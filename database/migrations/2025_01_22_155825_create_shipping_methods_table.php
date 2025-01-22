@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
+        Schema::create('shipping_methods', function (Blueprint $table) {
+            $table->id('id_shipping_method')->comment('ID phương thức giao hàng');
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->decimal('cost', 10, 2)->comment('Giá ship');
+            $table->string('estimated_time')->comment('Thời gian dự kiến giao hàng');
+            $table->string('status');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('shipping_methods');
     }
 };
