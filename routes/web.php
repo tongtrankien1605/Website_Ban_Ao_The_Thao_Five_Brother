@@ -51,3 +51,26 @@ Route::get('/404', function () {
 })->name('404');
 
 
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('/index', function () {
+        return view('admins.layout.index');
+    })->name('index');
+    Route::get('/form', function () {
+        return view('admins.form.index');
+    })->name('form');
+    Route::get('/table', function () {
+        return view('admins.table.index');
+    })->name('table');
+});
+
+Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
+    Route::get('/index', function () {
+        return view('staffs.layout.index');
+    })->name('index');
+    Route::get('/form', function () {
+        return view('staffs.form.index');
+    })->name('form');
+    Route::get('/table', function () {
+        return view('staffs.table.index');
+    })->name('table');
+});
