@@ -1,3 +1,4 @@
+
 @extends('admins.layout.index')
 
 @section('title')

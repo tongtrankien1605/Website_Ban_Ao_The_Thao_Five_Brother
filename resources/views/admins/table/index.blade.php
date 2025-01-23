@@ -1,5 +1,6 @@
 @extends('admins.layout.index')
 
+
 @section('title')
 table
 @endsection
@@ -228,6 +229,7 @@ table
             </div>
         </div>
 </div>
+<<<<<<< HEAD
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -1018,6 +1020,9 @@ table
 </div>
 <!-- /.content-wrapper -->
 
+=======
+</section>
+>>>>>>> f425af963e04c5b2b13e776c626e2bb0a5c27db6
 
 @extends('admins.table.js')
 
