@@ -24,8 +24,10 @@ return new class extends Migration
             $table->boolean('status')->default(true)->comment('Trạng thái tài khoản');
             $table->string('remember_token', 100)->nullable()->comment('Ghi nhớ token');
             $table->timestamps();
+            $table->softDeletes();
+
         });
-        
+
     }
 
     /**

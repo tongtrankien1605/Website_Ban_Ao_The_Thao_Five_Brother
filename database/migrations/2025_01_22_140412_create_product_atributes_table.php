@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->comment('ID thuộc tính sản phẩm');
             $table->string('name')->comment('Tên thuộc tính, vd: kích thước, kiểu dáng, chất liệu');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

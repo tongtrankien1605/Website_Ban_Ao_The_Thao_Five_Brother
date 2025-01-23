@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('vouchers', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->enum('discount_type', ['percentage', 'fixed'])->comment('Loại giảm giá');
+            $table->enum('discount_type', ['percentage', 'fixed'])->default('percentage')->comment('Loại giảm giá');
             $table->decimal('discount_value', 10, 2)->comment('Giá trị giảm giá');
             $table->integer('total_usage')->comment('Tổng số lượt sử dụng được phép');
-            $table->timestamp('start_date');
-            $table->timestamp('end_date');
-            $table->boolean('status')->comment('0: còn, 1: hết');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->boolean('status')->default(0)->comment('0: còn, 1: hết');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

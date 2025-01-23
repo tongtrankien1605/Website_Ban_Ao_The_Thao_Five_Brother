@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->comment('Tên thương hiệu');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
