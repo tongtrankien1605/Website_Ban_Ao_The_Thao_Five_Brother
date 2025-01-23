@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image', 255)->nullable()->comment('Ảnh chính');
             $table->decimal('price', 10, 2)->comment('Giá biến thể sản phẩm');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

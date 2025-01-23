@@ -20,6 +20,7 @@ return new class extends Migration
             $table->bigInteger('barcode')->unique()->comment('Mã vạch sản phẩm');
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
