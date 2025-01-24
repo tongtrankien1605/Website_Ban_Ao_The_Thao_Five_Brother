@@ -17,7 +17,8 @@ class VoucherUserFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id_user' => rand(1, 50),
+            'id_voucher' => rand(1, 50),
         ];
     }
 }

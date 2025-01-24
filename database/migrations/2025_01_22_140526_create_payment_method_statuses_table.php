@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_statuses', function (Blueprint $table) {
-            $table->id()->comment('ID của trạng thái đơn hàng');
-            $table->string('name')->comment('Trạng thái đơn hàng: đã giao, đã nhận, hoàn trả ,....');
+        Schema::create('payment_method_statuses', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->comment('trạng thái thanh toán: chưa, chờ, đã thanh toán');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_statuses');
+        Schema::dropIfExists('payment_method_statuses');
     }
 };

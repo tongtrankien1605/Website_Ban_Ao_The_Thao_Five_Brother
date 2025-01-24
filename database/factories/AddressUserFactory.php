@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Address_user>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AddressUser>
  */
 class AddressUserFactory extends Factory
 {
@@ -17,7 +17,8 @@ class AddressUserFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id_user'=>rand(1,50),
+            'address'=>fake()->address(),
         ];
     }
 }

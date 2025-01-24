@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id('id')->comment('ID danh mục');
-            $table->string('name', 100)->unique()->nullable(false)->comment('Tên danh mục (duy nhất)');
+            $table->string('name', 100)->unique()->comment('Tên danh mục (duy nhất)');
             $table->string('description', 255)->nullable()->comment('Mô tả');
             $table->string('image', 255)->nullable()->comment('Hình ảnh danh mục');
             $table->boolean('is_active')->default(1)->comment('1 là danh mục đang hiển thị, 0 nếu ẩn');

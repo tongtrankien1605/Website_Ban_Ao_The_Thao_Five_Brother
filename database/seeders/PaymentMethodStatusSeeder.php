@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class ProductAtributeSeeder extends Seeder
+class PaymentMethodStatusSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,15 +15,15 @@ class ProductAtributeSeeder extends Seeder
     {
         $dataSeeder = [
             [
-                'name'=>'Chất liệu'
+                'name' => 'Chưa thanh toán'
             ],
             [
-                'name'=>'Màu sắc'
+                'name' => 'Chờ thanh toán'
             ],
             [
-                'name'=>'Kích cỡ'
+                'name' => 'Đã thanh toán'
             ],
         ];
-        DB::table('product_atributes')->insert($dataSeeder);
+        DB::table('payment_method_statuses')->insert($dataSeeder);
     }
 }
