@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id('id_payment_method')->comment('ID phương thức thanh toán');
+            $table->unsignedBigInteger('id_payment_method_status')->comment('ID phương thức thanh toán');
+            $table->foreign('id_payment_method_status')->references('id')->on('payment_method_statuses');
             $table->string('name')->comment('Tên phương thức thanh toán');
-            $table->string('status')->comment('Trạng thái');
+            //$table->string('status')->comment('Trạng thái'); tách trạng thái và phương thức ra làm 2 bảng riêng lẻ
             $table->timestamps();
         });
     }

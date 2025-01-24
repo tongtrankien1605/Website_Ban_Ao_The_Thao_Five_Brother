@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->sentence(),
+            'published_at' => Carbon::now(),
+            'author' => fake()->name(),
+            'short_description' => fake()->text(150),
+            'content' => fake()->paragraph(3),
         ];
     }
 }

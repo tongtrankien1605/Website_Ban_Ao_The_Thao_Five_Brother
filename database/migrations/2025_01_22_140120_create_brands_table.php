@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Tên thương hiệu');
+            $table->string('name')->unique()->comment('Tên thương hiệu');
             $table->timestamps();
             $table->softDeletes();
         });
