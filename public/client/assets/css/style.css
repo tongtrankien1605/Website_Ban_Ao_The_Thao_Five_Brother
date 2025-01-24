@@ -118,6 +118,7 @@ a:focus {
 
 a:hover {
   text-decoration: none;
+  color: #ff708a;
 }
 
 button, input[type=submit] {
@@ -130,7 +131,7 @@ ul {
   padding: 0;
 }
 
-/*-- 
+/*--
     - Common Classes
 -----------------------------------------*/
 .fix {
@@ -294,7 +295,7 @@ ul {
   max-width: none;
 }
 
-/*-- 
+/*--
     - Input Placeholder
 -----------------------------------------*/
 input:-moz-placeholder, textarea:-moz-placeholder {
@@ -317,8 +318,8 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 }
 
-/*-- 
-    Scroll Up 
+/*--
+    Scroll Up
 -----------------------------------------*/
 #scrollUp {
   width: 40px;
@@ -402,15 +403,15 @@ img.mfp-img {
   overflow: visible;
 }
 
-/*-- 
-    Button 
+/*--
+    Button
 -----------------------------------------*/
 .btn-round {
   border-radius: 50px !important;
 }
 
-/*-- 
-    Page Pagination 
+/*--
+    Page Pagination
 -----------------------------------------*/
 .page-pagination {
   display: -webkit-box;

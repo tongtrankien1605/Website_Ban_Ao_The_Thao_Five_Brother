@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +14,18 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('login', [AuthController::class, 'showFormLogin'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('register', [AuthController::class, 'showFormRegister'])->name('register');
+Route::post('register', [AuthController::class, 'register']);
+Route::get('reset-password', [AuthController::class, 'showFormReset'])->name('reset-password');
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
+
+// Route::middleware(['auth'])
+
+//     ->group(function () {});
 
 Route::get('/', function () {
     return view('client.index');
@@ -28,12 +42,18 @@ Route::get('/shop', function () {
 Route::get('/wishlist', function () {
     return view('client.wishlist');
 })->name('wishlist');
-Route::get('/my-account', function () {
-    return view('client.my-account');
-})->name('my-account');
-Route::get('/login-register', function () {
-    return view('client.login-register');
-})->name('login-register');
+// Route::get('/my-account', function () {
+//     return view('client.my-account');
+// })->name('my-account');
+Route::get(
+    'my-account',
+    [UserController::class, 'show']
+)->name('my-account');
+// Route::get('my-account/{user}',    [UserController::class, 'edit'])->name('my-account.edit');
+// Route::put('my-account/{user}',    [UserController::class, 'update'])->name('my-account.update');
+// Route::get('/login-register', function () {
+//     return view('client.login-register');
+// })->name('login-register');
 Route::get('/contact', function () {
     return view('client.contact');
 })->name('contact');

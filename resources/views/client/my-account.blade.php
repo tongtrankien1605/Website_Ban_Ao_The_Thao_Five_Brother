@@ -37,9 +37,12 @@
 
                         <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> address</a>
 
-                        <a href="#account-info" data-bs-toggle="tab"><i class="fa fa-user"></i> Account Details</a>
+                        <a href="{{ route('my-account', $user->id) }}" data-bs-toggle="tab">
+                            <i class="fa fa-user"></i>
+                            Account Details
+                        </a>
 
-                        <a href="login-register.html"><i class="fa fa-sign-out"></i> Logout</a>
+                        <a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
                 </div>
                 <!-- My Account Tab Menu End -->
@@ -53,7 +56,7 @@
                                 <h3>Dashboard</h3>
 
                                 <div class="welcome">
-                                    <p>Hello, <strong>Alex Tuntuni</strong> (If Not <strong>Tuntuni !</strong><a
+                                    <p>Hello, <strong>{{ $user->name}}</strong> (If Not <strong>{{$user->name}}!</strong><a
                                             href="login-register.html" class="logout"> Logout</a>)</p>
                                 </div>
 
