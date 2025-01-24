@@ -54,7 +54,9 @@
                                 <ul class="sub-menu">
                                     <li><a href="{{ route('cart') }}">Cart</a></li>
                                     <li><a href="{{ route('checkout') }}">Checkout</a></li>
-                                    <li><a href="{{ route('login-register') }}">Login & Register</a></li>
+                                    {{-- <li><a href="{{ route('login-register') }}">Login & Register</a></li> --}}
+                                    <li><a href="{{ route('login') }}">Login</a></li>
+                                    <li><a href="{{ route('register') }}">Register</a></li>
                                     <li><a href="{{ route('my-account') }}">My Account</a></li>
                                     <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
                                     <li><a href="{{ route('404') }}">404 Error</a></li>
