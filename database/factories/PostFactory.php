@@ -22,7 +22,7 @@ class PostFactory extends Factory
             'published_at' => Carbon::now(),
             'author' => fake()->name(),
             'short_description' => fake()->text(150),
-            'content' => fake()->paragraph(10),
+            'content' => fake()->paragraphs(10, true),
         ];
     }
 }
