@@ -49,7 +49,7 @@
                     <nav>
                         <ul>
                             <li class="active"><a href="{{ route('index') }}">HOME</a></li>
-                            <li><a href="{{ route('shop') }}">SHOP</a></li>
+                            <li><a href="{{ route('product.index') }}">SHOP</a></li>
                             <li><a href="#">PAGES</a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ route('cart') }}">Cart</a></li>
@@ -62,11 +62,11 @@
                                     <li><a href="{{ route('404') }}">404 Error</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ route('blog') }}">BLOG</a>
-                                <ul class="sub-menu">
-                                    <li><a href="{{ route('blog') }}">Blog</a></li>
-                                    <li><a href="{{ route('single-blog') }}">Single Blog</a></li>
-                                </ul>
+                            <li><a href="{{ route('post.index') }}">BLOG</a>
+                                {{-- <ul class="sub-menu">
+                                    <li><a href="{{ route('post.index') }}">Blog</a></li>
+                                    <li><a href="{{ route('post.show',$post->id) }}">Single Blog</a></li>
+                                </ul> --}}
                             </li>
                             <li><a href="{{ route('contact') }}">CONTACT</a></li>
                         </ul>
