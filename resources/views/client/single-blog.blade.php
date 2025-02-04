@@ -22,30 +22,20 @@
                 <div class="col-xl-9 col-lg-8 col-12 order-1 order-lg-2 mb-40">
                     <div class="single-blog">
                         <div class="image-wrap">
-                            <h4 class="date">May <span>25</span></h4>
+                            <h4 class="date">{{ $post->published_month }} <span>{{ $post->published_day }}</span></h4>
                             <a class="image" href="single-blog.html"><img src="/client/assets/images/blog/single-blog.jpg"
                                     alt=""></a>
                         </div>
                         <div class="content">
                             <ul class="meta">
                                 <li><a href="#"><img src="/client/assets/images/blog/blog-author-1.jpg"
-                                            alt="Blog Author">Muhin</a></li>
+                                            alt="Blog Author">{{ $post->author }}</a></li>
                                 <li><a href="#">25 Likes</a></li>
                                 <li><a href="#">05 Views</a></li>
                             </ul>
                             <div class="desc">
-                                <p>Jadusona is one of the most of a exclusive Baby shop in the enim ipsam voluptatem quia
-                                    voluptas sit aspernatur aut odit aut fugit, sed quia res eos qui ratione voluptatem
-                                    sequi Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                                    adipisci velit, sed quia non numquam eius modi tempora inform enim ipsam voluptatem quia
-                                    voluptas sit aspernatur aut odit aut fugit, sed quia res eos qui ratione voluptatem
-                                    sequi Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                                    adipisci velit, sed quia non numquam eius modi tempora inform.</p>
-                                <p>Jadusona is one of the most of a exclusive Baby shop in the enim ipsam voluptatem quia
-                                    voluptas sit aspernatur aut odit aut fugit, sed quia res eos qui ratione voluptatem
-                                    sequi Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                                    adipisci velit.</p>
-                                <blockquote class="blockquote">
+                                <p>{{ $post->content }}</p>
+                                {{-- <blockquote class="blockquote">
                                     <p>Jadusona is one of the most of a exclusive Baby shop in the enim ipsam voluptatem
                                         quia voluptas sit aspernatur aut odit aut fugit, sed quia res eos qui ratione
                                         voluptatem sequi Neque porro quisquam est.</p>
@@ -55,7 +45,7 @@
                                     voluptas sit aspernatur aut odit aut fugit, sed quia res eos qui ratione voluptatem
                                     sequi Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
                                     adipisci velit, sed quia non numquam eius modi tempora inform enim ipsam voluptatem quia
-                                    voluptas sit aspernatur aut odit aut fugit.</p>
+                                    voluptas sit aspernatur aut odit aut fugit.</p> --}}
                             </div>
 
                             <div class="blog-footer row mt-45">
@@ -184,22 +174,23 @@
                     </div>
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Popular Blog</h4>
+                        <h4 class="sidebar-title">Lastest Blog</h4>
                         <div class="sidebar-blog-wrap">
-                            <div class="sidebar-blog">
-                                <a href="single-blog.html" class="image"><img
-                                        src="/client/assets/images/blog/blog-1.jpg" alt=""></a>
-                                <div class="content">
-                                    <a href="{{ route('single-blog') }}" class="title">Lates and new Trens for baby
-                                        fashion</a>
-                                    <span class="date">25 may</span>
+                            @foreach ($data as $post)
+                                <div class="sidebar-blog">
+                                    <a href="{{ route('post.show', $post->id) }}" class="image"><img
+                                            src="/client/assets/images/blog/blog-1.jpg" alt=""></a>
+                                    <div class="content">
+                                        <a href="{{ route('post.show', $post->id) }}" class="title">{{$post->title}}</a>
+                                        <span class="date">{{$post->published_time}}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="sidebar-blog">
+                            @endforeach
+                            {{-- <div class="sidebar-blog">
                                 <a href="single-blog.html" class="image"><img
                                         src="/client/assets/images/blog/blog-2.jpg" alt=""></a>
                                 <div class="content">
-                                    <a href="{{ route('single-blog') }}" class="title">New Collection New Trend all New
+                                    <a href="{{ route('post.show',$post) }}" class="title">New Collection New Trend all New
                                         Style</a>
                                     <span class="date">25 may</span>
                                 </div>
@@ -208,11 +199,11 @@
                                 <a href="single-blog.html" class="image"><img
                                         src="/client/assets/images/blog/blog-3.jpg" alt=""></a>
                                 <div class="content">
-                                    <a href="{{ route('single-blog') }}" class="title">Lates and new Trens for baby
+                                    <a href="{{ route('post.show',$post) }}" class="title">Lates and new Trens for baby
                                         fashion</a>
                                     <span class="date">25 may</span>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,16 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $data = Product::latest('id')->paginate(8);
+        // dd($data);
+        return view('client.shop', compact('data'));
+    }
+    public function indexMain()
+    {
+        $products = Product::latest('id')->limit(8)->get();
+        $posts = Post::latest('published_at')->limit(2)->get();
+        //  dd($data);
+        return view('client.index', compact(['products','posts']));
     }
 
     /**
@@ -36,7 +46,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        // dd($product->id);
+        return view('client.single-product', compact('product'));
     }
 
     /**

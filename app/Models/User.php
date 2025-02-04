@@ -62,7 +62,7 @@ class User extends Authenticatable
 
     protected function serializeDate($date)
     {
-        return Carbon::parse($date);
+        return $date->format('Y/m/d H:i:s');
     }
 
     protected static function boot()
@@ -76,5 +76,20 @@ class User extends Authenticatable
         });
         static::deleted(function ($model) {});
         static::created(function ($model) {});
+    }
+
+    public function address_users()
+    {
+        return $this->hasMany(AddressUser::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function voucher_users()
+    {
+        return $this->hasMany(VoucherUser::class);
     }
 }

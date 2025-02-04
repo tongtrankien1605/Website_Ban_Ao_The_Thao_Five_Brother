@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,19 +28,20 @@ Route::post('reset-password', [AuthController::class, 'resetPassword']);
 // Route::middleware(['auth'])
 
 //     ->group(function () {});
+// Route::get('/single-blog', function () {
+//     return view('client.single-blog');
+// })->name('single-blog');
+Route::get('/', [ProductController::class, 'indexMain'])->name('index');
+// Route::get('/single-product', function () {
+//     return view('client.single-product');
+// })->name('single-product');
+// Route::get('/single-product', [ProductController::class, 'show'])->name('single-product');
 
-Route::get('/', function () {
-    return view('client.index');
-})->name('index');
-Route::get('/single-product', function () {
-    return view('client.single-product');
-})->name('single-product');
-Route::get('/single-blog', function () {
-    return view('client.single-blog');
-})->name('single-blog');
-Route::get('/shop', function () {
-    return view('client.shop');
-})->name('shop');
+// Route::get('/shop', function () {
+//     return view('client.shop');
+// })->name('shop');
+// Route::get('/shop', [ProductController::class, 'index'])->name('shop');
+Route::resource('product', ProductController::class);
 Route::get('/wishlist', function () {
     return view('client.wishlist');
 })->name('wishlist');
@@ -63,9 +66,7 @@ Route::get('/checkout', function () {
 Route::get('/cart', function () {
     return view('client.cart');
 })->name('cart');
-Route::get('/blog', function () {
-    return view('client.blog');
-})->name('blog');
+Route::resource('post', PostController::class);
 Route::get('/404', function () {
     return view('client.404');
 })->name('404');
