@@ -52,7 +52,7 @@
                             <div class="product-inner">
 
                                 <div class="image">
-                                    <img src="/client/assets/images/product/product-1.jpg" alt="">
+                                    <img src="{{$product->image}}" alt="">
 
                                     <div class="image-overlay">
                                         <div class="action-buttons">

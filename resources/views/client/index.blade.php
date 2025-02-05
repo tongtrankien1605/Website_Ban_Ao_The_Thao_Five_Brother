@@ -111,7 +111,7 @@
                             <div class="product-inner">
 
                                 <div class="image">
-                                    <img src="/client/assets/images/product/product-1.jpg" alt="Image">
+                                    <img src="{{$product->image}}" alt="Image">
 
                                     <div class="image-overlay">
                                         <div class="action-buttons">
