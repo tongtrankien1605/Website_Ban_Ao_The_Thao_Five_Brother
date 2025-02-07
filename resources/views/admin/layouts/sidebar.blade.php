@@ -65,9 +65,12 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.posts.index') }}" class="nav-link">
-                        <i class="nav-icon far fa-image"></i>
-                        <p>List Posts</p>
+                    <a href="pages/widgets.html" class="nav-link">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Widgets
+                            <span class="right badge badge-danger">New</span>
+                        </p>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -298,7 +301,14 @@
                         </p>
                     </a>
                 </li>
-                
+                <li class="nav-item">
+                    <a href="pages/gallery.html" class="nav-link">
+                        <i class="nav-icon far fa-image"></i>
+                        <p>
+                            Gallery
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="pages/kanban.html" class="nav-link">
                         <i class="nav-icon fas fa-columns"></i>
