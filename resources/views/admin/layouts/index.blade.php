@@ -60,8 +60,6 @@
             <!-- Content Wrapper. Contains page content -->
             @yield('content')
 
-            @yield('scripts')
-
         </main>
 
 
