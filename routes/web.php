@@ -1,6 +1,11 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
+// use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,13 +58,13 @@ Route::get('/404', function () {
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/index', function () {
-        return view('admins.layout.index');
+        return view('admin.layouts.index');
     })->name('index');
     Route::get('/form', function () {
-        return view('admins.form.index');
+        return view('admin.form.index');
     })->name('form');
     Route::get('/table', function () {
-        return view('admins.table.index');
+        return view('admin.table.index');
     })->name('table');
 });
 
@@ -73,4 +78,15 @@ Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
     Route::get('/table', function () {
         return view('staffs.table.index');
     })->name('table');
+});
+
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 });
