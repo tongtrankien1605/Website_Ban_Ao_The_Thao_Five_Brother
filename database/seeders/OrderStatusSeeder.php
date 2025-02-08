@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class OrderStatusSeeder extends Seeder
 {
@@ -12,6 +13,26 @@ class OrderStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $dataSeeder = [
+            [
+                'name' => 'Chờ xác nhận'
+            ],
+            [
+                'name' => 'Chờ lấy hàng'
+            ],
+            [
+                'name' => 'Đang giao hàng'
+            ],
+            [
+                'name' => 'Đã giao'
+            ],
+            [
+                'name' => 'Hoàn trả'
+            ],
+            [
+                'name' => 'Đã hủy'
+            ],
+        ];
+        DB::table('order_statuses')->insert($dataSeeder);
     }
 }
