@@ -1,4 +1,4 @@
-@extends('admins.layout.index')
+@extends('admin.layouts.index')
 
 
 @section('title')
@@ -228,6 +228,8 @@ table
                 </div>
             </div>
         </div>
+
+    </section>
 </div>
 
 <!-- Content Wrapper. Contains page content -->
@@ -1021,6 +1023,6 @@ table
 
 </section>
 
-@extends('admins.table.js')
+@extends('admin.table.js')
 
 @endsection

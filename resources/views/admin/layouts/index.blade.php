@@ -9,23 +9,23 @@
     @include('admins.layout.css')
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layouts-fixed">
     <div class="wrapper">
 
         <header>
             <!-- Preloader -->
-            @include('admins.layout.preloader')
+            @include('admin.layouts.preloader')
 
 
             <!-- Navbar -->
-            @include('admins.layout.navbar')
+            @include('admin.layouts.navbar')
             <!-- /.navbar -->
         </header>
 
 
         <main>
             <!-- Main Sidebar Container -->
-            @include('admins.layout.sidebar')
+            @include('admin.layouts.sidebar')
 
 
             <!-- Content Wrapper. Contains page content -->
@@ -34,7 +34,7 @@
         </main>
 
 
-        @include('admins.layout.footer')
+        @include('admin.layouts.footer')
 
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">

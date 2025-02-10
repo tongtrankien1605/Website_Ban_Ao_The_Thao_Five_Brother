@@ -1,5 +1,5 @@
 
-@extends('admins.layout.index')
+@extends('admins.layouts.index')
 
 @section('title')
 form
