@@ -12,7 +12,8 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        //
+        $vouchers = Voucher::all();
+        return view('admins.vouchers.index', compact('vouchers'));
     }
 
     /**
@@ -20,7 +21,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        //
+        return view('admins.vouchers.create');
     }
 
     /**
@@ -28,7 +29,20 @@ class VoucherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'code' => 'required|unique:vouchers',
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric',
+            'total_usage' => 'required|integer',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'status' => 'required|boolean'
+        ]);
+
+        Voucher::create($request->all());
+
+        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher created successfully');
+
     }
 
     /**
@@ -44,7 +58,7 @@ class VoucherController extends Controller
      */
     public function edit(Voucher $voucher)
     {
-        //
+        return view('admins.vouchers.edit', compact('voucher'));
     }
 
     /**
@@ -52,14 +66,24 @@ class VoucherController extends Controller
      */
     public function update(Request $request, Voucher $voucher)
     {
-        //
+        $data=$request->validate([
+            'code' => 'required|unique:vouchers,code,' . $voucher->id,
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric',
+            'total_usage' => 'required|integer',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'status' => $request->has('status') ? 1 : 0
+        ]);
+
+        $voucher->update($data);
+
+        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Voucher $voucher)
     {
-        //
+        $voucher->delete();
+        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher deleted successfully');
     }
 }
