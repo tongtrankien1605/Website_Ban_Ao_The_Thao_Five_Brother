@@ -17,7 +17,11 @@ class SkusFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_id'=>rand(1,10),
+            'name'=>fake()->name(),
+            'quantity'=>10,
+            'price'=>rand(100000,1000000),
+            'barcode'=>fake()->unique()->numerify("#####"),
         ];
     }
 }

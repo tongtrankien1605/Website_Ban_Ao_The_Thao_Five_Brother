@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('product_atributes', function (Blueprint $table) {
             $table->id()->comment('ID thuộc tính sản phẩm');
-            $table->string('name')->comment('Tên thuộc tính, vd: kích thước, kiểu dáng, chất liệu');
+            $table->string('name')->unique()->comment('Tên thuộc tính, vd: kích thước, kiểu dáng, chất liệu');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

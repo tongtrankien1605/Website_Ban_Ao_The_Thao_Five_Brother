@@ -17,7 +17,12 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name'=>fake()->unique()->name(),
+            'id_brand'=>rand(1,10),
+            'description'=>fake()->paragraph(1),
+            'id_category'=>rand(1,10),
+            'image' => 'https://picsum.photos/400/400',
+            'price'=>rand(100000,1000000),
         ];
     }
 }

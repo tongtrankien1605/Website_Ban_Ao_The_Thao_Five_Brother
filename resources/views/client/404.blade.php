@@ -34,7 +34,7 @@
                                 <i class="fa fa-search"></i>
                             </button>
                         </form>
-                        <a href="index.html" class="back-btn">Back to home page</a>
+                        <a href="{{route('index')}}" class="back-btn">Back to home page</a>
                     </div>
                 </div>
 

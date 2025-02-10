@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
-// use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -18,27 +19,46 @@ use App\Http\Controllers\Admin\PostController;
 |
 */
 
-Route::get('/', function () {
-    return view('client.index');
-})->name('index');
-Route::get('/single-product', function () {
-    return view('client.single-product');
-})->name('single-product');
-Route::get('/single-blog', function () {
-    return view('client.single-blog');
-})->name('single-blog');
-Route::get('/shop', function () {
-    return view('client.shop');
-})->name('shop');
+Route::get('login', [AuthController::class, 'showFormLogin'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('register', [AuthController::class, 'showFormRegister'])->name('register');
+Route::post('register', [AuthController::class, 'register']);
+Route::get('reset-password', [AuthController::class, 'showFormReset'])->name('reset-password');
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
+
+// Route::middleware(['auth'])
+
+//     ->group(function () {});
+// Route::get('/single-blog', function () {
+//     return view('client.single-blog');
+// })->name('single-blog');
+Route::get('/', [ProductController::class, 'indexMain'])->name('index');
+// Route::get('/single-product', function () {
+//     return view('client.single-product');
+// })->name('single-product');
+// Route::get('/single-product', [ProductController::class, 'show'])->name('single-product');
+
+// Route::get('/shop', function () {
+//     return view('client.shop');
+// })->name('shop');
+// Route::get('/shop', [ProductController::class, 'index'])->name('shop');
+Route::resource('product', ProductController::class);
 Route::get('/wishlist', function () {
     return view('client.wishlist');
 })->name('wishlist');
-Route::get('/my-account', function () {
-    return view('client.my-account');
-})->name('my-account');
-Route::get('/login-register', function () {
-    return view('client.login-register');
-})->name('login-register');
+// Route::get('/my-account', function () {
+//     return view('client.my-account');
+// })->name('my-account');
+Route::get(
+    'my-account',
+    [UserController::class, 'show']
+)->name('my-account');
+// Route::get('my-account/{user}',    [UserController::class, 'edit'])->name('my-account.edit');
+// Route::put('my-account/{user}',    [UserController::class, 'update'])->name('my-account.update');
+// Route::get('/login-register', function () {
+//     return view('client.login-register');
+// })->name('login-register');
 Route::get('/contact', function () {
     return view('client.contact');
 })->name('contact');
@@ -48,15 +68,15 @@ Route::get('/checkout', function () {
 Route::get('/cart', function () {
     return view('client.cart');
 })->name('cart');
-Route::get('/blog', function () {
-    return view('client.blog');
-})->name('blog');
+Route::resource('post', PostController::class);
 Route::get('/404', function () {
     return view('client.404');
 })->name('404');
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('/user',AdminUserController::class);
+    Route::get('/index_delete_user',[AdminUserController::class,'indexDelete'])->name('user.indexDelUser');
     Route::get('/index', function () {
         return view('admin.layouts.index');
     })->name('index');
@@ -90,3 +110,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 });
+
+

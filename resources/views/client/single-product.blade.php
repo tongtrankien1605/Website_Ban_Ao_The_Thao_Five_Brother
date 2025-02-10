@@ -58,7 +58,7 @@
                                 <div class="head">
                                     <div class="head-left">
 
-                                        <h3 class="title">Tmart Baby Dress</h3>
+                                        <h3 class="title">{{$product->name}}</h3>
 
                                         <div class="ratting">
                                             <i class="fa fa-star"></i>
@@ -71,15 +71,12 @@
                                     </div>
 
                                     <div class="head-right">
-                                        <span class="price">$25</span>
+                                        <span class="price">{{$product->price}}</span>
                                     </div>
                                 </div>
 
                                 <div class="description">
-                                    <p>enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia res
-                                        eos qui ratione voluptatem sequi Neque porro quisquam est, qui dolorem ipsum quia
-                                        dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora
-                                        inform</p>
+                                    <p>{{$product->description}}</p>
                                 </div>
 
                                 <span class="availability">Availability: <span>In Stock</span></span>
@@ -149,13 +146,7 @@
                         <!-- Tab panes -->
                         <div class="tab-content col-12">
                             <div class="pro-info-tab tab-pane active" id="more-info">
-                                <p>Fashion has been creating well-designed collections since 2010. The brand offers feminine
-                                    designs delivering stylish separates and statement dresses which have since evolved into
-                                    a full ready-to-wear collection in which every item is a vital part of a woman's
-                                    wardrobe. The result? Cool, easy, chic looks with youthful elegance and unmistakable
-                                    signature style. All the beautiful pieces are made in Italy and manufactured with the
-                                    greatest attention. Now Fashion extends to a range of accessories including shoes, hats,
-                                    belts and more!</p>
+                                <p>{{$product->description}}</p>
                             </div>
                             <div class="pro-info-tab tab-pane" id="data-sheet">
                                 <table class="table-data-sheet">
