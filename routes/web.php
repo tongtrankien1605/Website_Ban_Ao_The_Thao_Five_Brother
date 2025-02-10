@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostController as UserPostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -68,7 +68,7 @@ Route::get('/checkout', function () {
 Route::get('/cart', function () {
     return view('client.cart');
 })->name('cart');
-Route::resource('post', PostController::class);
+Route::resource('post', UserPostController::class);
 Route::get('/404', function () {
     return view('client.404');
 })->name('404');
