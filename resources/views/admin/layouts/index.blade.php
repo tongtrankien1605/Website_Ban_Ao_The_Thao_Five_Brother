@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', '/')</title>
 
-    @include('admins.layout.css')
+    @include('admin.layouts.css')
 </head>
 
 <body class="hold-transition sidebar-mini layouts-fixed">
@@ -44,7 +44,7 @@
     </div>
     <!-- ./wrapper -->
 
-    @include('admins.layout.js')
+    @include('admin.layouts.js')
 
 </body>
 

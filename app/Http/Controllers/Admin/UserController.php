@@ -28,7 +28,7 @@ class UserController extends Controller
             $q->on('roles.id', '=', 'users.role');
             $q->whereNull('roles.deleted_at');
         })->latest('users.updated_at')->paginate(20);
-        return view('admins.users.index', compact('users'));
+        return view('admin.users.index', compact('users'));
     }
 
     /**
@@ -37,7 +37,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::whereNull('deleted_at')->get();
-        return view('admins.users.create', compact('roles'));
+        return view('admin.users.create', compact('roles'));
     }
 
     /**
@@ -73,7 +73,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('admins.users.show', compact('user'));
+        return view('admin.users.show', compact('user'));
     }
 
     /**
@@ -82,7 +82,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::whereNull('deleted_at')->get();
-        return view('admins.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -154,6 +154,6 @@ class UserController extends Controller
             $q->on('roles.id', '=', 'users.role');
             $q->whereNull('roles.deleted_at');
         })->latest('users.updated_at')->paginate(20);
-        return view('admins.users.indexDelUser', compact('users'));
+        return view('admin.users.indexDelUser', compact('users'));
     }
 }
