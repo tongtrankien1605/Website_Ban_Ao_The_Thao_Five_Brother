@@ -21,7 +21,7 @@ class SkusFactory extends Factory
             'name'=>fake()->name(),
             'quantity'=>10,
             'price'=>rand(100000,1000000),
-            'barcode'=>fake()->unique()->numerify("#####"),
+            'barcode'=>fake()->numerify("#####"),
         ];
     }
 }
