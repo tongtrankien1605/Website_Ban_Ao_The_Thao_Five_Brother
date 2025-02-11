@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PostController as UserPostController;
@@ -86,6 +87,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/table', function () {
         return view('admin.table.index');
     })->name('table');
+
+    
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
@@ -110,5 +113,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 });
+
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
+    Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
+    Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
+    Route::get('brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
+    Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+    Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
+    Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
+});
+
 
 
