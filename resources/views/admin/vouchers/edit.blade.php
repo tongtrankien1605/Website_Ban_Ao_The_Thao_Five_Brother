@@ -1,4 +1,4 @@
-@extends('admins.layout.index')
+@extends('admin.layouts.index')
 @section('title')
     Sửa Voucher
 @endsection
@@ -16,7 +16,7 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form method="post" enctype="multipart/form-data" action="{{ route('admin.vouchers.update') }}">
+                            <form method="post" enctype="multipart/form-data" action="{{ route('admin.vouchers.update',$voucher->id) }}">
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group">
