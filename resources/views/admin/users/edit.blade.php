@@ -1,4 +1,4 @@
-@extends('admins.layout.index')
+@extends('admin.layouts.index')
 @section('title')
     Chỉnh sửa người dùng
 @endsection
@@ -31,7 +31,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="phone_number">Số điện thoại</label>
-                                        <input type="number" class="form-control" id="phone_number" name="phone_number"
+                                        <input type="text" class="form-control" id="phone_number" name="phone_number"
                                             placeholder="Enter Phone number" value="{{ $user->phone_number }}">
                                         @error('phone_number')
                                             <div class="text-danger">{{ $message }}</div>
