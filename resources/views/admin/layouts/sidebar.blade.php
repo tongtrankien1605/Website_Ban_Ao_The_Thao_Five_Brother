@@ -63,6 +63,30 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item menu-open">
+                    <a href="{{route('admin.vouchers.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Quản lý Voucher
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('admin.vouchers.index')}}" class="nav-link">
+                                <i class="fa-regular fa-address-book"></i>
+                                <p>Danh sách Voucher</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.vouchers.create')}}" class="nav-link">
+                                <i class="fa-solid fa-person-circle-plus"></i>
+                                <p>Thêm mới Voucher</p>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a href="pages/widgets.html" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
