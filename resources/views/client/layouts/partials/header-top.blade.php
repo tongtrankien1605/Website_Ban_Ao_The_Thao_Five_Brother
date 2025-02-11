@@ -45,7 +45,11 @@
 
                                 <p><a href="{{ route('my-account') }}">My Account</a></p>
                                 {{-- <p><a href="{{ route('login-register') }}">Register</a><a href="{{ route('login-register') }}">Login</a></p> --}}
+                                @if (Auth::check())
+                                    
+                                @else
                                 <p><a href="{{ route('register') }}">Register</a><a href="{{ route('login') }}">Login</a></p>
+                                @endif
 
                             </div>
                             <!-- Header Shop Links End -->
