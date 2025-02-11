@@ -45,8 +45,4 @@
         });
     </script>
 </body>
-<<<<<<< HEAD
-
-=======
->>>>>>> f425af963e04c5b2b13e776c626e2bb0a5c27db6
 </html>

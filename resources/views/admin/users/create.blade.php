@@ -1,6 +1,6 @@
-@extends('admins.layout.index')
+@extends('admin.layouts.index')
 @section('title')
-    Chỉnh sửa người dùng
+    Thêm mới người dùng
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -12,19 +12,17 @@
                         <!-- general form elements -->
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Chỉnh sửa người dùng</h3>
+                                <h3 class="card-title">Thêm mới người dùng</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form method="post" enctype="multipart/form-data"
-                                action="{{ route('admin.user.update', $user->id) }}">
+                            <form method="post" enctype="multipart/form-data" action="{{ route('admin.user.store') }}">
                                 @csrf
-                                @method('PUT')
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label for="name">Name</label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Enter name" value="{{ $user->name }}">
+                                            placeholder="Enter name" value="{{ old('name') }}">
                                         @error('name')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -32,7 +30,7 @@
                                     <div class="form-group">
                                         <label for="phone_number">Số điện thoại</label>
                                         <input type="number" class="form-control" id="phone_number" name="phone_number"
-                                            placeholder="Enter Phone number" value="{{ $user->phone_number }}">
+                                            placeholder="Enter Phone number" value="{{ old('phone_number') }}">
                                         @error('phone_number')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -40,7 +38,7 @@
                                     <div class="form-group">
                                         <label for="email">Email</label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Enter email" value="{{ $user->email }}">
+                                            placeholder="Enter email" value="{{ old('email') }}">
                                         @error('email')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -48,12 +46,9 @@
                                     <div class="form-group">
                                         <label for="gender">Giới tính</label>
                                         <select class="form-control" id="gender" name="gender">
-                                            <option value="other" {{ $user->gender == 'other' ? 'selected' : '' }}>Other
-                                            </option>
-                                            <option value="male" {{ $user->gender == 'male' ? 'selected' : '' }}>Nam
-                                            </option>
-                                            <option value="female" {{ $user->gender == 'female' ? 'selected' : '' }}>Nữ
-                                            </option>
+                                            <option value="male">Other</option>
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nữ</option>
                                         </select>
                                         @error('gender')
                                             <div class="text-danger">{{ $message }}</div>
@@ -62,7 +57,7 @@
                                     <div class="form-group">
                                         <label for="birthday">Ngày sinh</label>
                                         <input type="date" class="form-control" id="birthday" name="birthday"
-                                            value="{{ $user->birthday }}">
+                                            value="{{ old('birthday') }}">
                                         @error('birthday')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -71,10 +66,7 @@
                                         <label for="role">Vai trò</label>
                                         <select class="form-control" id="role" name="role">
                                             @foreach ($roles as $role)
-                                                <option value="{{ $role->id }}"
-                                                    {{ $user->role == $role->id ? 'selected' : '' }}>
-                                                    {{ $role->user_role }}
-                                                </option>
+                                                <option value="{{ $role->id }}">{{ $role->user_role }}</option>
                                             @endforeach
                                         </select>
                                         @error('role')
@@ -100,20 +92,14 @@
                                     <div class="form-group">
                                         <label for="avatar">Avatar</label>
                                         <div class="input-group">
-                                            <div class="input-group">
-                                                @if ($user->avatar)
-                                                    <img src="{{ Storage::url($user->avatar) }}" alt=""
-                                                        width="100px">
-                                                @endif
-                                                <input type="file" class="" id="avatar" name="avatar">
-                                            </div>
+                                            <input type="file" class="" id="avatar" name="avatar"
+                                                value="{{ old('avatar') }}">
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <a href="{{ route('admin.user.index') }}" class="btn btn-danger text-center">Quay
+                                        <a href="{{ route('admin.user.index') }}" class="btn btn-danger">Quay
                                             lại</a>
-                                        <button type="submit" class="btn btn-primary text-center">Cập nhật</button>
-
+                                        <button type="submit" class="btn btn-primary">Thêm mới</button>
                                     </div>
                                 </div>
                             </form>

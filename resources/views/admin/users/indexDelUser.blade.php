@@ -1,4 +1,4 @@
-@extends('admins.layout.index')
+@extends('admin.layouts.index')
 @section('title')
     Danh sách Người dùng
 @endsection
@@ -85,8 +85,9 @@
                                                             <td>{{ $user->phone_number }}</td>
                                                             <td>{{ $user->email }}</td>
                                                             <td>{{ $user->user_role }}</td>
-                                                            <td class=" d-flex justify-content-around align-items-center text-nowrap">
-                                                                <a class="btn btn-success btn-sm"
+                                                            <td
+                                                                class=" d-flex justify-content-around align-items-center text-nowrap">
+                                                                {{-- <a class="btn btn-success btn-sm"
                                                                     href="{{ route('admin.user.show', $user->id) }}">Xem</a>
                                                                 <a class="btn btn-primary btn-sm"
                                                                     href="{{ route('admin.user.edit', $user->id) }}"
@@ -99,7 +100,7 @@
                                                                         onclick="return confirm('Bạn sẽ xóa khách hàng')"
                                                                         class="btn btn-danger btn-sm">Xóa
                                                                     </button>
-                                                                </form>
+                                                                </form> --}}
                                                             </td>
                                                         </tr>
                                                     @endforeach
