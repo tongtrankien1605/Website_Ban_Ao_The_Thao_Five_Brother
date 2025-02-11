@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
@@ -74,6 +75,8 @@ Route::get('/404', function () {
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('/user',AdminUserController::class);
+    Route::get('/index_delete_user',[AdminUserController::class,'indexDelete'])->name('user.indexDelUser');
     Route::get('/index', function () {
         return view('admins.layout.index');
     })->name('index');

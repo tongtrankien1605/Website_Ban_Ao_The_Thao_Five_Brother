@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Danh sách Voucher</h3>
+                                <h3 class="card-title">Danh sách người dùng</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -55,53 +55,43 @@
                                                             aria-controls="example1" rowspan="1" colspan="1"
                                                             aria-sort="ascending"
                                                             aria-label="Rendering engine: activate to sort column descending">
-                                                            Mã Voucher
+                                                            Họ và tên
                                                         </th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
-                                                            aria-label="Browser: activate to sort column ascending">Loại
+                                                            aria-label="Browser: activate to sort column ascending">Số điện
+                                                            thoại
                                                         </th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
                                                             aria-label="Platform(s): activate to sort column ascending">
-                                                            Giá trị</th>
+                                                            Email</th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
                                                             aria-label="Engine version: activate to sort column ascending">
-                                                            Số lần sử dụng
+                                                            Vai trò
                                                         </th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
-                                                            aria-label="CSS grade: activate to sort column ascending">Ngày
-                                                            bắt đầu</th>
-                                                        <th class="sorting" tabindex="0" aria-controls="example1"
-                                                            rowspan="1" colspan="1"
-                                                            aria-label="CSS grade: activate to sort column ascending">Ngày
-                                                            kết thúc</th>
-                                                        <th class="sorting" tabindex="0" aria-controls="example1"
-                                                            rowspan="1" colspan="1"
-                                                            aria-label="CSS grade: activate to sort column ascending">Trạng thái</th>
+                                                            aria-label="CSS grade: activate to sort column ascending">Hành
+                                                            động</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($vouchers as $voucher)
+                                                    @foreach ($users as $user)
                                                         <tr>
                                                             <td class="dtr-control sorting_1" tabindex="0">
-                                                                {{ $voucher->code }}</td>
-                                                                <td>{{ $voucher->discount_type }}</td>
-                                                                <td>{{ $voucher->discount_value }}</td>
-                                                                <td>{{ $voucher->total_usage }}</td>
-                                                                <td>{{ $voucher->start_date }}</td>
-                                                                <td>{{ $voucher->end_date }}</td>
-                                                                <td>{{ $voucher->status ? 'Còn' : 'Hết' }}</td>
-                                                            <td
-                                                                class=" d-flex justify-content-around align-items-center text-nowrap">
-                                                                {{-- <a class="btn btn-success btn-sm"
-                                                                    href="{{ route('admin.vouchers.show', $voucher->id) }}">Xem</a> --}}
+                                                                {{ $user->name }}</td>
+                                                            <td>{{ $user->phone_number }}</td>
+                                                            <td>{{ $user->email }}</td>
+                                                            <td>{{ $user->user_role }}</td>
+                                                            <td class=" d-flex justify-content-around align-items-center text-nowrap">
+                                                                <a class="btn btn-success btn-sm"
+                                                                    href="{{ route('admin.user.show', $user->id) }}">Xem</a>
                                                                 <a class="btn btn-primary btn-sm"
-                                                                    href="{{ route('admin.vouchers.edit', $voucher->id) }}"
+                                                                    href="{{ route('admin.user.edit', $user->id) }}"
                                                                     role="button">Sửa</a>
-                                                                <form action="{{ route('admin.vouchers.destroy', $voucher->id) }}"
+                                                                <form action="{{ route('admin.user.destroy', $user->id) }}"
                                                                     method="post">
                                                                     @method('DELETE')
                                                                     @csrf
@@ -116,13 +106,11 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th rowspan="1" colspan="1">Mã Voucher</th>
-                                                        <th rowspan="1" colspan="1">Loại</th>
-                                                        <th rowspan="1" colspan="1">Giá trị</th>
-                                                        <th rowspan="1" colspan="1">Số lần sử dụng</th>
-                                                        <th rowspan="1" colspan="1">Ngày bắt đầu</th>
-                                                        <th rowspan="1" colspan="1">Ngày kết thúc</th>
-                                                        <th rowspan="1" colspan="1">Trạng thái</th>
+                                                        <th rowspan="1" colspan="1">Họ và tên</th>
+                                                        <th rowspan="1" colspan="1">Số điện thoại</th>
+                                                        <th rowspan="1" colspan="1">Email</th>
+                                                        <th rowspan="1" colspan="1">Vai trò</th>
+                                                        <th rowspan="1" colspan="1">Hành động</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -130,7 +118,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12">
-                                            {{-- {{ $vouchers->links() }} --}}
+                                            {{ $users->links() }}
                                         </div>
                                     </div>
                                 </div>
@@ -141,4 +129,3 @@
             </div>
     </div>
 @endsection
-
