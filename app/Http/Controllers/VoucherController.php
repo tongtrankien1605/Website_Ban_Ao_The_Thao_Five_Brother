@@ -13,7 +13,7 @@ class VoucherController extends Controller
     public function index()
     {
         $vouchers = Voucher::all();
-        return view('admins.vouchers.index', compact('vouchers'));
+        return view('admin.vouchers.index', compact('vouchers'));
     }
 
     /**
@@ -21,7 +21,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        return view('admins.vouchers.create');
+        return view('admin.vouchers.create');
     }
 
     /**
@@ -58,7 +58,7 @@ class VoucherController extends Controller
      */
     public function edit(Voucher $voucher)
     {
-        return view('admins.vouchers.edit', compact('voucher'));
+        return view('admin.vouchers.edit', compact('voucher'));
     }
 
     /**
