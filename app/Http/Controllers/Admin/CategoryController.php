@@ -79,7 +79,7 @@ class CategoryController extends Controller
         }
 
         $categories = Category::where('name', 'like', "%$keyword%")
-            ->orWhere('description', 'like', "%keyword%")
+            ->orWhere('description', 'like', "%$keyword%")
             ->paginate(10);
 
         return view('admin.categories.index', compact('categories'));

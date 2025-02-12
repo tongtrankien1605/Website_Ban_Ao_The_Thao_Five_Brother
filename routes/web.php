@@ -95,10 +95,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
     Route::put('/vouchers/{voucher}', [VoucherController::class, 'update'])->name('vouchers.update');
     Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
-    //route Category
+    //Route Category
     Route::resource('category', CategoryController::class);
     Route::get('/Admin/category/search', [CategoryController::class, 'search'])->name('category.search');
-    //End route Category
+    //End Category
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
