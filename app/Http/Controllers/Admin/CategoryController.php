@@ -36,7 +36,7 @@ class CategoryController extends Controller
             'name'        => ['required', 'string', 'max:255', Rule::unique('categories', 'name')],
             'description' => ['required', 'string'],
             'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
-            'is_active'   => ['nullable', Rule::in([0,1])],
+            'is_active'   => ['nullable', Rule::in([0, 1])],
         ], [
             'name.required'        => 'Tên danh mục không được để trống.',
             'name.unique' => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác.',
@@ -70,6 +70,18 @@ class CategoryController extends Controller
     {
         //
     }
+    public function search(Request $request) {
+        $search = $request->input('keyword');
+
+        if (empty($search)) {
+            return redirect()->route('admin.category.index')->with('error', 'Vui lòng nhập từ khóa tìm kiếm!');
+        }
+
+        $categories = Category::where('name', 'like', "%$search%")
+                              ->paginate(10);
+
+        return view('admin.categories.index', compact('categories'));
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -97,7 +109,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Định dạng ảnh hợp lệ
-            'is_active' => ['nullable',Rule::in([0,1])],
+            'is_active' => ['nullable', Rule::in([0, 1])],
         ]);
 
         // Xử lý ảnh nếu có file mới
