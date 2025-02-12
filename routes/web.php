@@ -97,7 +97,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
     //route Category
     Route::resource('category', CategoryController::class);
-    Route::get('/admin/category/search', [CategoryController::class, 'search'])->name('category.search');
+    Route::get('/Admin/category/search', [CategoryController::class, 'search'])->name('category.search');
     //End route Category
 });
 
