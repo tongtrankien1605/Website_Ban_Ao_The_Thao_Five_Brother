@@ -11,9 +11,11 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Danh sách thương hiệu</h3>
-                                <div class="card-tools">
+
+                                {{-- <div class="card-tools">
                                     <a href="{{ route('admin.brands.create') }}" class="btn btn-primary btn-sm">Thêm mới</a>
-                                </div>
+                                </div> --}}
+
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -23,6 +25,7 @@
                                             <th>#</th>
                                             <th>Tên thương hiệu</th>
                                             <th>Ngày tạo</th>
+                                            <th>Ngày cập nhật</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -32,6 +35,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $brand->name }}</td>
                                                 <td>{{ $brand->created_at->format('d-m-Y') }}</td>
+                                                <td>{{ $brand->updated_at->format('d-m-Y') }}</td>
                                                 <td class="d-flex justify-content-around align-items-center text-nowrap">
                                                     <a class="btn btn-success btn-sm"
                                                         href="{{ route('admin.brands.show', $brand->id) }}">Xem</a>
