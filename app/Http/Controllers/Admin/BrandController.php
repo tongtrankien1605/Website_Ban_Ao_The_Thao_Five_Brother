@@ -37,7 +37,15 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $newBrand = new Brand();
+            $newBrand->name = $request->name;
+            $newBrand->save();
+
+            return redirect()->route('admin.brand.index')->with('success', 'Thêm thương hiệu thành công!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Đã có lỗi xảy ra!');
+        }
     }
 
     /**
@@ -54,15 +62,24 @@ class BrandController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $brand = Brand::find($id);
+        
+        return view('admin.brands.edit', compact('brand'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Brand $brand)
     {
-        //
+        try {
+            $brand->name = $request->name;
+            $brand->save();
+
+            return redirect()->route('admin.brand.index')->with('success', 'Cập nhật thương hiệu thành công!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Đã có lỗi xảy ra!');
+        }
     }
 
     /**

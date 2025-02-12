@@ -63,6 +63,7 @@
                         </li>
                     </ul>
                 </li>
+
                 <li class="nav-item menu-open">
                     <a href="{{route('admin.vouchers.index')}}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -87,6 +88,32 @@
                         
                     </ul>
                 </li>
+
+                <li class="nav-item menu-open">
+                    <a href="{{route('admin.brands.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Quản lý thương hiệu
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('admin.brands.index')}}" class="nav-link">
+                                <i class="fa-regular fa-address-book"></i>
+                                <p>Danh sách thương hiệu</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.brands.create')}}" class="nav-link">
+                                <i class="fa-solid fa-person-circle-plus"></i>
+                                <p>Thêm mới thương hiệu</p>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </li>
+
                 <li class="nav-item">
                     <a href="pages/widgets.html" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
