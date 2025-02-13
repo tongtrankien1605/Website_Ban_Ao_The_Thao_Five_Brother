@@ -27,7 +27,7 @@ class UserController extends Controller
         $users = User::select('users.*', 'roles.user_role')->join('roles', function ($q) {
             $q->on('roles.id', '=', 'users.role');
             $q->whereNull('roles.deleted_at');
-        })->latest('users.updated_at')->paginate(20);
+        })->orderBy('users.updated_at','desc')->paginate(20);
         return view('admin.users.index', compact('users'));
     }
 
