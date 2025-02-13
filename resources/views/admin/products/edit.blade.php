@@ -19,6 +19,7 @@
                             <form method="post" enctype="multipart/form-data"
                                 action="{{ route('admin.product.update', $product) }}">
                                 @csrf
+                                @method('PUT')
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label for="name">Tên sản phẩm</label>
@@ -30,7 +31,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="brand">Brand</label>
-                                        <select class="form-control" id="brand" name="brand">
+                                        <select class="form-control" id="brand" name="id_brand">
                                             @foreach ($brands as $brand)
                                                 <option value="{{ $brand->id }}"
                                                     {{ $product->id_brand == $brand->id ? 'selected' : '' }}>
@@ -38,13 +39,13 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        @error('brand')
+                                        @error('id_brand')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group">
                                         <label for="category">Category</label>
-                                        <select class="form-control" id="category" name="category">
+                                        <select class="form-control" id="category" name="id_category">
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category->id }}"
                                                     {{ $product->id_category == $category->id ? 'selected' : '' }}>
@@ -52,7 +53,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        @error('category')
+                                        @error('id_category')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -69,10 +70,8 @@
                                         <div class="input-group">
                                             <div class="input-group">
                                                 @if ($product->image)
-                                                    <img src="{{$product->image}}" alt=""
+                                                    <img src="{{ Storage::url($product->image) }}" alt=""
                                                         width="100px">
-                                                    {{-- <img src="{{ Storage::url($product->image) }}" alt=""
-                                                        width="100px"> --}}
                                                 @endif
                                                 <input type="file" class="" id="image" name="image">
                                             </div>
