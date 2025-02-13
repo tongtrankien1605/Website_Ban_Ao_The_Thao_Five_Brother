@@ -85,7 +85,8 @@
                                                             <td>{{ $user->phone_number }}</td>
                                                             <td>{{ $user->email }}</td>
                                                             <td>{{ $user->user_role }}</td>
-                                                            <td class=" d-flex justify-content-around align-items-center text-nowrap">
+                                                            <td
+                                                                class=" d-flex justify-content-around align-items-center text-nowrap">
                                                                 <a class="btn btn-success btn-sm"
                                                                     href="{{ route('admin.user.show', $user->id) }}">Xem</a>
                                                                 <a class="btn btn-primary btn-sm"
@@ -127,5 +128,6 @@
                     </div>
                 </div>
             </div>
+        </section>
     </div>
 @endsection
