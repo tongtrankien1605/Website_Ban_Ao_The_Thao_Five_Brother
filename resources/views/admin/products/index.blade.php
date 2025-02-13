@@ -56,12 +56,12 @@
                                                     @foreach ($products as $product)
                                                         <tr>
                                                             <td class="dtr-control sorting_1" tabindex="0">
-                                                                {{ $product->id }}</td>
-                                                            <td class="dtr-control sorting_1" tabindex="0">
                                                                 {{ $product->name }}</td>
                                                             <td>{{ $product->product_brand }}</td>
                                                             <td>{{ $product->product_category }}</td>
-                                                            <td>{{ $product->image }}</td>
+                                                            <td>
+                                                                <img src="{{Storage::url($product->image) }}" width="100px" alt="">
+                                                            </td>
                                                             <td>{{ $product->price }}</td>
                                                             <td
                                                                 class=" d-flex justify-content-around align-items-center text-nowrap">
