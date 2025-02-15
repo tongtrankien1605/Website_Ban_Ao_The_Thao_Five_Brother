@@ -29,7 +29,7 @@ class Variant extends Model
     {
         return $this->belongsTo(ProductAtribute::class);
     }
-    public function product_attribute_values()
+    public function product_atribute_values()
     {
         return $this->belongsTo(ProductAtributeValue::class);
     }
