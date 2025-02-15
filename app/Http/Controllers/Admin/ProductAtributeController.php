@@ -80,9 +80,11 @@ class ProductAtributeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($product, $skus)
     {
-        //
+
+        $skus = Skus::where('id', $skus)->first();
+        return view('admin.productAttribute.show', compact(['product', 'skus']));
     }
 
     /**
@@ -104,8 +106,10 @@ class ProductAtributeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($product, $skus)
     {
-        //
+        $skus = Skus::where('id', $skus)->first();
+        $skus->delete();
+        return redirect()->route('admin.product.product_attribute.index', $product);
     }
 }
