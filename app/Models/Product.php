@@ -40,7 +40,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
-    public function product_attribute_values()
+    public function product_atribute_values()
     {
         return $this->hasMany(ProductAtributeValue::class);
     }
