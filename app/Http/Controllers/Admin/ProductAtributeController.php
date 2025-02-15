@@ -10,6 +10,7 @@ use App\Models\ProductAtributeValue;
 use App\Models\Skus;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ProductAtributeController extends Controller
 {
@@ -90,18 +91,37 @@ class ProductAtributeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($product,$skus)
     {
         //
+        $skus = Skus::where('id', $skus)->first();
+        // dd($product);
+        return view('admin.productAttribute.edit', compact(['product', 'skus']));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+
+     public function update($product, $product_attribute, Request $request)
+     {
+         // Lấy SKU từ database
+         $skus = Skus::findOrFail($product_attribute);
+     
+         $data = $request->validate([
+             'name' => 'required|string|max:255',
+             'quantity' => 'required|integer|min:1',
+             'price' => 'required|numeric|min:0',
+             'barcode' => 'nullable|string|max:255',
+             'product_id' => 'required|exists:products,id',
+         ]);
+     
+         $skus->update($data);
+     
+         return redirect()->route('admin.product.index')->with('success', 'Sản phẩm đã được cập nhật');
+     }
+     
+
 
     /**
      * Remove the specified resource from storage.
