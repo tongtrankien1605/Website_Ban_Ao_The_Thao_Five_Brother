@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductAtributeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PostController as UserPostController;
 use App\Http\Controllers\ProductController;
@@ -79,8 +81,8 @@ Route::get('/404', function () {
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::resource('/user',AdminUserController::class);
-    Route::get('/index_delete_user',[AdminUserController::class,'indexDelete'])->name('user.indexDelUser');
+    Route::resource('/user', AdminUserController::class);
+    Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
     Route::get('/index', function () {
         return view('admin.layouts.index');
     })->name('index');
@@ -90,17 +92,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/table', function () {
         return view('admin.table.index');
     })->name('table');
-    Route::get('/vouchers', [AdminVoucherController::class, 'index'])->name('vouchers.index');
-    Route::get('/vouchers/create', [AdminVoucherController::class, 'create'])->name('vouchers.create');
-    Route::post('/vouchers', [AdminVoucherController::class, 'store'])->name('vouchers.store');
-    Route::get('/vouchers/{voucher}/edit', [AdminVoucherController::class, 'edit'])->name('vouchers.edit');
-    Route::put('/vouchers/{voucher}', [AdminVoucherController::class, 'update'])->name('vouchers.update');
-    Route::delete('/vouchers/{voucher}', [AdminVoucherController::class, 'destroy'])->name('vouchers.destroy');
-    Route::resource('product',AdminProductController::class);
+    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
+    Route::get('/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
+    Route::put('/vouchers/{voucher}', [VoucherController::class, 'update'])->name('vouchers.update');
+    Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+    Route::resource('product', AdminProductController::class);
     //route Category
     Route::resource('category', CategoryController::class);
     Route::get('/admin/category/search', [CategoryController::class, 'search'])->name('category.search');
     //End route Category
+    Route::resource('product.product_attribute', ProductAtributeController::class);
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
@@ -136,6 +139,3 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
     Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
 });
-
-
-
