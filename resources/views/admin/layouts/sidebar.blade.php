@@ -130,23 +130,38 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{route('admin.brands.create')}}" class="nav-link">
-                                <i class="fa-solid fa-person-circle-plus"></i>
+                                <i class="bi bi-folder-plus"></i>
                                 <p>Thêm mới thương hiệu</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item menu-open">
+                    <a href="{{route('admin.brands.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Quản lý bài viết
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('admin.posts.index')}}" class="nav-link">
+                                <i class="bi bi-list-columns"></i>
+                                <p>Danh sách bài viết</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.posts.create')}}" class="nav-link">
+                                <i class="bi bi-folder-plus"></i>
+                                <p>Thêm mới bài viết</p>
                             </a>
                         </li>
 
                     </ul>
                 </li>
-
-                <li class="nav-item">
-                    <a href="pages/widgets.html" class="nav-link">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Widgets
-                            <span class="right badge badge-danger">New</span>
-                        </p>
-                    </a>
-                </li>
+                
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-copy"></i>
