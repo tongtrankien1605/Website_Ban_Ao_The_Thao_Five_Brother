@@ -20,7 +20,7 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = Brand::latest('updated_at')->paginate(20);
+        $brands = Brand::latest('updated_at')->paginate(10);
         return view('admin.brands.index', compact('brands'));
     }
 
@@ -42,7 +42,7 @@ class BrandController extends Controller
             $newBrand->name = $request->name;
             $newBrand->save();
 
-            return redirect()->route('admin.brand.index')->with('success', 'Thêm thương hiệu thành công!');
+            return redirect()->route('admin.brands.index')->with('success', 'Thêm thương hiệu thành công!');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Đã có lỗi xảy ra!');
         }
@@ -76,7 +76,7 @@ class BrandController extends Controller
             $brand->name = $request->name;
             $brand->save();
 
-            return redirect()->route('admin.brand.index')->with('success', 'Cập nhật thương hiệu thành công!');
+            return redirect()->route('admin.brands.index')->with('success', 'Cập nhật thương hiệu thành công!');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Đã có lỗi xảy ra!');
         }
