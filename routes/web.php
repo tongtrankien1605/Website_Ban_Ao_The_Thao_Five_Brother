@@ -81,8 +81,10 @@ Route::get('/404', function () {
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+//user
     Route::resource('/user', AdminUserController::class);
     Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
+//chạy tem sẵn
     Route::get('/index', function () {
         return view('admin.layouts.index');
     })->name('index');
@@ -92,6 +94,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/table', function () {
         return view('admin.table.index');
     })->name('table');
+//voucher
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
     Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
     Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
@@ -99,11 +102,27 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::put('/vouchers/{voucher}', [VoucherController::class, 'update'])->name('vouchers.update');
     Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
     Route::resource('product', AdminProductController::class);
-    //route Category
+//route Category
     Route::resource('category', CategoryController::class);
-    Route::get('/admin/category/search', [CategoryController::class, 'search'])->name('category.search');
-    //End route Category
+    Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
+//End route Category
     Route::resource('product.product_attribute', ProductAtributeController::class);
+//post
+    Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+//brand
+    Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
+    Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
+    Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
+    Route::get('brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
+    Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+    Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
+    Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
@@ -116,26 +135,4 @@ Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
     Route::get('/table', function () {
         return view('staffs.table.index');
     })->name('table');
-});
-
-
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
-    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
-    Route::get('posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-    Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
-    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
-});
-
-
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
-    Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
-    Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
-    Route::get('brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-    Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
-    Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
-    Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
 });

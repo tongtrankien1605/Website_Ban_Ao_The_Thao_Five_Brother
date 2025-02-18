@@ -14,7 +14,7 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        $vouchers = Voucher::all();
+        $vouchers = Voucher::paginate(10);
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
