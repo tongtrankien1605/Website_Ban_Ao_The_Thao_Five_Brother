@@ -103,8 +103,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
     Route::resource('product', AdminProductController::class);
 //route Category
+
+Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
     Route::resource('category', CategoryController::class);
-    Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
 //End route Category
     Route::resource('product.product_attribute', ProductAtributeController::class);
 //post

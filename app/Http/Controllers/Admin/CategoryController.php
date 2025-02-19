@@ -70,15 +70,17 @@ class CategoryController extends Controller
     {
         //
     }
-    public function search(Request $request) {
-        $search = $request->input('keyword');
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
 
-        if (empty($search)) {
+        if (empty($keyword)) {
             return redirect()->route('admin.category.index')->with('error', 'Vui lòng nhập từ khóa tìm kiếm!');
         }
 
-        $categories = Category::where('name', 'like', "%$search%")
-                              ->paginate(10);
+        $categories = Category::where('name', 'like', "%$keyword%")
+            ->orWhere('description', 'like', "%$keyword%")
+            ->paginate(10);
 
         return view('admin.categories.index', compact('categories'));
     }
