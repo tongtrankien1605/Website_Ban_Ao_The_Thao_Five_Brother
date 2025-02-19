@@ -68,20 +68,6 @@
                                         required></textarea>
                                 </div>
 
-<<<<<<< HEAD
-                                <h4 class="mb-3">Display images</h4>
-                                <div class="dropzone dropzone-multiple p-0 mb-5 dz-clickable" id="my-awesome-dropzone"
-                                    data-dropzone="data-dropzone">
-
-                                    <div class="dz-preview d-flex flex-wrap"></div>
-                                    <div class="dz-message text-body-tertiary text-opacity-85"
-                                        data-dz-message="data-dz-message">Drag your photo here<span
-                                            class="text-body-secondary px-1">or</span><button class="btn btn-link p-0"
-                                            type="button">Browse from device</button><br><img class="mt-3 me-2"
-                                            src="../../../assets/img/icons/image-icon.png" width="40" alt="">
-                                    </div>
-                                </div>
-=======
                                 <h4 class="mb-3">Upload Images</h4>
                                 <form action="" method="POST" enctype="multipart/form-data">
                                     @csrf
@@ -102,7 +88,6 @@
                                     <!-- Hiển thị ảnh xem trước -->
                                     <button type="submit" class="btn btn-primary mt-3">Upload</button>
                                 </form>
->>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
 
                                 <h4 class="mb-3">Inventory</h4>
                                 <div class="row g-0 border-top border-bottom">
@@ -546,108 +531,9 @@
                                     <div class="col-12 col-xl-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                {{-- <h4 class="card-title mb-4">Variants</h4> --}}
+                                                <h4 class="card-title mb-4">Variants</h4>
                                                 <div class="row g-3">
                                                     <div class="col-12 col-sm-6 col-xl-12">
-<<<<<<< HEAD
-                                                        <div
-                                                            class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4">
-                                                            <div class="d-flex flex-wrap mb-2">
-                                                                <h5 class="text-body-highlight me-2">Variants</h5><a
-                                                                    class="fw-bold fs-9" href="#!">Remove</a>
-                                                            </div>
-                                                            
-                                                            <select class="form-select mb-3">
-                                                                <option value="size">Size</option>
-                                                                <option value="color">Color</option>
-                                                                <option value="weight">Weight</option>
-                                                                <option value="smell">Smell</option>
-                                                            </select>
-
-                                                            <div class="multi-select-container">
-                                                                <div class="selected-values">
-                                                                    <span class="values-list"></span>
-                                                                    <input type="hidden" class="variant-input" name="variants[]" />
-                                                                </div>
-                                                                <select class="multi-select-dropdown" multiple></select>
-                                                            </div>
-
-                                                            <style>
-                                                                .multi-select-container {
-                                                                    margin-top: 10px;
-                                                                    position: relative;
-                                                                    width: 300px;
-                                                                }
-                                                            
-                                                                .multi-select-dropdown {
-                                                                    width: 100%;
-                                                                    height: 100px;
-                                                                    display: block;
-                                                                }
-                                                            
-                                                                .selected-values {
-                                                                    display: flex;
-                                                                    flex-wrap: wrap;
-                                                                    border: 1px solid #ccc;
-                                                                    padding: 5px;
-                                                                    min-height: 30px;
-                                                                    cursor: pointer;
-                                                                }
-                                                            
-                                                                .values-list span {
-                                                                    background: #007bff;
-                                                                    color: white;
-                                                                    padding: 5px;
-                                                                    margin: 3px;
-                                                                    border-radius: 3px;
-                                                                    display: inline-block;
-                                                                    cursor: pointer;
-                                                                }
-                                                            </style>
-
-                                                            {{-- <div class="product-variant-select-menu">
-                                                                <div class="choices" data-type="select-multiple"
-                                                                    role="combobox" aria-autocomplete="list"
-                                                                    aria-haspopup="true" aria-expanded="false">
-                                                                    <div class="choices__inner"><select
-                                                                            class="form-select mb-3 choices__input"
-                                                                            data-choices="data-choices"
-                                                                            multiple="multiple"
-                                                                            data-options="{&quot;removeItemButton&quot;:true,&quot;placeholder&quot;:true}"
-                                                                            hidden="" tabindex="-1"
-                                                                            data-choice="active"></select>
-                                                                        <div class="choices__list choices__list--multiple">
-                                                                        </div><input type="search" name="search_terms"
-                                                                            class="choices__input choices__input--cloned"
-                                                                            autocomplete="off" autocapitalize="off"
-                                                                            spellcheck="false" role="textbox"
-                                                                            aria-autocomplete="list" aria-label="null">
-                                                                    </div>
-                                                                    <div class="choices__list choices__list--dropdown"
-                                                                        aria-expanded="false">
-                                                                        <div class="choices__list"
-                                                                            aria-multiselectable="true" role="listbox">
-                                                                            <div id="choices--zgf5-item-choice-1"
-                                                                                class="choices__item choices__item--choice choices__item--selectable is-highlighted"
-                                                                                role="option" data-choice=""
-                                                                                data-id="1" data-value="size"
-                                                                                data-select-text=""
-                                                                                data-choice-selectable=""
-                                                                                aria-selected="true">
-                                                                                4x6 in</div>
-                                                                            <div id="choices--zgf5-item-choice-2"
-                                                                                class="choices__item choices__item--choice choices__item--selectable"
-                                                                                role="option" data-choice=""
-                                                                                data-id="2" data-value="color"
-                                                                                data-select-text=""
-                                                                                data-choice-selectable="">9x6 in</div>
-                                                                            <div id="choices--zgf5-item-choice-3"
-                                                                                class="choices__item choices__item--choice choices__item--selectable"
-                                                                                role="option" data-choice=""
-                                                                                data-id="3" data-value="weight"
-                                                                                data-select-text=""
-                                                                                data-choice-selectable="">11x8 in</div>
-=======
                                                         @foreach ($attribute as $key => $value)
                                                             <div
                                                                 class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4">
@@ -670,71 +556,9 @@
                                                                                 for="attr-{{ $key }}-{{ $attributeValue->id }}">
                                                                                 {{ $attributeValue->value }}
                                                                             </label>
->>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
-<<<<<<< HEAD
-                                                            </div> --}}
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-sm-6 col-xl-12">
-                                                        <div class="d-flex flex-wrap mb-2">
-                                                            <h5 class="text-body-highlight me-2">Variants</h5><a
-                                                                class="fw-bold fs-9" href="#!">Remove</a>
-                                                        </div><select class="form-select mb-3">
-                                                            <option value="size">Size</option>
-                                                            <option value="color">Color</option>
-                                                            <option value="weight">Weight</option>
-                                                            <option value="smell">Smell</option>
-                                                        </select>
-                                                        <div class="product-variant-select-menu mb-3">
-                                                            <div class="choices" data-type="select-multiple"
-                                                                role="combobox" aria-autocomplete="list"
-                                                                aria-haspopup="true" aria-expanded="false">
-                                                                <div class="choices__inner"><select
-                                                                        class="form-select mb-3 choices__input"
-                                                                        data-choices="data-choices" multiple="multiple"
-                                                                        data-options="{&quot;removeItemButton&quot;:true,&quot;placeholder&quot;:true}"
-                                                                        hidden="" tabindex="-1"
-                                                                        data-choice="active"></select>
-                                                                    <div class="choices__list choices__list--multiple">
-                                                                    </div><input type="search" name="search_terms"
-                                                                        class="choices__input choices__input--cloned"
-                                                                        autocomplete="off" autocapitalize="off"
-                                                                        spellcheck="false" role="textbox"
-                                                                        aria-autocomplete="list" aria-label="null">
-                                                                </div>
-                                                                <div class="choices__list choices__list--dropdown"
-                                                                    aria-expanded="false">
-                                                                    <div class="choices__list" aria-multiselectable="true"
-                                                                        role="listbox">
-                                                                        <div id="choices--671z-item-choice-1"
-                                                                            class="choices__item choices__item--choice choices__item--selectable is-highlighted"
-                                                                            role="option" data-choice="" data-id="1"
-                                                                            data-value="size" data-select-text=""
-                                                                            data-choice-selectable=""
-                                                                            aria-selected="true">
-                                                                            4x6 in</div>
-                                                                        <div id="choices--671z-item-choice-2"
-                                                                            class="choices__item choices__item--choice choices__item--selectable"
-                                                                            role="option" data-choice="" data-id="2"
-                                                                            data-value="color" data-select-text=""
-                                                                            data-choice-selectable="">9x6 in</div>
-                                                                        <div id="choices--671z-item-choice-3"
-                                                                            class="choices__item choices__item--choice choices__item--selectable"
-                                                                            role="option" data-choice="" data-id="3"
-                                                                            data-value="weight" data-select-text=""
-                                                                            data-choice-selectable="">11x8 in</div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div><button class="btn btn-phoenix-primary w-100" type="button">Add
-                                                    another option</button>
-=======
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -742,7 +566,6 @@
                                                 <button class="btn btn-primary w-100" type="button">
                                                     Add option
                                                 </button>
->>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
                                             </div>
                                         </div>
                                     </div>
@@ -776,8 +599,6 @@
         });
     </script>
 @endsection
-<<<<<<< HEAD
-=======
 <script>
     document.getElementById("imageInput").addEventListener("change", function(event) {
         let previewContainer = document.getElementById("preview-container");
@@ -814,4 +635,3 @@
         });
     });
 </script>
->>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
