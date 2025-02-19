@@ -18,6 +18,7 @@
                             <!-- form start -->
                             <form method="post" enctype="multipart/form-data" action="{{ route('admin.vouchers.update',$voucher->id) }}">
                                 @csrf
+                                @method('PUT')
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label for="code">Mã voucher</label>

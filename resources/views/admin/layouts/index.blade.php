@@ -7,6 +7,8 @@
     <title>@yield('title', '/')</title>
 
     @include('admin.layouts.css')
+
+    
 </head>
 
 <body class="hold-transition sidebar-mini layouts-fixed">

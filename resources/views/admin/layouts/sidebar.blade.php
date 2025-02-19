@@ -63,6 +63,31 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="nav-item menu-open">
+                    <a href="{{route('admin.product.index')}}" class="nav-link">
+                        <i class="fa-brands fa-product-hunt"></i>
+                        <p>
+                            Quản lý sản phẩm
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('admin.product.index')}}" class="nav-link">
+                                <i class="fa-solid fa-list"></i>
+                                <p>Danh sách sản phẩm</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.product.create')}}" class="nav-link">
+                                <i class="fa-solid fa-plus"></i>
+                                <p>Thêm mới sản phẩm</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
                 <li class="nav-item menu-open">
                     <a href="{{route('admin.vouchers.index')}}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -84,18 +109,59 @@
                                 <p>Thêm mới Voucher</p>
                             </a>
                         </li>
-                        
+
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="pages/widgets.html" class="nav-link">
-                        <i class="nav-icon fas fa-th"></i>
+
+                <li class="nav-item menu-open">
+                    <a href="{{route('admin.brands.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
-                            Widgets
-                            <span class="right badge badge-danger">New</span>
+                            Quản lý thương hiệu
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('admin.brands.index')}}" class="nav-link">
+                                <i class="fa-regular fa-address-book"></i>
+                                <p>Danh sách thương hiệu</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.brands.create')}}" class="nav-link">
+                                <i class="bi bi-folder-plus"></i>
+                                <p>Thêm mới thương hiệu</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
+
+                <li class="nav-item menu-open">
+                    <a href="{{route('admin.brands.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Quản lý bài viết
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('admin.posts.index')}}" class="nav-link">
+                                <i class="bi bi-list-columns"></i>
+                                <p>Danh sách bài viết</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.posts.create')}}" class="nav-link">
+                                <i class="bi bi-folder-plus"></i>
+                                <p>Thêm mới bài viết</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-copy"></i>

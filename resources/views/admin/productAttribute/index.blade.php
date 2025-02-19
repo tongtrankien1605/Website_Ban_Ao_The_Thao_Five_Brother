@@ -1,6 +1,6 @@
 @extends('admin.layouts.index')
 @section('title')
-    Danh sách Người dùng
+    Danh sách biển thể sản phẩm
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -10,40 +10,11 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Danh sách người dùng</h3>
+                                <h3 class="card-title">Danh sách biến thể sản phẩm {{ $product->name }}</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6">
-                                            <div class="dt-buttons btn-group flex-wrap">
-                                                <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                                    aria-controls="example1" type="button"><span>Copy</span></button>
-                                                <button class="btn btn-secondary buttons-csv buttons-html5" tabindex="0"
-                                                    aria-controls="example1" type="button"><span>CSV</span></button>
-                                                <button class="btn btn-secondary buttons-excel buttons-html5" tabindex="0"
-                                                    aria-controls="example1" type="button"><span>Excel</span></button>
-                                                <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                                    aria-controls="example1" type="button"><span>PDF</span></button>
-                                                <button class="btn btn-secondary buttons-print" tabindex="0"
-                                                    aria-controls="example1" type="button"><span>Print</span></button>
-                                                <div class="btn-group">
-                                                    <button
-                                                        class="btn btn-secondary buttons-collection dropdown-toggle buttons-colvis"
-                                                        tabindex="0" aria-controls="example1" type="button"
-                                                        aria-haspopup="true"><span>Column
-                                                            visibility</span><span class="dt-down-arrow"></span></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6">
-                                            <div id="example1_filter" class="dataTables_filter"><label>Search:<input
-                                                        type="search" class="form-control form-control-sm" placeholder=""
-                                                        aria-controls="example1"></label>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <table id="example1"
@@ -55,21 +26,28 @@
                                                             aria-controls="example1" rowspan="1" colspan="1"
                                                             aria-sort="ascending"
                                                             aria-label="Rendering engine: activate to sort column descending">
-                                                            Họ và tên
+                                                            Tên sản phẩm
                                                         </th>
-                                                        <th class="sorting" tabindex="0" aria-controls="example1"
-                                                            rowspan="1" colspan="1"
-                                                            aria-label="Browser: activate to sort column ascending">Số điện
-                                                            thoại
+                                                        <th class="sorting sorting_asc" tabindex="0"
+                                                            aria-controls="example1" rowspan="1" colspan="1"
+                                                            aria-sort="ascending"
+                                                            aria-label="Rendering engine: activate to sort column descending">
+                                                            Tên biến thể
                                                         </th>
-                                                        <th class="sorting" tabindex="0" aria-controls="example1"
-                                                            rowspan="1" colspan="1"
-                                                            aria-label="Platform(s): activate to sort column ascending">
-                                                            Email</th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
                                                             aria-label="Engine version: activate to sort column ascending">
-                                                            Vai trò
+                                                            Price
+                                                        </th>
+                                                        <th class="sorting" tabindex="0" aria-controls="example1"
+                                                            rowspan="1" colspan="1"
+                                                            aria-label="Engine version: activate to sort column ascending">
+                                                            số lượng
+                                                        </th>
+                                                        <th class="sorting" tabindex="0" aria-controls="example1"
+                                                            rowspan="1" colspan="1"
+                                                            aria-label="Engine version: activate to sort column ascending">
+                                                            Barcode
                                                         </th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
@@ -78,39 +56,43 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($users as $user)
+                                                    @foreach ($skuses as $skus)
                                                         <tr>
                                                             <td class="dtr-control sorting_1" tabindex="0">
-                                                                {{ $user->name }}</td>
-                                                            <td>{{ $user->phone_number }}</td>
-                                                            <td>{{ $user->email }}</td>
-                                                            <td>{{ $user->user_role }}</td>
+                                                                {{ $product->name }}</td>
+                                                            <td class="dtr-control sorting_1" tabindex="0">
+                                                                {{ $skus->name }}</td>
+                                                            <td>{{ $skus->price }}</td>
+                                                            <td>{{ $skus->quantity }}</td>
+                                                            <td>{{ $skus->barcode }}</td>
                                                             <td
                                                                 class=" d-flex justify-content-around align-items-center text-nowrap">
-                                                                {{-- <a class="btn btn-success btn-sm"
-                                                                    href="{{ route('admin.user.show', $user->id) }}">Xem</a>
+                                                                <a class="btn btn-success btn-sm"
+                                                                    href="{{ route('admin.product.product_attribute.show', ['product' => $product->id, 'product_attribute' => $skus->id]) }}">Xem</a>
                                                                 <a class="btn btn-primary btn-sm"
-                                                                    href="{{ route('admin.user.edit', $user->id) }}"
+                                                                    href="{{ route('admin.product.product_attribute.edit', ['product' => $product->id, 'product_attribute' => $skus->id]) }}"
                                                                     role="button">Sửa</a>
-                                                                <form action="{{ route('admin.user.destroy', $user->id) }}"
+                                                                <form
+                                                                    action="{{ route('admin.product.product_attribute.show', ['product' => $product->id, 'product_attribute' => $skus->id]) }}"
                                                                     method="post">
                                                                     @method('DELETE')
                                                                     @csrf
                                                                     <button type="submit"
-                                                                        onclick="return confirm('Bạn sẽ xóa khách hàng')"
+                                                                        onclick="return confirm('Bạn sẽ xóa biến thể sản phẩm')"
                                                                         class="btn btn-danger btn-sm">Xóa
                                                                     </button>
-                                                                </form> --}}
+                                                                </form>
                                                             </td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th rowspan="1" colspan="1">Họ và tên</th>
-                                                        <th rowspan="1" colspan="1">Số điện thoại</th>
-                                                        <th rowspan="1" colspan="1">Email</th>
-                                                        <th rowspan="1" colspan="1">Vai trò</th>
+                                                        <th rowspan="1" colspan="1">Tên sản phẩm</th>
+                                                        <th rowspan="1" colspan="1">Tên biến thể</th>
+                                                        <th rowspan="1" colspan="1">giá</th>
+                                                        <th rowspan="1" colspan="1">số lượng</th>
+                                                        <th rowspan="1" colspan="1">barcode</th>
                                                         <th rowspan="1" colspan="1">Hành động</th>
                                                     </tr>
                                                 </tfoot>
@@ -119,7 +101,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12">
-                                            {{ $users->links() }}
+                                            {{ $skuses->links() }}
                                         </div>
                                     </div>
                                 </div>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_atribute_values', function (Blueprint $table) {
             $table->id()->comment('ID giá trị thuộc tính sản phẩm');
-            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('product_attribute_id');
             $table->string('value')->comment('Giá trị của thuộc tính (ví dụ: S, M, L, đỏ, xanh, vàng, cotton...)');
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();

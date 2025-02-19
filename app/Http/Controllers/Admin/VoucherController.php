@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class VoucherController extends Controller
 {
@@ -12,7 +14,7 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        $vouchers = Voucher::all();
+        $vouchers = Voucher::paginate(10);
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
@@ -36,7 +38,7 @@ class VoucherController extends Controller
             'total_usage' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'status' => 'boolean'
+            'status' => ['boolean,nullable',Rule::in([0,1])],
         ]);
 
         Voucher::create($request->all());
@@ -73,9 +75,12 @@ class VoucherController extends Controller
             'total_usage' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'status' => $request->has('status') ? 1 : 0
+            'status' => ['nullable',Rule::in([0,1])],
         ]);
 
+        $data['is_active'] ??= 0;
+
+        dd($data);
         $voucher->update($data);
 
         return redirect()->route('admin.vouchers.index')->with('success', 'Voucher updated successfully');
