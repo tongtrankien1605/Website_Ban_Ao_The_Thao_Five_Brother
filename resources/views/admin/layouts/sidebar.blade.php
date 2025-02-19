@@ -37,7 +37,7 @@
        with font-awesome or any other icon font library -->
                 <li class="nav-item menu-open">
                     <a href="{{route('admin.user.index')}}" class="nav-link">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <i class="fa-solid fa-users"></i>
                         <p>
                             Quản lý người dùng
                             <i class="right fas fa-angle-left"></i>
@@ -161,7 +161,7 @@
 
                     </ul>
                 </li>
-                
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-copy"></i>
