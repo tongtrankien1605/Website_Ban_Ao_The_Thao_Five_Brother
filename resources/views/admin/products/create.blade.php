@@ -14,7 +14,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.posts.create') }}">Add Posts</a>
+                            <li class="breadcrumb-item active"><a href="{{ route('admin.product.create') }}">Add product</a>
                             </li>
                         </ol>
                     </div>
@@ -39,7 +39,7 @@
                                     <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="description" class="form-label">Description</label>
                                     <textarea name="description" id="summernote" class="form-control" rows="5"
@@ -68,6 +68,7 @@
                                         required></textarea>
                                 </div>
 
+<<<<<<< HEAD
                                 <h4 class="mb-3">Display images</h4>
                                 <div class="dropzone dropzone-multiple p-0 mb-5 dz-clickable" id="my-awesome-dropzone"
                                     data-dropzone="data-dropzone">
@@ -80,6 +81,28 @@
                                             src="../../../assets/img/icons/image-icon.png" width="40" alt="">
                                     </div>
                                 </div>
+=======
+                                <h4 class="mb-3">Upload Images</h4>
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded">
+                                        <input type="file" name="images[]" multiple class="form-control d-none"
+                                            accept="image/*" id="imageInput">
+                                        <div class="text-center">
+                                            <p class="text-body-tertiary text-opacity-85">
+                                                Drag your photos here <span class="text-body-secondary px-1">or</span>
+                                                <button class="btn btn-link p-0" type="button"
+                                                    onclick="document.getElementById('imageInput').click();">
+                                                    Browse from device
+                                                </button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div id="preview-container" class="d-flex flex-wrap gap-2"></div>
+                                    <!-- Hiển thị ảnh xem trước -->
+                                    <button type="submit" class="btn btn-primary mt-3">Upload</button>
+                                </form>
+>>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
 
                                 <h4 class="mb-3">Inventory</h4>
                                 <div class="row g-0 border-top border-bottom">
@@ -526,6 +549,7 @@
                                                 {{-- <h4 class="card-title mb-4">Variants</h4> --}}
                                                 <div class="row g-3">
                                                     <div class="col-12 col-sm-6 col-xl-12">
+<<<<<<< HEAD
                                                         <div
                                                             class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4">
                                                             <div class="d-flex flex-wrap mb-2">
@@ -623,9 +647,34 @@
                                                                                 data-id="3" data-value="weight"
                                                                                 data-select-text=""
                                                                                 data-choice-selectable="">11x8 in</div>
-                                                                        </div>
-                                                                    </div>
+=======
+                                                        @foreach ($attribute as $key => $value)
+                                                            <div
+                                                                class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4">
+                                                                <div class="d-flex flex-wrap mb-2">
+                                                                    <h5 class="text-body-highlight me-2"
+                                                                        value="{{ $key }}">{{ $value }}
+                                                                    </h5>
+                                                                    <a class="fw-bold fs-9 mx-2" href="#!"><i
+                                                                            class="fa-solid fa-xmark"></i></a>
                                                                 </div>
+                                                                <div class="d-flex flex-column">
+                                                                    @foreach ($attributeValues[$key] ?? [] as $attributeValue)
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox"
+                                                                                name="attribute_values[{{ $key }}][]"
+                                                                                value="{{ $attributeValue->id }}"
+                                                                                id="attr-{{ $key }}-{{ $attributeValue->id }}">
+                                                                            <label class="form-check-label"
+                                                                                for="attr-{{ $key }}-{{ $attributeValue->id }}">
+                                                                                {{ $attributeValue->value }}
+                                                                            </label>
+>>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+<<<<<<< HEAD
                                                             </div> --}}
 
                                                         </div>
@@ -685,6 +734,15 @@
                                                     </div>
                                                 </div><button class="btn btn-phoenix-primary w-100" type="button">Add
                                                     another option</button>
+=======
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-primary w-100" type="button">
+                                                    Add option
+                                                </button>
+>>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
                                             </div>
                                         </div>
                                     </div>
@@ -718,3 +776,42 @@
         });
     </script>
 @endsection
+<<<<<<< HEAD
+=======
+<script>
+    document.getElementById("imageInput").addEventListener("change", function(event) {
+        let previewContainer = document.getElementById("preview-container");
+        previewContainer.innerHTML = ""; // Xóa preview cũ khi chọn ảnh mới
+
+        Array.from(event.target.files).forEach((file, index) => {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let div = document.createElement("div");
+                div.classList.add("position-relative");
+
+                let img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("rounded", "border", "p-1");
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "cover";
+
+                let removeBtn = document.createElement("button");
+                removeBtn.innerHTML = "&#10006;";
+                removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
+                    "btn-sm");
+                removeBtn.style.transform = "translate(50%, -50%)";
+
+                removeBtn.onclick = function() {
+                    div.remove();
+                };
+
+                div.appendChild(img);
+                div.appendChild(removeBtn);
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+>>>>>>> ad4f4dfcd3fdccba06716cb92ee99a0790c818c1
