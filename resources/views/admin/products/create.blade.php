@@ -64,8 +64,8 @@
 
                                 <div class="form-group">
                                     <label for="description" class="form-label">Mô tả sản phẩm</label>
-                                    <textarea name="description" id="summernote" class="form-control" rows="5"
-                                        placeholder="Nhập nội dung bài viết" required></textarea>
+                                    <textarea name="description" id="summernote" class="form-control" rows="5" placeholder="Nhập nội dung bài viết"
+                                        required></textarea>
                                 </div>
 
                                 <h4 class="mb-3">Display images</h4>
@@ -77,7 +77,8 @@
                                         data-dz-message="data-dz-message">Drag your photo here<span
                                             class="text-body-secondary px-1">or</span><button class="btn btn-link p-0"
                                             type="button">Browse from device</button><br><img class="mt-3 me-2"
-                                            src="../../../assets/img/icons/image-icon.png" width="40" alt=""></div>
+                                            src="../../../assets/img/icons/image-icon.png" width="40" alt="">
+                                    </div>
                                 </div>
 
                                 <h4 class="mb-3">Inventory</h4>
@@ -89,13 +90,14 @@
                                                 id="pricingTab" data-bs-toggle="tab" data-bs-target="#pricingTabContent"
                                                 role="tab" aria-controls="pricingTabContent" aria-selected="true"> <svg
                                                     xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-tag me-sm-2 fs-4 nav-icons">
                                                     <path
                                                         d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z">
                                                     </path>
-                                                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                                                    <line x1="7" y1="7" x2="7.01" y2="7">
+                                                    </line>
                                                 </svg><span class="d-none d-sm-inline">Pricing</span></a><a
                                                 class="nav-link border-end border-end-sm-0 border-bottom-sm text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center"
                                                 id="restockTab" data-bs-toggle="tab" data-bs-target="#restockTabContent"
@@ -104,20 +106,22 @@
                                                     height="16px" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-package me-sm-2 fs-4 nav-icons">
-                                                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                                                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21">
+                                                    </line>
                                                     <path
                                                         d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
                                                     </path>
                                                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                                    <line x1="12" y1="22.08" x2="12" y2="12">
+                                                    </line>
                                                 </svg><span class="d-none d-sm-inline">Restock</span></a><a
                                                 class="nav-link border-end border-end-sm-0 border-bottom-sm text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center"
-                                                id="shippingTab" data-bs-toggle="tab" data-bs-target="#shippingTabContent"
-                                                role="tab" aria-controls="shippingTabContent" aria-selected="false"
-                                                tabindex="-1">
+                                                id="shippingTab" data-bs-toggle="tab"
+                                                data-bs-target="#shippingTabContent" role="tab"
+                                                aria-controls="shippingTabContent" aria-selected="false" tabindex="-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-truck me-sm-2 fs-4 nav-icons">
                                                     <rect x="1" y="3" width="15" height="13"></rect>
                                                     <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
@@ -125,15 +129,16 @@
                                                     <circle cx="18.5" cy="18.5" r="2.5"></circle>
                                                 </svg><span class="d-none d-sm-inline">Shipping</span></a><a
                                                 class="nav-link border-end border-end-sm-0 border-bottom-sm text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center"
-                                                id="productsTab" data-bs-toggle="tab" data-bs-target="#productsTabContent"
-                                                role="tab" aria-controls="productsTabContent" aria-selected="false"
-                                                tabindex="-1">
+                                                id="productsTab" data-bs-toggle="tab"
+                                                data-bs-target="#productsTabContent" role="tab"
+                                                aria-controls="productsTabContent" aria-selected="false" tabindex="-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-globe me-sm-2 fs-4 nav-icons">
                                                     <circle cx="12" cy="12" r="10"></circle>
-                                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                                    <line x1="2" y1="12" x2="22" y2="12">
+                                                    </line>
                                                     <path
                                                         d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
                                                     </path>
@@ -141,30 +146,41 @@
                                                 class="nav-link border-end border-end-sm-0 border-bottom-sm text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center"
                                                 id="attributesTab" data-bs-toggle="tab"
                                                 data-bs-target="#attributesTabContent" role="tab"
-                                                aria-controls="attributesTabContent" aria-selected="false" tabindex="-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                    class="feather feather-sliders me-sm-2 fs-4 nav-icons">
-                                                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                                                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                                                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                                                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                                                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                                                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                                                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                                                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                                                    <line x1="17" y1="16" x2="23" y2="16"></line>
-                                                </svg><span class="d-none d-sm-inline">Attributes</span></a><a
-                                                class="nav-link text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center"
-                                                id="advancedTab" data-bs-toggle="tab" data-bs-target="#advancedTabContent"
-                                                role="tab" aria-controls="advancedTabContent" aria-selected="false"
+                                                aria-controls="attributesTabContent" aria-selected="false"
                                                 tabindex="-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="feather feather-sliders me-sm-2 fs-4 nav-icons">
+                                                    <line x1="4" y1="21" x2="4" y2="14">
+                                                    </line>
+                                                    <line x1="4" y1="10" x2="4" y2="3">
+                                                    </line>
+                                                    <line x1="12" y1="21" x2="12" y2="12">
+                                                    </line>
+                                                    <line x1="12" y1="8" x2="12" y2="3">
+                                                    </line>
+                                                    <line x1="20" y1="21" x2="20" y2="16">
+                                                    </line>
+                                                    <line x1="20" y1="12" x2="20" y2="3">
+                                                    </line>
+                                                    <line x1="1" y1="14" x2="7" y2="14">
+                                                    </line>
+                                                    <line x1="9" y1="8" x2="15" y2="8">
+                                                    </line>
+                                                    <line x1="17" y1="16" x2="23" y2="16">
+                                                    </line>
+                                                </svg><span class="d-none d-sm-inline">Attributes</span></a><a
+                                                class="nav-link text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center"
+                                                id="advancedTab" data-bs-toggle="tab"
+                                                data-bs-target="#advancedTabContent" role="tab"
+                                                aria-controls="advancedTabContent" aria-selected="false" tabindex="-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-lock me-sm-2 fs-4 nav-icons">
-                                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                    <rect x="3" y="11" width="18" height="11" rx="2"
+                                                        ry="2"></rect>
                                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                                 </svg><span class="d-none d-sm-inline">Advanced</span></a></div>
                                     </div>
@@ -194,10 +210,10 @@
                                                         <div class="col-sm"><button class="btn btn-primary"
                                                                 type="button"><svg
                                                                     class="svg-inline--fa fa-check me-1 fs-10"
-                                                                    aria-hidden="true" focusable="false" data-prefix="fas"
-                                                                    data-icon="check" role="img"
-                                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                                                    data-fa-i2svg="">
+                                                                    aria-hidden="true" focusable="false"
+                                                                    data-prefix="fas" data-icon="check" role="img"
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 448 512" data-fa-i2svg="">
                                                                     <path fill="currentColor"
                                                                         d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z">
                                                                     </path>
@@ -220,7 +236,8 @@
                                                                             class="svg-inline--fa fa-rotate text-body ms-1"
                                                                             style="--phoenix-text-opacity: .6;"
                                                                             aria-hidden="true" focusable="false"
-                                                                            data-prefix="fas" data-icon="rotate" role="img"
+                                                                            data-prefix="fas" data-icon="rotate"
+                                                                            role="img"
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             viewBox="0 0 512 512" data-fa-i2svg="">
                                                                             <path fill="currentColor"
@@ -286,25 +303,28 @@
                                                         </div>
                                                     </div>
                                                     <p class="fs-9 fw-semibold mb-0">See our <a class="fw-bold"
-                                                            href="#!">Delivery terms and conditions </a>for details.</p>
+                                                            href="#!">Delivery terms and conditions </a>for details.
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="tab-pane fade" id="productsTabContent" role="tabpanel"
                                                 aria-labelledby="productsTab">
                                                 <h5 class="mb-3 text-body-highlight">Global Delivery</h5>
                                                 <div class="mb-3">
-                                                    <div class="form-check"><input class="form-check-input" type="radio"
-                                                            name="deliveryRadio" id="worldwideDelivery"><label
+                                                    <div class="form-check"><input class="form-check-input"
+                                                            type="radio" name="deliveryRadio"
+                                                            id="worldwideDelivery"><label
                                                             class="form-check-label fs-8 text-body"
                                                             for="worldwideDelivery">Worldwide delivery</label></div>
                                                     <div class="ps-4">
                                                         <p class="fs-9 mb-0 text-body-secondary">Only available with
-                                                            Shipping method: <a href="#!">Fullfilled by Phoenix</a></p>
+                                                            Shipping method: <a href="#!">Fullfilled by Phoenix</a>
+                                                        </p>
                                                     </div>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <div class="form-check"><input class="form-check-input" type="radio"
-                                                            name="deliveryRadio" checked="checked"
+                                                    <div class="form-check"><input class="form-check-input"
+                                                            type="radio" name="deliveryRadio" checked="checked"
                                                             id="selectedCountry"><label
                                                             class="form-check-label fs-8 text-body"
                                                             for="selectedCountry">Selected Countries</label></div>
@@ -317,13 +337,15 @@
                                                                     id="organizerMultiple" data-choices="data-choices"
                                                                     multiple="multiple"
                                                                     data-options="{&quot;removeItemButton&quot;:true,&quot;placeholder&quot;:true}"
-                                                                    hidden="" tabindex="-1" data-choice="active"></select>
+                                                                    hidden="" tabindex="-1"
+                                                                    data-choice="active"></select>
                                                                 <div class="choices__list choices__list--multiple">
                                                                 </div><input type="search" name="search_terms"
                                                                     class="choices__input choices__input--cloned"
                                                                     autocomplete="off" autocapitalize="off"
                                                                     spellcheck="false" role="textbox"
-                                                                    aria-autocomplete="list" aria-label="Type Country name"
+                                                                    aria-autocomplete="list"
+                                                                    aria-label="Type Country name"
                                                                     placeholder="Type Country name"
                                                                     style="min-width: 18ch; width: 1ch;">
                                                             </div>
@@ -359,8 +381,8 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <div class="form-check"><input class="form-check-input" type="radio"
-                                                            name="deliveryRadio" id="localDelivery"><label
+                                                    <div class="form-check"><input class="form-check-input"
+                                                            type="radio" name="deliveryRadio" id="localDelivery"><label
                                                             class="form-check-label fs-8 text-body"
                                                             for="localDelivery">Local
                                                             delivery</label></div>
@@ -380,9 +402,10 @@
                                                         class="form-check-label text-body fs-8"
                                                         for="biodegradableCheck">Biodegradable</label></div>
                                                 <div class="mb-3">
-                                                    <div class="form-check"><input class="form-check-input" id="frozenCheck"
-                                                            type="checkbox" checked="checked"><label
-                                                            class="form-check-label text-body fs-8" for="frozenCheck">Frozen
+                                                    <div class="form-check"><input class="form-check-input"
+                                                            id="frozenCheck" type="checkbox" checked="checked"><label
+                                                            class="form-check-label text-body fs-8"
+                                                            for="frozenCheck">Frozen
                                                             Product</label><input class="form-control" type="text"
                                                             placeholder="Max. allowed Temperature"
                                                             style="max-width: 350px;">
@@ -394,7 +417,8 @@
                                                         Date of Product</label><input
                                                         class="form-control inventory-attributes datetimepicker flatpickr-input"
                                                         id="inventory" type="text" style="max-width: 350px;"
-                                                        placeholder="d/m/y" data-options="{&quot;disableMobile&quot;:true}"
+                                                        placeholder="d/m/y"
+                                                        data-options="{&quot;disableMobile&quot;:true}"
                                                         readonly="readonly">
                                                 </div>
                                             </div>
@@ -413,7 +437,8 @@
                                                     </div>
                                                     <div class="col-12 col-lg-6">
                                                         <h5 class="mb-2 text-body-highlight">Product ID</h5><input
-                                                            class="form-control" type="text" placeholder="ISBN Number">
+                                                            class="form-control" type="text"
+                                                            placeholder="ISBN Number">
                                                     </div>
                                                 </div>
                                             </div>
@@ -438,10 +463,12 @@
                                                                     href="{{ route('admin.category.create') }}">Thêm mới
                                                                     danh mục sản phẩm</a>
                                                             </div>
-                                                            <select class="form-control" id="category" name="id_category">
+                                                            <select class="form-control" id="category"
+                                                                name="id_category">
                                                                 <option value="" selected>-- select --</option>
                                                                 @foreach ($categories as $category)
-                                                                    <option value="{{ $category->id }}">{{ $category->name }}
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->name }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>
@@ -462,7 +489,8 @@
                                                             <select class="form-control" id="brand" name="id_brand">
                                                                 <option value="" selected>-- select --</option>
                                                                 @foreach ($brands as $brand)
-                                                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                                    <option value="{{ $brand->id }}">
+                                                                        {{ $brand->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                             @error('id_brand')
@@ -480,7 +508,8 @@
                                                     <div class="col-12 col-sm-6 col-xl-12">
                                                         <div class="d-flex flex-wrap mb-2">
                                                             <h5 class="mb-0 text-body-highlight me-2">Tags</h5><a
-                                                                class="fw-bold fs-9 lh-sm" href="#!">View all tags</a>
+                                                                class="fw-bold fs-9 lh-sm" href="#!">View all
+                                                                tags</a>
                                                         </div><select class="form-select" aria-label="category">
                                                             <option value="men-cloth">Men's Clothing</option>
                                                             <option value="women-cloth">Womens's Clothing</option>
@@ -494,27 +523,72 @@
                                     <div class="col-12 col-xl-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h4 class="card-title mb-4">Variants</h4>
+                                                {{-- <h4 class="card-title mb-4">Variants</h4> --}}
                                                 <div class="row g-3">
                                                     <div class="col-12 col-sm-6 col-xl-12">
                                                         <div
                                                             class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4">
                                                             <div class="d-flex flex-wrap mb-2">
-                                                                <h5 class="text-body-highlight me-2">Option 1</h5><a
+                                                                <h5 class="text-body-highlight me-2">Variants</h5><a
                                                                     class="fw-bold fs-9" href="#!">Remove</a>
-                                                            </div><select class="form-select mb-3">
+                                                            </div>
+                                                            
+                                                            <select class="form-select mb-3">
                                                                 <option value="size">Size</option>
                                                                 <option value="color">Color</option>
                                                                 <option value="weight">Weight</option>
                                                                 <option value="smell">Smell</option>
                                                             </select>
-                                                            <div class="product-variant-select-menu">
+
+                                                            <div class="multi-select-container">
+                                                                <div class="selected-values">
+                                                                    <span class="values-list"></span>
+                                                                    <input type="hidden" class="variant-input" name="variants[]" />
+                                                                </div>
+                                                                <select class="multi-select-dropdown" multiple></select>
+                                                            </div>
+
+                                                            <style>
+                                                                .multi-select-container {
+                                                                    margin-top: 10px;
+                                                                    position: relative;
+                                                                    width: 300px;
+                                                                }
+                                                            
+                                                                .multi-select-dropdown {
+                                                                    width: 100%;
+                                                                    height: 100px;
+                                                                    display: block;
+                                                                }
+                                                            
+                                                                .selected-values {
+                                                                    display: flex;
+                                                                    flex-wrap: wrap;
+                                                                    border: 1px solid #ccc;
+                                                                    padding: 5px;
+                                                                    min-height: 30px;
+                                                                    cursor: pointer;
+                                                                }
+                                                            
+                                                                .values-list span {
+                                                                    background: #007bff;
+                                                                    color: white;
+                                                                    padding: 5px;
+                                                                    margin: 3px;
+                                                                    border-radius: 3px;
+                                                                    display: inline-block;
+                                                                    cursor: pointer;
+                                                                }
+                                                            </style>
+
+                                                            {{-- <div class="product-variant-select-menu">
                                                                 <div class="choices" data-type="select-multiple"
                                                                     role="combobox" aria-autocomplete="list"
                                                                     aria-haspopup="true" aria-expanded="false">
                                                                     <div class="choices__inner"><select
                                                                             class="form-select mb-3 choices__input"
-                                                                            data-choices="data-choices" multiple="multiple"
+                                                                            data-choices="data-choices"
+                                                                            multiple="multiple"
                                                                             data-options="{&quot;removeItemButton&quot;:true,&quot;placeholder&quot;:true}"
                                                                             hidden="" tabindex="-1"
                                                                             data-choice="active"></select>
@@ -531,30 +605,34 @@
                                                                             aria-multiselectable="true" role="listbox">
                                                                             <div id="choices--zgf5-item-choice-1"
                                                                                 class="choices__item choices__item--choice choices__item--selectable is-highlighted"
-                                                                                role="option" data-choice="" data-id="1"
-                                                                                data-value="size" data-select-text=""
+                                                                                role="option" data-choice=""
+                                                                                data-id="1" data-value="size"
+                                                                                data-select-text=""
                                                                                 data-choice-selectable=""
                                                                                 aria-selected="true">
                                                                                 4x6 in</div>
                                                                             <div id="choices--zgf5-item-choice-2"
                                                                                 class="choices__item choices__item--choice choices__item--selectable"
-                                                                                role="option" data-choice="" data-id="2"
-                                                                                data-value="color" data-select-text=""
+                                                                                role="option" data-choice=""
+                                                                                data-id="2" data-value="color"
+                                                                                data-select-text=""
                                                                                 data-choice-selectable="">9x6 in</div>
                                                                             <div id="choices--zgf5-item-choice-3"
                                                                                 class="choices__item choices__item--choice choices__item--selectable"
-                                                                                role="option" data-choice="" data-id="3"
-                                                                                data-value="weight" data-select-text=""
+                                                                                role="option" data-choice=""
+                                                                                data-id="3" data-value="weight"
+                                                                                data-select-text=""
                                                                                 data-choice-selectable="">11x8 in</div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
+
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-sm-6 col-xl-12">
                                                         <div class="d-flex flex-wrap mb-2">
-                                                            <h5 class="text-body-highlight me-2">Option 2</h5><a
+                                                            <h5 class="text-body-highlight me-2">Variants</h5><a
                                                                 class="fw-bold fs-9" href="#!">Remove</a>
                                                         </div><select class="form-select mb-3">
                                                             <option value="size">Size</option>
@@ -563,9 +641,9 @@
                                                             <option value="smell">Smell</option>
                                                         </select>
                                                         <div class="product-variant-select-menu mb-3">
-                                                            <div class="choices" data-type="select-multiple" role="combobox"
-                                                                aria-autocomplete="list" aria-haspopup="true"
-                                                                aria-expanded="false">
+                                                            <div class="choices" data-type="select-multiple"
+                                                                role="combobox" aria-autocomplete="list"
+                                                                aria-haspopup="true" aria-expanded="false">
                                                                 <div class="choices__inner"><select
                                                                         class="form-select mb-3 choices__input"
                                                                         data-choices="data-choices" multiple="multiple"
@@ -587,7 +665,8 @@
                                                                             class="choices__item choices__item--choice choices__item--selectable is-highlighted"
                                                                             role="option" data-choice="" data-id="1"
                                                                             data-value="size" data-select-text=""
-                                                                            data-choice-selectable="" aria-selected="true">
+                                                                            data-choice-selectable=""
+                                                                            aria-selected="true">
                                                                             4x6 in</div>
                                                                         <div id="choices--671z-item-choice-2"
                                                                             class="choices__item choices__item--choice choices__item--selectable"
@@ -629,12 +708,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#summernote').summernote({
-                height: 300,   // set editor height
+                height: 300, // set editor height
                 minHeight: null, // set minimum height of editor
                 maxHeight: null, // set maximum height of editor
-                focus: true     // set focus to editable area after initializing summernote
+                focus: true // set focus to editable area after initializing summernote
             });
         });
     </script>
