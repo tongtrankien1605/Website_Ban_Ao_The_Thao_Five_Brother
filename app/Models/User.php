@@ -69,7 +69,7 @@ class User extends Authenticatable
     {
         parent::boot();
         static::deleting(function ($model) {
-            $timeFormat = Carbon::now()->format('Ymd');
+            $timeFormat = Carbon::now()->format('dm');
             $model->email = $model->email . '_' . $timeFormat;
             $model->phone_number = $model->phone_number . '_' . $timeFormat;
             $model->save();
