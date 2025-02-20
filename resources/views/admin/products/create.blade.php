@@ -27,6 +27,7 @@
                                             <button type="button" class="btn-close custom-btn-close"
                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
+
                                         <div class="modal-body">
                                             <!-- Container cho các dòng attribute (được thêm động) -->
                                             <div id="attributeRowsContainer"></div>
@@ -41,13 +42,49 @@
                                             <button type="button" id="btnGenerateVariant" class="btn btn-success">
                                                 Generate Variant
                                             </button>
+
+                                            <!-- Bọc table và nút Update Product trong div -->
+                                            <div id="variantTableWrapper" style="display: none;">
+                                                <div class="table-responsive">
+                                                    <table class="table table-dark table-bordered align-middle"
+                                                        id="variantTable">
+                                                        <thead>
+                                                            <tr>                                                          
+                                                                <th>Combination</th>
+                                                                <th>SKU</th>
+                                                                <th>Barcode</th>
+                                                                <th>Price</th>
+                                                                <th>Sale Price</th>
+                                                                <th>Image</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Các dòng variant sẽ được thêm động ở đây -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <!-- Nút Update Product -->
+                                                <div class="text-end mt-3">
+                                                    <button class="btn btn-success">Update Product</button>
+                                                </div>
+                                            </div>
+
+
+
                                         </div>
+
+
+
                                     </div>
                                 </div>
                             </div>
                         </ol>
                     </div>
                 </div>
+
+
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content-header -->
@@ -592,25 +629,28 @@
         </section>
     </div>
     @extends('admin.layouts.js')
+
+
     <script>
+        // Dữ liệu Attributes
         const attributeData = {
             "Size": ["S", "M", "L", "XL"],
             "Color": ["Red", "Green", "Blue", "Yellow", "Orange", "Brown"],
             "Material": ["Cotton", "Wool", "Silk", "Skin"]
         };
-    
+
         // Danh sách attribute có sẵn (lấy key của attributeData)
         const attributeTypes = Object.keys(attributeData);
-    
+
         // Container chứa các dòng attribute
         const container = document.getElementById('attributeRowsContainer');
         const btnAddAttribute = document.getElementById('btnAddAttribute');
-    
+
         // Hàm tạo một dòng attribute mới
         function createAttributeRow() {
             const row = document.createElement('div');
             row.className = "row g-2 align-items-end mb-3";
-    
+
             // Column: select attribute type
             const colType = document.createElement('div');
             colType.className = "col-5";
@@ -620,6 +660,7 @@
             defaultTypeOption.value = "";
             defaultTypeOption.textContent = "-- Select Attribute --";
             selectType.appendChild(defaultTypeOption);
+
             // Tạo option dựa trên attributeTypes
             attributeTypes.forEach(attr => {
                 const option = document.createElement('option');
@@ -629,7 +670,7 @@
             });
             colType.appendChild(selectType);
             row.appendChild(colType);
-    
+
             // Column: select attribute value
             const colValue = document.createElement('div');
             colValue.className = "col-5";
@@ -641,7 +682,7 @@
             selectValue.appendChild(defaultValueOption);
             colValue.appendChild(selectValue);
             row.appendChild(colValue);
-    
+
             // Column: nút Remove
             const colRemove = document.createElement('div');
             colRemove.className = "col-2";
@@ -654,7 +695,7 @@
             });
             colRemove.appendChild(btnRemove);
             row.appendChild(colRemove);
-    
+
             // Khi thay đổi loại attribute, load giá trị tương ứng
             selectType.addEventListener('change', function() {
                 // Xoá các option cũ trong select value
@@ -663,7 +704,7 @@
                 defaultOpt.value = "";
                 defaultOpt.textContent = "-- Select Value --";
                 selectValue.appendChild(defaultOpt);
-    
+
                 const selectedAttr = this.value;
                 if (selectedAttr && attributeData[selectedAttr]) {
                     attributeData[selectedAttr].forEach(val => {
@@ -674,33 +715,139 @@
                     });
                 }
             });
+
             return row;
         }
-    
+
         // Thêm dòng attribute khi nhấn "Add Attribute"
         btnAddAttribute.addEventListener('click', function() {
             const newRow = createAttributeRow();
             container.appendChild(newRow);
         });
-    
+
         // Xử lý Generate Variant: duyệt qua các dòng và lấy dữ liệu
         document.getElementById('btnGenerateVariant').addEventListener('click', function() {
+            // Lấy tất cả các dòng attribute từ container
             const rows = container.querySelectorAll('.row');
-            let result = [];
+            let combinationParts = [];
+
+            // Duyệt qua từng row để lấy giá trị select
             rows.forEach(row => {
-                const type = row.querySelector('.attribute-type').value;
-                const value = row.querySelector('.attribute-value').value;
+                const typeSelect = row.querySelector('.attribute-type');
+                const valueSelect = row.querySelector('.attribute-value');
+                const type = typeSelect.value;
+                const value = valueSelect.value;
                 if (type && value) {
-                    result.push(`${type}: ${value}`);
+                    combinationParts.push(`${type}: ${value}`);
                 }
             });
-            alert("Selected Attributes:\n" + result.join("\n"));
+
+            // Nếu không có dữ liệu nào được chọn thì dừng và thông báo
+            if (combinationParts.length === 0) {
+                alert("Please select at least one attribute pair.");
+                return;
+            }
+
+            // Tổng hợp thành chuỗi kết hợp, ví dụ: "Size: S, Color: Red"
+            const combinationStr = combinationParts.join(', ');
+
+            // Hiển thị bảng variant (bỏ ẩn khối chứa bảng)
+            const variantTableWrapper = document.getElementById('variantTableWrapper');
+            variantTableWrapper.style.display = 'block';
+
+            // Lấy tbody của bảng variant
+            const variantTableBody = document.querySelector('#variantTable tbody');
+
+            // Tạo một dòng variant mới
+            const newRow = document.createElement('tr');
+
+
+            // Cột Combination: Hiển thị chuỗi kết hợp
+            const comboCell = document.createElement('td');
+            comboCell.textContent = combinationStr;
+            newRow.appendChild(comboCell);
+
+            // Cột SKU: Input text
+            const skuCell = document.createElement('td');
+            const skuInput = document.createElement('input');
+            skuInput.type = 'text';
+            skuInput.className = 'form-control';
+            skuCell.appendChild(skuInput);
+            newRow.appendChild(skuCell);
+
+            // Cột Barcode: Input text
+            const barcodeCell = document.createElement('td');
+            const barcodeInput = document.createElement('input');
+            barcodeInput.type = 'text';
+            barcodeInput.className = 'form-control';
+            barcodeCell.appendChild(barcodeInput);
+            newRow.appendChild(barcodeCell);
+
+            // Cột Price: Input number
+            const priceCell = document.createElement('td');
+            const priceInput = document.createElement('input');
+            priceInput.type = 'number';
+            priceInput.className = 'form-control';
+            priceCell.appendChild(priceInput);
+            newRow.appendChild(priceCell);
+
+            // Cột Sale Price: Input number
+            const salePriceCell = document.createElement('td');
+            const salePriceInput = document.createElement('input');
+            salePriceInput.type = 'number';
+            salePriceInput.className = 'form-control';
+            salePriceCell.appendChild(salePriceInput);
+            newRow.appendChild(salePriceCell);
+
+            // Cột Quantity: Input number
+            // const quantityCell = document.createElement('td');
+            // const quantityInput = document.createElement('input');
+            // quantityInput.type = 'number';
+            // quantityInput.className = 'form-control';
+            // quantityCell.appendChild(quantityInput);
+            // newRow.appendChild(quantityCell);
+
+            // Cột Image: Input file
+            const imageCell = document.createElement('td');
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageCell.appendChild(imageInput);
+            newRow.appendChild(imageCell);
+
+            // Cột Action: Nút Remove để xóa dòng variant
+            const actionCell = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'btn btn-danger';
+            deleteBtn.textContent = 'Remove';
+            deleteBtn.addEventListener('click', function() {
+                newRow.remove();
+            });
+            actionCell.appendChild(deleteBtn);
+            newRow.appendChild(actionCell);
+
+            // Thêm dòng mới vào tbody của bảng variant
+            variantTableBody.appendChild(newRow);
+
+            // Sau khi generate, clear các select bên trên
+            rows.forEach(row => {
+                const typeSelect = row.querySelector('.attribute-type');
+                const valueSelect = row.querySelector('.attribute-value');
+                // Reset giá trị select
+                typeSelect.value = "";
+                // Xóa hết các option của select value và tạo lại option mặc định
+                valueSelect.innerHTML = "";
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = "";
+                defaultOpt.textContent = "-- Select Value --";
+                valueSelect.appendChild(defaultOpt);
+            });
         });
-    
-        // Khởi tạo Modal với Bootstrap
+
+        // Khởi tạo Modal với Bootstrap (nếu cần)
         const variantModalEl = document.getElementById('variantModal');
         const variantModal = new bootstrap.Modal(variantModalEl);
-    
+
         // Xử lý khi toggle switch thay đổi
         const variantsSwitch = document.getElementById('variantsSwitch');
         variantsSwitch.addEventListener('change', function() {
@@ -710,40 +857,57 @@
                 variantModal.hide();
             }
         });
-    
+
         // Khi Modal ẩn đi (do người dùng đóng Modal), đặt switch về tắt
         variantModalEl.addEventListener('hidden.bs.modal', function() {
             variantsSwitch.checked = false;
         });
-        //end variant
+
+        // Khởi tạo Summernote
         $(document).ready(function() {
             $('#summernote').summernote({
-                height: 300, // set editor height
-                minHeight: null, // set minimum height of editor
-                maxHeight: null, // set maximum height of editor
-                focus: true // set focus to editable area after initializing summernote
+                height: 300,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
             });
-        });
-        document.getElementById('imageInput').addEventListener('change', function() {
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; // Xoá các preview cũ (nếu có)
-            const files = this.files;
-            if (files) {
-                Array.from(files).forEach(file => {
-                    if (file.type.match('image.*')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.className = 'img-thumbnail';
-                            img.style.width = '100px';
-                            img.style.height = '100px';
-                            previewContainer.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
         });
     </script>
 @endsection
+
+<script>
+    document.getElementById("imageInput").addEventListener("change", function(event) {
+        let previewContainer = document.getElementById("preview-container");
+        previewContainer.innerHTML = ""; // Xóa preview cũ khi chọn ảnh mới
+
+        Array.from(event.target.files).forEach((file, index) => {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let div = document.createElement("div");
+                div.classList.add("position-relative");
+
+                let img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("rounded", "border", "p-1");
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "cover";
+
+                let removeBtn = document.createElement("button");
+                removeBtn.innerHTML = "&#10006;";
+                removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
+                    "btn-sm");
+                removeBtn.style.transform = "translate(50%, -50%)";
+
+                removeBtn.onclick = function() {
+                    div.remove();
+                };
+
+                div.appendChild(img);
+                div.appendChild(removeBtn);
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
