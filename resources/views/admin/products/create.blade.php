@@ -69,26 +69,23 @@
                                 </div>
 
                                 <h4 class="mb-3">Upload Images</h4>
-                                <form action="" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded">
-                                        <input type="file" name="images[]" multiple class="form-control d-none"
-                                            accept="image/*" id="imageInput">
-                                        <div class="text-center">
-                                            <p class="text-body-tertiary text-opacity-85">
-                                                Drag your photos here <span class="text-body-secondary px-1">or</span>
-                                                <button class="btn btn-link p-0" type="button"
-                                                    onclick="document.getElementById('imageInput').click();">
-                                                    Browse from device
-                                                </button>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div id="preview-container" class="d-flex flex-wrap gap-2"></div>
-                                    <!-- Hiển thị ảnh xem trước -->
-                                    <button type="submit" class="btn btn-primary mt-3">Upload</button>
-                                </form>
 
+                                <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded">
+                                    <input type="file" name="images[]" multiple class="form-control d-none"
+                                        accept="image/*" id="imageInput">
+                                    <div class="text-center">
+                                        <p class="text-body-tertiary text-opacity-85">
+                                            Drag your photos here <span class="text-body-secondary px-1">or</span>
+                                            <button class="btn btn-link p-0" type="button"
+                                                onclick="document.getElementById('imageInput').click();">
+                                                Browse from device
+                                            </button>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div id="preview-container" class="d-flex flex-wrap gap-2"></div>
+                                <!-- Hiển thị ảnh xem trước -->
+                                <button type="submit" class="btn btn-primary mt-3">Upload</button>
                                 <h4 class="mb-3">Inventory</h4>
                                 <div class="row g-0 border-top border-bottom">
                                     <div class="col-sm-4">
@@ -597,41 +594,39 @@
                 focus: true // set focus to editable area after initializing summernote
             });
         });
+        document.getElementById("imageInput").addEventListener("change", function(event) {
+            let previewContainer = document.getElementById("preview-container");
+            previewContainer.innerHTML = ""; // Xóa preview cũ khi chọn ảnh mới
+
+            Array.from(event.target.files).forEach((file, index) => {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let div = document.createElement("div");
+                    div.classList.add("position-relative");
+
+                    let img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("rounded", "border", "p-1");
+                    img.style.width = "120px";
+                    img.style.height = "120px";
+                    img.style.objectFit = "cover";
+
+                    let removeBtn = document.createElement("button");
+                    removeBtn.innerHTML = "&#10006;";
+                    removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
+                        "btn-sm");
+                    removeBtn.style.transform = "translate(50%, -50%)";
+
+                    removeBtn.onclick = function() {
+                        div.remove();
+                    };
+
+                    div.appendChild(img);
+                    div.appendChild(removeBtn);
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
     </script>
 @endsection
-<script>
-    document.getElementById("imageInput").addEventListener("change", function(event) {
-        let previewContainer = document.getElementById("preview-container");
-        previewContainer.innerHTML = ""; // Xóa preview cũ khi chọn ảnh mới
-
-        Array.from(event.target.files).forEach((file, index) => {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let div = document.createElement("div");
-                div.classList.add("position-relative");
-
-                let img = document.createElement("img");
-                img.src = e.target.result;
-                img.classList.add("rounded", "border", "p-1");
-                img.style.width = "120px";
-                img.style.height = "120px";
-                img.style.objectFit = "cover";
-
-                let removeBtn = document.createElement("button");
-                removeBtn.innerHTML = "&#10006;";
-                removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
-                    "btn-sm");
-                removeBtn.style.transform = "translate(50%, -50%)";
-
-                removeBtn.onclick = function() {
-                    div.remove();
-                };
-
-                div.appendChild(img);
-                div.appendChild(removeBtn);
-                previewContainer.appendChild(div);
-            };
-            reader.readAsDataURL(file);
-        });
-    });
-</script>
