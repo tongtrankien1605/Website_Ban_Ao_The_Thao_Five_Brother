@@ -24,11 +24,23 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::select('users.*', 'roles.user_role')->join('roles', function ($q) {
-            $q->on('roles.id', '=', 'users.role');
-            $q->whereNull('roles.deleted_at');
-        })->orderBy('users.updated_at','desc')->paginate(20);
-        return view('admin.users.index', compact('users'));
+        // $users = User::select('users.*', 'roles.user_role')->join('roles', function ($q) {
+        //     $q->on('roles.id', '=', 'users.role');
+        //     $q->whereNull('roles.deleted_at');
+        // })->orderBy('users.updated_at','desc')->paginate(20);
+        // return view('admin.users.index', compact('users'));
+        $users = User::select('users.*', 'roles.user_role')
+            ->join('roles', function ($q) {
+                $q->on('roles.id', '=', 'users.role');
+                $q->whereNull('roles.deleted_at');
+            })
+            ->orderBy('users.updated_at', 'desc')
+            ->paginate(20);
+
+        // Lấy thông tin admin (giả sử admin có role là 'admin')
+        $admin = User::where('role', 'admin')->first(); // Thay 'admin' bằng giá trị role tương ứng của admin
+
+        return view('admin.users.index', compact('users', 'admin'));
     }
 
     /**
