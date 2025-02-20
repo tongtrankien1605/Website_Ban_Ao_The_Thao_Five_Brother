@@ -240,7 +240,10 @@
     </div>
     @extends('admin.layouts.js')
 
-
+    <script>
+        var attributeValues = @json($attributeValues);
+    </script>
+    
     <script>
         //     //code của phong, làm ơn đừng xóa, thêm xóa sản phẩm
         //     document.addEventListener("DOMContentLoaded", function() {
