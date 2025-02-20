@@ -49,7 +49,7 @@
                                                     <table class="table table-dark table-bordered align-middle"
                                                         id="variantTable">
                                                         <thead>
-                                                            <tr>                                                          
+                                                            <tr>
                                                                 <th>Combination</th>
                                                                 <th>SKU</th>
                                                                 <th>Barcode</th>
@@ -91,7 +91,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12">                   
+                    <div class="col-12">
                         <div class="row g-5">
                             <div class="col-12 col-xl-8">
                                 {{-- <h4 class="mb-3">Product Title</h4><input class="form-control mb-5" type="text"
@@ -129,9 +129,6 @@
                                     <!-- Container hiển thị preview các ảnh đã chọn -->
                                     <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-3"></div>
                                 </div>
-                                <div id="preview-container" class="d-flex flex-wrap gap-2"></div>
-                                <!-- Hiển thị ảnh xem trước -->
-                                <button type="submit" class="btn btn-primary mt-3">Upload</button>
                                 <h4 class="mb-3">Inventory</h4>
                                 <div class="row g-0 border-top border-bottom">
                                     <div class="col-sm-4">
@@ -244,11 +241,11 @@
                                                 <div class="row g-3">
                                                     <div class="col-12 col-lg-6">
                                                         <h5 class="mb-2 text-body-highlight">Regular price</h5><input
-                                                            class="form-control" type="text" placeholder="$$$">
+                                                            class="form-control" type="number" placeholder="$$$">
                                                     </div>
                                                     <div class="col-12 col-lg-6">
                                                         <h5 class="mb-2 text-body-highlight">Sale price</h5><input
-                                                            class="form-control" type="text" placeholder="$$$">
+                                                            class="form-control" type="number" placeholder="$$$">
                                                     </div>
                                                 </div>
                                             </div>
@@ -577,15 +574,15 @@
                                             <div class="card-body">
                                                 <h4 class="card-title mb-4">Variants</h4>
                                                 <div class="row g-3">
-                                                    <div class="col-12 col-sm-6 col-xl-12">
+                                                    <div class="col-12 col-sm-6 col-xl-12" id="attributeContainer">
                                                         @foreach ($attribute as $key => $value)
                                                             <div
-                                                                class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4">
+                                                                class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4 attribute-item">
                                                                 <div class="d-flex flex-wrap mb-2">
-                                                                    <h5 class="text-body-highlight me-2"
-                                                                        value="{{ $key }}">{{ $value }}
-                                                                    </h5>
-                                                                    <a class="fw-bold fs-9 mx-2" href="#!"><i
+                                                                    <h5 class="text-body-highlight me-2">
+                                                                        {{ $value }}</h5>
+                                                                    <a class="fw-bold fs-9 mx-2 remove-attribute"
+                                                                        href="#!"><i
                                                                             class="fa-solid fa-xmark"></i></a>
                                                                 </div>
                                                                 <div class="d-flex flex-column">
@@ -607,9 +604,31 @@
                                                         @endforeach
                                                     </div>
                                                 </div>
-                                                <button class="btn btn-primary w-100" type="button">
+
+                                                <!-- Form thêm thuộc tính mới (ẩn mặc định) -->
+                                                <div id="newAttributeForm" class="mt-3 d-none">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <input type="text" class="form-control me-2"
+                                                            id="newAttributeName" placeholder="Nhập tên thuộc tính">
+                                                        <button class="btn btn-primary" id="addNewAttribute">Thêm</button>
+                                                    </div>
+
+                                                    <!-- Khu vực nhập giá trị -->
+                                                    <div id="attributeValuesList"></div>
+
+                                                    <div class="d-flex align-items-center mt-2">
+                                                        <input type="text" class="form-control me-2"
+                                                            id="newAttributeValue" placeholder="Nhập giá trị">
+                                                        <button class="btn btn-success" id="addValue">+</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Nút thêm option -->
+                                                <button class="btn btn-primary w-100 mt-3" type="button"
+                                                    id="showAttributeForm">
                                                     Add option
                                                 </button>
+
                                             </div>
                                         </div>
                                     </div>
@@ -632,6 +651,108 @@
 
 
     <script>
+        //code của phong, làm ơn đừng xóa, thêm xóa sản phẩm
+        document.addEventListener("DOMContentLoaded", function() {
+            let showFormBtn = document.getElementById("showAttributeForm");
+            let formContainer = document.getElementById("newAttributeForm");
+            let addAttributeBtn = document.getElementById("addNewAttribute");
+            let attributeContainer = document.getElementById("attributeContainer");
+            let addValueBtn = document.getElementById("addValue");
+            let valuesList = document.getElementById("attributeValuesList");
+            let newAttributeInput = document.getElementById("newAttributeValue");
+
+            // Hiển thị form nhập thuộc tính khi nhấn "Add option"
+            showFormBtn.addEventListener("click", function() {
+                formContainer.classList.toggle("d-none");
+            });
+
+            // Thêm giá trị vào danh sách
+            addValueBtn.addEventListener("click", function(event) {
+                event.preventDefault();
+                let value = newAttributeInput.value.trim();
+                if (value === "") return;
+
+                let div = document.createElement("div");
+                div.classList.add("d-flex", "align-items-center", "mb-2");
+
+                div.innerHTML = `
+            <input type="text" class="form-control me-2" value="${value}" readonly>
+            <button class="btn btn-danger btn-sm remove-value">❌</button>
+        `;
+
+                valuesList.appendChild(div);
+                newAttributeInput.value = ""; // Reset ô nhập
+
+                // Gắn sự kiện xóa giá trị
+                div.querySelector(".remove-value").addEventListener("click", function() {
+                    div.remove();
+                });
+            });
+
+            // Xử lý khi nhấn "Thêm"
+            addAttributeBtn.addEventListener("click", function() {
+                let attributeName = document.getElementById("newAttributeName").value.trim();
+                let values = Array.from(valuesList.querySelectorAll("input")).map(input => input.value);
+
+                if (attributeName === "" || values.length === 0) {
+                    alert("Vui lòng nhập đầy đủ thông tin!");
+                    return;
+                }
+
+                // Tạo HTML mới cho thuộc tính
+                let newAttributeHTML = `
+            <div class="border-bottom border-translucent border-dashed border-sm-0 border-bottom-xl pb-4 attribute-item">
+                <div class="d-flex flex-wrap mb-2">
+                    <h5 class="text-body-highlight me-2">${attributeName}</h5>
+                    <a class="fw-bold fs-9 mx-2 remove-attribute" href="#!"><i class="fa-solid fa-xmark"></i></a>
+                </div>
+                <div class="d-flex flex-column">
+                    ${values.map(value => `
+                            <div class="d-flex align-items-center mb-2">
+                                <input class="form-check-input me-2" type="checkbox" name="attribute_values[${attributeName}][]" value="${value}">
+                                <label class="form-check-label me-2">${value}</label>
+                                <button class="btn btn-danger btn-sm remove-value">❌</button>
+                            </div>
+                        `).join('')}
+                </div>
+            </div>
+        `;
+
+                // Thêm vào danh sách
+                attributeContainer.insertAdjacentHTML("beforeend", newAttributeHTML);
+
+                // Reset form
+                document.getElementById("newAttributeName").value = "";
+                valuesList.innerHTML = "";
+
+                // Ẩn form nhập thuộc tính
+                formContainer.classList.add("d-none");
+
+                // Gắn sự kiện xóa thuộc tính
+                attachRemoveEvent();
+            });
+
+            // Hàm gắn sự kiện xóa thuộc tính
+            function attachRemoveEvent() {
+                document.querySelectorAll(".remove-attribute").forEach(button => {
+                    button.addEventListener("click", function(event) {
+                        event.preventDefault();
+                        this.closest(".attribute-item").remove();
+                    });
+                });
+
+                document.querySelectorAll(".remove-value").forEach(button => {
+                    button.addEventListener("click", function() {
+                        this.closest(".d-flex").remove();
+                    });
+                });
+            }
+
+            // Gắn sự kiện xóa ban đầu
+            attachRemoveEvent();
+        });
+        //hết uplaod ảnh
+        
         // Dữ liệu Attributes
         const attributeData = {
             "Size": ["S", "M", "L", "XL"],
@@ -872,42 +993,34 @@
                 focus: true
             });
         });
+        document.getElementById("imageInput").addEventListener("change", function(event) {
+            Array.from(event.target.files).forEach((file, index) => {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let div = document.createElement("div");
+                    div.classList.add("position-relative");
+
+                    let img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("rounded", "border", "p-1");
+                    img.style.width = "120px";
+                    img.style.height = "120px";
+                    img.style.objectFit = "cover";
+
+                    let removeBtn = document.createElement("button");
+                    removeBtn.innerHTML = "&#10006;";
+                    removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
+                        "btn-sm");
+                    removeBtn.onclick = function() {
+                        div.remove();
+                    };
+
+                    div.appendChild(img);
+                    div.appendChild(removeBtn);
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
     </script>
 @endsection
-
-<script>
-    document.getElementById("imageInput").addEventListener("change", function(event) {
-        let previewContainer = document.getElementById("preview-container");
-        previewContainer.innerHTML = ""; // Xóa preview cũ khi chọn ảnh mới
-
-        Array.from(event.target.files).forEach((file, index) => {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let div = document.createElement("div");
-                div.classList.add("position-relative");
-
-                let img = document.createElement("img");
-                img.src = e.target.result;
-                img.classList.add("rounded", "border", "p-1");
-                img.style.width = "120px";
-                img.style.height = "120px";
-                img.style.objectFit = "cover";
-
-                let removeBtn = document.createElement("button");
-                removeBtn.innerHTML = "&#10006;";
-                removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
-                    "btn-sm");
-                removeBtn.style.transform = "translate(50%, -50%)";
-
-                removeBtn.onclick = function() {
-                    div.remove();
-                };
-
-                div.appendChild(img);
-                div.appendChild(removeBtn);
-                previewContainer.appendChild(div);
-            };
-            reader.readAsDataURL(file);
-        });
-    });
-</script>
