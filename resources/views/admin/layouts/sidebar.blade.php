@@ -1,8 +1,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
-        <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
         <span class="brand-text font-weight-light">5Brother</span>
     </a>
 
@@ -21,7 +21,8 @@
         <!-- SidebarSearch Form -->
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Search"
+                    aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar">
                         <i class="fas fa-search fa-fw"></i>
@@ -32,11 +33,12 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
        with font-awesome or any other icon font library -->
                 <li class="nav-item menu-open">
-                    <a href="{{route('admin.user.index')}}" class="nav-link">
+                    <a href="{{ route('admin.user.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Quản lý người dùng
@@ -45,27 +47,50 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('admin.user.index')}}" class="nav-link">
+                            <a href="{{ route('admin.user.index') }}" class="nav-link">
                                 <i class="fa-regular fa-address-book"></i>
                                 <p>Danh sách người dùng</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('admin.user.create')}}" class="nav-link">
+                            <a href="{{ route('admin.user.create') }}" class="nav-link">
                                 <i class="fa-solid fa-person-circle-plus"></i>
                                 <p>Thêm mới người dùng</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('admin.user.indexDelUser')}}" class="nav-link">
+                            <a href="{{ route('admin.user.indexDelUser') }}" class="nav-link">
                                 <p>Danh sách người dùng đã xóa</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-
                 <li class="nav-item menu-open">
-                    <a href="{{route('admin.product.index')}}" class="nav-link">
+                    <a href="{{ route('admin.category.index') }}" class="nav-link">
+                        <i class="fa-brands fa-product-hunt"></i>
+                        <p>
+                            Quản lý danh mục sản phẩm
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.category.index') }}" class="nav-link">
+                                <i class="fa-solid fa-list"></i>
+                                <p>Danh sách danh mục sản phẩm</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.category.create') }}" class="nav-link">
+                                <i class="fa-solid fa-plus"></i>
+                                <p>Thêm mới danh mục sản phẩm</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item menu-open">
+                    <a href="{{ route('admin.product.index') }}" class="nav-link">
                         <i class="fa-brands fa-product-hunt"></i>
                         <p>
                             Quản lý sản phẩm
@@ -74,13 +99,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('admin.product.index')}}" class="nav-link">
+                            <a href="{{ route('admin.product.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
                                 <p>Danh sách sản phẩm</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('admin.product.create')}}" class="nav-link">
+                            <a href="{{ route('admin.product.create') }}" class="nav-link">
                                 <i class="fa-solid fa-plus"></i>
                                 <p>Thêm mới sản phẩm</p>
                             </a>
@@ -89,7 +114,7 @@
                     </ul>
                 </li>
                 <li class="nav-item menu-open">
-                    <a href="{{route('admin.vouchers.index')}}" class="nav-link">
+                    <a href="{{ route('admin.vouchers.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Quản lý Voucher
@@ -98,13 +123,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('admin.vouchers.index')}}" class="nav-link">
+                            <a href="{{ route('admin.vouchers.index') }}" class="nav-link">
                                 <i class="fa-regular fa-address-book"></i>
                                 <p>Danh sách Voucher</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('admin.vouchers.create')}}" class="nav-link">
+                            <a href="{{ route('admin.vouchers.create') }}" class="nav-link">
                                 <i class="fa-solid fa-person-circle-plus"></i>
                                 <p>Thêm mới Voucher</p>
                             </a>
@@ -114,7 +139,7 @@
                 </li>
 
                 <li class="nav-item menu-open">
-                    <a href="{{route('admin.brands.index')}}" class="nav-link">
+                    <a href="{{ route('admin.brands.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Quản lý thương hiệu
@@ -123,13 +148,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('admin.brands.index')}}" class="nav-link">
+                            <a href="{{ route('admin.brands.index') }}" class="nav-link">
                                 <i class="fa-regular fa-address-book"></i>
                                 <p>Danh sách thương hiệu</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('admin.brands.create')}}" class="nav-link">
+                            <a href="{{ route('admin.brands.create') }}" class="nav-link">
                                 <i class="bi bi-folder-plus"></i>
                                 <p>Thêm mới thương hiệu</p>
                             </a>
@@ -138,7 +163,7 @@
                 </li>
 
                 <li class="nav-item menu-open">
-                    <a href="{{route('admin.brands.index')}}" class="nav-link">
+                    <a href="{{ route('admin.brands.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Quản lý bài viết
@@ -147,13 +172,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('admin.posts.index')}}" class="nav-link">
+                            <a href="{{ route('admin.posts.index') }}" class="nav-link">
                                 <i class="bi bi-list-columns"></i>
                                 <p>Danh sách bài viết</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('admin.posts.create')}}" class="nav-link">
+                            <a href="{{ route('admin.posts.create') }}" class="nav-link">
                                 <i class="bi bi-folder-plus"></i>
                                 <p>Thêm mới bài viết</p>
                             </a>
@@ -161,7 +186,7 @@
 
                     </ul>
                 </li>
-                
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-copy"></i>
