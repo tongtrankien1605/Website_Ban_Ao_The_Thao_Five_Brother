@@ -13,9 +13,38 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.product.create') }}">Add product</a>
-                            </li>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="variantsSwitch">
+                                <label class="form-check-label" for="variantsSwitch">Does this product have
+                                    variants?</label>
+                            </div>
+                            <div class="modal fade" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content custom-modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="variantModalLabel">Configure Variants</h5>
+                                            <button type="button" class="btn-close custom-btn-close"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Container cho các dòng attribute (được thêm động) -->
+                                            <div id="attributeRowsContainer"></div>
+                                            <!-- Nút thêm dòng attribute -->
+                                            <button type="button" id="btnAddAttribute" class="btn btn-secondary mt-3">
+                                                Add Attribute
+                                            </button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="button" id="btnGenerateVariant" class="btn btn-success">
+                                                Generate Variant
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </ol>
                     </div>
                 </div>
@@ -70,7 +99,8 @@
 
                                 <h4 class="mb-3">Upload Images</h4>
 
-                                <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded">
+                                <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded"
+                                    id="myDropzone">
                                     <input type="file" name="images[]" multiple class="form-control d-none"
                                         accept="image/*" id="imageInput">
                                     <div class="text-center">
@@ -82,6 +112,8 @@
                                             </button>
                                         </p>
                                     </div>
+                                    <!-- Container hiển thị preview các ảnh đã chọn -->
+                                    <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-3"></div>
                                 </div>
                                 <div id="preview-container" class="d-flex flex-wrap gap-2"></div>
                                 <!-- Hiển thị ảnh xem trước -->
@@ -93,8 +125,8 @@
                                             role="tablist" aria-orientation="vertical"><a
                                                 class="nav-link border-end border-end-sm-0 border-bottom-sm text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center active"
                                                 id="pricingTab" data-bs-toggle="tab" data-bs-target="#pricingTabContent"
-                                                role="tab" aria-controls="pricingTabContent" aria-selected="true"> <svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+                                                role="tab" aria-controls="pricingTabContent" aria-selected="true">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-tag me-sm-2 fs-4 nav-icons">
@@ -108,8 +140,9 @@
                                                 id="restockTab" data-bs-toggle="tab" data-bs-target="#restockTabContent"
                                                 role="tab" aria-controls="restockTabContent" aria-selected="false"
                                                 tabindex="-1"> <svg xmlns="http://www.w3.org/2000/svg" width="16px"
-                                                    height="16px" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    height="16px" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
                                                     class="feather feather-package me-sm-2 fs-4 nav-icons">
                                                     <line x1="16.5" y1="9.4" x2="7.5" y2="4.21">
                                                     </line>
@@ -580,12 +613,131 @@
             </div>
         </section>
     </div>
-
-    <!-- Include Summernote CSS and JS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
+    @extends('admin.layouts.js')
     <script>
+        const attributeData = {
+            "Size": ["S", "M", "L", "XL"],
+            "Color": ["Red", "Green", "Blue", "Yellow", "Orange"],
+            "Material": ["Cotton", "Wool", "Silk"]
+        };
+    
+        // Danh sách attribute có sẵn (lấy key của attributeData)
+        const attributeTypes = Object.keys(attributeData);
+    
+        // Container chứa các dòng attribute
+        const container = document.getElementById('attributeRowsContainer');
+        const btnAddAttribute = document.getElementById('btnAddAttribute');
+    
+        // Hàm tạo một dòng attribute mới
+        function createAttributeRow() {
+            const row = document.createElement('div');
+            row.className = "row g-2 align-items-end mb-3";
+    
+            // Column: select attribute type
+            const colType = document.createElement('div');
+            colType.className = "col-5";
+            const selectType = document.createElement('select');
+            selectType.className = "form-select custom-form-select attribute-type";
+            const defaultTypeOption = document.createElement('option');
+            defaultTypeOption.value = "";
+            defaultTypeOption.textContent = "-- Select Attribute --";
+            selectType.appendChild(defaultTypeOption);
+            // Tạo option dựa trên attributeTypes
+            attributeTypes.forEach(attr => {
+                const option = document.createElement('option');
+                option.value = attr;
+                option.textContent = attr;
+                selectType.appendChild(option);
+            });
+            colType.appendChild(selectType);
+            row.appendChild(colType);
+    
+            // Column: select attribute value
+            const colValue = document.createElement('div');
+            colValue.className = "col-5";
+            const selectValue = document.createElement('select');
+            selectValue.className = "form-select custom-form-select attribute-value";
+            const defaultValueOption = document.createElement('option');
+            defaultValueOption.value = "";
+            defaultValueOption.textContent = "-- Select Value --";
+            selectValue.appendChild(defaultValueOption);
+            colValue.appendChild(selectValue);
+            row.appendChild(colValue);
+    
+            // Column: nút Remove
+            const colRemove = document.createElement('div');
+            colRemove.className = "col-2";
+            const btnRemove = document.createElement('button');
+            btnRemove.type = "button";
+            btnRemove.className = "btn btn-danger";
+            btnRemove.textContent = "Remove";
+            btnRemove.addEventListener('click', function() {
+                row.remove();
+            });
+            colRemove.appendChild(btnRemove);
+            row.appendChild(colRemove);
+    
+            // Khi thay đổi loại attribute, load giá trị tương ứng
+            selectType.addEventListener('change', function() {
+                // Xoá các option cũ trong select value
+                selectValue.innerHTML = "";
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = "";
+                defaultOpt.textContent = "-- Select Value --";
+                selectValue.appendChild(defaultOpt);
+    
+                const selectedAttr = this.value;
+                if (selectedAttr && attributeData[selectedAttr]) {
+                    attributeData[selectedAttr].forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val;
+                        opt.textContent = val;
+                        selectValue.appendChild(opt);
+                    });
+                }
+            });
+            return row;
+        }
+    
+        // Thêm dòng attribute khi nhấn "Add Attribute"
+        btnAddAttribute.addEventListener('click', function() {
+            const newRow = createAttributeRow();
+            container.appendChild(newRow);
+        });
+    
+        // Xử lý Generate Variant: duyệt qua các dòng và lấy dữ liệu
+        document.getElementById('btnGenerateVariant').addEventListener('click', function() {
+            const rows = container.querySelectorAll('.row');
+            let result = [];
+            rows.forEach(row => {
+                const type = row.querySelector('.attribute-type').value;
+                const value = row.querySelector('.attribute-value').value;
+                if (type && value) {
+                    result.push(`${type}: ${value}`);
+                }
+            });
+            alert("Selected Attributes:\n" + result.join("\n"));
+        });
+    
+        // Khởi tạo Modal với Bootstrap
+        const variantModalEl = document.getElementById('variantModal');
+        const variantModal = new bootstrap.Modal(variantModalEl);
+    
+        // Xử lý khi toggle switch thay đổi
+        const variantsSwitch = document.getElementById('variantsSwitch');
+        variantsSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                variantModal.show();
+            } else {
+                variantModal.hide();
+            }
+        });
+    
+        // Khi Modal ẩn đi (do người dùng đóng Modal), đặt switch về tắt
+        variantModalEl.addEventListener('hidden.bs.modal', function() {
+            variantsSwitch.checked = false;
+        });
+        //end variant
         $(document).ready(function() {
             $('#summernote').summernote({
                 height: 300, // set editor height
@@ -594,39 +746,26 @@
                 focus: true // set focus to editable area after initializing summernote
             });
         });
-        document.getElementById("imageInput").addEventListener("change", function(event) {
-            let previewContainer = document.getElementById("preview-container");
-            previewContainer.innerHTML = ""; // Xóa preview cũ khi chọn ảnh mới
-
-            Array.from(event.target.files).forEach((file, index) => {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let div = document.createElement("div");
-                    div.classList.add("position-relative");
-
-                    let img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.classList.add("rounded", "border", "p-1");
-                    img.style.width = "120px";
-                    img.style.height = "120px";
-                    img.style.objectFit = "cover";
-
-                    let removeBtn = document.createElement("button");
-                    removeBtn.innerHTML = "&#10006;";
-                    removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-danger",
-                        "btn-sm");
-                    removeBtn.style.transform = "translate(50%, -50%)";
-
-                    removeBtn.onclick = function() {
-                        div.remove();
-                    };
-
-                    div.appendChild(img);
-                    div.appendChild(removeBtn);
-                    previewContainer.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
+        document.getElementById('imageInput').addEventListener('change', function() {
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = ''; // Xoá các preview cũ (nếu có)
+            const files = this.files;
+            if (files) {
+                Array.from(files).forEach(file => {
+                    if (file.type.match('image.*')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'img-thumbnail';
+                            img.style.width = '100px';
+                            img.style.height = '100px';
+                            previewContainer.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
         });
     </script>
 @endsection
