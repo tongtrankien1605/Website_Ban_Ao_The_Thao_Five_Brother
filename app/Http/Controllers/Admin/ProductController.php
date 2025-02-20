@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductAtribute;
+use App\Models\ProductAtributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -35,9 +37,14 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $attribute = ProductAtribute::get()->pluck('name', 'id');
+        $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attribute->keys())
+        ->get()
+        ->groupBy('product_attribute_id');
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
-        return view('admin.products.create', compact(['brands', 'categories']));
+        // dd($attibute, $value, $brands, $categories);
+        return view('admin.products.create', compact(['brands', 'categories', 'attribute', 'attributeValues']));
     }
 
     /**
@@ -102,10 +109,12 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $attibute = ProductAtribute::get();
+        $value = ProductAtributeValue::get();
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
         // dd($product->image);
-        return view('admin.products.edit', compact(['brands', 'categories', 'product']));
+        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attibute', 'value']));
     }
 
     /**

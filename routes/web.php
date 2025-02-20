@@ -128,12 +128,12 @@ Route::get('/category/search', [CategoryController::class, 'search'])->name('cat
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
     Route::get('/index', function () {
-        return view('staffs.layout.index');
+        return view('staff.layouts.index');
     })->name('index');
     Route::get('/form', function () {
-        return view('staffs.form.index');
+        return view('staff.form.index');
     })->name('form');
     Route::get('/table', function () {
-        return view('staffs.table.index');
+        return view('staff.table.index');
     })->name('table');
 });

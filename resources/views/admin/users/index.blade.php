@@ -23,7 +23,7 @@ Danh sách Người dùng
     </section>
 
     <div class="col-12">
-        <div class="card" style="height: 700px; width:1250px">
+        <div class="card" style="width:1250px">
             <div class="card-header">
                 <h3 class="card-title"></h3>
                 {{-- <a href="{{ route('admin.user.create') }}" class="btn btn-primary">Thêm mới bài viết</a> --}}
@@ -43,7 +43,7 @@ Danh sách Người dùng
             <div class="card-body table-responsive p-0">
                 @if (session('success'))
                     <div class="alert alert-success">
-                        {{ session('success') }}
+                        Xóa người dùng thành công!
                     </div>
                 @endif
 
@@ -104,8 +104,8 @@ Danh sách Người dùng
                 </table>
             </div>
         </div>
-        <div class="d-flex justify-content-center">
-            {{ $users->links('vendor.pagination.bootstrap-4') }}
+        <div class="col-sm-12 col-md-12">
+            {{ $users->links() }}
         </div>
     </div>
 </div>
