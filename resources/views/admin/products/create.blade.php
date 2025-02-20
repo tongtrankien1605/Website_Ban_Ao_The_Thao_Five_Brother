@@ -54,30 +54,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12">
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        {{-- <form method="post" enctype="multipart/form-data" action="{{ route('admin.product.store') }}">
-                            @csrf
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="price">Price</label>
-                                    <input type="text" class="form-control" id="price" name="price"
-                                        placeholder="Enter price" value="{{ old('price') }}">
-                                    @error('price')
-                                    <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea name="description" id="summernote" class="form-control" rows="5"
-                                        placeholder="Nhập mô tả sản phẩm"></textarea>
-                                </div>
-
-                            </div>
-                        </form> --}}
-
+                    <div class="col-12">                   
                         <div class="row g-5">
                             <div class="col-12 col-xl-8">
                                 {{-- <h4 class="mb-3">Product Title</h4><input class="form-control mb-5" type="text"
@@ -606,6 +583,7 @@
                     </div>
                 </div>
             </div>
+            <br>
             <div class="text-center">
                 <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Quay
                     lại</a>
@@ -617,8 +595,8 @@
     <script>
         const attributeData = {
             "Size": ["S", "M", "L", "XL"],
-            "Color": ["Red", "Green", "Blue", "Yellow", "Orange"],
-            "Material": ["Cotton", "Wool", "Silk"]
+            "Color": ["Red", "Green", "Blue", "Yellow", "Orange", "Brown"],
+            "Material": ["Cotton", "Wool", "Silk", "Skin"]
         };
     
         // Danh sách attribute có sẵn (lấy key của attributeData)
