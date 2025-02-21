@@ -146,7 +146,7 @@
                                                             tính</label>
                                                         <select id="attributeSelect" class="form-select">
                                                             <option value="">Chọn thuộc tính...</option>
-                                                            @foreach ($attribute as $key => $value)
+                                                            @foreach ($attributes as $key => $value)
                                                                 <option value="{{ $key }}">
                                                                     {{ $value }}</option>
                                                             @endforeach
@@ -315,6 +315,7 @@
                     </div>
                     <div class="card-body d-none">
                         <div class="mb-3">
+                            <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
                             <label class="form-label">Barcode</label>
                             <input type="text" class="form-control" name="variants[${variantCounter}][barcode]">
                         </div>
@@ -327,8 +328,8 @@
                             <input type="text" class="form-control" name="variants[${variantCounter}][sale_price]">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Stock</label>
-                            <input type="number" class="form-control" name="variants[${variantCounter}][stock]">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Image</label>

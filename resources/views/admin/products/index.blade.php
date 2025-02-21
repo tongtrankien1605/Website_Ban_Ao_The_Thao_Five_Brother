@@ -27,7 +27,7 @@
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
                     <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Thêm mới bài viết</a>
+                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Thêm mới sản phẩm</a>
                     <div class="card-tools">
                         <form action="{{ route('admin.posts.index') }}" method="GET" class="input-group input-group-sm"
                             style="width: 150px;">
@@ -68,10 +68,6 @@
                                     Image
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                    aria-label="Engine version: activate to sort column ascending">
-                                    Price
-                                </th>
-                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
                                     aria-label="CSS grade: activate to sort column ascending">Hành
                                     động</th>
                             </tr>
@@ -86,10 +82,9 @@
                                     <td>{{ $product->product_brand }}</td>
                                     <td>{{ $product->product_category }}</td>
                                     <td>
-                                        <img src="{{Storage::url($product->image) }}" width="100px"
+                                        <img src="{{ Storage::url($product->product_image) }}" width="100px"
                                             alt="">
                                     </td>
-                                    <td>{{ $product->price }}</td>
                                     <td>
                                         <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-warning">
                                             <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
@@ -104,7 +99,8 @@
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="bi bi-trash"></i></button>
                                         </form>
                                         <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-info"><i
                                                 class="bi bi-eye"></i></a>

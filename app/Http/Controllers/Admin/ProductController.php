@@ -8,7 +8,11 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAtribute;
 use App\Models\ProductAtributeValue;
+use App\Models\ProductImage;
+use App\Models\Skus;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -20,7 +24,14 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::select(['products.*', 'categories.name as product_category', 'brands.name as product_brand'])
+        $products = Product::select(
+            [
+                'products.*',
+                'categories.name as product_category',
+                'brands.name as product_brand',
+                DB::raw('(SELECT image_url FROM product_images WHERE product_images.id_product = products.id ORDER BY updated_at DESC LIMIT 1) as product_image')
+            ]
+        )
             ->join('categories', function ($q) {
                 $q->on('categories.id', '=', 'products.id_category');
                 $q->whereNull('categories.deleted_at');
@@ -28,8 +39,9 @@ class ProductController extends Controller
             ->join('brands', function ($q) {
                 $q->on('brands.id', '=', 'products.id_brand');
                 $q->whereNull('brands.deleted_at');
-            })->orderByDesc('products.updated_at')->paginate(20);
-        return view('admin.products.index', compact('products'));
+            })
+            ->orderByDesc('products.updated_at')->paginate(20);
+        return view('admin.products.index', compact(['products']));
     }
 
     /**
@@ -37,14 +49,13 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $attribute = ProductAtribute::get()->pluck('name', 'id');
-        $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attribute->keys())
-        ->get()
-        ->groupBy('product_attribute_id');
+        $attributes = ProductAtribute::get()->pluck('name', 'id');
+        $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attributes->keys())
+            ->get()
+            ->groupBy('product_attribute_id');
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
-        // dd($attibute, $value, $brands, $categories);
-        return view('admin.products.create', compact(['brands', 'categories', 'attribute', 'attributeValues']));
+        return view('admin.products.create', compact(['brands', 'categories', 'attributes', 'attributeValues']));
     }
 
     /**
@@ -52,44 +63,48 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name'        => ['required', 'string', 'max:255', Rule::unique('products', 'name')],
-            'description' => ['required', 'string'],
-            'id_category' => ['required', 'exists:categories,id'], // Check id tồn tại
-            'id_brand'    => ['required', 'exists:brands,id'], // Check id tồn tại
-            'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
-            'price'       => ['required', 'numeric']
-        ], [
-            'name.required'        => 'Tên sản phẩm không được để trống.',
-            'name.unique'          => 'Tên sản phẩm đã tồn tại, vui lòng chọn tên khác.',
-            'description.required' => 'Mô tả không được để trống.',
-            'image.image'          => 'File phải là hình ảnh.',
-            'image.mimes'          => 'Ảnh phải có định dạng: jpg, jpeg, png, gif.',
-            'image.max'            => 'Kích thước ảnh tối đa là 2MB.',
-            'id_category.exists'   => 'Danh mục không hợp lệ.',
-            'id_brand.exists'      => 'Thương hiệu không hợp lệ.',
-        ]);
-
         try {
-            // Kiểm tra nếu có file ảnh thì lưu vào storage
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('products', 'public');
-                $data['image'] = $path;
-            } else {
-                $data['image'] = null; // 🔥 Đảm bảo luôn có giá trị
+            DB::beginTransaction();
+
+            $product = new Product();
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->id_category = $request->id_category;
+            $product->id_brand = $request->id_brand;
+            $product->save();
+            if ($request->images) {
+                $productImages = [];
+                foreach ($request->images as $image) {
+                    $productImagePath = $image->store('public/products');
+                    $productImages[] = [
+                        'id_product' => $product->id,
+                        'image_url' => str_replace('public/', '', $productImagePath),
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ];
+                }
+                ProductImage::insert($productImages);
             }
-
-            // Kiểm tra dữ liệu trước khi lưu
-            if (empty($data['image']) && $request->hasFile('image')) {
-                throw new \Exception('Lưu ảnh thất bại, vui lòng thử lại.');
+            if (!empty($request->variants)) {
+                $skues = [];
+                foreach ($request->variants as $variant) {
+                    $skues[] = [
+                        'product_id' => $product->id,
+                        'name' => $variant['name'],
+                        'quantity' => $variant['quantity'],
+                        'price' => $variant['price'],
+                        'sale_price' => $variant['sale_price'],
+                        'barcode' => $variant['barcode'],
+                    ];
+                }
+                Skus::insert($skues);
             }
-
-            // Tạo sản phẩm mới
-            Product::create($data);
-
-            return redirect()->route('admin.product.index')->with('message', 'Thêm sản phẩm thành công!');
+            DB::commit();
+            return redirect()->route('admin.product.index')->with([
+                'status_succeed' => 'Thêm sản phẩm thành công.'
+            ]);
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            DB::rollBack();
         }
     }
 
@@ -98,10 +113,12 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $brands = Brand::whereNull('deleted_at')->get();
-        $categories = Category::whereNull('deleted_at')->get();
-        // dd($product->image);
-        return view('admin.products.show', compact(['brands', 'categories', 'product']));
+        // dd($product);
+        $brand = Brand::whereNull('deleted_at')->where('id', $product->id_brand)->first();
+        $category = Category::whereNull('deleted_at')->where('id', $product->id_category)->first();
+        $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
+        // dd($productImages);
+        return view('admin.products.show', compact(['brand', 'category', 'product', 'productImages']));
     }
 
     /**
@@ -109,12 +126,13 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $attibute = ProductAtribute::get();
-        $value = ProductAtributeValue::get();
+        $attributes = ProductAtribute::get()->pluck('name', 'id');
+        $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attributes->keys())
+            ->get()
+            ->groupBy('product_attribute_id');
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
-        // dd($product->image);
-        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attibute', 'value']));
+        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues']));
     }
 
     /**
