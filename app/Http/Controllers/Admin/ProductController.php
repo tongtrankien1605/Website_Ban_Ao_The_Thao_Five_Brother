@@ -63,6 +63,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             DB::beginTransaction();
 
@@ -88,13 +89,14 @@ class ProductController extends Controller
             if (!empty($request->variants)) {
                 $skues = [];
                 foreach ($request->variants as $variant) {
+                    $skuImages = $image->store('public/productsVariants');
                     $skues[] = [
                         'product_id' => $product->id,
                         'name' => $variant['name'],
-                        'quantity' => $variant['quantity'],
                         'price' => $variant['price'],
                         'sale_price' => $variant['sale_price'],
                         'barcode' => $variant['barcode'],
+                        'image' => str_replace('public/', '', $skuImages),
                     ];
                 }
                 Skus::insert($skues);
@@ -113,11 +115,9 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // dd($product);
         $brand = Brand::whereNull('deleted_at')->where('id', $product->id_brand)->first();
         $category = Category::whereNull('deleted_at')->where('id', $product->id_category)->first();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
-        // dd($productImages);
         return view('admin.products.show', compact(['brand', 'category', 'product', 'productImages']));
     }
 
@@ -141,22 +141,6 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $data = $request->validate([
-            'name'        => ['required', 'string', 'max:255', Rule::unique('products', 'name')->ignore($product->id)],
-            'description' => ['required', 'string'],
-            'id_category' => ['required'], // Đảm bảo ID danh mục hợp lệ
-            'id_brand'    => ['required'], // Đảm bảo ID thương hiệu hợp lệ
-            'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
-            'price'       => ['required', 'numeric']
-        ], [
-            'name.required'        => 'Tên sản phẩm không được để trống.',
-            'name.unique'          => 'Tên sản phẩm đã tồn tại, vui lòng chọn tên khác.',
-            'description.required' => 'Mô tả không được để trống.',
-            'image.image'          => 'File phải là hình ảnh.',
-            'image.mimes'          => 'Ảnh phải có định dạng: jpg, jpeg, png, gif.',
-            'image.max'            => 'Kích thước ảnh tối đa là 2MB.',
-        ]);
-        // dd($data);
         try {
             // Nếu có file ảnh mới thì xóa ảnh cũ và lưu ảnh mới
             if ($request->hasFile('image')) {
