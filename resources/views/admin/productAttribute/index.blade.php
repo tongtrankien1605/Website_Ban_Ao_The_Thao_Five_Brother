@@ -63,8 +63,8 @@
                                                             <td class="dtr-control sorting_1" tabindex="0">
                                                                 {{ $skus->name }}</td>
                                                             <td>{{ $skus->price }}</td>
-                                                            <td>{{ $skus->quantity }}</td>
-                                                            <td>{{ $skus->barcode }}</td>
+                                                            <td> <img src="{{ Storage::url($skus->image) }}"
+                                                                    width="100px" alt=""></td>
                                                             <td
                                                                 class=" d-flex justify-content-around align-items-center text-nowrap">
                                                                 <a class="btn btn-success btn-sm"

@@ -19,14 +19,13 @@
         <!-- /.content-header -->
         <section class="content">
             <div class="container-fluid">
-                <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.product.update',$product) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('put')
                     <div class="row">
                         <div class="col-12">
                             <div class="row g-5">
                                 <div class="col-12 col-xl-8">
-                                    {{-- <h4 class="mb-3">Product Title</h4><input class="form-control mb-5" type="text"
-                                    placeholder="Write title here..."> --}}
                                     <div class="form-group">
                                         <label for="name">Tên sản phẩm</label>
                                         <input type="text" class="form-control" id="name" name="name"
