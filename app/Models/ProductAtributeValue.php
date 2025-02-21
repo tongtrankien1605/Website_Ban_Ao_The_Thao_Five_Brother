@@ -12,18 +12,12 @@ class ProductAtributeValue extends Model
 
     protected $table = 'product_atribute_values';
     protected $fillable = [
-        'product_id',
         'product_attribute_id',
         'value',
     ];
     public function serializeDate($date)
     {
         return $date->format('Y/m/d H:i:s');
-    }
-
-    public function products()
-    {
-        return $this->belongsTo(Product::class);
     }
     public function product_attributes()
     {

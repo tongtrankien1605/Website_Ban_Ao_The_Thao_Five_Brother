@@ -21,7 +21,6 @@ class ProductFactory extends Factory
             'id_brand'=>rand(1,10),
             'description'=>fake()->paragraph(1),
             'id_category'=>rand(1,10),
-            'price'=>rand(100000,1000000),
         ];
     }
 }

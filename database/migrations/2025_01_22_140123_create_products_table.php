@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('name',255)->comment('tên gốc của sản phẩm');
             $table->text('description')->nullable()->comment('Mô tả sản phẩm');
             $table->foreignId('id_category')->constrained('categories');
-            $table->string('image', 255)->nullable()->comment('Ảnh chính');
-            $table->decimal('price', 10, 2)->comment('Giá sản phẩm(mặc định)');
             $table->timestamps();
             $table->softDeletes();
         });

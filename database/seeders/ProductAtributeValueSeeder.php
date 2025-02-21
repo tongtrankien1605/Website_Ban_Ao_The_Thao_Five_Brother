@@ -15,42 +15,34 @@ class ProductAtributeValueSeeder extends Seeder
     {
         $dataSeeder = [
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 3,
                 'value'=>'S'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 3,
                 'value'=>'M'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 3,
                 'value'=>'L'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 2,
                 'value'=>'Vàng'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 2,
                 'value'=>'Đỏ'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 2,
                 'value'=>'Xanh'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 1,
                 'value'=>'Cotton'
             ],
             [
-                'product_id'=>1,
                 'product_attribute_id'=> 1,
                 'value'=>'vải dù'
             ],

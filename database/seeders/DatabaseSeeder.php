@@ -34,8 +34,8 @@ class DatabaseSeeder extends Seeder
         Category::factory(20)->create();
         Product::factory(100)->create();
 
-        // $this->call(ProductAtributeSeeder::class);
-        // $this->call(ProductAtributeValueSeeder::class);
+        $this->call(ProductAtributeSeeder::class);
+        $this->call(ProductAtributeValueSeeder::class);
 
         Skus::factory(150)->create();
 
