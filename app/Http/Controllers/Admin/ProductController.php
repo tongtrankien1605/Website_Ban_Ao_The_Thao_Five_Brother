@@ -132,7 +132,9 @@ class ProductController extends Controller
             ->groupBy('product_attribute_id');
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
-        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues']));
+        $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
+        $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->get();
+        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues', 'productImages', 'skues']));
     }
 
     /**

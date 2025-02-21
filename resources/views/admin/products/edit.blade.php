@@ -12,16 +12,13 @@
                         <h1>Chỉnh sửa sản phẩm</h1>
                     </div>
                 </div>
-
-
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
-        <!-- /.content-header -->
         <section class="content">
             <div class="container-fluid">
-                <form action="{{ route('admin.product.update',$product) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('put')
+                    @method('PUT')
                     <div class="row">
                         <div class="col-12">
                             <div class="row g-5">
@@ -29,7 +26,7 @@
                                     <div class="form-group">
                                         <label for="name">Tên sản phẩm</label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Nhập tên sản phẩm..." value="{{ old('name') }}">
+                                            value="{{ old('name', $product->name) }}">
                                         @error('name')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -37,45 +34,93 @@
 
                                     <div class="form-group">
                                         <label for="description" class="form-label">Mô tả sản phẩm</label>
-                                        <textarea name="description" class="form-control" rows="5" placeholder="Nhập nội dung bài viết"> {{ old('description') }}</textarea>
+                                        <textarea name="description" class="form-control" rows="5">{{ old('description', $product->description) }}</textarea>
                                         @error('description')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <h4 class="mb-3">Upload Images</h4>
-
+                                    <div id="existingImages" class="d-flex flex-wrap gap-2 mt-3">
+                                        @if ($productImages)
+                                            @foreach ($productImages as $productImage)
+                                                <img src="{{ Storage::url($productImage->image_url) }}" width="100px"
+                                                    alt="">
+                                            @endforeach
+                                        @endif
+                                    </div>
                                     <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded"
                                         id="myDropzone">
                                         <input type="file" name="images[]" multiple class="form-control d-none"
-                                            accept="image/*" id="imageInput" value="{{ old('images[]') }}">
+                                            accept="image/*" id="imageInput">
                                         <div class="text-center">
                                             <p class="text-body-tertiary text-opacity-85">
                                                 Drag your photos here <span class="text-body-secondary px-1">or</span>
                                                 <button class="btn btn-link p-0" type="button"
-                                                    onclick="document.getElementById('imageInput').click();">
-                                                    Browse from device
-                                                </button>
+                                                    onclick="document.getElementById('imageInput').click();">Browse from
+                                                    device</button>
                                             </p>
                                         </div>
-                                        <!-- Container hiển thị preview các ảnh đã chọn -->
                                         <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-3"></div>
                                         @error('images[]')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <!-- Container chứa các variant đã tạo -->
+
                                     <div id="createdVariantContainer" class="mt-4">
-                                        <!-- Các variant block sẽ được thêm vào đây -->
+                                        @foreach ($skues as $sku)
+                                            <div class="card mb-3 variant-block">
+                                                <div
+                                                    class="card-header toggle-variant d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">{{ $sku->name }}</h5>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger float-end remove-variant">Xóa
+                                                        Variant</button>
+                                                </div>
+                                                <div class="card-body d-none">
+                                                    <input type="hidden" name="variants[{{ $sku->id }}][name]"
+                                                        value="{{ $sku->name }}">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Barcode</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[{{ $sku->id }}][barcode]"
+                                                            value="{{ $sku->barcode }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Price</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[{{ $sku->id }}][price]"
+                                                            value="{{ $sku->price }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Sale price</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[{{ $sku->id }}][sale_price]"
+                                                            value="{{ $sku->sale_price }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Image</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group">
+                                                                @if ($sku->image)
+                                                                    <img src="{{ Storage::url($sku->image) }}"
+                                                                        alt="" width="200px">
+                                                                @endif
+                                                                <input type="file" class="" id="image"
+                                                                    name="image">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
-
                                 <div class="col-12 col-xl-4">
                                     <div class="row g-2">
                                         <div class="col-12 col-xl-12">
                                             <div class="card mb-3">
                                                 <div class="card-body">
-                                                    {{-- <h4 class="card-title mb-4"></h4> --}}
                                                     <div class="row gx-3">
                                                         <div class="col-12 col-sm-6 col-xl-12">
                                                             <div class="mb-4">
@@ -83,15 +128,12 @@
                                                                     <h5 class="mb-0 text-body-highlight me-2">Danh mục sản
                                                                         phẩm
                                                                     </h5> <br>
-                                                                    {{-- <a class="fw-bold fs-9"
-                                                                        href="{{ route('admin.category.create') }}">Thêm mới
-                                                                        danh mục sản phẩm</a> --}}
                                                                 </div>
                                                                 <select class="form-control" id="category"
                                                                     name="id_category">
-                                                                    <option value="" selected>-- select --</option>
                                                                     @foreach ($categories as $category)
-                                                                        <option value="{{ $category->id }}">
+                                                                        <option
+                                                                            value="{{ $category->id }}"{{ $product->id_category == $category->id ? 'selected' : '' }}>
                                                                             {{ $category->name }}
                                                                         </option>
                                                                     @endforeach
@@ -105,17 +147,16 @@
                                                             <div class="mb-4">
                                                                 <div class="d-flex flex-wrap mb-2">
                                                                     <h5 class="mb-0 text-body-highlight me-2">Thương hiệu
-                                                                        sản
-                                                                        phẩm</h5> <br>
-                                                                    {{-- <a class="fw-bold fs-9"
-                                                                        href="{{ route('admin.brands.create') }}">
-                                                                        Thêm mới thương hiệu sản phẩm</a> --}}
+                                                                        sản phẩm</h5>
+                                                                    <br>
                                                                 </div>
-                                                                <select class="form-control" id="brand" name="id_brand">
-                                                                    <option value="" selected>-- select --</option>
+                                                                <select class="form-control" id="brand"
+                                                                    name="id_brand">
                                                                     @foreach ($brands as $brand)
-                                                                        <option value="{{ $brand->id }}">
-                                                                            {{ $brand->name }}</option>
+                                                                        <option value="{{ $brand->id }}"
+                                                                            {{ $product->id_brand == $brand->id ? 'selected' : '' }}>
+                                                                            {{ $brand->name }}
+                                                                        </option>
                                                                     @endforeach
                                                                 </select>
                                                                 @error('id_brand')
@@ -131,38 +172,25 @@
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h4 class="card-title mb-0">Variants</h4>
-                                                    <!-- Nút toggle hiển thị/ẩn variants -->
                                                     <button type="button" class="btn btn-primary btn-sm float-end"
-                                                        id="toggleVariantsBtn">
-                                                        Add Variant
-                                                    </button>
+                                                        id="toggleVariantsBtn">Add Variant</button>
                                                 </div>
-                                                <!-- Phần này ẩn ban đầu, chỉ hiện khi nhấn nút -->
                                                 <div class="card-body d-none" id="variantsCard">
-                                                    <!-- Select option để chọn Attribute -->
                                                     <div class="mb-3">
                                                         <label for="attributeSelect" class="form-label">Chọn thuộc
                                                             tính</label>
                                                         <select id="attributeSelect" class="form-select">
                                                             <option value="">Chọn thuộc tính...</option>
                                                             @foreach ($attributes as $key => $value)
-                                                                <option value="{{ $key }}">
-                                                                    {{ $value }}</option>
+                                                                <option value="{{ $key }}">{{ $value }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-
-                                                    <!-- Container hiển thị các checkbox thuộc tính -->
-                                                    <div id="attributeContainer" class="row g-3">
-                                                        <!-- Các thuộc tính sẽ hiển thị ở đây -->
-                                                    </div>
-
-                                                    <!-- Nút tạo Variant -->
+                                                    <div id="attributeContainer" class="row g-3"></div>
                                                     <div class="mt-3 text-center">
-                                                        <button type="button" class="btn btn-success" id="createVariantBtn"
-                                                            disabled>
-                                                            Tạo Variant
-                                                        </button>
+                                                        <button type="button" class="btn btn-success"
+                                                            id="createVariantBtn" disabled>Tạo Variant</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -174,19 +202,15 @@
                     </div>
                     <br>
                     <div class="text-center">
-                        <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Quay
-                            lại</a>
-                        <button type="submit" class="btn btn-primary">Thêm mới</button>
+                        <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
                     </div>
                 </form>
             </div>
         </section>
     </div>
-    @extends('admin.layouts.js')
-
     <script>
         var attributeValues = @json($attributeValues);
-
         document.addEventListener("DOMContentLoaded", function() {
             const toggleBtn = document.getElementById('toggleVariantsBtn');
             const variantsCard = document.getElementById('variantsCard');
@@ -212,23 +236,21 @@
                     let checkboxesHtml = '';
                     values.forEach(function(item) {
                         checkboxesHtml += `<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="attribute_values[${selectedKey}][]" value="${item.id}" id="attr-${selectedKey}-${item.id}">
-                    <label class="form-check-label" for="attr-${selectedKey}-${item.id}">${item.value}</label>
-                </div>`;
+                        <input class="form-check-input" type="checkbox" name="attribute_values[${selectedKey}][]" value="${item.id}" id="attr-${selectedKey}-${item.id}">
+                        <label class="form-check-label" for="attr-${selectedKey}-${item.id}">${item.value}</label>
+                    </div>`;
                     });
-
                     const attributeDiv = document.createElement("div");
                     attributeDiv.classList.add("col-12", "border", "p-3", "rounded", "position-relative");
                     attributeDiv.dataset.key = selectedKey;
 
                     attributeDiv.innerHTML = `
-                <h5 class="mb-2">${selectedText}</h5>
-                <div class="attribute-values-container">
-                    ${checkboxesHtml}
-                </div>
-                <button class="btn btn-sm btn-danger mt-2 remove-attribute">Xóa</button>
-            `;
-
+                    <h5 class="mb-2">${selectedText}</h5>
+                    <div class="attribute-values-container">
+                        ${checkboxesHtml}
+                    </div>
+                    <button class="btn btn-sm btn-danger mt-2 remove-attribute">Xóa</button>
+                `;
                     attributeContainer.appendChild(attributeDiv);
                     this.querySelector(`option[value='${selectedKey}']`).disabled = true;
                     this.value = "";
@@ -248,25 +270,20 @@
             function updateCreateVariantButton() {
                 createVariantBtn.disabled = attributeContainer.children.length === 0;
             }
-
             createVariantBtn.addEventListener("click", function() {
-                createdVariantContainer.innerHTML = ""; // Reset biến thể trước khi tạo mới
-
+                createdVariantContainer.innerHTML = "";
                 const productName = document.getElementById("name").value.trim();
                 if (!productName) {
                     alert("Vui lòng nhập tên sản phẩm trước khi tạo biến thể.");
                     return;
                 }
-
                 const attributeDivs = attributeContainer.querySelectorAll("div[data-key]");
                 if (attributeDivs.length === 0) {
                     alert("Vui lòng chọn thuộc tính và đánh dấu giá trị cần thiết.");
                     return;
                 }
-
                 let variantCombinations = [];
                 let selectedAttributes = {};
-
                 attributeDivs.forEach(function(div) {
                     const key = div.dataset.key;
                     const attributeName = div.querySelector("h5").innerText.trim();
@@ -307,36 +324,32 @@
                     let variantName =
                         `${productName}-${combination.map(attr => attr.value).join("-")}`;
                     let variantHtml = `
-                <div class="card mb-3 variant-block">
-                    <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">${variantName}</h5>
-                        <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
-                    </div>
-                    <div class="card-body d-none">
-                        <div class="mb-3">
-                            <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
-                            <label class="form-label">Barcode</label>
-                            <input type="text" class="form-control" name="variants[${variantCounter}][barcode]">
+                    <div class="card mb-3 variant-block">
+                        <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">${variantName}</h5>
+                            <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Price</label>
-                            <input type="text" class="form-control" name="variants[${variantCounter}][price]">
+                        <div class="card-body d-none">
+                            <div class="mb-3">
+                                <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
+                                <label class="form-label">Barcode</label>
+                                <input type="text" class="form-control" name="variants[${variantCounter}][barcode]">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Price</label>
+                                <input type="text" class="form-control" name="variants[${variantCounter}][price]">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Sale price</label>
+                                <input type="text" class="form-control" name="variants[${variantCounter}][sale_price]">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
+                                <img class="img-preview mt-2 d-none" width="100" height="100">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Sale price</label>
-                            <input type="text" class="form-control" name="variants[${variantCounter}][sale_price]">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Image</label>
-                            <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
-                            <img class="img-preview mt-2 d-none" width="100" height="100">
-                        </div>
-                    </div>
-                </div>`;
+                    </div>`;
                     createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
                 });
             });
@@ -368,8 +381,6 @@
                         "d-none");
                 }
             });
-
-            // Image preview script
             document.getElementById("imageInput").addEventListener("change", function(event) {
                 const previewContainer = document.getElementById("previewContainer");
                 previewContainer.innerHTML = "";
