@@ -52,9 +52,6 @@
                                     <a href="{{ route('admin.product.product_attribute.index', $product->id) }}"
                                         class="btn btn-success">
                                         danh sách biến thể sản phẩm</a>
-                                    <a href="{{ route('admin.product.product_attribute.create', $product->id) }}"
-                                        class="btn btn-primary">
-                                        Thêm biến thể sản phẩm</a>
                                 </div>
                             </div>
 
