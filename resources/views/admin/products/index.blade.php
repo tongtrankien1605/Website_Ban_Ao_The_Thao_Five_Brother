@@ -65,7 +65,7 @@
                                     Category</th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
                                     aria-label="Engine version: activate to sort column ascending">
-                                    Image
+                                    Status
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
                                     aria-label="CSS grade: activate to sort column ascending">Hành
@@ -82,8 +82,11 @@
                                     <td>{{ $product->product_brand }}</td>
                                     <td>{{ $product->product_category }}</td>
                                     <td>
-                                        <img src="{{ Storage::url($product->product_image) }}" width="100px"
-                                            alt="">
+                                        @if ($product->status)
+                                            <span class="badge bg-success">active</span>
+                                        @else
+                                            <span class="badge bg-danger">dieactive</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-warning">
@@ -94,14 +97,6 @@
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.product.destroy', $product->id) }}" method="POST"
-                                            onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i
-                                                    class="bi bi-trash"></i></button>
-                                        </form>
                                         <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-info"><i
                                                 class="bi bi-eye"></i></a>
                                     </td>

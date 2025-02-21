@@ -50,6 +50,7 @@ class ProductController extends Controller
     public function create()
     {
         $attributes = ProductAtribute::get()->pluck('name', 'id');
+        // dd($attributes);
         $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attributes->keys())
             ->get()
             ->groupBy('product_attribute_id');
@@ -89,13 +90,13 @@ class ProductController extends Controller
             if (!empty($request->variants)) {
                 $skues = [];
                 foreach ($request->variants as $variant) {
-                    $skuImages = $image->store('public/productsVariants');
+                    $skuImages = $variant['image']->store('public/productsVariants');
                     $skues[] = [
                         'product_id' => $product->id,
                         'name' => $variant['name'],
                         'price' => $variant['price'],
                         'sale_price' => $variant['sale_price'],
-                        'barcode' => $variant['barcode'],
+                        'barcode' => $product->id . $variant['barcode'],
                         'image' => str_replace('public/', '', $skuImages),
                     ];
                 }
@@ -106,6 +107,7 @@ class ProductController extends Controller
                 'status_succeed' => 'Thêm sản phẩm thành công.'
             ]);
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
         }
     }
@@ -144,38 +146,117 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         try {
-            // Nếu có file ảnh mới thì xóa ảnh cũ và lưu ảnh mới
-            if ($request->hasFile('image')) {
-                // Xóa ảnh cũ nếu có
-                if ($product->image && Storage::exists('public/' . $product->image)) {
-                    Storage::delete('public/' . $product->image);
-                }
 
-                // Lưu ảnh mới
-                $imagePath = $request->file('image')->store('products', 'public');
-                $data['image'] = $imagePath;
-            } else {
-                // Không có ảnh mới thì giữ nguyên ảnh cũ
-                $data['image'] = $product->image;
+            DB::beginTransaction();
+
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->id_category = $request->id_category;
+            $product->id_brand = $request->id_brand;
+            $product->status = 1;
+            $product->save();
+            $productImages = ProductImage::where('id_product', $product->id)->get();
+
+            if ($productImages) {
+                foreach ($productImages as $productImage) {
+                    Storage::delete('public/' . $productImage->image_url);
+                }
+                ProductImage::where('id_product', $product->id)->delete();
+            }
+            if ($request->images) {
+                $productImages = [];
+                foreach ($request->images as $image) {
+                    $productImagePath = $image->store('public/products');
+                    $productImages[] = [
+                        'id_product' => $product->id,
+                        'image_url' => str_replace('public/', '', $productImagePath),
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ];
+                }
+                ProductImage::insert($productImages);
+            }
+            $existingBarcodes = Skus::where('product_id', $product->id)->pluck('barcode')->toArray();
+            $skusToInsert = [];
+            $skusToUpdate = [];
+
+            if (!empty($request->variants)) {
+                foreach ($request->variants as $variant) {
+                    if (!isset($variant['barcode'])) continue;
+                    if (in_array($variant['barcode'], $existingBarcodes)) {
+                        // Cập nhật biến thể cũ
+                        $skusToUpdate[] = [
+                            'barcode' => $variant['barcode'],
+                            'name' => $variant['name'],
+                            'price' => $variant['price'],
+                            'sale_price' => $variant['sale_price'],
+                            'updated_at' => Carbon::now(),
+                        ];
+
+                        // Nếu có ảnh mới, cập nhật ảnh
+                        if (isset($variant['image']) && $variant['image']->isValid()) {
+                            $skuImagePath = $variant['image']->store('public/productsVariants');
+                            Skus::where('barcode', $variant['barcode'])->update([
+                                'image' => str_replace('public/', '', $skuImagePath)
+                            ]);
+                        }
+                    } else {
+                        // Thêm biến thể mới
+                        $skuImagePath = isset($variant['image']) && $variant['image']->isValid()
+                            ? str_replace('public/', '', $variant['image']->store('public/productsVariants'))
+                            : null;
+
+                        $skusToInsert[] = [
+                            'product_id' => $product->id,
+                            'name' => $variant['name'],
+                            'price' => $variant['price'],
+                            'sale_price' => $variant['sale_price'],
+                            'barcode' => $variant['barcode'],
+                            'image' => $skuImagePath,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ];
+                    }
+                }
             }
 
-            // Cập nhật sản phẩm
-            $product->update($data);
+            // Cập nhật biến thể cũ
+            foreach ($skusToUpdate as $skuData) {
+                Skus::where('barcode', $skuData['barcode'])->update([
+                    'name' => $skuData['name'],
+                    'price' => $skuData['price'],
+                    'sale_price' => $skuData['sale_price'],
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
+
+            // Thêm biến thể mới nếu có
+            if (!empty($skusToInsert)) {
+                Skus::insert($skusToInsert);
+            }
+
+            // Xóa các biến thể không có trong request (tức là bị xóa trên giao diện)
+            $requestBarcodes = array_column($request->variants, 'barcode');
+            Skus::where('product_id', $product->id)
+                ->whereNotIn('barcode', $requestBarcodes)
+                ->update(['status' => 0]);
+
+            DB::commit();
 
             return redirect()->route('admin.product.index')->with('message', 'Sửa sản phẩm thành công!');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            DB::rollBack();
+            dd($e);
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Product $product)
     {
-        //
-        $product->delete();
+        $product->update(['status' => 0]);
+        Skus::where('product_id', $product->id)->update(['status' => 0]);
         return redirect()->route('admin.product.index');
     }
 }

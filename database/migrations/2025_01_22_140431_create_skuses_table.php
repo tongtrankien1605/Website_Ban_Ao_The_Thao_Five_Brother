@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('price');
             $table->integer('sale_price');
             $table->string('image')->nullable();
-            $table->bigInteger('barcode')->unique()->comment('Mã vạch sản phẩm');
+            $table->string('barcode')->unique()->comment('Mã vạch sản phẩm');
+            $table->boolean('status')->default(1)->comment('Trạng thái sản phẩm');
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

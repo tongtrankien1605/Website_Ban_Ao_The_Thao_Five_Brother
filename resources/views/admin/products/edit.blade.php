@@ -16,7 +16,7 @@
         </section>
         <section class="content">
             <div class="container-fluid">
-                <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.product.update', $product) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">
@@ -84,7 +84,7 @@
                                                         <label class="form-label">Barcode</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[{{ $sku->id }}][barcode]"
-                                                            value="{{ $sku->barcode }}">
+                                                            value="{{ $sku->barcode }}" readonly>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
@@ -270,36 +270,43 @@
             function updateCreateVariantButton() {
                 createVariantBtn.disabled = attributeContainer.children.length === 0;
             }
+
+            function removeVietnameseTones(str) {
+                return str.normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu
+                    .replace(/đ/g, "D").replace(/Đ/g, "D") // Thay đ/Đ bằng D
+                    .toUpperCase() // Viết hoa
+                    .replace(/\s+/g, ""); // Xóa khoảng trắng
+            }
+
             createVariantBtn.addEventListener("click", function() {
                 createdVariantContainer.innerHTML = "";
                 const productName = document.getElementById("name").value.trim();
+
                 if (!productName) {
                     alert("Vui lòng nhập tên sản phẩm trước khi tạo biến thể.");
                     return;
                 }
+
                 const attributeDivs = attributeContainer.querySelectorAll("div[data-key]");
                 if (attributeDivs.length === 0) {
                     alert("Vui lòng chọn thuộc tính và đánh dấu giá trị cần thiết.");
                     return;
                 }
+
                 let variantCombinations = [];
-                let selectedAttributes = {};
                 attributeDivs.forEach(function(div) {
-                    const key = div.dataset.key;
-                    const attributeName = div.querySelector("h5").innerText.trim();
                     const checkedBoxes = div.querySelectorAll("input[type='checkbox']:checked");
                     let values = [];
                     checkedBoxes.forEach(function(checkbox) {
                         values.push({
                             id: checkbox.value,
-                            value: checkbox.nextElementSibling.innerText
+                            value: checkbox.nextElementSibling.innerText,
+                            formattedValue: removeVietnameseTones(checkbox
+                                .nextElementSibling.innerText)
                         });
                     });
                     if (values.length > 0) {
-                        selectedAttributes[key] = {
-                            name: attributeName,
-                            values: values
-                        };
                         variantCombinations.push(values);
                     }
                 });
@@ -321,35 +328,33 @@
 
                 combinations.forEach((combination, i) => {
                     variantCounter++;
+                    let barcode = combination.map(attr => attr.formattedValue).join(
+                        ""); // Chỉ có giá trị thuộc tính
                     let variantName =
-                        `${productName}-${combination.map(attr => attr.value).join("-")}`;
+                        `${productName} - ${combination.map(attr => attr.value).join(" ")}`; // Giữ nguyên tên sản phẩm
+
                     let variantHtml = `
-                    <div class="card mb-3 variant-block">
-                        <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">${variantName}</h5>
-                            <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
-                        </div>
-                        <div class="card-body d-none">
-                            <div class="mb-3">
-                                <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
-                                <label class="form-label">Barcode</label>
-                                <input type="text" class="form-control" name="variants[${variantCounter}][barcode]">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Price</label>
-                                <input type="text" class="form-control" name="variants[${variantCounter}][price]">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Sale price</label>
-                                <input type="text" class="form-control" name="variants[${variantCounter}][sale_price]">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Image</label>
-                                <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
-                                <img class="img-preview mt-2 d-none" width="100" height="100">
-                            </div>
-                        </div>
-                    </div>`;
+        <div class="card mb-3 variant-block">
+            <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">${variantName}</h5>
+                <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
+            </div>
+            <div class="card-body d-none">
+                <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
+                <label class="form-label">Barcode</label>
+                <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
+
+                <label class="form-label">Price</label>
+                <input type="number" class="form-control" name="variants[${variantCounter}][price]">
+
+                <label class="form-label">Sale price</label>
+                <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
+
+                <label class="form-label">Image</label>
+                <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
+                <img class="img-preview mt-2 d-none" width="100" height="100">
+            </div>
+        </div>`;
                     createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
                 });
             });

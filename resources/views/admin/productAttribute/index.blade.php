@@ -26,7 +26,7 @@
                                                             aria-controls="example1" rowspan="1" colspan="1"
                                                             aria-sort="ascending"
                                                             aria-label="Rendering engine: activate to sort column descending">
-                                                            Tên sản phẩm
+                                                            Ảnh biến thể
                                                         </th>
                                                         <th class="sorting sorting_asc" tabindex="0"
                                                             aria-controls="example1" rowspan="1" colspan="1"
@@ -42,12 +42,12 @@
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
                                                             aria-label="Engine version: activate to sort column ascending">
-                                                            số lượng
+                                                            Sale price
                                                         </th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
                                                             aria-label="Engine version: activate to sort column ascending">
-                                                            Barcode
+                                                            Status
                                                         </th>
                                                         <th class="sorting" tabindex="0" aria-controls="example1"
                                                             rowspan="1" colspan="1"
@@ -58,13 +58,19 @@
                                                 <tbody>
                                                     @foreach ($skuses as $skus)
                                                         <tr>
-                                                            <td class="dtr-control sorting_1" tabindex="0">
-                                                                {{ $product->name }}</td>
+                                                            <td> <img src="{{ Storage::url($skus->image) }}" width="100px"
+                                                                    alt=""></td>
                                                             <td class="dtr-control sorting_1" tabindex="0">
                                                                 {{ $skus->name }}</td>
                                                             <td>{{ $skus->price }}</td>
-                                                            <td> <img src="{{ Storage::url($skus->image) }}"
-                                                                    width="100px" alt=""></td>
+                                                            <td>{{ $skus->sale_price }}</td>
+                                                            <td>
+                                                                @if ($skus->status)
+                                                                    <span class="badge bg-success">active</span>
+                                                                @else
+                                                                    <span class="badge bg-danger">dieactive</span>
+                                                                @endif
+                                                            </td>
                                                             <td
                                                                 class=" d-flex justify-content-around align-items-center text-nowrap">
                                                                 <a class="btn btn-success btn-sm"
@@ -73,13 +79,13 @@
                                                                     href="{{ route('admin.product.product_attribute.edit', ['product' => $product->id, 'product_attribute' => $skus->id]) }}"
                                                                     role="button">Sửa</a>
                                                                 <form
-                                                                    action="{{ route('admin.product.product_attribute.show', ['product' => $product->id, 'product_attribute' => $skus->id]) }}"
+                                                                    action="{{ route('admin.product.product_attribute.changeActive', ['product' => $product->id, 'product_attribute' => $skus->id]) }}"
                                                                     method="post">
-                                                                    @method('DELETE')
+                                                                    @method('put')
                                                                     @csrf
                                                                     <button type="submit"
                                                                         onclick="return confirm('Bạn sẽ xóa biến thể sản phẩm')"
-                                                                        class="btn btn-danger btn-sm">Xóa
+                                                                        class="btn btn-danger btn-sm">change status
                                                                     </button>
                                                                 </form>
                                                             </td>
