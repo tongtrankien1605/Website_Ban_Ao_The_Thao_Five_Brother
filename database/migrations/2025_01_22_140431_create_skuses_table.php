@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('quantity');
             $table->integer('price');
+            $table->integer('sale_price');
             $table->bigInteger('barcode')->unique()->comment('Mã vạch sản phẩm');
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->timestamps();

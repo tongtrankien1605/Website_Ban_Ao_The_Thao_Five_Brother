@@ -15,6 +15,7 @@ class Skus extends Model
         'name',
         'quantity',
         'price',
+        'sale_price',
         'barcode',
     ];
 

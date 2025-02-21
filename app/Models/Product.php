@@ -17,8 +17,6 @@ class Product extends Model
         'name',
         'description',
         'id_category',
-        'image',
-        'price',
     ];
 
     public function serializeDate($date)
@@ -40,11 +38,6 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
-    public function product_atribute_values()
-    {
-        return $this->hasMany(ProductAtributeValue::class);
-    }
-
     public function skuses()
     {
         return $this->hasMany(Skus::class);
