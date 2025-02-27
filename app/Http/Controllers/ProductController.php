@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\Skus;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,16 +14,17 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = Product::latest('id')->paginate(8);
+        $data = Skus::where('status',1)->latest('updated_at')->paginate(8);
         // dd($data);
         return view('client.shop', compact('data'));
     }
     public function indexMain()
     {
-        $products = Product::latest('id')->limit(8)->get();
+        $products = Product::where('status', 1)->latest('updated_at')->limit(8)->get();
+        // dd($products->toArray());
         $posts = Post::latest('published_at')->limit(2)->get();
         //  dd($data);
-        return view('client.index', compact(['products','posts']));
+        return view('client.index', compact(['products', 'posts']));
     }
 
     /**

@@ -20,15 +20,35 @@ class ProductAtributeRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
+        $id = $this->product_attribute;
         return [
-            'attributes.*.name' => [
+            'name' => [
                 'required',
                 'max:255',
+                Rule::unique('product_atributes', 'name')->ignore($id),
             ],
-            'attributes.*.values' => ['required', 'array', 'min:1'],
-            'attributes.*.values.*' => ['required', 'string', 'max:255'],
+            'values' => 'required|array|min:1',
+            'values.*' => 'required|max:255'
+        ];
+    }
+
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Tên thuộc tính không được để trống.',
+            'name.string' => 'Tên thuộc tính phải là chuỗi.',
+            'name.max' => 'Tên thuộc tính không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên thuộc tính đã tồn tại.',
+            'values.required' => 'Danh sách giá trị không được để trống.',
+            'values.array' => 'Danh sách giá trị phải là một mảng.',
+            'values.min' => 'Phải có ít nhất một giá trị.',
+            'values.*.required' => 'Giá trị không được để trống.',
+            'values.*.string' => 'Giá trị phải là chuỗi.',
+            'values.*.max' => 'Giá trị không được vượt quá 255 ký tự.',
+            'values.*.distinct' => 'Các giá trị không được trùng nhau.'
         ];
     }
 }

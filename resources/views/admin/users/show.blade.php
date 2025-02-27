@@ -6,15 +6,27 @@
 
 @section('content')
     <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Chi tiết người dùng</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="{{ route('admin.user.show', $user) }}">Chi tiết người
+                                    dùng</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
                         <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Chi tiết người dùng</h3>
-                            </div>
-
                             <div class="card-body">
                                 <div class="form-group">
                                     <label>Họ và tên:</label>
@@ -40,7 +52,21 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Vai trò:</label>
-                                    <p>{{ $user->role }}</p>
+                                    <p>
+                                        @switch($user->role)
+                                            @case($user->role == 1)
+                                                <span>User</span>
+                                            @break
+
+                                            @case($user->role == 2)
+                                                <span>Staff</span>
+                                            @break
+
+                                            @case($user->role == 3)
+                                                <span>Admin</span>
+                                            @break
+                                        @endswitch
+                                    </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Avatar:</label>

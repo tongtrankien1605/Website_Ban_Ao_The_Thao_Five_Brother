@@ -19,8 +19,8 @@ class SkusFactory extends Factory
         return [
             'product_id'=>rand(1,10),
             'name'=>fake()->name(),
-            'price'=>rand(100000,1000000),
-            'sale_price'=>rand(100000,1000000),
+            'price'=>rand(500001,1000000),
+            'sale_price'=>rand(100000,500000),
             'barcode'=>fake()->unique()->isbn13(),
         ];
     }

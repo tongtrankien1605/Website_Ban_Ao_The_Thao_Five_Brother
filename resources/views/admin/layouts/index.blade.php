@@ -8,7 +8,11 @@
 
     @include('admin.layouts.css')
 
-    
+    <style>
+        body{
+            height: 1000px !important;
+        }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini layouts-fixed">
