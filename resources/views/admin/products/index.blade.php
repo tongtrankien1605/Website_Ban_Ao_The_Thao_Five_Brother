@@ -51,44 +51,63 @@
                     <table class="table table-head-fixed text-nowrap">
                         <thead>
                             <tr>
-                                <th>STT</th>
-                                <th class="sorting sorting_asc" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-sort="ascending"
+                                <th class="sorting sorting_asc text-center" tabindex="0" aria-controls="example1"
+                                    rowspan="1" colspan="1" aria-sort="ascending"
                                     aria-label="Rendering engine: activate to sort column descending">
-                                    Tên sản phẩm
+                                    Thông tin sản phẩm
                                 </th>
-                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                    aria-label="Browser: activate to sort column ascending">Brand
+                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
+                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
+                                    Ảnh đại diện
                                 </th>
-                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                    aria-label="Platform(s): activate to sort column ascending">
-                                    Category</th>
-                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                    aria-label="Engine version: activate to sort column ascending">
+                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
+                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
+                                    Số lượng biến thể
+                                </th>
+                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
+                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
+                                    Ngày tạo
+                                </th>
+                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
+                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
                                     Status
                                 </th>
-                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
-                                    aria-label="CSS grade: activate to sort column ascending">Hành
+                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
+                                    colspan="1" aria-label="CSS grade: activate to sort column ascending" width="100px">
+                                    Hành
                                     động</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($products as $product)
                                 <tr>
-                                    <td>{{ $product->id }}</td>
                                     <td class="dtr-control sorting_1" tabindex="0">
-                                        {{ $product->name }}
+                                        <ul>
+                                            <li><strong>Tên sản phẩm: </strong>{{ $product->name }}
+                                            </li>
+                                            <li><strong>Brand:
+                                                </strong>{{ $product->product_brand }}</li>
+                                            <li><strong>Category:
+                                                </strong>{{ $product->product_category }}</li>
+                                        </ul>
                                     </td>
-                                    <td>{{ $product->product_brand }}</td>
-                                    <td>{{ $product->product_category }}</td>
-                                    <td>
+                                    <td class="text-center">
+                                        <img src="{{ Storage::url($product->image) }}" width="100px" alt="">
+                                    </td>
+                                    <td class=" text-center">
+                                        {{ $product->count_variant }}
+                                    </td>
+                                    <td class=" text-center">
+                                        {{ $product->created_at }}
+                                    </td>
+                                    <td class=" text-center">
                                         @if ($product->status)
                                             <span class="badge bg-success">active</span>
                                         @else
-                                            <span class="badge bg-danger">dieactive</span>
+                                            <span class="badge bg-danger">deactive</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-warning">
                                             <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                                 stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em"
@@ -99,6 +118,15 @@
                                         </a>
                                         <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-info"><i
                                                 class="bi bi-eye"></i></a>
+                                        <form action="{{ route('admin.product.change_status', $product->id) }}"
+                                            method="post"
+                                            onsubmit="return confirm('Bạn có chắc muốn disable sản phẩm này?')"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-primary"><i
+                                                    class="fa-solid fa-repeat"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
