@@ -1,5 +1,6 @@
 @extends('client.layouts.master')
 @section('content')
+
     <!-- Hero Section Start -->
     <div class="hero-section section">
 
@@ -111,12 +112,16 @@
                             <div class="product-inner">
 
                                 <div class="image">
-                                    <img src="{{$product->image}}" alt="Image">
+                                    @foreach ($image as $productImage)
+                                    @if ($product->id == $productImage->id_product && $productImage->is_default == 1)
+                                    <img src="{{ Storage::url($productImage->image_url) }}" alt="">
+                                    @endif
+                                    @endforeach 
 
                                     <div class="image-overlay">
                                         <div class="action-buttons">
-                                            <button>add to cart</button>
-                                            <button>add to wishlist</button>
+                                            <button class="add_to_cart" data-url="{{route('add.cart',['id' => $product->id])}}">Add to cart</button>
+                                            <button>Add to wishlist</button>
                                         </div>
                                     </div>
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\Skus;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -14,15 +16,18 @@ class ProductController extends Controller
     public function index()
     {
         $data = Product::latest('id')->paginate(8);
+        $image = ProductImage::all();
         // dd($data);
-        return view('client.shop', compact('data'));
+        return view('client.shop', compact('data','image'));
     }
     public function indexMain()
     {
         $products = Product::latest('id')->limit(8)->get();
         $posts = Post::latest('published_at')->limit(2)->get();
+        $image = ProductImage::all();
+
         //  dd($data);
-        return view('client.index', compact(['products','posts']));
+        return view('client.index', compact(['products','posts','image']));
     }
 
     /**
@@ -47,7 +52,10 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         // dd($product->id);
-        return view('client.single-product', compact('product'));
+        $skus = Skus::whereNull('deleted_at')->where('product_id', $product->id)->first();
+        dd($skus);
+
+        return view('client.single-product', compact('product','skus'));
     }
 
     /**

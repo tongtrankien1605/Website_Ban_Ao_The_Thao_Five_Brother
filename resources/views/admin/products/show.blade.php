@@ -51,7 +51,7 @@
                                     <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Quay lại</a>
                                     <a href="{{ route('admin.product.product_attribute.index', $product->id) }}"
                                         class="btn btn-success">
-                                        danh sách biến thể sản phẩm</a>
+                                        Danh sách biến thể sản phẩm</a>
                                 </div>
                             </div>
 

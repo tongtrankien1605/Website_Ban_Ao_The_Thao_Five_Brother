@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="header-mini-cart">
-                        <a href="{{ route('cart') }}"><img src="/client/assets/images/icons/cart.png" alt="Cart">
+                        <a href="{{ route('show.cart') }}"><img src="/client/assets/images/icons/cart.png" alt="Cart">
                             <span>02($250)</span></a>
                     </div>
 
@@ -52,7 +52,7 @@
                             <li><a href="{{ route('product.index') }}">SHOP</a></li>
                             <li><a href="#">PAGES</a>
                                 <ul class="sub-menu">
-                                    <li><a href="{{ route('cart') }}">Cart</a></li>
+                                    <li><a href="{{ route('show.cart') }}">Cart</a></li>
                                     <li><a href="{{ route('checkout') }}">Checkout</a></li>
                                     {{-- <li><a href="{{ route('login-register') }}">Login & Register</a></li> --}}
                                     <li><a href="{{ route('login') }}">Login</a></li>
