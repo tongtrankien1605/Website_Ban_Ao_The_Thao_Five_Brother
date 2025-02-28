@@ -17,17 +17,20 @@ class ProductController extends Controller
     {
         $data = Product::latest('id')->paginate(8);
         $image = ProductImage::all();
+        $data = Skus::where('status',1)->latest('updated_at')->paginate(8);
         // dd($data);
         return view('client.shop', compact('data','image'));
     }
     public function indexMain()
     {
-        $products = Product::latest('id')->limit(8)->get();
+        $products = Product::where('status', 1)->latest('updated_at')->limit(8)->get();
+        // dd($products->toArray());
         $posts = Post::latest('published_at')->limit(2)->get();
         $image = ProductImage::all();
 
         //  dd($data);
         return view('client.index', compact(['products','posts','image']));
+        return view('client.index', compact(['products', 'posts']));
     }
 
     /**

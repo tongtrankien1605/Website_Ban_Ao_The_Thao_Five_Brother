@@ -34,12 +34,26 @@
 
                                     <div class="form-group">
                                         <label for="description" class="form-label">Mô tả sản phẩm</label>
-                                        <textarea name="description" class="form-control" rows="5">{{ old('description', $product->description) }}</textarea>
+                                        <textarea name="description" class="form-control" rows="5" id="summernote">{{ old('description', $product->description) }}</textarea>
                                         @error('description')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
+                                    <div class="form-group">
+                                        <label for="image">Ảnh đại diện</label>
+                                        <div class="input-group">
+                                            <div class="input-group">
+                                                @if ($product->image)
+                                                    <img src="{{ Storage::url($product->image) }}" alt=""
+                                                        width="100px">
+                                                @endif
+                                            </div>
+                                            <input type="file" class="form-control" id="pwd" name="image">
+                                            @error('image')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <h4 class="mb-3">Upload Images</h4>
                                     <div id="existingImages" class="d-flex flex-wrap gap-2 mt-3">
                                         @if ($productImages)
@@ -91,12 +105,18 @@
                                                         <input type="text" class="form-control"
                                                             name="variants[{{ $sku->id }}][price]"
                                                             value="{{ $sku->price }}">
+                                                        @error('variants[{{ $sku->id }}][price]')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Sale price</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[{{ $sku->id }}][sale_price]"
                                                             value="{{ $sku->sale_price }}">
+                                                        @error('variants[{{ $sku->id }}][sale_price]')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Image</label>
@@ -106,9 +126,12 @@
                                                                     <img src="{{ Storage::url($sku->image) }}"
                                                                         alt="" width="200px">
                                                                 @endif
-                                                                <input type="file" class="" id="image"
-                                                                    name="image">
                                                             </div>
+                                                            <input type="file" class="form-control" id="image"
+                                                                name="variants[{{ $sku->id }}][image]">
+                                                            @error('variants[{{ $sku->id }}][image]')
+                                                                <div class="text-danger">{{ $message }}</div>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                 </div>
@@ -202,8 +225,8 @@
                     </div>
                     <br>
                     <div class="text-center">
-                        <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Quay lại</a>
-                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        <a href="{{ route('admin.product.index') }}" class="btn btn-danger my-2">Quay lại</a>
+                        <button type="submit" class="btn btn-primary my-2">Cập nhật</button>
                     </div>
                 </form>
             </div>
@@ -271,14 +294,6 @@
                 createVariantBtn.disabled = attributeContainer.children.length === 0;
             }
 
-            function removeVietnameseTones(str) {
-                return str.normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu
-                    .replace(/đ/g, "D").replace(/Đ/g, "D") // Thay đ/Đ bằng D
-                    .toUpperCase() // Viết hoa
-                    .replace(/\s+/g, ""); // Xóa khoảng trắng
-            }
-
             createVariantBtn.addEventListener("click", function() {
                 createdVariantContainer.innerHTML = "";
                 const productName = document.getElementById("name").value.trim();
@@ -288,11 +303,14 @@
                     return;
                 }
 
-                const attributeDivs = attributeContainer.querySelectorAll("div[data-key]");
+                const attributeDivs = Array.from(attributeContainer.querySelectorAll("div[data-key]"));
                 if (attributeDivs.length === 0) {
                     alert("Vui lòng chọn thuộc tính và đánh dấu giá trị cần thiết.");
                     return;
                 }
+
+                // Sắp xếp các attributeDivs theo id tăng dần
+                attributeDivs.sort((a, b) => parseInt(a.dataset.key) - parseInt(b.dataset.key));
 
                 let variantCombinations = [];
                 attributeDivs.forEach(function(div) {
@@ -301,9 +319,7 @@
                     checkedBoxes.forEach(function(checkbox) {
                         values.push({
                             id: checkbox.value,
-                            value: checkbox.nextElementSibling.innerText,
-                            formattedValue: removeVietnameseTones(checkbox
-                                .nextElementSibling.innerText)
+                            value: checkbox.nextElementSibling.innerText
                         });
                     });
                     if (values.length > 0) {
@@ -328,36 +344,45 @@
 
                 combinations.forEach((combination, i) => {
                     variantCounter++;
-                    let barcode = combination.map(attr => attr.formattedValue).join(
-                        ""); // Chỉ có giá trị thuộc tính
+                    combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                    let barcode = combination.map(attr => attr.id).join(
+                        "");
                     let variantName =
-                        `${productName} - ${combination.map(attr => attr.value).join(" ")}`; // Giữ nguyên tên sản phẩm
+                        `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
 
                     let variantHtml = `
-        <div class="card mb-3 variant-block">
-            <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">${variantName}</h5>
-                <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
-            </div>
-            <div class="card-body d-none">
-                <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
-                <label class="form-label">Barcode</label>
-                <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
+                    <div class="card mb-3 variant-block">
+                        <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">${variantName}</h5>
+                            <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
+                        </div>
+                        <div class="card-body d-none">
+                            <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
 
-                <label class="form-label">Price</label>
-                <input type="number" class="form-control" name="variants[${variantCounter}][price]">
+                            <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
-                <label class="form-label">Sale price</label>
-                <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
-
-                <label class="form-label">Image</label>
-                <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
-                <img class="img-preview mt-2 d-none" width="100" height="100">
-            </div>
-        </div>`;
+                            <label class="form-label">Price</label>
+                            <input type="number" class="form-control" name="variants[${variantCounter}][price]">
+                                @error('variants[${variantCounter}][price]')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            <label class="form-label">Sale price</label>
+                            <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
+                                @error('variants[${variantCounter}][sale_price]')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            <label class="form-label">Image</label>
+                            <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
+                                @error('variants[${variantCounter}][image]')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            <img class="img-preview mt-2 d-none" width="100" height="100">
+                        </div>
+                    </div>`;
                     createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
                 });
             });
+
 
             document.addEventListener("change", function(e) {
                 if (e.target && e.target.classList.contains("variant-image")) {
@@ -419,9 +444,11 @@
             });
         });
     </script>
+
 @endsection
 <style>
-    .content-wrapper {
+    .content-wrapper,
+    .main-sidebar {
         min-height: fit-content !important;
     }
 

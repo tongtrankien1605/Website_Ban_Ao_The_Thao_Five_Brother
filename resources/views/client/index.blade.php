@@ -607,20 +607,22 @@
                             <div class="col-12 mb-40">
                                 <div class="blog-item">
                                     <div class="image-wrap">
-                                        <h4 class="date">{{$post->published_month}}<span>{{$post->published_day}}</span></h4>
+                                        <h4 class="date">
+                                            {{ $post->published_month }}<span>{{ $post->published_day }}</span></h4>
                                         <a class="image" href="{{ route('post.show', $post) }}"><img
                                                 src="/client/assets/images/blog/blog-1.jpg" alt="Image"></a>
                                     </div>
                                     <div class="content">
-                                        <h4 class="title"><a href="{{ route('post.show', $post) }}">{{$post->title}}</a>
+                                        <h4 class="title"><a
+                                                href="{{ route('post.show', $post) }}">{{ $post->title }}</a>
                                         </h4>
                                         <div class="desc">
-                                            <p>{{$post->short_description}}</p>
+                                            <p>{{ $post->short_description }}</p>
                                         </div>
                                         <ul class="meta">
                                             <li>
                                                 <a href="#"><img src="/client/assets/images/blog/blog-author-1.jpg"
-                                                        alt="Blog Author">{{$post->author}}</a>
+                                                        alt="Blog Author">{{ $post->author }}</a>
                                             </li>
                                             <li><a href="#">25 Likes</a></li>
                                             <li><a href="#">05 Views</a></li>

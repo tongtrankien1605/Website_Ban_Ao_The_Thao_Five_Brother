@@ -4,51 +4,73 @@
 @endsection
 @section('content')
     <div class="content-wrapper">
-        <!-- /.content-header -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Thêm thuộc tính</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="{{ route('admin.product_attribute.create') }}">Thêm
+                                    thuộc tính</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        <!-- general form elements -->
                         <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Thêm biến thể sản phẩm: {{ $item->name }}</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <!-- form start -->
-                            <form action="{{ route('admin.product.product_attribute.store', $product) }}" method="POST">
+                            <form action="{{ route('admin.product_attribute.store') }}" method="POST">
                                 @csrf
                                 <div class="card-body">
                                     <div id="attributes-container">
                                         <div class="attribute-group mb-3">
-                                            <label class="form-label">Tên thuộc tính</label>
-                                            <input type="text" name="attributes[0][name]" class="form-control">
-                                            @error('attributes.*.name')
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <label class="form-label mb-0">Tên thuộc tính</label>
+                                            </div>
+                                            <input type="text" name="name" class="form-control"
+                                                value="{{ old('name') }}">
+                                            @error('name')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                             <div class="attribute-values mt-2">
-                                                <label class="form-label">Tên giá trị</label>
-                                                <div class="d-flex mb-2">
-                                                    <input type="text" name="attributes[0][values][]"
-                                                        class="form-control">
-                                                    <button type="button" class="btn btn-success ms-2"
-                                                        onclick="addValue(this)">+</button>
-
+                                                <div class="d-flex gap-2 mb-3 align-items-center">
+                                                    <label class="form-label mb-0">Tên giá trị</label>
+                                                    <button type="button" class="btn btn-outline-success ms-2 btn-sm"
+                                                        onclick="addValue(this)">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
                                                 </div>
-                                                @error('attributes.[0].values.[0]')
+                                                @php
+                                                    $oldValues = old('values', ['']);
+                                                @endphp
+
+                                                @foreach ($oldValues as $index => $value)
+                                                    <div class="d-flex mb-2">
+                                                        <input type="text" name="values[]" class="form-control"
+                                                            value="{{ $value }}">
+                                                        <button type="button" class="btn btn-danger ms-2 btn-sm"
+                                                            onclick="removeValue(this)">
+                                                            <i class="fa-solid fa-minus"></i>
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                                @error('values.*')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <button type="button" class="btn btn-secondary mt-2" onclick="addAttribute()">Thêm
-                                            thuộc tính</button>
-                                        <button type="button" class="btn btn-info mt-2" onclick="generateVariants()">Tạo
-                                            biến
-                                            thể</button>
-                                        <button type="submit" class="btn btn-primary mt-2">Lưu</button>
-
+                                        <a href="{{ route('admin.product_attribute.index') }}"
+                                            class="btn btn-danger mt-2">Quay
+                                            lại</a>
+                                        <button type="submit" class="btn btn-primary mt-2">Thêm mới</button>
                                         <div id="variants-container" class="mt-4"></div>
                                     </div>
                                 </div>
@@ -60,153 +82,29 @@
             </div>
         </section>
     </div>
+
+    <script script>
+        function addValue(button) {
+            let container = button.closest('.attribute-values');
+
+            let newInputGroup = document.createElement('div');
+            newInputGroup.classList.add('d-flex', 'mb-2');
+
+            newInputGroup.innerHTML = `
+            <input type="text" name="values[]" class="form-control">
+            <button type="button" class="btn btn-danger ms-2 btn-sm" onclick="removeValue(this)">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+        `;
+
+            container.appendChild(newInputGroup);
+        }
+
+        function removeValue(button) {
+            let container = button.closest('.attribute-values');
+            if (container.querySelectorAll('input').length > 1) {
+                button.parentElement.remove();
+            }
+        }
+    </script>
 @endsection
-<script>
-    let attributeIndex = 1;
-    let productName = "{{ $item->name }}"; // Lấy tên sản phẩm từ Blade vào JS
-
-    function addAttribute() {
-        let container = document.getElementById('attributes-container');
-        let div = document.createElement('div');
-        div.classList.add('attribute-group', 'mb-3');
-        div.innerHTML = `
-        <label class="form-label">Tên thuộc tính</label>
-        <input type="text" name="attributes[${attributeIndex}][name]" class="form-control" oninput="validateAttributes()">
-
-        <div class="attribute-values mt-2">
-            <label class="form-label">Tên giá trị</label>
-            <div class="d-flex mb-2">
-                <input type="text" name="attributes[${attributeIndex}][values][]" class="form-control" oninput="validateAttributes()">
-                <button type="button" class="btn btn-success ms-2" onclick="addValue(this)">+</button>
-            </div>
-        </div>
-
-        <button type="button" class="btn btn-danger mt-2" onclick="removeAttribute(this)">Xóa thuộc tính</button>
-    `;
-        container.appendChild(div);
-        attributeIndex++;
-        validateAttributes(); // Kiểm tra ngay sau khi thêm
-    }
-
-    function addValue(btn) {
-        let valuesContainer = btn.closest('.attribute-values');
-        let attributeGroup = btn.closest('.attribute-group');
-        let attributeIndex = [...document.querySelectorAll('.attribute-group')].indexOf(
-        attributeGroup); // Lấy chỉ số chính xác
-
-        let input = document.createElement('div');
-        input.classList.add('d-flex', 'mb-2');
-        input.innerHTML = `
-        <input type="text" name="attributes[${attributeIndex}][values][]" class="form-control" oninput="validateAttributes()">
-        <button type="button" class="btn btn-danger ms-2" onclick="removeValue(this)">-</button>
-    `;
-        valuesContainer.appendChild(input);
-    }
-
-
-    function removeValue(btn) {
-        btn.parentElement.remove();
-        validateAttributes(); // Kiểm tra lại khi xóa giá trị
-    }
-
-    function removeAttribute(btn) {
-        let attributeGroup = btn.closest('.attribute-group'); // Tìm phần tử cha có class 'attribute-group'
-        if (attributeGroup) {
-            attributeGroup.remove(); // Xóa toàn bộ nhóm thuộc tính khỏi DOM
-            validateAttributes(); // Kiểm tra lại khi xóa để cập nhật trạng thái nút
-        }
-    }
-
-    function validateAttributes() {
-        let attributes = document.querySelectorAll('.attribute-group');
-        let isValid = false;
-
-        attributes.forEach(group => {
-            let name = group.querySelector('input[type="text"]').value.trim();
-            let values = [...group.querySelectorAll('.attribute-values input[type="text"]')]
-                .map(input => input.value.trim())
-                .filter(value => value !== "");
-
-            if (name && values.length > 0) {
-                isValid = true;
-            }
-        });
-
-        let btnGenerate = document.querySelector('.btn-info'); // Nút "Tạo biến thể"
-        btnGenerate.disabled = !isValid; // Nếu không có dữ liệu hợp lệ, vô hiệu hóa nút
-    }
-
-    function generateVariants() {
-        let attributes = [];
-        document.querySelectorAll('.attribute-group').forEach(group => {
-            let name = group.querySelector('input[type="text"]').value.trim();
-            let values = [...group.querySelectorAll('.attribute-values input[type="text"]')]
-                .map(input => input.value.trim())
-                .filter(value => value !== "");
-
-            if (name && values.length > 0) {
-                attributes.push({
-                    name,
-                    values
-                });
-            }
-        });
-
-        if (attributes.length === 0) {
-            alert("Vui lòng nhập ít nhất một thuộc tính và một giá trị!");
-            return;
-        }
-
-        let variants = combineAttributes(attributes);
-        renderVariants(variants);
-    }
-
-    function combineAttributes(attributes) {
-        let result = [
-            []
-        ];
-
-        attributes.forEach(attr => {
-            let temp = [];
-            result.forEach(res => {
-                attr.values.forEach(value => {
-                    temp.push([...res, `${attr.name}: ${value}`]);
-                });
-            });
-            result = temp;
-        });
-
-        return result;
-    }
-
-    function renderVariants(variants) {
-        let container = document.getElementById('variants-container');
-        container.innerHTML = `
-        <h4>Danh sách biến thể</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Biến thể</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Barcode</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${variants.map((variant, index) => `
-                    <tr>
-                        <td>${productName} - ${variant.join(' - ')}</td>
-                        <td><input type="number" name="variants[${index}][price]" class="form-control" placeholder="Nhập nhập giá"></td>
-                        <td><input type="number" name="variants[${index}][quantity]" class="form-control" placeholder="Nhập số lượng"></td>
-                        <td><input type="text" name="variants[${index}][barcode]" class="form-control" placeholder="Nhập barcode"></td>
-                        <input type="hidden" name="variants[${index}][attributes]" value="${productName} - ${variant.join(' - ')}">
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
-    }
-
-    // Kiểm tra khi trang tải lại
-    window.onload = validateAttributes;
-</script>
