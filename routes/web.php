@@ -12,8 +12,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\SkusController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 
 /*
@@ -153,5 +155,7 @@ Route::middleware('auth')->group(function (){
     
     
     Route::get('payment', [PaymentController::class, 'index'])->name('indexPayment');
-    // Route::post('/payment/{orderId}', [PaymentController::class, 'payOrder'])->name('payOrder');
-    });
+    Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
+    // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
+
+});
