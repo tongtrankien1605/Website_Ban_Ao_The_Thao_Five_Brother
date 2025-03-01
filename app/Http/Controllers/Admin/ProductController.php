@@ -11,7 +11,6 @@ use App\Models\ProductAtribute;
 use App\Models\ProductAtributeValue;
 use App\Models\ProductImage;
 use App\Models\Skus;
-use App\Models\Variant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -78,81 +77,58 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'id_category' => 'required|integer|exists:categories,id',
-        'id_brand' => 'required|integer|exists:brands,id',
-        'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
-        'variants.*.name' => 'required|string|max:255',
-        'variants.*.price' => 'required|numeric|min:0',
-        'variants.*.sale_price' => 'nullable|numeric|min:0',
-        'variants.*.barcode' => 'required|string|unique:skuses,barcode',
-        'variants.*.image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'variants.*.attributes.*.attribute_id' => 'integer|exists:product_attributes,id',
-        'variants.*.attributes.*.attribute_value_id' => 'integer|exists:product_attribute_values,id',
-    ]);
+    public function store(ProductRequest $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    try {
-        DB::beginTransaction();
-
-
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'id_category' => $request->id_category,
-            'id_brand' => $request->id_brand
-        ]);
-
-        if ($request->has('images')) {
-            $productImages = [];
-            foreach ($request->file('images') as $image) {
-                $productImages[] = [
-                    'id_product' => $product->id,
-                    'image_url' => str_replace('public/', '', $image->store('public/products')),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-            ProductImage::insert($productImages);
-        }
-        if ($request->has('variants')) {
-            foreach ($request->variants as $variant) {
-                $skuImagePath = isset($variant['image']) ? $variant['image']->store('public/productsVariants') : null;
-
-                $sku = Skus::create([
-                    'product_id' => $product->id,
-                    'name' => $variant['name'],
-                    'price' => $variant['price'],
-                    'sale_price' => $variant['sale_price'] ?? null,
-                    'barcode' => $product->id . $variant['barcode'],
-                    'image' => $skuImagePath ? str_replace('public/', '', $skuImagePath) : null,
-                ]);
-
-
-                if (isset($variant['attributes']) && is_array($variant['attributes'])) {
-                    foreach ($variant['attributes'] as $attr) {
-                        Variant::create([
-                            'product_id' => $product->id,
-                            'id_skus' => $sku->id,
-                            'product_attribute_id' => $attr['attribute_id'],
-                            'product_attribute_value_id' => $attr['attribute_value_id']
-                        ]);
-                    }
+            $product = new Product();
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->id_category = $request->id_category;
+            $product->id_brand = $request->id_brand;
+            $productpath = $request->image->store('public/products');
+            $product->image = str_replace('public/', '', $productpath);
+            $product->save();
+            if ($request->images) {
+                $productImages = [];
+                foreach ($request->images as $image) {
+                    $productImagePath = $image->store('public/products');
+                    $productImages[] = [
+                        'id_product' => $product->id,
+                        'image_url' => str_replace('public/', '', $productImagePath),
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ];
                 }
+                ProductImage::insert($productImages);
             }
+            if (!empty($request->variants)) {
+                $skues = [];
+                foreach ($request->variants as $variant) {
+                    $skuImages = $variant['image']->store('public/productsVariants');
+                    $skues[] = [
+                        'product_id' => $product->id,
+                        'name' => $variant['name'],
+                        'price' => $variant['price'],
+                        'sale_price' => $variant['sale_price'],
+                        'barcode' => $product->id . $variant['barcode'],
+                        'image' => str_replace('public/', '', $skuImages),
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ];
+                }
+                Skus::insert($skues);
+            }
+            DB::commit();
+            return redirect()->route('admin.product.index')->with([
+                'status_succeed' => 'Thêm sản phẩm thành công.'
+            ]);
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollBack();
         }
-
-        DB::commit();
-        return redirect()->route('admin.product.index')->with('status_succeed', 'Thêm sản phẩm thành công.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()->withErrors('Lỗi: ' . $e->getMessage())->withInput();
     }
-}
-
 
     /**
      * Display the specified resource.

@@ -33,7 +33,6 @@ class ProductRequest extends FormRequest
             "id_category" => "required|integer|exists:categories,id",
             "id_brand" => "required|integer|exists:brands,id",
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-
             "variants.*.name" => "required|max:255",
             "variants.*.price" => "required|numeric|min:50000|max:99999999",
             "variants.*.sale_price" => "nullable|numeric|min:0|lt:variants.*.price",
@@ -43,6 +42,7 @@ class ProductRequest extends FormRequest
         ];
         if ($id) {
             $validate['image'] = 'image|mimes:jpeg,png,jpg,gif|max:2048';
+            $validate["variants.*.image"] = "image|mimes:jpeg,png,jpg,gif|max:2048";
         }
         return $validate;
     }
