@@ -69,6 +69,7 @@ Route::get(
 // Route::get('/login-register', function () {
 //     return view('client.login-register');
 // })->name('login-register');
+
 Route::get('/contact', function () {
     return view('client.contact');
 })->name('contact');

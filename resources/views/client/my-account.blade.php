@@ -28,6 +28,12 @@
                         <a href="#dashboad" class="active" data-bs-toggle="tab"><i class="fa fa-dashboard"></i>
                             Dashboard</a>
 
+                        @if (Auth::check() && Auth::user()->role === 3)
+                            <a href="{{ route('admin.index') }}">
+                                <i class="fa fa-user"></i> Quản Lý Admin
+                            </a>
+                        @endif
+
                         <a href="#orders" data-bs-toggle="tab"><i class="fa fa-cart-arrow-down"></i> Orders</a>
 
                         <a href="#download" data-bs-toggle="tab"><i class="fa fa-cloud-download"></i> Download</a>
@@ -37,10 +43,7 @@
 
                         <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> address</a>
 
-                        <a href="{{ route('my-account', $user->id) }}" data-bs-toggle="tab">
-                            <i class="fa fa-user"></i>
-                            Account Details
-                        </a>
+                    
 
                         <a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
@@ -56,8 +59,10 @@
                                 <h3>Dashboard</h3>
 
                                 <div class="welcome">
-                                    <p>Hello, <strong>{{ $user->name}}</strong> (If Not <strong>{{$user->name}}!</strong><a
-                                            href="login-register.html" class="logout"> Logout</a>)</p>
+                                    <p>Hello, <strong>{{ $user->name }}</strong> (If Not
+                                        <strong>{{ $user->name }}!</strong><a href="login-register.html" class="logout">
+                                            Logout</a>)
+                                    </p>
                                 </div>
 
                                 <p class="mb-0">From your account dashboard. you can easily check &amp; view your
