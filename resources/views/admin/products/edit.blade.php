@@ -102,7 +102,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
-                                                        <input type="text" class="form-control"
+                                                        <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][price]"
                                                             value="{{ $sku->price }}">
                                                         @error('variants[{{ $sku->id }}][price]')
@@ -111,7 +111,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Sale price</label>
-                                                        <input type="text" class="form-control"
+                                                        <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][sale_price]"
                                                             value="{{ $sku->sale_price }}">
                                                         @error('variants[{{ $sku->id }}][sale_price]')
@@ -150,7 +150,8 @@
                                                                 <div class="d-flex flex-wrap mb-2">
                                                                     <h5 class="mb-0 text-body-highlight me-2">Danh mục sản
                                                                         phẩm
-                                                                    </h5> <br>
+                                                                    </h5>
+                                                                    <br>
                                                                 </div>
                                                                 <select class="form-control" id="category"
                                                                     name="id_category">

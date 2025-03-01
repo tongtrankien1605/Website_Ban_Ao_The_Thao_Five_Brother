@@ -26,10 +26,6 @@ class ProductController extends Controller
         $products = Product::where('status', 1)->latest('updated_at')->limit(8)->get();
         // dd($products->toArray());
         $posts = Post::latest('published_at')->limit(2)->get();
-        $image = ProductImage::all();
-
-        //  dd($data);
-        return view('client.index', compact(['products','posts','image']));
         return view('client.index', compact(['products', 'posts']));
     }
 
