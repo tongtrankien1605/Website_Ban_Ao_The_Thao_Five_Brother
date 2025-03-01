@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\SkusController;
+use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -140,4 +144,18 @@ Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
     Route::get('/table', function () {
         return view('staff.table.index');
     })->name('table');
+});
+
+Route::middleware('auth')->group(function (){
+    Route::post('/cart/add_to_cart/{id}', [CartController::class, 'addToCart'])->name('add.cart');
+    Route::get('/cart', [CartController::class, 'index'])->name('show.cart');
+    Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity']);
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('remove.cart');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('clear.cart');
+    
+    
+    Route::get('payment', [PaymentController::class, 'index'])->name('indexPayment');
+    Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
+    // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
+
 });

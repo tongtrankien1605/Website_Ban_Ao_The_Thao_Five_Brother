@@ -34,21 +34,11 @@
                             </div>
                             <!-- Single Product Thumbnail Slider -->
                             <ul id="pro-thumb-img" class="pro-thumb-img">
-                                <li><a href="/client/assets/images/product/product-zoom-1.jpg"
-                                        data-standard="/client/assets/images/product/product-big-1.jpg"><img
-                                            src="/client/assets/images/product/product-1.jpg" alt="" /></a></li>
-                                <li><a href="/client/assets/images/product/product-zoom-2.jpg"
-                                        data-standard="/client/assets/images/product/product-big-2.jpg"><img
-                                            src="/client/assets/images/product/product-2.jpg" alt="" /></a></li>
-                                <li><a href="/client/assets/images/product/product-zoom-3.jpg"
-                                        data-standard="/client/assets/images/product/product-big-3.jpg"><img
-                                            src="/client/assets/images/product/product-3.jpg" alt="" /></a></li>
-                                <li><a href="/client/assets/images/product/product-zoom-4.jpg"
-                                        data-standard="/client/assets/images/product/product-big-4.jpg"><img
-                                            src="/client/assets/images/product/product-4.jpg" alt="" /></a></li>
-                                <li><a href="/client/assets/images/product/product-zoom-5.jpg"
-                                        data-standard="/client/assets/images/product/product-big-5.jpg"><img
-                                            src="/client/assets/images/product/product-5.jpg" alt="" /></a></li>
+                                @foreach ($skus as $sku)
+                                <li><a href="{{Storage::url($sku->image)}}"
+                                    data-standard="{{Storage::url($sku->image)}}"><img
+                                        src="{{Storage::url($sku->image)}}" alt="" /></a></li>
+                                @endforeach
                             </ul>
                         </div>
 

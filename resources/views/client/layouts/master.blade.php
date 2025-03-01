@@ -12,8 +12,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/client/assets/images/favicon.ico">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @extends('client.layouts.partials.css')
+    @extends('client.layouts.partials.js')
 
 </head>
 
@@ -48,7 +49,7 @@
         </footer>
     </div>
 
-    @extends('client.layouts.partials.js')
+  
 
 </body>
 

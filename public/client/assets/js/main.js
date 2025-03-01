@@ -442,38 +442,38 @@ $('.nice-select').niceSelect()
 /*--
 	Price Range Slider
 ------------------------*/
-$('#price-range').slider({
-   range: true,
-   min: 0,
-   max: 2000,
-   values: [ 250, 1670 ],
-   slide: function( event, ui ) {
-	$('#price-amount').val( '$' + ui.values[ 0 ] + '  -  $' + ui.values[ 1 ] );
-   }
-  });
-$('#price-amount').val( '$' + $('#price-range').slider( 'values', 0 ) +
-   '  -  $' + $('#price-range').slider('values', 1 ) ); 
+// $('#price-range').slider({
+//    range: true,
+//    min: 0,
+//    max: 2000,
+//    values: [ 250, 1670 ],
+//    slide: function( event, ui ) {
+// 	$('#price-amount').val( '$' + ui.values[ 0 ] + '  -  $' + ui.values[ 1 ] );
+//    }
+//   });
+// $('#price-amount').val( '$' + $('#price-range').slider( 'values', 0 ) +
+//    '  -  $' + $('#price-range').slider('values', 1 ) ); 
     
-/*----- 
-	Quantity
---------------------------------*/
-$('.pro-qty').prepend('<span class="dec qtybtn"><i class="ti-minus"></i></span>');
-$('.pro-qty').append('<span class="inc qtybtn"><i class="ti-plus"></i></span>');
-$('.qtybtn').on('click', function() {
-	var $button = $(this);
-	var oldValue = $button.parent().find('input').val();
-	if ($button.hasClass('inc')) {
-	  var newVal = parseFloat(oldValue) + 1;
-	} else {
-	   // Don't allow decrementing below zero
-	  if (oldValue > 0) {
-		var newVal = parseFloat(oldValue) - 1;
-		} else {
-		newVal = 0;
-	  }
-	  }
-	$button.parent().find('input').val(newVal);
-});  
+// /*----- 
+// 	Quantity
+// --------------------------------*/
+// $('.pro-qty').prepend('<span class="dec qtybtn"><i class="ti-minus"></i></span>');
+// $('.pro-qty').append('<span class="inc qtybtn"><i class="ti-plus"></i></span>');
+// $('.qtybtn').on('click', function() {
+// 	var $button = $(this);
+// 	var oldValue = $button.parent().find('input').val();
+// 	if ($button.hasClass('inc')) {
+// 	  var newVal = parseFloat(oldValue) + 1;
+// 	} else {
+// 	   // Don't allow decrementing below zero
+// 	  if (oldValue > 0) {
+// 		var newVal = parseFloat(oldValue) - 1;
+// 		} else {
+// 		newVal = 0;
+// 	  }
+// 	  }
+// 	$button.parent().find('input').val(newVal);
+// });  
     
 /*----- 
 	Shipping Form Toggle

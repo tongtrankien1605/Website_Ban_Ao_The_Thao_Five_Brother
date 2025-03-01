@@ -13,3 +13,5 @@
     <script src="/client/assets/js/plugins.js"></script>
     <!-- Main JS -->
     <script src="/client/assets/js/main.js"></script>
+
+    <script src="/client/assets/js/cart.js"></script>

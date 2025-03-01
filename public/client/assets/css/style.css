@@ -17,7 +17,7 @@
     09. Sidebar CSS
     10. Feature CSS
     11. Testimonial CSS
-    12. Blog CSS
+    12. Blog CSSpro-qty
     13. Brand CSS
     14. Login & Register CSS
     15. My Account CSS
@@ -4440,7 +4440,7 @@ img.mfp-img {
   width: 100%;
 }
 .cart-table table tbody tr td.pro-title {
-  width: 270px;
+  width: 240px;
 }
 .cart-table table tbody tr td.pro-title a {
   color: #1a161e;
@@ -4454,7 +4454,7 @@ img.mfp-img {
   color: #ff708a;
 }
 .cart-table table tbody tr td.pro-price {
-  width: 130px;
+  width: 180px;
 }
 .cart-table table tbody tr td.pro-price .amount {
   font-family: "Dosis", sans-serif;
@@ -4499,7 +4499,7 @@ img.mfp-img {
   text-align: center;
 }
 .cart-table table tbody tr td.pro-subtotal {
-  width: 120px;
+  width: 180px;
   font-family: "Dosis", sans-serif;
   font-size: 24px;
   color: #ff708a;
@@ -4650,7 +4650,7 @@ img.mfp-img {
 .cart-total table tr.order-total td {
   font-size: 20px;
   padding: 0;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 .cart-total .proceed-to-checkout a {
   background-color: #1a161e;

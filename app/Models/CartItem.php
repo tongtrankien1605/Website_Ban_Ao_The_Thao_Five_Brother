@@ -15,6 +15,7 @@ class CartItem extends Model
         'id_cart',
         'id_product_variant',
         'quantity',
+        'id_user',
         'price',
     ];
     public function serializeDate($date)
@@ -23,11 +24,11 @@ class CartItem extends Model
     }
     public function carts()
     {
-        return $this->belongsTo(Cart::class);
+        return $this->belongsTo(Cart::class,'id_cart');
     }
 
     public function skuses()
     {
-        return $this->belongsTo(Skus::class);
+        return $this->belongsTo(Skus::class,'id_product_variant');
     }
 }

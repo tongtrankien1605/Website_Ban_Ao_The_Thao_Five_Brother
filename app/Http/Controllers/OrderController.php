@@ -1,65 +1,49 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Cart;
+use App\Models\CartItem;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function placeOrder(Request $request)
     {
-        //
-    }
+        $cart = Cart::firstOrCreate(['id_user' => Auth::id()]);
+        $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
+        $total = 0;
+        foreach ($cartItem as $item) {
+            $total += $item->price * $item->quantity;
+        }
+        // dd($request->all(),$total);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // dd($cartItem->toArray());
+        $order = Order::create([
+            'id_user' => Auth::id(),
+            'id_address' => $request->address_id,
+            'phone_number' => $request->phone_number,
+            'id_shipping_method' => $request->shipping_id,
+            'id_payment_method' => $request->payment_method,
+            'total_amount' => $total,
+            'id_order_status' => 1, // Đơn hàng mới
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
-    {
-        //
-    }
+        foreach ($cartItem as $item) {
+            OrderDetail::create([
+                'id_order' => $order->id,
+                'id_product_variant' => $item->id_product_variant,
+                'quantity' => $item->quantity,
+                'unit_price' => $item->skuses->price,
+                'total_price' => $item->quantity * $item->skuses->price,
+            ]);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
+        $cart->delete(); // Xóa giỏ hàng sau khi đặt hàng
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
+        return redirect()->route('index')->with('success', 'Đơn hàng của bạn đã được đặt thành công!');
     }
 }

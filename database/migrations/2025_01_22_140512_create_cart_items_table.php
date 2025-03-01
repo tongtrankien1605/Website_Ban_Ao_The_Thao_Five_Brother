@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_cart');
             $table->unsignedBigInteger('id_product_variant');
+            $table->unsignedBigInteger('id_user');
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
             $table->foreign('id_cart')->references('id')->on('carts')->cascadeOnDelete();
             $table->foreign('id_product_variant')->references('id')->on('skuses')->cascadeOnDelete();
+            $table->foreign('id_user')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
