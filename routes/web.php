@@ -85,7 +85,10 @@ Route::get('/404', function () {
 })->name('404');
 
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+
+// thêm middleware auth vào các route admin
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function () {
     //user
     Route::resource('/user', AdminUserController::class);
     Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
