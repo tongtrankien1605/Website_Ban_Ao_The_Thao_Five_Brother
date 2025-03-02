@@ -37,7 +37,7 @@
 
                     <div class="header-mini-cart">
                         <a href="{{ route('show.cart') }}"><img src="/client/assets/images/icons/cart.png" alt="Cart">
-                            <span>02($250)</span></a>
+                            <span>{{$quantity}}({{number_format($total)}} Đồng)</span></a>
                     </div>
 
                 </div>
