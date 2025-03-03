@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddressUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,8 +47,9 @@ class UserController extends Controller
             return abort(403);
         }
         // dd($user);
+        $addresses = AddressUser::where('id_user',$user->id)->orderByDesc('is_default')->get();
 
-        return view('client.my-account', compact('user'));
+        return view('client.my-account', compact('user','addresses'));
     }
 
     /**

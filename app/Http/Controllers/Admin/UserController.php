@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
+use App\Models\AddressUser;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -37,10 +38,7 @@ class UserController extends Controller
             ->orderBy('users.updated_at', 'desc')
             ->paginate(20);
 
-        // Lấy thông tin admin (giả sử admin có role là 'admin')
-        $admin = User::where('role', 'admin')->first(); // Thay 'admin' bằng giá trị role tương ứng của admin
-
-        return view('admin.users.index', compact('users', 'admin'));
+        return view('admin.users.index', compact('users'));
     }
 
     /**
@@ -85,7 +83,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('admin.users.show', compact('user'));
+        $addresses = AddressUser::where('id_user',$user->id)->orderByDesc('is_default')->get();
+        return view('admin.users.show', compact('user','addresses'));
     }
 
     /**
