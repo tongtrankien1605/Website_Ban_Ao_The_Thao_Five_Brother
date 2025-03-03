@@ -52,11 +52,10 @@
                             <div class="product-inner">
 
                                 <div class="image">
-                                    @foreach ($image as $productImage)
-                                    @if ($product->id == $productImage->id_product && $productImage->is_default == 1)
-                                    <img src="{{ Storage::url($productImage->image_url) }}" alt="">
-                                    @endif
-                                    @endforeach
+                                    <div class="bg-light border rounded d-flex justify-content-center align-items-center">
+                                        <img src="{{ Storage::url($product->image) }}" alt=""
+                                            style="height: 300px;width: 300px; overflow: hidden;">
+                                    </div>
                                     <div class="image-overlay">
                                         <div class="action-buttons">
                                             <button data-url="{{route('add.cart',['id' => $product->id])}}"

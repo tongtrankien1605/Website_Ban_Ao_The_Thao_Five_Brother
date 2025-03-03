@@ -84,7 +84,9 @@
                                 <tbody>
                                     <tr class="cart-subtotal">
                                         <th>Subtotal</th>
-                                        <td><span class="amount">$306.00</span></td>
+                                        <td>
+                                            <span class="amount">{{number_format($total)}} Đồng</span>
+                                        </td>
                                     </tr>
                                     <tr class="order-total">
                                         <th>Total</th>

@@ -34,7 +34,7 @@ class ProductRequest extends FormRequest
             "id_brand" => "required|integer|exists:brands,id",
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             "variants.*.name" => "required|max:255",
-            "variants.*.price" => "required|numeric|min:50000|max:99999999",
+            "variants.*.price" => "required|numeric|min:0|max:99999999",
             "variants.*.sale_price" => "nullable|numeric|min:0|lt:variants.*.price",
             "variants.*.image" => "required|image|mimes:jpeg,png,jpg,gif|max:2048",
             "images" => "nullable|min:1|max:10",
