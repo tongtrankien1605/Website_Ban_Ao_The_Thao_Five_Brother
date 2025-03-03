@@ -43,7 +43,7 @@
 
                         <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> address</a>
 
-                    
+
 
                         <a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
@@ -60,7 +60,7 @@
 
                                 <div class="welcome">
                                     <p>Hello, <strong>{{ $user->name }}</strong> (If Not
-                                        <strong>{{ $user->name }}!</strong><a href="login-register.html" class="logout">
+                                        <strong>{{ $user->name }}!</strong><a href="{{ route('logout') }}" class="logout">
                                             Logout</a>)
                                     </p>
                                 </div>
@@ -172,13 +172,21 @@
                         <div class="tab-pane fade" id="address-edit" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Billing Address</h3>
-
-                                <address>
-                                    <p><strong>Alex Tuntuni</strong></p>
-                                    <p>1355 Market St, Suite 900 <br>
-                                        San Francisco, CA 94103</p>
-                                    <p>Mobile: (123) 456-7890</p>
-                                </address>
+                                <p>{{ $user->phone }}</p>
+                                @foreach ($addresses as $address)
+                                    <address>
+                                        <ul>
+                                            <li>
+                                                <p>
+                                                    @if ($address->is_default == 1)
+                                                        <span><strong>Mặc định: </strong></span>
+                                                    @endif
+                                                    {{ $address->address }}
+                                                </p>
+                                            </li>
+                                        </ul>
+                                    </address>
+                                @endforeach
 
                                 <a href="#" class="btn btn-dark btn-round d-inline-block"><i
                                         class="fa fa-edit"></i>Edit Address</a>

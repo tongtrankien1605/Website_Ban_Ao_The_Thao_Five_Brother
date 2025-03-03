@@ -44,7 +44,7 @@
                 <div class="card-body table-responsive p-0">
                     @if (session('success'))
                         <div class="alert alert-success">
-                            Xóa người dùng thành công!
+                            Thành công!
                         </div>
                     @endif
 

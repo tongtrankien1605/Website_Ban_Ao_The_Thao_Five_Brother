@@ -78,6 +78,23 @@
                                         @endif
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label>Địa chỉ:</label>
+                                    <div>
+                                        @foreach ($addresses as $address)
+                                            <ul>
+                                                <li>
+                                                    <p>
+                                                        @if ($address->is_default == 1)
+                                                            <span><strong>Mặc định: </strong></span>
+                                                        @endif
+                                                        {{ $address->address }}
+                                                    </p>
+                                                </li>
+                                            </ul>
+                                        @endforeach
+                                    </div>
+                                </div>
                                 <div class="text-center">
                                     <a href="{{ route('admin.user.index') }}" class="btn btn-danger">Quay lại</a>
                                 </div>
