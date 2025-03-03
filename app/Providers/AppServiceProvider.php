@@ -41,11 +41,9 @@ class AppServiceProvider extends ServiceProvider
                     'quantity' => $quantity
                 ]);
             } else {
-                $total = 0;
-                $quantity = 0;
                 $view->with([
-                    'total' => $total,
-                    'quantity' => $quantity
+                    'total' => 0,
+                    'quantity' => 0
                 ]);
             }
         });
