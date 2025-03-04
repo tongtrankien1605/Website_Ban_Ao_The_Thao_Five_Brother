@@ -22,7 +22,7 @@
         <div class="container">
 
             <!-- Checkout Form s-->
-            <form action="{{route('payOrder')}}" class="checkout-form" method="POST">
+            <form action="{{ route('payOrder') }}" class="checkout-form" method="POST">
                 @csrf
                 @method('POST')
                 <div class="row row-50 mbn-40">
@@ -37,17 +37,20 @@
 
                                 <div class="col-md-6 col-12 mb-5">
                                     <label>Full Name*</label>
-                                    <input type="text" name="fullname" placeholder="First Name" value="{{ Auth::user()->name }}">
+                                    <input type="text" name="fullname" placeholder="First Name"
+                                        value="{{ Auth::user()->name }}">
                                 </div>
 
                                 <div class="col-md-6 col-12 mb-5">
                                     <label>Email Address*</label>
-                                    <input type="email" name="email" placeholder="Email Address" value="{{ Auth::user()->email }}">
+                                    <input type="email" name="email" placeholder="Email Address"
+                                        value="{{ Auth::user()->email }}">
                                 </div>
 
                                 <div class="col-12 mb-5">
                                     <label>Phone Number</label>
-                                    <input type="text" name="phone_number" placeholder="Phone number"value="{{ Auth::user()->phone_number }}">
+                                    <input type="text" name="phone_number"
+                                        placeholder="Phone number"value="{{ Auth::user()->phone_number }}">
                                 </div>
 
                                 {{-- <div class="col-12 mb-5">
@@ -60,9 +63,9 @@
                                 <div class="col-12 mb-5">
                                     <label>Address*</label>
                                     <select class="nice-select" name="address_id">
-                                    @foreach ($address_user as $ad)
-                                    <option value="{{$ad->id}}">{{$ad->address}}</option>
-                                    @endforeach
+                                        @foreach ($address_user as $ad)
+                                            <option value="{{ $ad->id }}">{{ $ad->address }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -73,9 +76,9 @@
                                 <div class="col-md-6  col-12 mb-5">
                                     <label>Shipping Method*</label>
                                     <select class="nice-select" name="shipping_id">
-                                    @foreach ($shipping as $sm)
-                                    <option value="{{$sm->id_shipping_method}}">{{$sm->name}}</option>
-                                    @endforeach
+                                        @foreach ($shipping as $sm)
+                                            <option value="{{ $sm->id_shipping_method }}">{{ $sm->name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -90,11 +93,11 @@
                                 </div> --}}
 
                                 {{-- <div class="col-12 mb-5"> --}}
-                                    {{-- <div class="check-box mb-15">
+                                {{-- <div class="check-box mb-15">
                                         <input type="checkbox" id="create_account">
                                         <label for="create_account">Create an Acount?</label>
                                     </div> --}}
-                                    {{-- <div class="check-box mb-15">
+                                {{-- <div class="check-box mb-15">
                                         <input type="checkbox" id="shiping_address" data-shipping>
                                         <label for="shiping_address">Ship to Different Address</label>
                                     </div> --}}
@@ -187,14 +190,15 @@
 
                                     <ul>
                                         @foreach ($cartItem as $item)
-                                        <li>{{$item->skuses->name}} x {{$item->quantity}} <span>{{number_format($item->price*$item->quantity)}} Đồng</span></li>
+                                            <li>{{ $item->skuses->name }} x {{ $item->quantity }}
+                                                <span>{{ number_format($item->price * $item->quantity) }} Đồng</span></li>
                                         @endforeach
                                     </ul>
 
-                                    <p>Sub Total <span>{{number_format($total)}} Đồng</span></p>
+                                    <p>Sub Total <span>{{ number_format($total) }} Đồng</span></p>
                                     <p>Shipping Fee <span>$00.00</span></p>
 
-                                    <h4>Grand Total <span>{{number_format($total)}} Đồng</span></h4>
+                                    <h4>Grand Total <span>{{ number_format($total) }} Đồng</span></h4>
 
                                 </div>
 
@@ -206,48 +210,14 @@
                                 <h4 class="checkout-title">Payment Method</h4>
 
                                 <div class="checkout-payment-method">
-
-                                    {{-- <div class="single-method">
-                                        <input type="radio" id="payment_check" name="payment-method" value="check">
-                                        <label for="payment_check">Check Payment</label>
-                                        <p data-method="check">Please send a Check to Store name with Store Street, Store
-                                            Town, Store State, Store Postcode, Store Country.</p>
-                                    </div> --}}
-
-                                    {{-- <div class="single-method">
-                                        <input type="radio" id="payment_bank" name="payment-method" value="bank">
-                                        <label for="payment_bank">Direct Bank Transfer</label>
-                                        <p data-method="bank">Please send a Check to Store name with Store Street, Store
-                                            Town, Store State, Store Postcode, Store Country.</p>
-                                    </div> --}}
-
-                                    <div class="single-method">
-                                        <input type="radio" id="payment_cash" name="payment_method" value="1">
-                                        <label for="payment_cash">Cash on Delivery</label>
-                                        <p data-method="cash">Please send a Check to Store name with Store Street, Store
-                                            Town, Store State, Store Postcode, Store Country.</p>
-                                    </div>
-
-                                    <div class="single-method">
-                                        <input type="radio" id="payment_paypal" name="payment_method" value="2">
-                                        <label for="payment_paypal">Paypal</label>
-                                        <p data-method="paypal">Please send a Check to Store name with Store Street, Store
-                                            Town, Store State, Store Postcode, Store Country.</p>
-                                    </div>
-
-                                    <div class="single-method">
-                                        <input type="radio" id="payment_VnPay" name="payment_method"
-                                            value="3">
-                                        <label for="payment_VnPay">VnPay</label>
-                                        <p data-method="VnPay">">Please send a Check to Store name with Store Street,
-                                            Store Town, Store State, Store Postcode, Store Country.</p>
-                                    </div>
-
-                                    {{-- <div class="single-method">
-                                        <input type="checkbox" id="accept_terms">
-                                        <label for="accept_terms">I’ve read and accept the terms & conditions</label>
-                                    </div> --}}
-
+                                    @foreach ($paymentMethods as $method)
+                                        <div class="single-method">
+                                            <input type="radio" id="payment_{{ $method->id_payment_method }}"
+                                                name="payment_method" value="{{ $method->id_payment_method }}" required>
+                                            <label
+                                                for="payment_{{ $method->id_payment_method }}">{{ $method->name }}</label>
+                                        </div>
+                                    @endforeach
                                 </div>
 
                                 <button class="place-order">Place order</button>
@@ -262,4 +232,4 @@
 
         </div>
     </div><!-- Page Section End -->
-   @endsection
+@endsection

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -42,8 +43,15 @@ class OrderController extends Controller
             ]);
         }
 
-        $cart->delete(); // Xóa giỏ hàng sau khi đặt hàng
+        // $cart->delete();
 
-        return redirect()->route('index')->with('success', 'Đơn hàng của bạn đã được đặt thành công!');
+        if ($request->payment_method == 1) {
+            $cart->delete();
+            // $order->update(['id_order_status' => 2]); // "Đã thanh toán"
+            return redirect()->route('order.success')->with('success', 'Đơn hàng của bạn sẽ được giao COD!');
+        }
+
+        $paymentController = new PaymentController();
+        return $paymentController->processPayment($request, $order);
     }
 }

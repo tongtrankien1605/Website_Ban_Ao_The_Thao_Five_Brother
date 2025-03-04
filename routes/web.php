@@ -162,4 +162,10 @@ Route::middleware('auth')->group(function (){
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
     // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
 
+
 });
+Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payment.vnpay.callback');
+Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
+Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
+
