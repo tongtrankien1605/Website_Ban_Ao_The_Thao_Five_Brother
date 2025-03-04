@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -15,18 +17,22 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = Product::latest('id')->paginate(8);
-        $image = ProductImage::all();
-        $data = Skus::where('status',1)->latest('updated_at')->paginate(8);
-        // dd($data);
-        return view('client.shop', compact('data','image'));
+        $products = Product::latest('id')->paginate(8);
+        foreach ($products as $product) {
+            $product->default_image = ProductImage::where('id_product', $product->id)
+                ->where('is_default', 1)
+                ->first()?->image_url ??
+                ProductImage::where('id_product', $product->id)->first()?->image_url;
+        }
+
+        return view('client.shop', compact('products'));
     }
     public function indexMain()
     {
         $products = Product::where('status', 1)->latest('updated_at')->limit(8)->get();
-        // dd($products->toArray());
         $posts = Post::latest('published_at')->limit(2)->get();
-        return view('client.index', compact(['products', 'posts']));
+
+        return view('client.index', compact('products', 'posts'));
     }
 
     /**
@@ -50,12 +56,17 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // dd($product->id);
-        $skus = Skus::whereNull('deleted_at')->where('product_id', $product->id)->first();
-        dd($skus);
+        $brand = Brand::whereNull('deleted_at')->where('id', $product->id_brand)->first();
+        $category = Category::whereNull('deleted_at')->where('id', $product->id_category)->first();
+        $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
+        $skus = Skus::whereNull('deleted_at')->where('product_id', $product->id)->get();
 
-        return view('client.single-product', compact('product','skus'));
+        $mainImage = $product->image ?? ($productImages->first() ? $productImages->first()->image_url : null);
+
+        return view('client.single-product', compact(['brand', 'category', 'product', 'productImages', 'mainImage', 'skus']));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
