@@ -30,17 +30,14 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
-        'vnpay' => [
+    'vnpay' => [
             'tmn_code' => env('VNPAY_TMN_CODE'),
             'hash_secret' => env('VNPAY_HASH_SECRET'),
             'url' => env('VNPAY_URL'),
-        ],
-        'paypal' => [
+    ],
+    'paypal' => [
             'client_id' => env('PAYPAL_CLIENT_ID'),
             'secret' => env('PAYPAL_SECRET'),
             'mode' => env('PAYPAL_MODE'),
-        ],
-    
-
+    ],
 ];
