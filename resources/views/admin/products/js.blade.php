@@ -106,13 +106,18 @@
             let combinations = [];
             generateCombinations(variantCombinations, 0, combinations);
 
-            combinations.forEach((combination, i) => {
+            combinations.forEach((combination) => {
                 variantCounter++;
                 combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                let barcode = combination.map(attr => attr.id).join(
-                    "");
+                let barcode = combination.map(attr => attr.id).join("");
                 let variantName =
                     `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
+
+                let hiddenAttributeInputs = combination.map(attr =>
+                    `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attr.id}"
+                        data-attribute-value="${attr.id}">`
+                ).join("");
+
 
                 let variantHtml = `
                 <div class="card mb-3 variant-block">
@@ -122,7 +127,7 @@
                     </div>
                     <div class="card-body d-none">
                         <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
-
+                        ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
                         <label class="form-label">Price</label>
@@ -173,6 +178,21 @@
             if (e.target && e.target.closest(".toggle-variant")) {
                 e.target.closest(".variant-block").querySelector(".card-body").classList.toggle(
                     "d-none");
+            }
+        });
+        document.getElementById("pwd").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+
+            const preview = document.getElementById("imagePreview");
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("d-none");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.add("d-none");
             }
         });
         document.getElementById("imageInput").addEventListener("change", function(event) {
