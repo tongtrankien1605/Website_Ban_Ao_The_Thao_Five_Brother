@@ -88,7 +88,7 @@ class ProductController extends Controller
             $product->description = $request->description;
             $product->id_category = $request->id_category;
             $product->id_brand = $request->id_brand;
-            $product->image = str_replace('public/', '', $request->image->store('public/products'));
+            $product->image = $request->file('image')->store('products', 'public');
             $product->save();
 
             ProductImage::create([
@@ -109,7 +109,7 @@ class ProductController extends Controller
                     $imageAdd = $imageNews[$imageName];
                     $productImages[] = [
                         'id_product' => $product->id,
-                        'image_url' => str_replace('public/', '', $imageAdd->store('public/products')), 
+                        'image_url' => $imageAdd->store('products', 'public'),
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ];
@@ -125,7 +125,7 @@ class ProductController extends Controller
                         'price' => $variant['price'],
                         'sale_price' => $variant['sale_price'],
                         'barcode' => $product->id . $variant['barcode'],
-                        'image' => str_replace('public/', '', $variant['image']->store('public/productsVariants')),
+                        'image' => $variant['image']->store('productsVariants', 'public'),
                     ]);
                     $skuses[] = [
                         'id' => $sku->id,
@@ -210,7 +210,7 @@ class ProductController extends Controller
             $product->id_brand = $request->id_brand;
             if (isset($request->image)) {
                 if ($product->image) {
-                    Storage::delete('public/' . $product->image);
+                    Storage::disk('public')->delete($product->image);
                 }
                 $productpath = $request->image->store('public/products');
                 $product->image = str_replace('public/', '', $productpath);
@@ -221,7 +221,7 @@ class ProductController extends Controller
                 $productImages = ProductImage::where('id_product', $product->id)->get();
                 if ($productImages) {
                     foreach ($productImages as $productImage) {
-                        Storage::delete('public/' . $productImage->image_url);
+                        Storage::disk('public')->delete($productImage->image_url);
                     }
                     ProductImage::where('id_product', $product->id)->delete();
                 }
