@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="header-wishlist">
-                        <a href="{{ route('wishlist') }}"><img src="/client/assets/images/icons/wishlist.png"
+                        <a href="{{ route('index_wishlist') }}"><img src="/client/assets/images/icons/wishlist.png"
                                 alt="Wishlist">
                             <span>02</span></a>
                     </div>

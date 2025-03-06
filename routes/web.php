@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WishlistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -161,7 +162,9 @@ Route::middleware('auth')->group(function (){
     Route::get('payment', [PaymentController::class, 'index'])->name('indexPayment');
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
     // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
-
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
+    Route::post('/wishlist/add_to_wishlist/{id}', [WishlistController::class, 'store'])->name('add_wishlist');
+    Route::get('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('delete_wishlist');
 
 });
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');

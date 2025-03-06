@@ -15,3 +15,4 @@
     <script src="/client/assets/js/main.js"></script>
 
     <script src="/client/assets/js/cart.js"></script>
+    <script src="/client/assets/js/wishlist.js"></script>

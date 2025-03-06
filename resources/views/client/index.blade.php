@@ -120,7 +120,7 @@
                                     <div class="image-overlay">
                                         <div class="action-buttons">
                                             <button class="add_to_cart" data-url="{{route('add.cart',['id' => $product->id])}}">Add to cart</button>
-                                            <button>Add to wishlist</button>
+                                            <button class="add_to_wishlist" data-url="{{route('add_wishlist',['id'=>$product->id])}}">Add to wishlist</button>
                                         </div>
                                     </div>
 

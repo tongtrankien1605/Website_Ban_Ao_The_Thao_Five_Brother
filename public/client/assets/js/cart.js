@@ -1,4 +1,4 @@
-console.log("cart.js đã được load!");
+// console.log("cart.js đã được load!");
 
 $(document).ready(function () {
     console.log("Script đã load!");
@@ -32,6 +32,8 @@ $(document).ready(function () {
         });
     });
 });
+
+
 
 
 
