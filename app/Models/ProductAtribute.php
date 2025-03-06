@@ -28,4 +28,9 @@ class ProductAtribute extends Model
     {
         return $this->hasMany(Variant::class);
     }
+    public function values()
+    {
+        return $this->hasMany(ProductAtributeValue::class, 'product_attribute_id');
+    }
+
 }

@@ -23,9 +23,9 @@ class ProductAtributeValue extends Model
     {
         return $date->format('Y/m/d H:i:s');
     }
-    public function product_attributes()
+    public function attribute()
     {
-        return $this->belongsTo(ProductAtribute::class);
+        return $this->belongsTo(ProductAtribute::class, 'product_attribute_id');
     }
     public function variants()
     {

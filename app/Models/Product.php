@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use App\Http\Controllers\Admin\ProductAttributeController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,14 +40,37 @@ class Product extends Model
     }
     public function skuses()
     {
-        return $this->hasMany(Skus::class);
+        return $this->hasMany(Skus::class, 'product_id', 'id');
     }
 
     public function variants()
     {
-        return $this->hasMany(Variant::class);
+        return $this->hasMany(Variant::class, 'product_id', 'id');
     }
 
+    public function attributes()
+    {
+        return $this->hasManyThrough(
+            ProductAttributeController::class, 
+            ProductAtributeValue::class, 
+            'product_id', 
+            'id', 
+            'id',
+            'attribute_id' 
+        );
+    }
+    public function attributeValues()
+    {
+        return $this->hasManyThrough(
+            ProductAtributeValue::class, // Bảng đích (chứa value)
+            Variant::class, // Bảng trung gian (chứa product_id)
+            'product_id', // Khóa ngoại trong bảng variants trỏ đến products
+            'id', // Khóa chính của bảng product_attribute_value
+            'id', // Khóa chính của bảng products
+            'product_attribute_value_id' // Khóa ngoại trong bảng variants trỏ đến product_attribute_value
+        );
+    }
+    
     public function images()
     {
         return $this->hasMany(ProductImage::class);
