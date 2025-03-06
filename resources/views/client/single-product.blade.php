@@ -18,6 +18,19 @@
     </div><!-- Page Banner Section End -->
 
     <!-- Page Section Start -->
+    <style>
+        .color-btn {
+            width: 32px;
+            height: 32px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .btn-check:checked+.color-btn {
+            border-color: #333;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+    </style>
     <div class="page-section section section-padding">
         <div class="container">
             <div class="row row-30 mbn-40">
@@ -25,11 +38,14 @@
                 <div class="col-xl-9 col-lg-8 col-12 order-1 order-lg-2 mb-40">
                     <div class="row row-20">
                         <div class="col-lg-6 col-12 mb-40">
+                            {{-- Ảnh chính --}}
                             <div class="pro-large-img mb-10 fix easyzoom easyzoom--overlay easyzoom--with-thumbnails">
                                 <a href="{{ Storage::url($mainImage) }}" id="main-image-link">
                                     <img id="main-image" src="{{ Storage::url($mainImage) }}" alt="{{ $product->name }}">
                                 </a>
                             </div>
+
+                            {{-- Danh sách ảnh nhỏ --}}
                             <ul id="pro-thumb-img" class="pro-thumb-img d-flex">
                                 @foreach ($productImages as $image)
                                     <li>
@@ -41,17 +57,13 @@
                                     </li>
                                 @endforeach
                             </ul>
-
                         </div>
 
                         <div class="col-lg-6 col-12 mb-40">
                             <div class="single-product-content">
-
                                 <div class="head">
                                     <div class="head-left">
-
                                         <h3 class="title">{{ $product->name }}</h3>
-
                                         <div class="ratting">
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
@@ -59,11 +71,9 @@
                                             <i class="fa fa-star-half-o"></i>
                                             <i class="fa fa-star-o"></i>
                                         </div>
-
                                     </div>
-
                                     <div class="head-right">
-                                        <span class="price">{{ $product->price }}</span>
+                                        <span class="price">${{ number_format($product->price, 2) }}</span>
                                     </div>
                                 </div>
 
@@ -73,59 +83,78 @@
 
                                 <span class="availability">Availability: <span>In Stock</span></span>
 
-                                <div class="quantity-colors">
+                                @if ($product->attributeValues->isNotEmpty())
+                                    @php
+                                        $colorMap = [
+                                            'Đỏ' => '#ff0000',
+                                            'Xanh' => '#0000ff',
+                                            'Đen' => '#000000',
+                                            'Trắng' => '#ffffff',
+                                            'Vàng' => '#ffff00',
+                                            'Xanh lá' => '#008000',
+                                            'Cam' => '#ffa500',
+                                            'Hồng' => '#ffc0cb',
+                                            'Tím' => '#800080',
+                                        ];
+                                    @endphp
 
-                                    <div class="quantity">
-                                        <h5>Quantity:</h5>
-                                        <div class="pro-qty"><input type="text" value="1"></div>
-                                    </div>
-
-                                    <div class="colors">
-                                        <h5>Color:</h5>
-                                        <div class="color-options">
-                                            <button style="background-color: #ff502e"></button>
-                                            <button style="background-color: #fff600"></button>
-                                            <button style="background-color: #1b2436"></button>
+                                    <div class="product-options mt-3">
+                                        {{-- Số lượng --}}
+                                        <div class="mb-3">
+                                            <label for="quantity">Số lượng:</label>
+                                            <input type="number" id="quantity" class="form-control w-50" value="1"
+                                                min="1">
                                         </div>
-                                    </div>
+                                        @foreach ($product->attributeValues->groupBy('attribute.name') as $attributeName => $values)
+                                            @php
+                                                $uniqueValues = $values->unique('value'); // Loại bỏ giá trị trùng lặp
+                                            @endphp
+                                            <div class="mb-3">
+                                                <h5>{{ $attributeName }}:</h5>
+                                                <div class="btn-group variant-selection" role="group"
+                                                    data-attribute="{{ $attributeName }}">
+                                                    @foreach ($uniqueValues as $value)
+                                                        @php
+                                                            $sku = $skus
+                                                                ->where('product_attribute_value_id', $value->id)
+                                                                ->first();
+                                                            $variantImage = $sku ? Storage::url($sku->image) : null;
+                                                        @endphp
 
-                                </div>
+                                                        <input type="radio" class="btn-check variant-option"
+                                                            id="{{ Str::slug($attributeName) }}-{{ $value->id }}"
+                                                            name="{{ Str::slug($attributeName) }}"
+                                                            value="{{ $value->id }}" data-image="{{ $variantImage }}">
+
+                                                        @if ($attributeName == 'Màu sắc')
+                                                            @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
+                                                            <label class="btn color-btn border border-secondary"
+                                                                for="{{ Str::slug($attributeName) }}-{{ $value->id }}"
+                                                                style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%;">
+                                                            </label>
+                                                        @else
+                                                            <label class="btn btn-outline-dark"
+                                                                for="{{ Str::slug($attributeName) }}-{{ $value->id }}">
+                                                                {{ $value->value }}
+                                                            </label>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+
+                                    </div>
+                                @endif
 
                                 <div class="actions">
-
                                     <button><i class="ti-shopping-cart"></i><span>ADD TO CART</span></button>
                                     <button class="box" data-tooltip="Compare"><i
                                             class="ti-control-shuffle"></i></button>
                                     <button class="box" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
-
                                 </div>
-
-                                <div class="tags">
-
-                                    <h5>Tags:</h5>
-                                    <a href="#">Electronic</a>
-                                    <a href="#">Smartphone</a>
-                                    <a href="#">Phone</a>
-                                    <a href="#">Charger</a>
-                                    <a href="#">Powerbank</a>
-
-                                </div>
-
-                                <div class="share">
-
-                                    <h5>Share: </h5>
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-instagram"></i></a>
-                                    <a href="#"><i class="fa fa-google-plus"></i></a>
-
-                                </div>
-
                             </div>
                         </div>
-
                     </div>
-
                     <div class="row mb-50">
                         <!-- Nav tabs -->
                         <div class="col-12">
@@ -551,15 +580,93 @@
         document.addEventListener("DOMContentLoaded", function() {
             const mainImage = document.getElementById("main-image");
             const mainImageLink = document.getElementById("main-image-link");
+            const variantOptions = document.querySelectorAll(".variant-option");
             const thumbnails = document.querySelectorAll(".thumb-link");
 
+            let defaultMainImage = mainImage.src; // Lưu ảnh mặc định
+            let selectedThumbnail = null; // Ảnh nhỏ được chọn gần nhất
+            let selectedVariants = {}; // Lưu trạng thái chọn của từng attribute
+
+            // ✅ Xử lý khi bấm vào ảnh nhỏ (thumbnail)
             thumbnails.forEach(thumbnail => {
                 thumbnail.addEventListener("click", function(event) {
-                    const newImageSrc = this.querySelector(".thumb-img").src;
-                    mainImage.src = newImageSrc;
-                    mainImageLink.href = newImageSrc;
+                    event.preventDefault();
+                    const newImageSrc = this.href;
+                    if (newImageSrc) {
+                        mainImage.src = newImageSrc;
+                        mainImageLink.href = newImageSrc;
+                        selectedThumbnail = newImageSrc; // Lưu ảnh nhỏ đã chọn
+                    }
+                });
+            });
+
+            // ✅ Xử lý chọn/bỏ chọn biến thể
+            variantOptions.forEach(option => {
+                option.addEventListener("click", function(event) {
+                    event.preventDefault();
+
+                    let scrollY = window.scrollY; // Lưu vị trí cuộn trước khi thay đổi ảnh
+                    const attributeGroup = option.name; // Lấy nhóm thuộc tính (size, color,...)
+                    const isSelected = selectedVariants[attributeGroup] === option.value;
+
+                    // Nếu đã chọn trước đó, thì bỏ chọn
+                    if (isSelected) {
+                        option.checked = false;
+                        selectedVariants[attributeGroup] = null;
+
+                        // Xóa viền chọn
+                        option.nextElementSibling.classList.remove("border-dark", "btn-dark",
+                            "text-white");
+                        option.nextElementSibling.classList.add("btn-outline-dark");
+
+                        // Nếu bỏ chọn màu nhưng có ảnh nhỏ đã chọn trước đó → Giữ ảnh nhỏ
+                        if (attributeGroup === "color" && selectedThumbnail) {
+                            mainImage.src = selectedThumbnail;
+                            mainImageLink.href = selectedThumbnail;
+                        } else {
+                            mainImage.src = defaultMainImage;
+                            mainImageLink.href = defaultMainImage;
+                        }
+                    } else {
+                        // Nếu chưa chọn trước đó, thì chọn mới
+                        selectedVariants[attributeGroup] = option.value;
+
+                        // Xóa class active cho tất cả các lựa chọn trong cùng nhóm attribute
+                        document.querySelectorAll(`[name="${attributeGroup}"]`).forEach(other => {
+                            other.nextElementSibling.classList.remove("border-dark",
+                                "btn-dark", "text-white");
+                            other.nextElementSibling.classList.add("btn-outline-dark");
+                        });
+
+                        // Đánh dấu nút được chọn
+                        if (option.nextElementSibling.classList.contains("color-btn")) {
+                            option.nextElementSibling.classList.add("border-dark");
+                        } else {
+                            option.nextElementSibling.classList.add("btn-dark", "text-white");
+                            option.nextElementSibling.classList.remove("btn-outline-dark");
+                        }
+
+                        // Kiểm tra ảnh biến thể
+                        let selectedImage = option.dataset.image;
+                        if (selectedImage && selectedImage !== "null") {
+                            mainImage.src = selectedImage;
+                            mainImageLink.href = selectedImage;
+                            selectedThumbnail =
+                            null; // Nếu chọn biến thể có ảnh, bỏ ảnh nhỏ đã chọn trước đó
+                        } else {
+                            // Nếu không có ảnh biến thể, giữ ảnh nhỏ nếu đã chọn
+                            mainImage.src = selectedThumbnail ? selectedThumbnail :
+                            defaultMainImage;
+                            mainImageLink.href = selectedThumbnail ? selectedThumbnail :
+                                defaultMainImage;
+                        }
+                    }
+
+                    // Giữ nguyên vị trí cuộn
+                    window.scrollTo(0, scrollY);
                 });
             });
         });
     </script>
+
 @endsection

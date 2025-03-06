@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProductAtribute;
 use App\Models\ProductImage;
 use App\Models\Skus;
 use Illuminate\Http\Request;
@@ -54,20 +55,33 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        $brand = Brand::whereNull('deleted_at')->where('id', $product->id_brand)->first();
-        $category = Category::whereNull('deleted_at')->where('id', $product->id_category)->first();
-        $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
-        $skus = Skus::whereNull('deleted_at')->where('product_id', $product->id)->get();
-
+        $product = Product::with([
+            'attributeValues.attribute', // Lấy thuộc tính và giá trị
+            'variants'
+        ])->findOrFail($id);
+    
+        $brand = Brand::find($product->id_brand);
+        $category = Category::find($product->id_category);
+        $productImages = ProductImage::where('id_product', $product->id)->get();
+        $skus = Skus::where('product_id', $product->id)->get();
+    
         $mainImage = $product->image ?? ($productImages->first() ? $productImages->first()->image_url : null);
-
-        return view('client.single-product', compact(['brand', 'category', 'product', 'productImages', 'mainImage', 'skus']));
+    
+        // Debug để kiểm tra dữ liệu trước khi truyền vào view
+        // dd($product->attributeValues);
+    
+        return view('client.single-product', compact([
+            'brand',
+            'category',
+            'product',
+            'productImages',
+            'mainImage',
+            'skus',
+        ]));
     }
-
-
-
+    
     /**
      * Show the form for editing the specified resource.
      */

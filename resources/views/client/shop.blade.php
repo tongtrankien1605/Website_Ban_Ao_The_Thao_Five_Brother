@@ -50,10 +50,9 @@
 
                         <div class="product-item">
                             <div class="product-inner">
-
                                 <div class="image">
                                     <div class="bg-light border rounded d-flex justify-content-center align-items-center">
-                                        <img src="{{ Storage::url($product->default_image) }}" alt="Product Image"
+                                        <img id="main-image" src="{{ Storage::url($mainImage) }}" alt="{{ $product->name }}"
                                             style="height: 300px; width: 300px;">
                                     </div>
                                     <div class="image-overlay">

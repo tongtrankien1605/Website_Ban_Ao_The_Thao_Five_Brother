@@ -57,7 +57,7 @@
                                     <div>
                                         @if ($productImages)
                                             @foreach ($productImages as $productImage)
-                                                <img src="{{ Storage::url($productImage->image_url) }}" width="200px"
+                                                <img src="{{ Storage::url($productImage->image_url) }}" width="70px"
                                                     style="margin-right: 10px" alt="">
                                             @endforeach
                                         @else

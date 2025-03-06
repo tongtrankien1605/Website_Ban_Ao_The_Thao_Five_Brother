@@ -25,13 +25,13 @@ class Variant extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    public function product_attributes()
+    public function attributes()
     {
-        return $this->belongsTo(ProductAtribute::class);
+        return $this->belongsTo(ProductAtributeValue::class, 'product_attribute_value_id', 'id');
     }
     public function product_atribute_values()
     {
-        return $this->belongsTo(ProductAtributeValue::class);
+        return $this->belongsTo(ProductAtributeValue::class, 'product_attribute_value_id', 'id');
     }
     public function skuses()
     {
