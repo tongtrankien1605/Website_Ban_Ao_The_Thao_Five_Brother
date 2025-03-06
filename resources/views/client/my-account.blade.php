@@ -91,30 +91,25 @@
                                         </thead>
 
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Moisturizing Oil</td>
-                                                <td>Aug 22, 2022</td>
-                                                <td>Pending</td>
-                                                <td>$45</td>
-                                                <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Katopeno Altuni</td>
-                                                <td>July 22, 2022</td>
-                                                <td>Approved</td>
-                                                <td>$100</td>
-                                                <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>Murikhete Paris</td>
-                                                <td>June 12, 2022</td>
-                                                <td>On Hold</td>
-                                                <td>$99</td>
-                                                <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
-                                            </tr>
+                                            @foreach ($orders as $order)
+                                                <tr>
+                                                    <td>{{ $order->id }}</td>
+                                                    <td>
+                                                        <ul>
+                                                            @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                                <li class="text-start">
+                                                                    <span class="dot"></span>
+                                                                    {{ $orderDetail->name }}
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </td>
+                                                    <td>{{ $order->created_at->format('d/m/Y') }}</td>
+                                                    <td>{{ $order->payment_method_status_name }}</td>
+                                                    <td>{{ number_format($order->total_amount) }}đ</td>
+                                                    <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -252,3 +247,14 @@
         </div>
     </div><!-- Page Section End -->
 @endsection
+<style>
+    .dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: #000000;
+        border-radius: 50%;
+        margin-bottom: 3px;
+        margin-right: 3px;
+    }
+</style>

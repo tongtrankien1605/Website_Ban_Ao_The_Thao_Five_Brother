@@ -11,6 +11,7 @@ use App\Models\ProductAtribute;
 use App\Models\ProductAtributeValue;
 use App\Models\ProductImage;
 use App\Models\Skus;
+use App\Models\Variant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -87,16 +88,28 @@ class ProductController extends Controller
             $product->description = $request->description;
             $product->id_category = $request->id_category;
             $product->id_brand = $request->id_brand;
-            $productpath = $request->image->store('public/products');
-            $product->image = str_replace('public/', '', $productpath);
+            $product->image = str_replace('public/', '', $request->image->store('public/products'));
             $product->save();
+
+            ProductImage::create([
+                'id_product' => $product->id,
+                'image_url' => $product->image,
+                'is_default' => 1,
+            ]);
+
             if ($request->images) {
-                $productImages = [];
+                $imageNews = [];
                 foreach ($request->images as $image) {
-                    $productImagePath = $image->store('public/products');
+                    $imageNews[$image->getClientOriginalName()] = $image;
+                }
+                $imageMain = [$request->image->getClientOriginalName()];
+                $imageAdds = array_diff(array_keys($imageNews), $imageMain);
+                $productImages = [];
+                foreach ($imageAdds as $imageName) {
+                    $imageAdd = $imageNews[$imageName];
                     $productImages[] = [
                         'id_product' => $product->id,
-                        'image_url' => str_replace('public/', '', $productImagePath),
+                        'image_url' => str_replace('public/', '', $imageAdd->store('public/products')), 
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ];
@@ -104,21 +117,34 @@ class ProductController extends Controller
                 ProductImage::insert($productImages);
             }
             if (!empty($request->variants)) {
-                $skues = [];
+                $skuses = [];
                 foreach ($request->variants as $variant) {
-                    $skuImages = $variant['image']->store('public/productsVariants');
-                    $skues[] = [
+                    $sku = Skus::create([
                         'product_id' => $product->id,
                         'name' => $variant['name'],
                         'price' => $variant['price'],
                         'sale_price' => $variant['sale_price'],
                         'barcode' => $product->id . $variant['barcode'],
-                        'image' => str_replace('public/', '', $skuImages),
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
+                        'image' => str_replace('public/', '', $variant['image']->store('public/productsVariants')),
+                    ]);
+                    $skuses[] = [
+                        'id' => $sku->id,
+                        'attribute_values' => $variant['attribute_values'],
                     ];
                 }
-                Skus::insert($skues);
+                $variantsData = [];
+                foreach ($skuses as $skuData) {
+                    foreach ($skuData['attribute_values'] as $attributeValueId) {
+                        $variantsData[] = [
+                            'product_id' => $product->id,
+                            'id_skus' => $skuData['id'],
+                            'product_attribute_value_id' => $attributeValueId,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ];
+                    }
+                }
+                Variant::insert($variantsData);
             }
             DB::commit();
             return redirect()->route('admin.product.index')->with([
@@ -147,6 +173,13 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        // $data = Variant::select('id_skus')
+        // ->where('product_id', $product->id)
+        // ->whereIn('product_attribute_value_id', [7, 5, 2])
+        // ->groupBy('id_skus')
+        // ->havingRaw('COUNT(DISTINCT product_attribute_value_id) = ?', [3])
+        // ->first();
+        $variants = Variant::where('product_id', $product->id)->get()->groupBy('product_attribute_value_id')->keys()->flatten()->toArray();
         $attributes = ProductAtribute::get()->pluck('name', 'id');
         $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attributes->keys())
             ->get()
@@ -155,7 +188,9 @@ class ProductController extends Controller
         $categories = Category::whereNull('deleted_at')->get();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
         $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->get();
-        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues', 'productImages', 'skues']));
+        $data =  Variant::whereIn('id_skus', $skues->pluck('id')->toArray())->get();
+        // dd($data->toArray());
+        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues', 'productImages', 'skues', 'variants']));
     }
 
     /**
@@ -164,6 +199,7 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
+        dd($request->all());
         try {
 
             DB::beginTransaction();

@@ -40,9 +40,13 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="image">Ảnh đại diện</label>
+                                        <div>
+                                            <img id="imagePreview" class="img-preview mt-2 d-none" width="100"
+                                                height="100" style="overflow: hidden">
+                                        </div>
                                         <div class="input-group">
-                                            <input type="file" class="form-control" id="pwd" id="image"
-                                                name="image" value="{{ old('image') }}">
+                                            <input type="file" class="form-control" id="pwd" name="image"
+                                                value="{{ old('image') }}">
 
                                         </div>
                                         @error('image')
@@ -89,7 +93,11 @@
                                                     <input type="hidden" class="form-control"
                                                         name="variants[{{ $index }}][barcode]"
                                                         value="{{ $variant['barcode'] }}" readonly>
-
+                                                    @foreach ($variant['attribute_values'] as $attrValue)
+                                                        <input type="hidden"
+                                                            name="variants[{{ $index }}][attribute_values][]"
+                                                            value="{{ $attrValue }}">
+                                                    @endforeach
                                                     <label class="form-label">Price</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][price]"
@@ -108,7 +116,8 @@
 
                                                     <label class="form-label">Image</label>
                                                     <input type="file" class="form-control variant-image"
-                                                        name="variants[{{ $index }}][image]" accept="image/*">
+                                                        name="variants[{{ $index }}][image]" accept="image/*"
+                                                        value="{{ old("variants.$index.image") }}">
                                                     @error("variants.$index.image")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -134,9 +143,10 @@
                                                                 </div>
                                                                 <select class="form-control" id="category"
                                                                     name="id_category">
-                                                                    <option value="" selected>-- select --</option>
+                                                                    <option value="">-- select --</option>
                                                                     @foreach ($categories as $category)
-                                                                        <option value="{{ $category->id }}">
+                                                                        <option value="{{ $category->id }}"
+                                                                            {{ old('id_category') == $category->id ? 'selected' : '' }}>
                                                                             {{ $category->name }}
                                                                         </option>
                                                                     @endforeach
@@ -155,9 +165,10 @@
                                                                 </div>
                                                                 <select class="form-control" id="brand"
                                                                     name="id_brand">
-                                                                    <option value="" selected>-- select --</option>
+                                                                    <option value="">-- select --</option>
                                                                     @foreach ($brands as $brand)
-                                                                        <option value="{{ $brand->id }}">
+                                                                        <option value="{{ $brand->id }}"
+                                                                            {{ old('id_brand') == $brand->id ? 'selected' : '' }}>
                                                                             {{ $brand->name }}
                                                                         </option>
                                                                     @endforeach

@@ -42,17 +42,15 @@
                                     <div class="form-group">
                                         <label for="image">Ảnh đại diện</label>
                                         <div class="input-group">
-                                            <div class="input-group">
-                                                @if ($product->image)
-                                                    <img src="{{ Storage::url($product->image) }}" alt=""
-                                                        width="100px">
-                                                @endif
-                                            </div>
-                                            <input type="file" class="form-control" id="pwd" name="image">
-                                            @error('image')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
+                                            @if ($product->image)
+                                                <img src="{{ Storage::url($product->image) }}" alt=""
+                                                    width="100px">
+                                            @endif
                                         </div>
+                                        <input type="file" class="form-control" id="pwd" name="image">
+                                        @error('image')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <h4 class="mb-3">Upload Images</h4>
                                     <div id="existingImages" class="d-flex flex-wrap gap-2 mt-3">
@@ -66,29 +64,30 @@
                                     <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded"
                                         id="myDropzone">
                                         <input type="file" name="images[]" multiple class="form-control d-none"
-                                            accept="image/*" id="imageInput">
+                                            accept="image/*" id="imageInput" value="{{ old('images[]') }}">
                                         <div class="text-center">
                                             <p class="text-body-tertiary text-opacity-85">
                                                 Drag your photos here <span class="text-body-secondary px-1">or</span>
                                                 <button class="btn btn-link p-0" type="button"
-                                                    onclick="document.getElementById('imageInput').click();">Browse from
-                                                    device</button>
+                                                    onclick="document.getElementById('imageInput').click();">
+                                                    Browse from device
+                                                </button>
                                             </p>
                                         </div>
+
                                         <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-3"></div>
                                         @error('images[]')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-                                    <div id="createdVariantContainer" class="mt-4">
+                                    <div id="createdVariantContainer" class="mt-4" data-id-product="{{ $product->id }}">
                                         @foreach ($skues as $sku)
                                             <div class="card mb-3 variant-block">
                                                 <div
                                                     class="card-header toggle-variant d-flex justify-content-between align-items-center">
                                                     <h5 class="mb-0">{{ $sku->name }}</h5>
                                                     <button type="button"
-                                                        class="btn btn-sm btn-danger float-end remove-variant">Xóa
+                                                        class="btn btn-sm btn-danger float-end remove-variant">Disabled
                                                         Variant</button>
                                                 </div>
                                                 <div class="card-body d-none">
@@ -100,6 +99,11 @@
                                                             name="variants[{{ $sku->id }}][barcode]"
                                                             value="{{ $sku->barcode }}" readonly>
                                                     </div>
+                                                    {{-- @foreach ($variant['attribute_values'] as $attrValue)
+                                                        <input type="text"
+                                                            name="variants[{{ $index }}][attribute_values][]"
+                                                            value="{{ $attrValue }}">
+                                                    @endforeach --}}
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
@@ -139,6 +143,7 @@
                                         @endforeach
                                     </div>
                                 </div>
+
                                 <div class="col-12 col-xl-4">
                                     <div class="row g-2">
                                         <div class="col-12 col-xl-12">
@@ -150,8 +155,7 @@
                                                                 <div class="d-flex flex-wrap mb-2">
                                                                     <h5 class="mb-0 text-body-highlight me-2">Danh mục sản
                                                                         phẩm
-                                                                    </h5>
-                                                                    <br>
+                                                                    </h5> <br>
                                                                 </div>
                                                                 <select class="form-control" id="category"
                                                                     name="id_category">
@@ -199,19 +203,32 @@
                                                     <button type="button" class="btn btn-primary btn-sm float-end"
                                                         id="toggleVariantsBtn">Add Variant</button>
                                                 </div>
-                                                <div class="card-body d-none" id="variantsCard">
-                                                    <div class="mb-3">
-                                                        <label for="attributeSelect" class="form-label">Chọn thuộc
-                                                            tính</label>
-                                                        <select id="attributeSelect" class="form-select">
-                                                            <option value="">Chọn thuộc tính...</option>
-                                                            @foreach ($attributes as $key => $value)
-                                                                <option value="{{ $key }}">{{ $value }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
+                                                <div class="card-body" id="variantsCard">
+                                                    <div class="row g-3" id="attributeContainer">
+                                                        @foreach ($attributes as $key => $value)
+                                                            <div class="col-12 border p-3 rounded position-relative"
+                                                                data-key="{{ $key }}">
+                                                                <h5 class="mb-2">{{ $value }}</h5>
+                                                                <div class="attribute-values-container">
+                                                                    @foreach ($attributeValues[$key] as $option)
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox"
+                                                                                name="attribute_values[{{ $key }}][]"
+                                                                                value="{{ $option['id'] }}"
+                                                                                id="attr-{{ $key }}-{{ $option['id'] }}"
+                                                                                {{ in_array($option['id'], $variants) ? 'checked data-db-checked=true disabled' : '' }}>
+                                                                            <label class="form-check-label"
+                                                                                for="attr-{{ $key }}-{{ $option['id'] }}">
+                                                                                {{ $option['value'] }}
+                                                                            </label>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+
                                                     </div>
-                                                    <div id="attributeContainer" class="row g-3"></div>
                                                     <div class="mt-3 text-center">
                                                         <button type="button" class="btn btn-success"
                                                             id="createVariantBtn" disabled>Tạo Variant</button>
@@ -236,64 +253,37 @@
     <script>
         var attributeValues = @json($attributeValues);
         document.addEventListener("DOMContentLoaded", function() {
-            const toggleBtn = document.getElementById('toggleVariantsBtn');
-            const variantsCard = document.getElementById('variantsCard');
+            const toggleBtn = document.getElementById("toggleVariantsBtn");
+            const variantsCard = document.getElementById("variantsCard");
             const createVariantBtn = document.getElementById("createVariantBtn");
-            const attributeSelect = document.getElementById("attributeSelect");
             const attributeContainer = document.getElementById("attributeContainer");
             const createdVariantContainer = document.getElementById("createdVariantContainer");
-            const attributeValuesMap = {!! json_encode($attributeValues) !!};
+            const productId = createdVariantContainer.getAttribute("data-id-product");
             let variantCounter = 0;
 
-            toggleBtn.addEventListener('click', function() {
-                variantsCard.classList.toggle('d-none');
+            toggleBtn.addEventListener("click", function() {
+                variantsCard.classList.toggle("d-none");
             });
 
-            createVariantBtn.disabled = true;
+            function isOnlyDBChecked() {
+                const checkedInputs = Array.from(attributeContainer.querySelectorAll(
+                    "input[type='checkbox']:checked"));
+                return checkedInputs.length > 0 && checkedInputs.every(input => input.hasAttribute(
+                    "data-db-checked"));
+            }
 
-            attributeSelect.addEventListener("change", function() {
-                const selectedKey = this.value;
-                const selectedText = this.options[this.selectedIndex].text;
+            function updateCreateVariantButton() {
+                const checkedInputs = attributeContainer.querySelectorAll("input[type='checkbox']:checked");
+                createVariantBtn.disabled = checkedInputs.length === 0 || isOnlyDBChecked();
+            }
 
-                if (selectedKey) {
-                    const values = attributeValuesMap[selectedKey] || [];
-                    let checkboxesHtml = '';
-                    values.forEach(function(item) {
-                        checkboxesHtml += `<div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="attribute_values[${selectedKey}][]" value="${item.id}" id="attr-${selectedKey}-${item.id}">
-                        <label class="form-check-label" for="attr-${selectedKey}-${item.id}">${item.value}</label>
-                    </div>`;
-                    });
-                    const attributeDiv = document.createElement("div");
-                    attributeDiv.classList.add("col-12", "border", "p-3", "rounded", "position-relative");
-                    attributeDiv.dataset.key = selectedKey;
-
-                    attributeDiv.innerHTML = `
-                    <h5 class="mb-2">${selectedText}</h5>
-                    <div class="attribute-values-container">
-                        ${checkboxesHtml}
-                    </div>
-                    <button class="btn btn-sm btn-danger mt-2 remove-attribute">Xóa</button>
-                `;
-                    attributeContainer.appendChild(attributeDiv);
-                    this.querySelector(`option[value='${selectedKey}']`).disabled = true;
-                    this.value = "";
-
+            attributeContainer.addEventListener("change", function(event) {
+                if (event.target.type === "checkbox" && !event.target.hasAttribute("disabled")) {
                     updateCreateVariantButton();
-
-                    attributeDiv.querySelector(".remove-attribute").addEventListener("click", function(e) {
-                        e.preventDefault();
-                        attributeDiv.remove();
-                        attributeSelect.querySelector(`option[value='${selectedKey}']`).disabled =
-                            false;
-                        updateCreateVariantButton();
-                    });
                 }
             });
 
-            function updateCreateVariantButton() {
-                createVariantBtn.disabled = attributeContainer.children.length === 0;
-            }
+            updateCreateVariantButton();
 
             createVariantBtn.addEventListener("click", function() {
                 createdVariantContainer.innerHTML = "";
@@ -309,8 +299,6 @@
                     alert("Vui lòng chọn thuộc tính và đánh dấu giá trị cần thiết.");
                     return;
                 }
-
-                // Sắp xếp các attributeDivs theo id tăng dần
                 attributeDivs.sort((a, b) => parseInt(a.dataset.key) - parseInt(b.dataset.key));
 
                 let variantCombinations = [];
@@ -343,13 +331,16 @@
                 let combinations = [];
                 generateCombinations(variantCombinations, 0, combinations);
 
-                combinations.forEach((combination, i) => {
+                combinations.forEach((combination) => {
                     variantCounter++;
                     combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                    let barcode = combination.map(attr => attr.id).join(
-                        "");
+                    let barcode = combination.map(attr => attr.id).join("");
                     let variantName =
                         `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
+
+                    let hiddenAttributeInputs = combination.map(attr =>
+                        `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attr.id}">`
+                    ).join("");
 
                     let variantHtml = `
                     <div class="card mb-3 variant-block">
@@ -360,8 +351,8 @@
                         <div class="card-body d-none">
                             <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
 
-                            <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
-
+                            <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
+                            ${hiddenAttributeInputs}
                             <label class="form-label">Price</label>
                             <input type="number" class="form-control" name="variants[${variantCounter}][price]">
                                 @error('variants[${variantCounter}][price]')
@@ -410,6 +401,21 @@
                 if (e.target && e.target.closest(".toggle-variant")) {
                     e.target.closest(".variant-block").querySelector(".card-body").classList.toggle(
                         "d-none");
+                }
+            });
+            document.getElementById("pwd").addEventListener("change", function(event) {
+                const file = event.target.files[0];
+
+                const preview = document.getElementById("imagePreview");
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.classList.remove("d-none");
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.classList.add("d-none");
                 }
             });
             document.getElementById("imageInput").addEventListener("change", function(event) {
