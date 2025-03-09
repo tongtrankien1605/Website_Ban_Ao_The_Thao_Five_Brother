@@ -203,41 +203,43 @@
                                     <div class="row">
                                         <!-- Avatar -->
                                         <div class="col-12 text-center mb-4">
-                                            <img src="{{ $user->avatar }}" alt="Avatar" class="img-fluid rounded-circle" width="150">
+                                            <img src="{{ $user->avatar }}" alt="Avatar" class="img-fluid rounded-circle"
+                                                width="150">
                                         </div>
-                                
+
                                         <!-- Name -->
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Name:</strong></label>
                                             <p>{{ $user->name }}</p>
                                         </div>
-                                
+
                                         <!-- Email -->
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Email Address:</strong></label>
                                             <p>{{ $user->email }}</p>
                                         </div>
-                                
+
                                         <!-- Phone Number -->
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Phone Number:</strong></label>
                                             <p>{{ $user->phone_number }}</p>
                                         </div>
-                                
+
                                         <!-- Gender -->
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Gender:</strong></label>
-                                            <p>{{ $user->gender == 'male' ? 'Male' : 'Female' }}</p>
+                                            <p>{{ $user->gender ?? 'Chưa cập nhật' }}</p>
+                                           
                                         </div>
-                                
+
                                         <!-- Birthday -->
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Birthday:</strong></label>
-                                            <p>{{ $user->birthday }}</p>
+                                            <p>{{ $user->birthday ?? 'Chưa cập nhật' }}</p>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
 
