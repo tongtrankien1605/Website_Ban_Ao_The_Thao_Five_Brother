@@ -132,4 +132,11 @@ class UserController extends Controller
     {
         //
     }
+
+    public function accountInfo()
+{
+    $user = auth()->user(); // Lấy thông tin user đang đăng nhập
+    return view('client.my-account', compact('user'));
+}
+
 }
