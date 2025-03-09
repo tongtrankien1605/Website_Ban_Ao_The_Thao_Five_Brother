@@ -41,7 +41,10 @@
                         <a href="#payment-method" data-bs-toggle="tab"><i class="fa fa-credit-card"></i> Payment
                             Method</a>
 
-                        <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> address</a>
+                        <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> Address</a>
+
+
+                        <a href="{{ route('admin.index') }}"><i class="fa fa-user"></i> Account Details</a>
 
 
 
