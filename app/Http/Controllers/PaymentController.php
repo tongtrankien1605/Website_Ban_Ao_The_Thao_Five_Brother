@@ -22,7 +22,7 @@ class PaymentController extends Controller
         $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
         $shipping = ShippingMethod::all();
         $paymentMethods = PaymentMethod::all();
-    
+
         $total = 0;
         foreach ($cartItem as $item) {
             $total += $item->price * $item->quantity;
@@ -47,53 +47,65 @@ class PaymentController extends Controller
 
     public function processVNPay($order)
     {
-        $vnp_TmnCode = config('services.vnpay.tmn_code');
-        $vnp_HashSecret = config('services.vnpay.hash_secret');
-        $vnp_Url = config('services.vnpay.url');
-    
-        // ✅ Chuyển total_amount thành số nguyên (VNPay chỉ nhận đơn vị VND x100)
+        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        $vnp_Returnurl = env('VNP_RETURN_URL');
+        $vnp_TmnCode = env('VNP_TMN_CODE');
+        $vnp_HashSecret = env('VNP_HASH_SECRET');
+
+        $vnp_TxnRef = $order->id; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+        $vnp_OrderInfo = "Thanh toán hóa đơn";
+        $vnp_OrderType = "test";
         $vnp_Amount = intval($order->total_amount) * 100;
-    
-        // ✅ Đảm bảo `TxnRef` là số nguyên duy nhất
-        $vnp_TxnRef = strval($order->id);
-    
-        // ✅ Dùng giá trị hợp lệ từ VNPay Docs (có thể thử `billpayment`)
-        $vnp_OrderType = "billpayment"; 
-    
-        // ✅ Kiểm tra lại thời gian để đúng định dạng VNPay
-        $vnp_CreateDate = now()->format('YmdHis');
-    
-        // ✅ Fix lỗi `vnp_ReturnUrl` (loại bỏ dấu `//`)
-        $vnp_ReturnUrl = rtrim(env('APP_URL'), '/') . "/payment/vnpay/callback";
-    
-        // ✅ Thêm đầy đủ thông tin theo chuẩn VNPay
-        $inputData = [
+        $vnp_Locale = "VN";
+        $vnp_BankCode = "NCB";
+        $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
+        $inputData = array(
             "vnp_Version" => "2.1.0",
             "vnp_TmnCode" => $vnp_TmnCode,
             "vnp_Amount" => $vnp_Amount,
             "vnp_Command" => "pay",
+            "vnp_CreateDate" => date('YmdHis'),
             "vnp_CurrCode" => "VND",
+            "vnp_IpAddr" => $vnp_IpAddr,
+            "vnp_Locale" => $vnp_Locale,
+            "vnp_OrderInfo" => $vnp_OrderInfo,
+            "vnp_OrderType" => $vnp_OrderType,
+            "vnp_ReturnUrl" => $vnp_Returnurl,
             "vnp_TxnRef" => $vnp_TxnRef,
-            "vnp_OrderInfo" => "Thanh toán đơn hàng #" . $order->id,
-            "vnp_OrderType" => $vnp_OrderType, // ✅ Fix lỗi OrderType
-            "vnp_IpAddr" => request()->ip(),
-            "vnp_CreateDate" => $vnp_CreateDate, // ✅ Fix lỗi ngày
-            "vnp_ReturnUrl" => $vnp_ReturnUrl // ✅ Fix lỗi Localhost
-        ];
-    
-        // ✅ Sắp xếp tham số & tạo chữ ký bảo mật (HMAC SHA512)
+        );
+
+        if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+            $inputData['vnp_BankCode'] = $vnp_BankCode;
+        }
+        if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
+            $inputData['vnp_Bill_State'] = $vnp_Bill_State;
+        }
         ksort($inputData);
-        $query = http_build_query($inputData);
-        $hashData = urldecode($query);
-        $vnpSecureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-    
-        // ✅ Gửi dữ liệu đến VNPay
-        $vnp_Url .= '?' . $query . '&vnp_SecureHash=' . $vnpSecureHash;
-        dd($vnp_Url);
-    
-        return redirect($vnp_Url);
+        $query = "";
+        $i = 0;
+        $hashdata = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashdata .= urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
+            $query .= urlencode($key) . "=" . urlencode($value) . '&';
+        }
+
+        $vnp_Url = $vnp_Url . "?" . $query;
+        if (isset($vnp_HashSecret)) {
+            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+            $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+        }
+        if (isset($_POST['redirect'])) {
+            return redirect()->away($vnp_Url);
+        } else {
+            return redirect()->away($vnp_Url);
+        }
     }
-    
+
 
     public function processPayPal($order)
     {
@@ -102,14 +114,14 @@ class PaymentController extends Controller
         dd(new PayPalClient());
         $provider = new PayPalClient();
         $provider->setApiCredentials(config('services.paypal'));
-    
+
         // ✅ Kiểm tra lại xem có client_id không
         $config = config('services.paypal');
         if (empty($config['client_id'])) {
             return back()->withErrors('PayPal Client ID bị thiếu! Kiểm tra lại .env.');
         }
-        
-    
+
+
         // ✅ Tạo đơn hàng PayPal
         $response = $provider->createOrder([
             "intent" => "CAPTURE",
@@ -126,7 +138,7 @@ class PaymentController extends Controller
                 "cancel_url" => route('payment.paypal.cancel'),
             ]
         ]);
-    
+
         // ✅ Kiểm tra response từ PayPal
         if (isset($response['id']) && $response['status'] == "CREATED") {
             foreach ($response['links'] as $link) {
@@ -135,7 +147,7 @@ class PaymentController extends Controller
                 }
             }
         }
-    
+
         return back()->withErrors('Lỗi khi tạo thanh toán PayPal.');
     }
 }

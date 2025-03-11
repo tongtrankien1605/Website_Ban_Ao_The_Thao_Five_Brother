@@ -22,8 +22,14 @@
                 </div>
             </div>
         </section>
-
         <div class="col-12">
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
                     <h3 class="card-title"></h3>
@@ -42,12 +48,6 @@
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
                     <table class="table table-head-fixed text-nowrap">
                         <thead>
                             <tr>

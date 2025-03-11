@@ -49,15 +49,16 @@ class UserController extends Controller
             return abort(403);
         }
         $addresses = AddressUser::where('id_user', $user->id)->orderByDesc('is_default')->get();
-        $orders = Order::where('id_user', $user->id)
-            ->join('shipping_methods',function ($q) {
-                $q->on('shipping_methods.id_shipping_method','=','orders.id_shipping_method');
+        $orders = Order::where('total_amount', '>', 0)->where('id_user', $user->id)
+            ->latest('id')
+            ->join('shipping_methods', function ($q) {
+                $q->on('shipping_methods.id_shipping_method', '=', 'orders.id_shipping_method');
             })
-            ->join('payment_methods',function ($q) {
-                $q->on('payment_methods.id_payment_method','=','orders.id_payment_method');
+            ->join('payment_methods', function ($q) {
+                $q->on('payment_methods.id_payment_method', '=', 'orders.id_payment_method');
             })
-            ->join('payment_method_statuses',function ($q) {
-                $q->on('payment_methods.id_payment_method_status','=','payment_method_statuses.id');
+            ->join('payment_method_statuses', function ($q) {
+                $q->on('payment_methods.id_payment_method_status', '=', 'payment_method_statuses.id');
             })
             ->select([
                 'orders.*',
@@ -66,6 +67,7 @@ class UserController extends Controller
                 'payment_method_statuses.name as payment_method_status_name',
             ])
             ->paginate(10);
+
         $orderIds = $orders->pluck('id');
         $orderDetails = OrderDetail::whereIn('id_order', $orderIds)
             ->join('skuses', function ($q) {

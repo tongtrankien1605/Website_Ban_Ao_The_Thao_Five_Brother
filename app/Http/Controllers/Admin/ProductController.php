@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Brand;
+use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAtribute;
@@ -188,9 +189,12 @@ class ProductController extends Controller
         $categories = Category::whereNull('deleted_at')->get();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
         $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->get();
-        $data =  Variant::whereIn('id_skus', $skues->pluck('id')->toArray())->get();
-        // dd($data->toArray());
-        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues', 'productImages', 'skues', 'variants']));
+        $skuesArray = Skus::whereNull('deleted_at')->where('product_id', $product->id)->pluck('name', 'id');
+        $skusAttributeValues =  Variant::leftJoin('product_atribute_values', function ($q) {
+            $q->on('product_atribute_values.id', '=', 'variants.product_attribute_value_id');
+            $q->whereNull('product_atribute_values.deleted_at');
+        })->whereIn('id_skus', $skuesArray->keys())->get()->groupBy('id_skus');
+        return view('admin.products.edit', compact(['brands', 'categories', 'product', 'attributes', 'attributeValues', 'productImages', 'skues', 'variants', 'skusAttributeValues']));
     }
 
     /**
@@ -199,7 +203,7 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
-        dd($request->all());
+        // dd($request->toArray());
         try {
 
             DB::beginTransaction();
@@ -210,90 +214,115 @@ class ProductController extends Controller
             $product->id_brand = $request->id_brand;
             if (isset($request->image)) {
                 if ($product->image) {
+                    ProductImage::where('id_product', $product->id)->where('is_default', 1)->delete();
                     Storage::disk('public')->delete($product->image);
                 }
-                $productpath = $request->image->store('public/products');
-                $product->image = str_replace('public/', '', $productpath);
+                $product->image = $request->image->store('products', 'public');
+                ProductImage::create([
+                    'id_product' => $product->id,
+                    'image_url' => $product->image,
+                    'is_default' => 1,
+                ]);
             }
             $product->save();
 
             if ($request->images) {
-                $productImages = ProductImage::where('id_product', $product->id)->get();
+                $productImages = ProductImage::where('id_product', $product->id)->where('is_default', 0)->get();
                 if ($productImages) {
                     foreach ($productImages as $productImage) {
                         Storage::disk('public')->delete($productImage->image_url);
                     }
                     ProductImage::where('id_product', $product->id)->delete();
                 }
-                $productImages = [];
+                
+                $imageUpdates = [];
                 foreach ($request->images as $image) {
-                    $productImagePath = $image->store('public/products');
+                    $imageUpdates[$image->getClientOriginalName()] = $image;
+                }
+                $imageMain = isset($request->image) ? [$request->image->getClientOriginalName()] : [];
+                $imageAdds = array_diff(array_keys($imageUpdates), $imageMain);
+                $productImages = [];
+                foreach ($imageAdds as $image) {
+                    $imageAdd = $imageUpdates[$image];
                     $productImages[] = [
                         'id_product' => $product->id,
-                        'image_url' => str_replace('public/', '', $productImagePath),
+                        'image_url' => $imageAdd->store('products', 'public'),
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ];
                 }
                 ProductImage::insert($productImages);
             }
-            $existingBarcodes = Skus::where('product_id', $product->id)->pluck('barcode')->toArray();
-            $skusToInsert = [];
-            $skusToUpdate = [];
 
-            if (!empty($request->variants)) {
-                foreach ($request->variants as $variant) {
-                    if (!isset($variant['barcode'])) continue;
-                    if (in_array($variant['barcode'], $existingBarcodes)) {
-
+            if ($request->variants) {
+                $requestIds = array_keys($request->variants);
+                Skus::where('product_id', $product->id)->whereNotIn('id', $requestIds)->update(['status' => 0]);
+                $skusIds = Skus::where('product_id', $product->id)->pluck('id')->toArray();
+                $skusToUpdate = [];
+                $variantsData = [];
+                // dd($request->variants);
+                foreach ($request->variants as $key => $variant) {
+                    if (in_array($key, $skusIds)) {
                         $skusToUpdate[] = [
+                            'id' => $key,
                             'barcode' => $variant['barcode'],
                             'name' => $variant['name'],
                             'price' => $variant['price'],
                             'sale_price' => $variant['sale_price'],
                             'updated_at' => Carbon::now(),
                         ];
-                        if (isset($variant['image'])) {
-                            $skuImagePath = $variant['image']->store('public/productsVariants');
-                            Skus::where('barcode', $variant['barcode'])->update([
-                                'image' => str_replace('public/', '', $skuImagePath)
+                        if (isset($variant['status'])) {
+                            Skus::where('id', $key)->update([
+                                'status' => $variant['status']
+                            ]);
+                        } else {
+                            Skus::where('id', $key)->update([
+                                'status' => 0
+                            ]);
+                        }
+                        if (isset($variant['image']) && $variant['image']->isValid()) {
+                            Skus::where('id', $key)->update([
+                                'image' => $variant['image']->store('productsVariants', 'public')
                             ]);
                         }
                     } else {
-                        $skuImagePath = isset($variant['image']) && $variant['image']->isValid()
-                            ? str_replace('public/', '', $variant['image']->store('public/productsVariants'))
-                            : null;
-
-                        $skusToInsert[] = [
+                        $sku = Skus::create([
                             'product_id' => $product->id,
                             'name' => $variant['name'],
                             'price' => $variant['price'],
                             'sale_price' => $variant['sale_price'],
                             'barcode' => $variant['barcode'],
-                            'image' => $skuImagePath,
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                        ];
+                            'image' => $variant['image']->store('productsVariants', 'public'),
+                        ]);
+                        foreach ($variant['attribute_values'] as $attributeValueId) {
+                            $variantsData[] = [
+                                'product_id' => $product->id,
+                                'id_skus' => $sku->id,
+                                'product_attribute_value_id' => $attributeValueId,
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
+                            ];
+                        }
                     }
                 }
+
+                if (!empty($variantsData)) {
+                    Variant::insert($variantsData);
+                }
+                foreach ($skusToUpdate as $skuData) {
+                    Skus::where('id', $skuData['id'])
+                        ->update([
+                            'name' => $skuData['name'],
+                            'price' => $skuData['price'],
+                            'barcode' => $skuData['barcode'],
+                            'sale_price' => $skuData['sale_price'],
+                        ]);
+                }
+            } else {
+                Skus::where('product_id', $product->id)->update(['status' => 0]);
             }
 
-            foreach ($skusToUpdate as $skuData) {
-                Skus::where('barcode', $skuData['barcode'])->update([
-                    'name' => $skuData['name'],
-                    'price' => $skuData['price'],
-                    'sale_price' => $skuData['sale_price'],
-                    'updated_at' => Carbon::now(),
-                ]);
-            }
 
-            if (!empty($skusToInsert)) {
-                Skus::insert($skusToInsert);
-            }
-            $requestBarcodes = array_column($request->variants, 'barcode');
-            Skus::where('product_id', $product->id)
-                ->whereNotIn('barcode', $requestBarcodes)
-                ->update(['status' => 0]);
 
             DB::commit();
 
@@ -318,13 +347,19 @@ class ProductController extends Controller
 
     public function changeStatus(Product $product)
     {
-        DB::beginTransaction();
-        $product->status = $product->status ? 0 : 1;
-        // Skus::whereNull('deleted_at')->where('product_id', $product->id)->update(['status' => $product->status]);
-        if (!$product->save()) {
-            DB::rollBack();
+        if (!$product) {
+            return redirect()->back()->with('error', 'Sản phẩm không tồn tại!');
         }
-        DB::commit();
-        return redirect()->route('admin.product.index');
+        $skus = Skus::where('product_id', $product->id)->pluck('id')->toArray();
+        $checkCartExists = CartItem::whereIn('id_product_variant', $skus)->exists();
+        if ($checkCartExists) {
+            return redirect()->back()->with('error', 'Không thể thay đổi trạng thái vì biến thể của sản phẩm đang tồn tại trong giỏ hàng!');
+        }
+
+        $product->status = $product->status ? 0 : 1;
+        if (!$product->save()) {
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi');
+        }
+        return redirect()->route('admin.product.index')->with('success', 'Trạng thái sản phẩm đã được cập nhật thành công!');
     }
 }
