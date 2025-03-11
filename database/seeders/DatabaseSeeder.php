@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductAtributeSeeder::class);
         $this->call(ProductAtributeValueSeeder::class);
 
-        Skus::factory(150)->create();
+        // Skus::factory(150)->create();
 
         $this->call(PaymentMethodStatusSeeder::class);
         $this->call(PaymentMethodSeeder::class);

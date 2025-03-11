@@ -52,7 +52,7 @@
                             <div class="product-inner">
                                 <div class="image">
                                     <div class="bg-light border rounded d-flex justify-content-center align-items-center">
-                                        <img id="main-image" src="{{ Storage::url($mainImage) }}" alt="{{ $product->name }}"
+                                        <img id="main-image" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
                                             style="height: 300px; width: 300px;">
                                     </div>
                                     <div class="image-overlay">

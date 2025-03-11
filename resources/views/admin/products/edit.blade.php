@@ -86,9 +86,11 @@
                                                 <div
                                                     class="card-header toggle-variant d-flex justify-content-between align-items-center">
                                                     <h5 class="mb-0">{{ $sku->name }}</h5>
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-danger float-end remove-variant">Disabled
-                                                        Variant</button>
+                                                    @if ($sku->status)
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-danger float-end remove-variant">Disabled
+                                                            Variant</button>
+                                                    @endif
                                                 </div>
                                                 <div class="card-body d-none">
                                                     <input type="hidden" name="variants[{{ $sku->id }}][name]"
@@ -99,17 +101,27 @@
                                                             name="variants[{{ $sku->id }}][barcode]"
                                                             value="{{ $sku->barcode }}" readonly>
                                                     </div>
-                                                    {{-- @foreach ($variant['attribute_values'] as $attrValue)
-                                                        <input type="text"
-                                                            name="variants[{{ $index }}][attribute_values][]"
-                                                            value="{{ $attrValue }}">
-                                                    @endforeach --}}
+                                                    <div>
+                                                        <label class="form-label">Các giá trị: </label>
+                                                        <ul>
+                                                            @foreach ($skusAttributeValues[$sku->id] as $skusAttributeValue)
+                                                                <li>
+                                                                    {{ $skusAttributeValue['value'] }}
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                        @foreach ($skusAttributeValues[$sku->id] as $skusAttributeValue)
+                                                            <input type="hidden" class="form-control"
+                                                                name="variants[{{ $sku->id }}][attribute_values][]"
+                                                                value="{{ $skusAttributeValue['product_attribute_value_id'] }}">
+                                                        @endforeach
+                                                    </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][price]"
                                                             value="{{ $sku->price }}">
-                                                        @error('variants[{{ $sku->id }}][price]')
+                                                        @error("variants.$sku->id.price")
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
@@ -118,9 +130,21 @@
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][sale_price]"
                                                             value="{{ $sku->sale_price }}">
-                                                        @error('variants[{{ $sku->id }}][sale_price]')
+                                                        @error("variants.$sku->id.sale_price")
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="check1"
+                                                            name="variants[{{ $sku->id }}][status]" value="1"
+                                                            @checked($sku->status)>
+                                                        <label class="form-check-label" for="check1">
+                                                            @if ($sku->status)
+                                                                Deadactive
+                                                            @else
+                                                                Active
+                                                            @endif
+                                                        </label>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Image</label>
@@ -133,7 +157,7 @@
                                                             </div>
                                                             <input type="file" class="form-control" id="image"
                                                                 name="variants[{{ $sku->id }}][image]">
-                                                            @error('variants[{{ $sku->id }}][image]')
+                                                            @error("variants.$sku->id.image")
                                                                 <div class="text-danger">{{ $message }}</div>
                                                             @enderror
                                                         </div>
@@ -200,8 +224,6 @@
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h4 class="card-title mb-0">Variants</h4>
-                                                    <button type="button" class="btn btn-primary btn-sm float-end"
-                                                        id="toggleVariantsBtn">Add Variant</button>
                                                 </div>
                                                 <div class="card-body" id="variantsCard">
                                                     <div class="row g-3" id="attributeContainer">
@@ -217,7 +239,7 @@
                                                                                 name="attribute_values[{{ $key }}][]"
                                                                                 value="{{ $option['id'] }}"
                                                                                 id="attr-{{ $key }}-{{ $option['id'] }}"
-                                                                                {{ in_array($option['id'], $variants) ? 'checked data-db-checked=true disabled' : '' }}>
+                                                                                {{ in_array($option['id'], $variants) ? 'checked' : '' }}>
                                                                             <label class="form-check-label"
                                                                                 for="attr-{{ $key }}-{{ $option['id'] }}">
                                                                                 {{ $option['value'] }}
@@ -230,6 +252,8 @@
 
                                                     </div>
                                                     <div class="mt-3 text-center">
+                                                        <button type="button" class="btn btn-success"
+                                                            id="addAttributeValue" disabled>Cập nhật giá trị</button>
                                                         <button type="button" class="btn btn-success"
                                                             id="createVariantBtn" disabled>Tạo Variant</button>
                                                     </div>
@@ -253,66 +277,65 @@
     <script>
         var attributeValues = @json($attributeValues);
         document.addEventListener("DOMContentLoaded", function() {
-            const toggleBtn = document.getElementById("toggleVariantsBtn");
             const variantsCard = document.getElementById("variantsCard");
             const createVariantBtn = document.getElementById("createVariantBtn");
             const attributeContainer = document.getElementById("attributeContainer");
             const createdVariantContainer = document.getElementById("createdVariantContainer");
             const productId = createdVariantContainer.getAttribute("data-id-product");
-            let variantCounter = 0;
+            const addAttributeValueBtn = document.getElementById("addAttributeValue");
+            let variantCounter = document.querySelectorAll(".variant-block").length;
 
-            toggleBtn.addEventListener("click", function() {
-                variantsCard.classList.toggle("d-none");
-            });
 
-            function isOnlyDBChecked() {
-                const checkedInputs = Array.from(attributeContainer.querySelectorAll(
-                    "input[type='checkbox']:checked"));
-                return checkedInputs.length > 0 && checkedInputs.every(input => input.hasAttribute(
-                    "data-db-checked"));
-            }
+            let initialChecked = Array.from(attributeContainer.querySelectorAll("input[type='checkbox']:checked"))
+                .length;
 
             function updateCreateVariantButton() {
-                const checkedInputs = attributeContainer.querySelectorAll("input[type='checkbox']:checked");
-                createVariantBtn.disabled = checkedInputs.length === 0 || isOnlyDBChecked();
+                const checkedInputs = attributeContainer.querySelectorAll("input[type='checkbox']:checked").length;
+                createVariantBtn.disabled = checkedInputs <= initialChecked;
             }
 
+            updateCreateVariantButton();
+
             attributeContainer.addEventListener("change", function(event) {
-                if (event.target.type === "checkbox" && !event.target.hasAttribute("disabled")) {
+                if (event.target.type === "checkbox") {
                     updateCreateVariantButton();
                 }
             });
 
-            updateCreateVariantButton();
-
             createVariantBtn.addEventListener("click", function() {
-                createdVariantContainer.innerHTML = "";
                 const productName = document.getElementById("name").value.trim();
-
                 if (!productName) {
                     alert("Vui lòng nhập tên sản phẩm trước khi tạo biến thể.");
                     return;
                 }
 
                 const attributeDivs = Array.from(attributeContainer.querySelectorAll("div[data-key]"));
-                if (attributeDivs.length === 0) {
-                    alert("Vui lòng chọn thuộc tính và đánh dấu giá trị cần thiết.");
-                    return;
-                }
-                attributeDivs.sort((a, b) => parseInt(a.dataset.key) - parseInt(b.dataset.key));
-
+                let newAttributes = {};
+                let existingAttributes = new Set();
                 let variantCombinations = [];
+                document.querySelectorAll(".variant-block input[name*='attribute_values']").forEach(
+                    input => {
+                        existingAttributes.add(input.value);
+                    });
+
                 attributeDivs.forEach(function(div) {
-                    const checkedBoxes = div.querySelectorAll("input[type='checkbox']:checked");
+                    const key = div.getAttribute("data-key");
+                    const checkedBoxes = div.querySelectorAll(
+                        "input[type='checkbox']:checked:not([disabled])");
                     let values = [];
+
                     checkedBoxes.forEach(function(checkbox) {
                         values.push({
                             id: checkbox.value,
                             value: checkbox.nextElementSibling.innerText
                         });
                     });
+
                     if (values.length > 0) {
                         variantCombinations.push(values);
+                        if (!existingAttributes.has(values[0].id)) {
+                            newAttributes[key] = values;
+                        }
                     }
                 });
 
@@ -331,18 +354,27 @@
                 let combinations = [];
                 generateCombinations(variantCombinations, 0, combinations);
 
+                let existingVariants = document.querySelectorAll(".variant-block");
+                let existingVariantNames = new Set();
+
+                existingVariants.forEach(variant => {
+                    let variantName = variant.querySelector("h5").innerText;
+                    existingVariantNames.add(variantName);
+                });
+
                 combinations.forEach((combination) => {
-                    variantCounter++;
                     combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                    let barcode = combination.map(attr => attr.id).join("");
+                    let barcode = `${productId}${combination.map(attr => attr.id).join("")}`;
                     let variantName =
                         `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
 
-                    let hiddenAttributeInputs = combination.map(attr =>
-                        `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attr.id}">`
-                    ).join("");
+                    if (!existingVariantNames.has(variantName)) {
+                        variantCounter++;
+                        let hiddenAttributeInputs = combination.map(attr =>
+                            `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attr.id}">`
+                        ).join("");
 
-                    let variantHtml = `
+                        let variantHtml = `
                     <div class="card mb-3 variant-block">
                         <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">${variantName}</h5>
@@ -371,10 +403,21 @@
                             <img class="img-preview mt-2 d-none" width="100" height="100">
                         </div>
                     </div>`;
-                    createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
+                        createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
+                    }
                 });
             });
 
+            document.addEventListener("click", function(e) {
+                if (e.target && e.target.classList.contains("remove-variant")) {
+                    e.preventDefault();
+                    e.target.closest(".variant-block").remove();
+                }
+                if (e.target && e.target.closest(".toggle-variant")) {
+                    e.target.closest(".variant-block").querySelector(".card-body").classList.toggle(
+                        "d-none");
+                }
+            });
 
             document.addEventListener("change", function(e) {
                 if (e.target && e.target.classList.contains("variant-image")) {
@@ -393,16 +436,6 @@
                 }
             });
 
-            document.addEventListener("click", function(e) {
-                if (e.target && e.target.classList.contains("remove-variant")) {
-                    e.preventDefault();
-                    e.target.closest(".variant-block").remove();
-                }
-                if (e.target && e.target.closest(".toggle-variant")) {
-                    e.target.closest(".variant-block").querySelector(".card-body").classList.toggle(
-                        "d-none");
-                }
-            });
             document.getElementById("pwd").addEventListener("change", function(event) {
                 const file = event.target.files[0];
 

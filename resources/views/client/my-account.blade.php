@@ -115,6 +115,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    {{ $orders->links() }}
                                 </div>
                             </div>
                         </div>
@@ -229,7 +230,7 @@
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Gender:</strong></label>
                                             <p>{{ $user->gender ?? 'Chưa cập nhật' }}</p>
-                                           
+
                                         </div>
 
                                         <!-- Birthday -->
