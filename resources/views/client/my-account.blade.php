@@ -111,7 +111,7 @@
                                                         </ul>
                                                     </td>
                                                     <td>{{ $order->created_at->format('d/m/Y') }}</td>
-                                                    <td>{{ $order->payment_method_status_name }}</td>
+                                                    <td>{{ $order->order_status_name }}</td>
                                                     <td>{{ number_format($order->total_amount) }}đ</td>
 
                                                     <td>
@@ -206,7 +206,7 @@
                                                             </ul>
                                                         </td>
                                                         <td>{{ $order->created_at->format('d/m/Y') }}</td>
-                                                        <td>{{ $order->payment_method_status_name }}</td>
+                                                        <td>{{ $order->order_status_name }}</td>
                                                         <td>{{ number_format($order->total_amount) }}đ</td>
                                                         <td>
                                                             <a href="#"
@@ -400,20 +400,20 @@
         let ordersList = document.getElementById("orders-list");
         let orderDetailsContent = document.getElementById("order-details-content");
         let orderDetailsBody = document.getElementById("order-details-body");
-    
+
         // Xử lý khi nhấn "View"
         document.querySelectorAll(".order-details-btn").forEach(button => {
             button.addEventListener("click", function (e) {
                 e.preventDefault();
                 let orderId = this.getAttribute("data-order-id");
-    
+
                 // Gửi AJAX để lấy chi tiết đơn hàng
                 fetch(`/get-order-details/${orderId}`)
                     .then(response => response.json())
                     .then(data => {
                         // Xóa dữ liệu cũ
                         orderDetailsBody.innerHTML = "";
-    
+
                         // Thêm dữ liệu mới
                         data.forEach(detail => {
                             let row = `
@@ -425,14 +425,14 @@
                                 </tr>`;
                             orderDetailsBody.innerHTML += row;
                         });
-    
+
                         // Ẩn danh sách đơn hàng, hiển thị chi tiết đơn hàng
                         ordersList.style.display = "none";
                         orderDetailsContent.style.display = "block";
                     });
             });
         });
-    
+
         // Quay lại danh sách Orders
         document.getElementById("back-to-orders").addEventListener("click", function () {
             ordersList.style.display = "block";
@@ -440,5 +440,5 @@
         });
     });
     </script>
-    
+
 

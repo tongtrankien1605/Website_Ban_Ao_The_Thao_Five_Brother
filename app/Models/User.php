@@ -92,4 +92,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(VoucherUser::class);
     }
+    public function order_status_histories()
+    {
+        return $this->hasMany(OrderStatusHistory::class, 'user_id', 'id');
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'id_user', 'id');
+    }
 }

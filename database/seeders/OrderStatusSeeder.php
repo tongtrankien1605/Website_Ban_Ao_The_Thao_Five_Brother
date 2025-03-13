@@ -18,13 +18,19 @@ class OrderStatusSeeder extends Seeder
                 'name' => 'Chờ xác nhận'
             ],
             [
-                'name' => 'Chờ lấy hàng'
+                'name' => 'Đã xác nhận'
             ],
             [
                 'name' => 'Đang giao hàng'
             ],
             [
+                'name' => 'Chờ lấy hàng'
+            ],
+            [
                 'name' => 'Đã giao'
+            ],
+            [
+                'name' => 'Giao thất bại'
             ],
             [
                 'name' => 'Hoàn trả'

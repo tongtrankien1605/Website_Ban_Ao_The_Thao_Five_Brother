@@ -15,6 +15,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @extends('client.layouts.partials.css')
     @extends('client.layouts.partials.js')
+    @vite('resources/js/app.js')
 
 </head>
 
@@ -25,31 +26,34 @@
         <header>
 
             <!-- Header Section Start -->
-        <div class="header-section section">
+            <div class="header-section section">
 
-            @include('client.layouts.partials.header-top')
+                @include('client.layouts.partials.header-top')
 
-            @include('client.layouts.partials.header-bottom')
+                @include('client.layouts.partials.header-bottom')
 
-        </div>
-        <!-- Header Section End -->
+            </div>
+            <!-- Header Section End -->
 
         </header>
 
         @yield('content')
 
         @include('client.layouts.partials.brand-section')
-
+        <script>
+            window.userId = @json(auth()->id()); // Lấy user ID từ backend
+            console.log(window.userId);
+        </script>
         <footer>
-            
+
             @include('client.layouts.partials.footer-top')
 
             @include('client.layouts.partials.footer-bottom')
-            
+
         </footer>
     </div>
 
-  
+
 
 </body>
 

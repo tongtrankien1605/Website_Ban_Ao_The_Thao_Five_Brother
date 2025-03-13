@@ -210,6 +210,14 @@
 
                     </ul>
                 </li>
+
+                <li class="nav-item menu-close">
+                    <a href="{{ route('admin.orders.index') }}" class="nav-link">
+                        <p>
+                            Quản lý đơn hàng
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

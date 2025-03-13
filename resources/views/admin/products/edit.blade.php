@@ -86,13 +86,13 @@
                                                 <div
                                                     class="card-header toggle-variant d-flex justify-content-between align-items-center">
                                                     <h5 class="mb-0">{{ $sku->name }}</h5>
-                                                    @if ($sku->status)
+                                                    {{-- @if ($sku->status)
                                                         <button type="button"
                                                             class="btn btn-sm btn-danger float-end remove-variant">Disabled
                                                             Variant</button>
-                                                    @endif
+                                                    @endif --}}
                                                 </div>
-                                                <div class="card-body d-none">
+                                                <div class="card-body">
                                                     <input type="hidden" name="variants[{{ $sku->id }}][name]"
                                                         value="{{ $sku->name }}">
                                                     <div class="mb-3">
@@ -134,7 +134,7 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <div class="form-check">
+                                                    {{-- <div class="form-check">
                                                         <input type="checkbox" class="form-check-input" id="check1"
                                                             name="variants[{{ $sku->id }}][status]" value="1"
                                                             @checked($sku->status)>
@@ -145,7 +145,7 @@
                                                                 Active
                                                             @endif
                                                         </label>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="mb-3">
                                                         <label class="form-label">Image</label>
                                                         <div class="input-group">
@@ -285,22 +285,77 @@
             const addAttributeValueBtn = document.getElementById("addAttributeValue");
             let variantCounter = document.querySelectorAll(".variant-block").length;
 
+            // Lưu danh sách các thuộc tính đã có giá trị được chọn ban đầu
+            let initialCheckedAttributes = new Set();
+            attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
+                let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
+                if (hasChecked) {
+                    initialCheckedAttributes.add(div.getAttribute("data-key"));
+                }
+            });
 
-            let initialChecked = Array.from(attributeContainer.querySelectorAll("input[type='checkbox']:checked"))
-                .length;
+            let initialChecked = attributeContainer.querySelectorAll("input[type='checkbox']:checked").length;
+            let hasNewAttributeSelected = false; // Biến kiểm tra xem có thuộc tính mới không
 
-            function updateCreateVariantButton() {
-                const checkedInputs = attributeContainer.querySelectorAll("input[type='checkbox']:checked").length;
-                createVariantBtn.disabled = checkedInputs <= initialChecked;
+            function updateButtons() {
+                let foundNewAttribute = false;
+
+                attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
+                    let key = div.getAttribute("data-key");
+                    let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
+
+                    // Kiểm tra xem thuộc tính có giá trị mới được chọn hay không
+                    if (hasChecked && !initialCheckedAttributes.has(key)) {
+                        foundNewAttribute = true;
+                    }
+                });
+
+                hasNewAttributeSelected = foundNewAttribute;
+
+                // "Cập nhật giá trị" chỉ bật nếu có thuộc tính mới
+                addAttributeValueBtn.disabled = !hasNewAttributeSelected;
+
+                // "Tạo Variant" bị disabled nếu có thuộc tính mới hoặc số lượng chọn <= số lượng ban đầu
+                createVariantBtn.disabled = hasNewAttributeSelected ||
+                    attributeContainer.querySelectorAll("input[type='checkbox']:checked").length <= initialChecked;
             }
-
-            updateCreateVariantButton();
 
             attributeContainer.addEventListener("change", function(event) {
                 if (event.target.type === "checkbox") {
-                    updateCreateVariantButton();
+                    updateButtons();
+
+                    // Nếu có thuộc tính mới sau khi đã "Cập nhật giá trị", disable lại "Tạo Variant"
+                    if (hasNewAttributeSelected) {
+                        createVariantBtn.disabled = true;
+                    }
                 }
             });
+
+            // Khi nhấn "Cập nhật giá trị"
+            addAttributeValueBtn.addEventListener("click", function() {
+                // // Cập nhật lại danh sách thuộc tính đã chọn
+                // attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
+                //     let key = div.getAttribute("data-key");
+                //     let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
+                //     if (hasChecked) {
+                //         initialCheckedAttributes.add(key);
+                //     }
+                // });
+
+                // Reset trạng thái sau khi cập nhật
+                // hasNewAttributeSelected = false;
+                addAttributeValueBtn.disabled = true;
+
+                // // Cập nhật lại số lượng thuộc tính đã chọn ban đầu
+                // initialChecked = attributeContainer.querySelectorAll("input[type='checkbox']:checked")
+                //     .length;
+
+                // Khi đã cập nhật giá trị, cho phép "Tạo Variant"
+                createVariantBtn.disabled = false;
+            });
+
+            // Cập nhật trạng thái ban đầu
+            updateButtons();
 
             createVariantBtn.addEventListener("click", function() {
                 const productName = document.getElementById("name").value.trim();
