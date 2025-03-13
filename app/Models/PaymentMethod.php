@@ -22,10 +22,10 @@ class PaymentMethod extends Model
     }
     public function payment_method_statuses()
     {
-        return $this->belongsTo(PaymentMethodStatus::class, 'id_payment_method_status');
+        return $this->belongsTo(PaymentMethodStatus::class, 'id_payment_method_status',);
     }
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class,'id_payment_method','id_payment_method');
     }
 }

@@ -25,10 +25,10 @@ class OrderDetail extends Model
     }
     public function orders()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class,'id_order','id');
     }
     public function product_variants()
     {
-        return $this->belongsTo(Skus::class, 'id_product_variant');
+        return $this->belongsTo(Skus::class, 'id_product_variant','id');
     }
 }

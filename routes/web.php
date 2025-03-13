@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductAttributeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VoucherController;
@@ -137,6 +138,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     Route::resource('product.skus', SkusController::class);
     Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
+
+    Route::resource('orders',AdminOrderController::class);
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
@@ -157,8 +160,8 @@ Route::middleware('auth')->group(function (){
     Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity']);
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('remove.cart');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('clear.cart');
-    
-    
+
+
     Route::get('payment', [PaymentController::class, 'index'])->name('indexPayment');
 
 

@@ -213,16 +213,14 @@ class ProductController extends Controller
             $product->id_category = $request->id_category;
             $product->id_brand = $request->id_brand;
             if (isset($request->image)) {
-                if ($product->image) {
-                    ProductImage::where('id_product', $product->id)->where('is_default', 1)->delete();
+                if (!empty($product->image)) {
                     Storage::disk('public')->delete($product->image);
                 }
                 $product->image = $request->image->store('products', 'public');
-                ProductImage::create([
-                    'id_product' => $product->id,
-                    'image_url' => $product->image,
-                    'is_default' => 1,
-                ]);
+                ProductImage::updateOrCreate(
+                    ['id_product' => $product->id, 'is_default' => 1], // Điều kiện tìm bản ghi cũ
+                    ['image_url' => $product->image] // Nếu có, cập nhật ảnh mới
+                );
             }
             $product->save();
 
@@ -231,10 +229,10 @@ class ProductController extends Controller
                 if ($productImages) {
                     foreach ($productImages as $productImage) {
                         Storage::disk('public')->delete($productImage->image_url);
+                        $productImage->delete();
                     }
-                    ProductImage::where('id_product', $product->id)->delete();
                 }
-                
+
                 $imageUpdates = [];
                 foreach ($request->images as $image) {
                     $imageUpdates[$image->getClientOriginalName()] = $image;
@@ -255,14 +253,16 @@ class ProductController extends Controller
             }
 
             if ($request->variants) {
-                $requestIds = array_keys($request->variants);
-                Skus::where('product_id', $product->id)->whereNotIn('id', $requestIds)->update(['status' => 0]);
+                // $requestIds = array_keys($request->variants);
+                // Skus::where('product_id', $product->id)->whereNotIn('id', $requestIds)->update(['status' => 0]);
                 $skusIds = Skus::where('product_id', $product->id)->pluck('id')->toArray();
                 $skusToUpdate = [];
                 $variantsData = [];
                 // dd($request->variants);
                 foreach ($request->variants as $key => $variant) {
                     if (in_array($key, $skusIds)) {
+                        // dd($key);
+                        Variant::where('id_skus', $key)->delete();
                         $skusToUpdate[] = [
                             'id' => $key,
                             'barcode' => $variant['barcode'],
@@ -271,15 +271,24 @@ class ProductController extends Controller
                             'sale_price' => $variant['sale_price'],
                             'updated_at' => Carbon::now(),
                         ];
-                        if (isset($variant['status'])) {
-                            Skus::where('id', $key)->update([
-                                'status' => $variant['status']
-                            ]);
-                        } else {
-                            Skus::where('id', $key)->update([
-                                'status' => 0
-                            ]);
+                        foreach ($variant['attribute_values'] as $attributeValueId) {
+                            $variantsData[] = [
+                                'product_id' => $product->id,
+                                'id_skus' => $key,
+                                'product_attribute_value_id' => $attributeValueId,
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
+                            ];
                         }
+                        // if (isset($variant['status'])) {
+                        //     Skus::where('id', $key)->update([
+                        //         'status' => $variant['status']
+                        //     ]);
+                        // } else {
+                        //     Skus::where('id', $key)->update([
+                        //         'status' => 0
+                        //     ]);
+                        // }
                         if (isset($variant['image']) && $variant['image']->isValid()) {
                             Skus::where('id', $key)->update([
                                 'image' => $variant['image']->store('productsVariants', 'public')
@@ -318,11 +327,10 @@ class ProductController extends Controller
                             'sale_price' => $skuData['sale_price'],
                         ]);
                 }
-            } else {
-                Skus::where('product_id', $product->id)->update(['status' => 0]);
             }
-
-
+            // else {
+            //     Skus::where('product_id', $product->id)->update(['status' => 0]);
+            // }
 
             DB::commit();
 
