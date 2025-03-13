@@ -1,4 +1,7 @@
 @extends('client.layouts.master')
+
+
+
 @section('content')
     <!-- Page Banner Section Start -->
     <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
@@ -76,7 +79,7 @@
                         <!-- Single Tab Content End -->
 
                         <!-- Single Tab Content Start -->
-                        <div class="tab-pane fade" id="orders" role="tabpanel">
+                        {{-- <div class="tab-pane fade" id="orders" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Orders</h3>
 
@@ -110,7 +113,15 @@
                                                     <td>{{ $order->created_at->format('d/m/Y') }}</td>
                                                     <td>{{ $order->payment_method_status_name }}</td>
                                                     <td>{{ number_format($order->total_amount) }}đ</td>
-                                                    <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
+
+                                                    <td>
+                                                        <a href="#orders-details" data-order-id="{{ $order->id }}"
+                                                            class="btn btn-dark btn-round order-details-btn"
+                                                            data-bs-toggle="tab">
+                                                            View
+                                                        </a>
+                                                    </td>
+
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -118,8 +129,121 @@
                                     {{ $orders->links() }}
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Single Tab Content End -->
+
+                        <!-- Single Tab Content Start -->
+                        {{-- <div class="tab-pane fade" id="orders-details" role="tabpanel">
+                            <div class="myaccount-content">
+                                <h3>Orders Details</h3>
+
+                                <div id="order-details-content" class="myaccount-table table-responsive text-center">
+                                    <table class="table table-bordered">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Name</th>
+
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach ($orders as $order)
+                                                <tr>
+                                                    <td>{{ $order->id }}</td>
+                                                    <td>
+                                                        <ul>
+                                                            @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                                <li class="text-start">
+                                                                    <span class="dot"></span>
+                                                                    {{ $orderDetail->name }}
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </td>
+
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    {{ $orders->links() }}
+                                </div>
+                            </div>
+                        </div> --}}
+                        <!-- Single Tab Content End -->
+
+
+
+                        <!-- Tab Orders -->
+                        <div class="tab-pane fade" id="orders" role="tabpanel">
+                            <div id="orders-list">
+                                <div class="myaccount-content">
+                                    <h3>Orders</h3>
+                                    <div class="myaccount-table table-responsive text-center">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>No1</th>
+                                                    <th>Name</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                    <th>Total</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($orders as $order)
+                                                    <tr>
+                                                        <td>{{ $order->id }}</td>
+                                                        <td>
+                                                            <ul>
+                                                                @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>
+                                                                        {{ $orderDetail->name }}
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </td>
+                                                        <td>{{ $order->created_at->format('d/m/Y') }}</td>
+                                                        <td>{{ $order->payment_method_status_name }}</td>
+                                                        <td>{{ number_format($order->total_amount) }}đ</td>
+                                                        <td>
+                                                            <a href="#"
+                                                                class="btn btn-dark btn-round order-details-btn"
+                                                                data-order-id="{{ $order->id }}">
+                                                                View
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        {{ $orders->links() }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chi tiết đơn hàng (Ban đầu ẩn) -->
+                            <div id="order-details-content" style="display: none;">
+                                <button class="btn btn-secondary mb-3" id="back-to-orders">← Back</button>
+                                <h3>Order Details</h3>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên Sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá</th>
+                                            <th>Tổng tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="order-details-body">
+                                        <!-- Dữ liệu chi tiết đơn hàng sẽ được thêm vào đây -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
 
                         <!-- Single Tab Content Start -->
                         <div class="tab-pane fade" id="download" role="tabpanel">
@@ -204,8 +328,8 @@
                                     <div class="row">
                                         <!-- Avatar -->
                                         <div class="col-12 text-center mb-4">
-                                            <img src="{{ $user->avatar }}" alt="Avatar" class="img-fluid rounded-circle"
-                                                width="150">
+                                            <img src="{{ $user->avatar }}" alt="Avatar"
+                                                class="img-fluid rounded-circle" width="150">
                                         </div>
 
                                         <!-- Name -->
@@ -265,3 +389,56 @@
         margin-right: 3px;
     }
 </style>
+
+
+
+<script>
+
+    // JS chuyển tab Order Details khi ấn View ở tab Order
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let ordersList = document.getElementById("orders-list");
+        let orderDetailsContent = document.getElementById("order-details-content");
+        let orderDetailsBody = document.getElementById("order-details-body");
+    
+        // Xử lý khi nhấn "View"
+        document.querySelectorAll(".order-details-btn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                let orderId = this.getAttribute("data-order-id");
+    
+                // Gửi AJAX để lấy chi tiết đơn hàng
+                fetch(`/get-order-details/${orderId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Xóa dữ liệu cũ
+                        orderDetailsBody.innerHTML = "";
+    
+                        // Thêm dữ liệu mới
+                        data.forEach(detail => {
+                            let row = `
+                                <tr>
+                                    <td>${detail.product_name}</td>
+                                    <td>${detail.quantity}</td>
+                                    <td>${new Intl.NumberFormat().format(detail.unit_price)}đ</td>
+                                    <td>${new Intl.NumberFormat().format(detail.total_price)}đ</td>
+                                </tr>`;
+                            orderDetailsBody.innerHTML += row;
+                        });
+    
+                        // Ẩn danh sách đơn hàng, hiển thị chi tiết đơn hàng
+                        ordersList.style.display = "none";
+                        orderDetailsContent.style.display = "block";
+                    });
+            });
+        });
+    
+        // Quay lại danh sách Orders
+        document.getElementById("back-to-orders").addEventListener("click", function () {
+            ordersList.style.display = "block";
+            orderDetailsContent.style.display = "none";
+        });
+    });
+    </script>
+    
+
