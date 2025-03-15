@@ -85,12 +85,17 @@
                                                                         class="btn btn-info">
                                                                         <i class="bi bi-eye"></i>
                                                                     </a>
-                                                                    <button type="button"
-                                                                        class="btn btn-primary edit-order-btn"
-                                                                        data-order-id="{{ $order->id }}"
-                                                                        data-status-id="{{ $order->id_order_status }}">
-                                                                        <i class="fa-solid fa-screwdriver-wrench"></i>
-                                                                    </button>
+                                                                    @if (!in_array($order->id_order_status, [OrderStatus::SUCCESS, OrderStatus::CANCEL, OrderStatus::REFUND]))
+                                                                        <button type="button"
+                                                                            class="btn btn-primary edit-order-btn"
+                                                                            data-order-id="{{ $order->id }}"
+                                                                            data-status-id="{{ $order->id_order_status }}"
+                                                                            data-user-name="{{ $order->user_name }}"
+                                                                            data-payment-status="{{ $order->payment_method_status_name }}"
+                                                                            data-created-at="{{ $order->created_at->format('H:i d/m/Y') }}">
+                                                                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                                                                        </button>
+                                                                    @endif
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -107,7 +112,7 @@
                 </div>
 
                 <!-- Modal Chỉnh sửa đơn hàng (Di chuyển ra ngoài vòng lặp) -->
-                <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel"
+                <div class="modal fade" id="editOrderModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="editOrderModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -122,14 +127,24 @@
                                     @method('PUT')
 
                                     <input type="hidden" id="order_id" name="order_id">
+                                    <div class="mb-3">
+                                        <label for="user_name" class="form-label">Người đặt:</label>
+                                        <input type="text" id="user_name" class="form-control" disabled>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="payment_status" class="form-label">Trạng thái thanh toán:</label>
+                                        <input type="text" id="payment_status" class="form-control" disabled>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="created_at" class="form-label">Thời gian đặt:</label>
+                                        <input type="text" id="created_at" class="form-control" disabled>
+                                    </div>
 
                                     <div class="mb-3">
                                         <label for="id_order_status" class="form-label">Trạng thái đơn hàng</label>
-                                        <select id="id_order_status" name="id_order_status" class="form-control"
-                                            @disabled(
-                                                $order->id_order_status == OrderStatus::CANCEL ||
-                                                    $order->id_order_status == OrderStatus::SUCCESS ||
-                                                    $order->id_order_status == OrderStatus::REFUND)>
+                                        <select id="id_order_status" name="id_order_status" class="form-control">
                                             @foreach ($orderStatuses as $orderStatus)
                                                 <option value="{{ $orderStatus->id }}">{{ $orderStatus->name }}</option>
                                             @endforeach
@@ -140,8 +155,10 @@
                                         <label for="note" class="form-label">Ghi chú(nếu có):</label>
                                         <textarea name="note" id="note" class="form-control" rows="5" id="summernote"></textarea>
                                     </div>
-
-                                    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+                                    <div class=" text-center">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+                                    </div>
                                 </form>
                                 <div id="response-message"></div>
                             </div>
@@ -163,8 +180,14 @@
                     button.addEventListener("click", function() {
                         let orderId = this.getAttribute("data-order-id");
                         let statusId = this.getAttribute("data-status-id");
+                        let userName = this.getAttribute("data-user-name");
+                        let paymentStatus = this.getAttribute("data-payment-status");
+                        let createdAt = this.getAttribute("data-created-at");
 
                         document.getElementById("order_id").value = orderId;
+                        document.getElementById("user_name").value = userName;
+                        document.getElementById("payment_status").value = paymentStatus;
+                        document.getElementById("created_at").value = createdAt;
                         let selectStatus = document.querySelector("select#id_order_status");
                         selectStatus.value = statusId;
 

@@ -11,11 +11,11 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{ isset($admin) && $admin->avatar ? url('storage/avatars/' . $admin->avatar) : url('dist/img/user2-160x160.jpg') }}"
+                <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : url('dist/img/user2-160x160.jpg') }}"
                     class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ isset($admin) ? $admin->name : 'Admin' }}</a>
+                <a href="{{ route('admin.user.show', Auth::user()->id) }}" class="d-block">{{ Auth::user()->name }}</a>
             </div>
         </div>
 
@@ -214,7 +214,16 @@
                 <li class="nav-item menu-close">
                     <a href="{{ route('admin.orders.index') }}" class="nav-link">
                         <p>
+                            <i class="fa-solid fa-cart-shopping"></i>
                             Quản lý đơn hàng
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item menu-close">
+                    <a href="{{ route('index') }}" class="nav-link">
+                        <p>
+                            <i class="fa-solid fa-arrow-left"></i>
+                            Quay lại trang client
                         </p>
                     </a>
                 </li>

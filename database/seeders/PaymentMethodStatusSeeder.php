@@ -17,9 +17,9 @@ class PaymentMethodStatusSeeder extends Seeder
             [
                 'name' => 'Chưa thanh toán'
             ],
-            [
-                'name' => 'Chờ thanh toán'
-            ],
+            // [
+            //     'name' => 'Chờ thanh toán'
+            // ],
             [
                 'name' => 'Đã thanh toán'
             ],

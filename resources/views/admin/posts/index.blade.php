@@ -96,5 +96,4 @@ Danh sách bài viết
         </div>
     </div>
 </div>
-@extends('admin.table.js')
 @endsection

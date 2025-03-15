@@ -50,27 +50,26 @@
                                 </div>
                                 <!-- info row -->
                                 <div class="row invoice-info">
-                                    <div class="col-sm-6 invoice-col">
-                                        Người đặt:
+                                    <div class="col-sm-6 invoice-col pb-3">
+                                        <address> Người đặt: {{ $order->users->name }}</address>
                                         <address>
-                                            <strong>{{ $order->users->name }}</strong><br>
-                                            Địa chỉ:<br>
-                                            {{ $order->address_users->address }}
+
+                                            Địa chỉ: {{ $order->address_users->address }}
                                         </address>
 
                                         <address>
-                                            <strong>Trạng thái đơn hàng: {{ $order->order_statuses->name }}</strong>
+                                            Trạng thái đơn hàng: {{ $order->order_statuses->name }}
                                         </address>
                                     </div>
                                     <!-- /.col -->
-                                    <div class="col-sm-6 invoice-col">
+                                    {{-- <div class="col-sm-6 invoice-col">
                                         Lịch sử đơn hàng:
                                         <strong></strong><br>
                                         795 Folsom Ave, Suite 600<br>
                                         San Francisco, CA 94107<br>
                                         Phone: (555) 539-1037<br>
                                         Email: john.doe@example.com
-                                    </div>
+                                    </div> --}}
                                     <!-- /.col -->
                                     {{-- <div class="col-sm-4 invoice-col">
                                         <b>Invoice #007612</b><br>
@@ -218,8 +217,50 @@
                                 <div class="row">
                                     <!-- accepted payments column -->
                                     <div class="col-6">
-                                        <p class="lead">Payment Methods: {{ $order->payment_methods->name }}</p>
-                                        <p class="lead">Shipping Methods: {{ $order->shipping_methods->name }}</p>
+                                        <ul>
+                                            <li>
+                                                <p class="lead">
+                                                    <strong>
+                                                        Payment Methods: {{ $order->payment_methods->name }}
+                                                    </strong>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p class="lead">
+                                                    <strong>
+                                                        Payment Method Status: {{ $order->payment_method_statuses->name }}
+                                                    </strong>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p class="lead">
+                                                    <strong>
+                                                        Shipping Methods: {{ $order->shipping_methods->name }}
+                                                    </strong>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p class="lead">
+                                                    @if ($order->id_shipping_method == 1)
+                                                        <strong>
+                                                            Thời gian dự kiến nhận hàng:
+                                                            {{ $order->created_at->addDay(1)->format('d/m/Y') }}
+                                                        </strong>
+                                                    @elseif($order->id_shipping_method == 2)
+                                                        <strong>
+                                                            Thời gian dự kiến nhận hàng:
+                                                            {{ $order->created_at->addDay(3)->format('d/m/Y') }}
+                                                        </strong>
+                                                    @elseif($order->id_shipping_method == 3)
+                                                        <strong>
+                                                            Thời gian dự kiến nhận hàng:
+                                                            {{ $order->created_at->addDay(5)->format('d/m/Y') }}
+
+                                                        </strong>
+                                                    @endif
+                                                </p>
+                                            </li>
+                                        </ul>
                                     </div>
                                     <!-- /.col -->
                                     <div class="col-6">
@@ -229,13 +270,15 @@
                                                     <th style="width:50%">Subtotal:</th>
                                                     <td>{{ number_format($order->total_amount, 0, '', ',') }} VND</td>
                                                 </tr>
-                                                {{-- <tr>
+                                                <tr>
                                                     <th>Shipping:</th>
-                                                    <td>$5.80</td>
-                                                </tr> --}}
+                                                    <td>{{ number_format($order->shipping_methods->cost, 0, '', ',') }} VND
+                                                    </td>
+                                                </tr>
                                                 <tr>
                                                     <th>Total:</th>
-                                                    <td>{{ number_format($order->total_amount, 0, '', ',') }} VND</td>
+                                                    <td>{{ number_format($order->total_amount + $order->shipping_methods->cost, 0, '', ',') }}
+                                                        VND</td>
                                                 </tr>
                                             </table>
                                         </div>

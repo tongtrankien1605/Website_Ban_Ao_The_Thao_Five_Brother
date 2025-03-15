@@ -33,7 +33,7 @@ class OrderController extends Controller
                 $q->on('payment_methods.id_payment_method', '=', 'orders.id_payment_method');
             })
             ->join('payment_method_statuses', function ($q) {
-                $q->on('payment_methods.id_payment_method_status', '=', 'payment_method_statuses.id');
+                $q->on('payment_method_statuses.id', '=', 'orders.id_payment_method_status');
             })
             ->select([
                 'orders.*',
@@ -76,6 +76,7 @@ class OrderController extends Controller
             'order_statuses',
             'shipping_methods',
             'payment_methods',
+            'payment_method_statuses',
             'vouchers',
             'order_details',
             'order_status_histories',

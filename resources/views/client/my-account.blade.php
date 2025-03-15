@@ -328,7 +328,7 @@
                                     <div class="row">
                                         <!-- Avatar -->
                                         <div class="col-12 text-center mb-4">
-                                            <img src="{{ $user->avatar }}" alt="Avatar"
+                                            <img src="{{ Storage::url($user->avatar) }}" alt="Avatar"
                                                 class="img-fluid rounded-circle" width="150">
                                         </div>
 
@@ -361,6 +361,17 @@
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Birthday:</strong></label>
                                             <p>{{ $user->birthday ?? 'Chưa cập nhật' }}</p>
+                                        </div>
+                                        <!-- address -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Địa chỉ mặc định:</strong></label>
+                                            @if (
+                                                $data = collect($addresses)->filter(function ($address) {
+                                                        return $address['is_default'] === 1;
+                                                    })->first())
+                                                <p>{{ $data->address }}</p>
+                                            @endif
+
                                         </div>
                                     </div>
                                 </div>
