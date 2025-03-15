@@ -15,34 +15,13 @@ class PaymentMethodSeeder extends Seeder
     {
         $dataSeeder = [
             [
-                'id_payment_method_status'=>1,
                 'name' => 'Tiền mặt',
-                // 'status' => '1',
             ],
             [
-                'id_payment_method_status'=>2,
-                'name' => 'Tiền mặt',
-                // 'status' => '1',
+                'name' => 'Paypal',
             ],
             [
-                'id_payment_method_status'=>3,
-                'name' => 'Tiền mặt',
-                // 'status' => '1',
-            ],
-            [
-                'id_payment_method_status'=>1,
-                'name' => 'Chuyển khoản',
-                // 'status' => '1',
-            ],
-            [
-                'id_payment_method_status'=>2,
-                'name' => 'Chuyển khoản',
-                // 'status' => '1',
-            ],
-            [
-                'id_payment_method_status'=>3,
-                'name' => 'Chuyển khoản',
-                // 'status' => '1',
+                'name' => 'Vnpay',
             ],
         ];
         DB::table('payment_methods')->insert($dataSeeder);

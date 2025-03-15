@@ -11,7 +11,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="/client/assets/images/favicon.ico">
+    <link rel="icon" type="image/x-icon"
+        href="{{ Auth::user() ? Storage::url(Auth::user()->avatar) : '/client/assets/images/favicon.ico' }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @extends('client.layouts.partials.css')
     @extends('client.layouts.partials.js')

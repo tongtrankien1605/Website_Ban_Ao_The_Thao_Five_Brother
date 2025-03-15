@@ -46,6 +46,10 @@ class Order extends Model
     {
         return $this->belongsTo(PaymentMethod::class,'id_payment_method','id_payment_method');
     }
+    public function payment_method_statuses()
+    {
+        return $this->belongsTo(PaymentMethodStatus::class,'id_payment_method_status','id');
+    }
     public function vouchers()
     {
         return $this->belongsTo(Voucher::class);

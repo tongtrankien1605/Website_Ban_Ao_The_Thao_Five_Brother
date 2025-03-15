@@ -7,6 +7,8 @@
     <title>@yield('title', '/')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('admin.layouts.css')
+    <link rel="icon" type="image/x-icon"
+        href="{{ Auth::user() ? Storage::url(Auth::user()->avatar) : '/client/assets/images/favicon.ico' }}">
 
     <style>
         body {

@@ -28,6 +28,10 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-body">
+                                <div class="col-12 text-center mb-4">
+                                    <img src="{{ Storage::url($user->avatar) }}" alt="Avatar"
+                                        class="img-fluid rounded-circle" width="150">
+                                </div>
                                 <div class="form-group">
                                     <label>Họ và tên:</label>
                                     <p>{{ $user->name }}</p>
@@ -67,16 +71,6 @@
                                             @break
                                         @endswitch
                                     </p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Avatar:</label>
-                                    <div>
-                                        @if ($user->avatar)
-                                            <img src="{{ Storage::url($user->avatar) }}" alt="" width="100px">
-                                        @else
-                                            <p>Chưa có ảnh đại diện</p>
-                                        @endif
-                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Địa chỉ:</label>
