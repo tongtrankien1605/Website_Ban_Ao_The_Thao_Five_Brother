@@ -16,23 +16,29 @@ use Illuminate\Support\Facades\Http;
 class PaymentController extends Controller
 {
     public function index(Request $request)
-    {
-        $address_user = AddressUser::where('id_user', Auth::id())->get();
-        $cart = Cart::firstOrCreate(['id_user' => Auth::id()]);
-        $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
-        $shipping = ShippingMethod::all();
-        $paymentMethods = PaymentMethod::all();
+{
+    $selectedItems = $request->input('items'); // Lấy danh sách sản phẩm từ AJAX
+    $address_user = AddressUser::where('id_user', Auth::id())->get();
+    $shipping = ShippingMethod::all();
+    $paymentMethods = PaymentMethod::all();
 
-        $total = 0;
-        foreach ($cartItem as $item) {
-            $total += $item->price * $item->quantity;
-        }
-        // dd($total);
-        // dd($Address);
-        // $address_user = $address_user->toArray();
-        // dd($address_user);
-        return view('client.checkout', compact('address_user', 'cartItem', 'cart', 'total', 'shipping','paymentMethods'));
+    $cartItem = collect(); // Tạo danh sách rỗng
+
+    if ($selectedItems) {
+        $cartItem = CartItem::whereIn('id', collect($selectedItems)->pluck('id'))
+            ->where('id_user', Auth::id())
+            ->with('skuses')
+            ->get();
     }
+
+    $total = 0;
+    foreach ($cartItem as $item) {
+        $total += $item->price * $item->quantity;
+    }
+
+    return view('client.checkout', compact('address_user', 'cartItem', 'total', 'shipping', 'paymentMethods'));
+}
+
 
     public function processPayment(Request $request, $order)
     {
@@ -47,6 +53,7 @@ class PaymentController extends Controller
 
     public function processVNPay($order)
     {
+        // dd($order);
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl = env('VNP_RETURN_URL');
         $vnp_TmnCode = env('VNP_TMN_CODE');
@@ -100,10 +107,17 @@ class PaymentController extends Controller
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
         if (isset($_POST['redirect'])) {
-            return redirect()->away($vnp_Url);
+            $order->id_payment_method_status = 2;
+            $order->save();
+                // dd($order);
+                return redirect()->away($vnp_Url);
         } else {
+            $order->id_payment_method_status = 2;
+            $order->save();
+                // dd($order);
             return redirect()->away($vnp_Url);
         }
+
     }
 
 

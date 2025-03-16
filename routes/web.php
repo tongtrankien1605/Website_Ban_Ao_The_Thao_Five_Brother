@@ -189,3 +189,7 @@ Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'
 Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
 Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
 
+Route::get('/success', function () {
+    return view('client.success');
+})->name('order_success');
+

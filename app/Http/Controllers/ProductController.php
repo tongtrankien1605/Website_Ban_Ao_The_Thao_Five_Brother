@@ -61,7 +61,7 @@ class ProductController extends Controller
             'attributeValues.attribute', // Lấy thuộc tính và giá trị
             'variants'
         ])->findOrFail($id);
-    
+    // dd($product->toArray());
         $brand = Brand::find($product->id_brand);
         $category = Category::find($product->id_category);
         $productImages = ProductImage::where('id_product', $product->id)->get();

@@ -35,6 +35,6 @@ class Variant extends Model
     }
     public function skuses()
     {
-        return $this->belongsTo(Skus::class);
+        return $this->belongsTo(Skus::class, 'id_skus', 'id');
     }
 }

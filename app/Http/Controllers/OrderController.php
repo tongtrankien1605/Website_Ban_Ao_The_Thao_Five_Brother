@@ -19,6 +19,12 @@ class OrderController extends Controller
         foreach ($cartItem as $item) {
             $total += $item->price * $item->quantity;
         }
+        $request->validate([
+            'shipping_id' => 'required|exists:shipping_methods,id_shipping_method',
+            'payment_method' => 'required|exists:payment_methods,id_payment_method',
+            'shipping_cost' => 'required|numeric',
+            'grand_total' => 'required|numeric',
+        ]);
         // dd($request->all(),$total);
 
         // dd($cartItem->toArray());
@@ -28,8 +34,9 @@ class OrderController extends Controller
             'phone_number' => $request->phone_number,
             'id_shipping_method' => $request->shipping_id,
             'id_payment_method' => $request->payment_method,
-            'total_amount' => $total,
+            'total_amount' => $request->grand_total,
             'id_order_status' => 1, // Đơn hàng mới
+            'id_payment_method_status' => 1, // "Chưa thanh toán"
         ]);
 
 
@@ -48,7 +55,7 @@ class OrderController extends Controller
         if ($request->payment_method == 1) {
             $cart->delete();
             // $order->update(['id_order_status' => 2]); // "Đã thanh toán"
-            return redirect()->route('index')->with('success', 'Đơn hàng của bạn sẽ được giao COD!');
+            return redirect()->route('order_success')->with('success', 'Đơn hàng của bạn sẽ được giao COD!');
         }
 
         $paymentController = new PaymentController();
@@ -66,7 +73,7 @@ class OrderController extends Controller
                     ->select('order_details.*', 'skuses.name');
             }])
             ->first();
-
+            
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }
