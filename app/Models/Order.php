@@ -18,6 +18,7 @@ class Order extends Model
         'id_order_status',
         'id_shipping_method',
         'id_payment_method',
+        'id_payment_method_status',
         'total_amount',
         'id_voucher',
     ];

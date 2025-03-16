@@ -119,7 +119,7 @@
 
                                     <div class="image-overlay">
                                         <div class="action-buttons">
-                                            <button class="add_to_cart" data-url="{{route('add.cart',['id' => $product->id])}}">Add to cart</button>
+                                            <button><a href="{{route('product.show',$product->id)}}">Add to cart</a></button>
                                             <button class="add_to_wishlist" data-url="{{route('add_wishlist',['id'=>$product->id])}}">Add to wishlist</button>
                                         </div>
                                     </div>

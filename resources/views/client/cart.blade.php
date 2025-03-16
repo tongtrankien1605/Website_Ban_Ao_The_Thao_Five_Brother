@@ -31,6 +31,7 @@
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="pro-select">Select</th>
                                         <th class="pro-thumbnail">Image</th>
                                         <th class="pro-title">Product</th>
                                         <th class="pro-price">Price</th>
@@ -47,20 +48,29 @@
                                                     $subtotal = floatval($cart->price) * intval($cart->quantity);
                                                     $total += $subtotal;
                                                 @endphp
+                                                <td class="pro-select">
+                                                    <input type="checkbox" class="cart-checkbox" name="selected_items[]" 
+                                                        value="{{ $cart->id }}" 
+                                                        data-price="{{ $cart->price }}" 
+                                                        data-quantity="{{ $cart->quantity }}">
+                                                </td>
+                                                                                               
                                                 <td class="pro-thumbnail"><a href="#"><img
                                                             src="{{ Storage::url($cart->skuses->image) }}"
                                                             alt="" /></a>
                                                 </td>
                                                 <td class="pro-title"><a href="#">{{ $cart->skuses->name }}</a></td>
-                                                <td class="pro-price" data-price="{{ $cart->price }}"><span
-                                                        class="amount">{{ number_format($cart->price) }} đồng</span></td>
+                                                <td class="pro-price" data-price="{{ $cart->price }}">
+                                                    <span class="amount">{{ number_format($cart->price) }} đồng</span>
+                                                </td>
                                                 <td class="pro-quantity">
                                                     <div class="pro-qty"><input data-id="{{ $cart->id }}"
                                                             class="dataInput" type="text" value="{{ $cart->quantity }}">
                                                     </div>
                                                 </td>
                                                 <td class="pro-subtotal" id="subtotal-{{ $cart->id }}">
-                                                    {{ number_format($subtotal) }} đồng</td>
+                                                    {{ number_format($subtotal) }} đồng
+                                                </td>
                                                 <td class="pro-remove"><a
                                                         data-url="{{ route('remove.cart', ['id' => $cart->id]) }}"
                                                         href="{{ route('remove.cart', $cart->id) }}"
@@ -70,10 +80,11 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan='6' class='text-center'><strong>Giỏ hàng trống</strong></td>
+                                            <td colspan='7' class='text-center'><strong>Giỏ hàng trống</strong></td>
                                         </tr>
                                     @endif
                                 </tbody>
+                                
                             </table>
                         </div>
                     </div>
@@ -112,7 +123,7 @@
                                     </tbody>
                                 </table>
                                 <div class="proceed-to-checkout section mt-30">
-                                    <a href="{{ route('indexPayment') }}">Proceed to Checkout</a>
+                                    <a href="{{ route('indexPayment') }}" class="checkout-btn">Proceed to Checkout</a>
                                 </div>
                             </div>
                         @endif
@@ -122,4 +133,5 @@
 
         </div>
     </div><!-- Page Section End -->
+        
 @endsection

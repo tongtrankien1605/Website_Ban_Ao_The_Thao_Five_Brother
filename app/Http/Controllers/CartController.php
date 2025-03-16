@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\Skus;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,43 +14,69 @@ use Illuminate\Support\Facades\DB;
 class CartController extends Controller
 {
 
-    public function addToCart($id)
+    public function addToCart(Request $request, $id)
     {
+        // Kiểm tra đăng nhập
         if (!Auth::check()) {
             return response()->json(['message' => 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng'], 401);
         }
-
-        // Tìm hoặc tạo giỏ hàng
+    
+        // Validate request
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+            'variant_ids' => 'required|array',
+            'variant_ids.*' => 'integer|exists:variants,id',
+        ]);
+    
+        // Chuyển variant_ids thành mảng nếu cần
+        $variantIds = is_array($request->variant_ids) ? $request->variant_ids : [$request->variant_ids];
+    
+        // Lấy hoặc tạo giỏ hàng của user
         $cart = Cart::firstOrCreate(['id_user' => Auth::id()]);
-
-        // Lấy biến thể sản phẩm (chỉ lấy một bản ghi)
-        $productVariant = Skus::where('product_id', $id)->first();
-
-        if (!$productVariant) {
-            return response()->json(['message' => 'Sản phẩm không tồn tại'], 404);
+    
+        // Tìm SKU phù hợp với các biến thể
+        $data = Variant::select('id_skus')
+            ->where('product_id', $id)
+            ->whereIn('product_attribute_value_id', $variantIds)
+            ->groupBy('id_skus')
+            ->havingRaw('COUNT(DISTINCT product_attribute_value_id) = ?', [count($variantIds)])
+            ->first();
+    
+        // Nếu không tìm thấy SKU phù hợp
+        if (!$data) {
+            return response()->json(['message' => 'Không tìm thấy biến thể nào'], 404);
         }
-
-        // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
+    
+        // Lấy thông tin sản phẩm từ bảng Skus
+        $productVariant = Skus::where('id', $data->id_skus)->first();
+    
+        if (!$productVariant) {
+            return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
+        }
+    
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
         $cartItem = CartItem::where('id_cart', $cart->id)
             ->where('id_product_variant', $productVariant->id)
             ->first();
+    
         if ($cartItem) {
-            $cartItem->quantity += 1;
+            // Nếu sản phẩm đã có, tăng số lượng
+            $cartItem->quantity += $request->quantity;
             $cartItem->save();
         } else {
+            // Nếu chưa có, tạo mới
             CartItem::create([
                 'id_cart' => $cart->id,
                 'id_product_variant' => $productVariant->id,
                 'id_user' => Auth::id(),
-                'quantity' => 1,
-                'price' => $productVariant->price,
+                'quantity' => $request->quantity,
+                'price' => $productVariant->sale_price ?? 0,
             ]);
         }
-
+    
         return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
     }
-
-
+    
     public function index()
     {
         $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();

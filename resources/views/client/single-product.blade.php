@@ -85,6 +85,7 @@
 
                                 @if ($product->attributeValues->isNotEmpty())
                                     @php
+                                    
                                         $colorMap = [
                                             'Đỏ' => '#ff0000',
                                             'Xanh' => '#0000ff',
@@ -101,53 +102,49 @@
                                     <div class="product-options mt-3">
                                         {{-- Số lượng --}}
                                         <div class="mb-3">
-                                            <label for="quantity">Số lượng:</label>
+                                            <label for="">Số lượng:</label>
                                             <input type="number" id="quantity" class="form-control w-50" value="1"
                                                 min="1">
                                         </div>
                                         @foreach ($product->attributeValues->groupBy('attribute.name') as $attributeName => $values)
-                                            @php
-                                                $uniqueValues = $values->unique('value'); // Loại bỏ giá trị trùng lặp
-                                            @endphp
-                                            <div class="mb-3">
-                                                <h5>{{ $attributeName }}:</h5>
-                                                <div class="btn-group variant-selection" role="group"
-                                                    data-attribute="{{ $attributeName }}">
-                                                    @foreach ($uniqueValues as $value)
-                                                        @php
-                                                            $sku = $skus
-                                                                ->where('product_attribute_value_id', $value->id)
-                                                                ->first();
-                                                            $variantImage = $sku ? Storage::url($sku->image) : null;
-                                                        @endphp
-
-                                                        <input type="radio" class="btn-check variant-option"
-                                                            id="{{ Str::slug($attributeName) }}-{{ $value->id }}"
-                                                            name="{{ Str::slug($attributeName) }}"
-                                                            value="{{ $value->id }}" data-image="{{ $variantImage }}">
-
-                                                        @if ($attributeName == 'Màu sắc')
+                                        @php
+                                            $uniqueValues = $values->unique('value');
+                                            // dd($uniqueValues); // Loại bỏ giá trị trùng lặp
+                                        @endphp
+                                        <div class="mb-3">
+                                            <h5>{{ $attributeName }}:</h5>
+                                            <div class="btn-group variant-selection" role="group" data-attribute="{{ $attributeName }}">
+                                                @foreach ($uniqueValues as $value)
+                                                    @php
+                                                        $sku = $skus->where('product_attribute_value_id', $value->id)->first();
+                                                        $variantImage = $sku ? Storage::url($sku->image) : null;
+                                                    @endphp
+                                    
+                                                    <input type="radio" class="btn-check variant-option"
+                                                        id="variant-{{ $value->id }}"
+                                                        name="variant[{{ Str::slug($attributeName) }}]"
+                                                        value="{{ $value->id }}" data-image="{{ $variantImage }}">
+                                                    <label class="btn btn-outline-dark" for="variant-{{ $value->id }}">
+                                                        {{ $value->value }}
+                                                    </label>
+                                                    @if ($attributeName == 'Màu sắc')
                                                             @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
                                                             <label class="btn color-btn border border-secondary"
                                                                 for="{{ Str::slug($attributeName) }}-{{ $value->id }}"
                                                                 style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%;">
                                                             </label>
-                                                        @else
-                                                            <label class="btn btn-outline-dark"
-                                                                for="{{ Str::slug($attributeName) }}-{{ $value->id }}">
-                                                                {{ $value->value }}
-                                                            </label>
                                                         @endif
-                                                    @endforeach
-                                                </div>
+                                                @endforeach
                                             </div>
-                                        @endforeach
+                                        </div>
+                                    @endforeach
+                                    
 
                                     </div>
                                 @endif
 
                                 <div class="actions">
-                                    <button><i class="ti-shopping-cart"></i><span>ADD TO CART</span></button>
+                                    <button class="add_to_cart" data-url="{{route('add.cart',['id'=>$product->id])}}"><i class="ti-shopping-cart"></i><span>ADD TO CART</span></button>
                                     <button class="box" data-tooltip="Compare"><i
                                             class="ti-control-shuffle"></i></button>
                                     <button class="box" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
@@ -577,6 +574,52 @@
         </div>
     </div><!-- Page Section End -->
     <script>
+
+$(document).ready(function () {
+    $('.add_to_cart').on('click', function () {
+        let url = $(this).data('url');
+        let quantity = $('#quantity').val(); // Lấy số lượng
+
+        let selectedVariants = [];
+        $('input[type="radio"]:checked').each(function () {
+            selectedVariants.push($(this).val()); // ✅ Lưu tất cả ID vào mảng
+        });
+
+        console.log("🟢 Dữ liệu gửi lên:", {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            quantity: quantity,
+            variant_ids: selectedVariants
+        });
+
+        // Kiểm tra lỗi
+        if (selectedVariants.length === 0) {
+            alert('❌ Vui lòng chọn ít nhất một biến thể!');
+            return;
+        }
+        if (!quantity || quantity < 1) {
+            alert('❌ Vui lòng nhập số lượng hợp lệ!');
+            return;
+        }
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                quantity: quantity,
+                variant_ids: selectedVariants // ✅ Chuyển về mảng thay vì object
+            },
+            success: function (response) {
+                console.log("✅ Thành công:", response);
+                alert(response.message);
+            },
+            error: function (xhr) {
+                console.log("❌ Lỗi:", xhr.responseText);
+            }
+        });
+    });
+});
+
         document.addEventListener("DOMContentLoaded", function() {
             const mainImage = document.getElementById("main-image");
             const mainImageLink = document.getElementById("main-image-link");
