@@ -64,31 +64,159 @@ class OrderController extends Controller
 
 
     // Order Details
+    // public function getOrderDetails($id)
+    // {
+    //     $order = Order::where('id', $id)
+    //         ->with(['orderDetails' => function ($query) {
+    //             $query->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
+    //                 ->select('order_details.*', 'skuses.name');
+    //         }])
+    //         ->first();
+
+    //     if (!$order) {
+    //         return response()->json(['error' => 'Order not found'], 404);
+    //     }
+
+    //     return response()->json([
+    //         'id' => $order->id,
+    //         'date' => $order->created_at->format('d/m/Y'),
+    //         'status' => $order->payment_method_status_name,
+    //         'total' => number_format($order->total_amount),
+    //         'items' => $order->orderDetails->map(function ($item) {
+    //             return [
+    //                 'name' => $item->name,
+    //                 'quantity' => $item->quantity,
+    //                 'price' => number_format($item->price),
+    //             ];
+    //         }),
+    //     ]);
+    // }
+
+    // public function getOrderDetails($id)
+    // {
+    //     $order = Order::where('id', $id)
+    //         ->with(['orderDetails' => function ($query) {
+    //             $query->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
+    //             ->join('address_users', 'address_users.id', '=', 'orders.id_address')
+    //                 ->select(
+    //                     'order_details.*', 
+    //                     'skuses.name', 
+    //                     'skuses.price', 
+    //                     'skuses.sale_price', 
+    //                     'skuses.image', 
+    //                     'skuses.barcode',
+    //                     'skuses.status',
+    //                     'address_users.address'        
+    //                 );
+    //         }, 'customer']) // Lấy thông tin khách hàng
+    //         ->first();
+
+    //     if (!$order) {
+    //         return response()->json(['error' => 'Order not found'], 404);
+    //     }
+
+    //     return response()->json([
+    //         'id' => $order->id,
+    //         'date' => $order->created_at->format('d/m/Y'),
+    //         'status' => $order->status, // Kiểm tra xem đây có phải trạng thái đúng không
+    //         'total' => number_format($order->total_amount),
+    //         'customer' => [
+    //             'name' => $order->customer->name ?? 'N/A',
+    //             'phone' => $order->customer->phone ?? 'N/A',
+    //             'address' => $order->customer->address ?? 'N/A',
+    //         ],
+    //         'items' => $order->orderDetails->map(function ($item) {
+    //             return [
+    //                 'name' => $item->name,
+    //                 'image' => $item->image,
+    //                 'color' => $item->color,
+    //                 'size' => $item->size,
+    //                 'quantity' => $item->quantity,
+    //                 'price' => number_format($item->price),
+    //                 'total' => number_format($item->quantity * $item->price),
+    //             ];
+    //         }),
+    //     ]);
+    // }
+
     public function getOrderDetails($id)
     {
+
+        
+        
         $order = Order::where('id', $id)
-            ->with(['orderDetails' => function ($query) {
-                $query->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
-                    ->select('order_details.*', 'skuses.name');
-            }])
+            ->with([
+                'orderDetails' => function ($query) {
+                    $query->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
+                        ->select(
+                            'order_details.*',
+                            'skuses.name',
+                            'skuses.image',
+                            'skuses.price',
+                            'skuses.sale_price',
+                            'skuses.barcode',
+                            'skuses.status',
+                            'skuses.color', // Thêm màu sắc nếu có trong bảng `skuses`
+                            'skuses.size'   // Thêm size nếu có trong bảng `skuses`
+                        );
+                },
+                'customer',
+                'customer.addresses' => function ($query) {
+                    $query->where('is_default', 1);
+                }
+            ])
             ->first();
 
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }
 
+        
+
         return response()->json([
             'id' => $order->id,
             'date' => $order->created_at->format('d/m/Y'),
-            'status' => $order->payment_method_status_name,
-            'total' => number_format($order->total_amount),
+            'status' => [
+                'text' => $order->status,
+                'badge' => $this->getStatusBadge($order->status), // Hàm hiển thị badge trạng thái giống giao diện
+            ],
+            'payment_method' => $order->payment_method,
+            'total' => number_format($order->total_price) . 'đ',
+
+            'customer' => [
+                'name' => $order->customer->name ?? 'N/A',
+                'phone' => $order->customer->phone ?? 'N/A',
+                'address' => optional($order->customer->addresses->first())->address ?? 'N/A',
+            ],
+
             'items' => $order->orderDetails->map(function ($item) {
                 return [
+                    'image' => $item->image ?? '/default-image.jpg', // Nếu không có ảnh thì gán ảnh mặc định
                     'name' => $item->name,
+                    'color' => $item->color ?? 'Không xác định',
+                    'size' => $item->size ?? 'Không xác định',
                     'quantity' => $item->quantity,
-                    'price' => number_format($item->price),
+                    'price' => number_format($item->price) . 'đ',
+                    'total' => number_format($item->quantity * $item->price) . 'đ',
                 ];
             }),
+
+            
         ]);
+    }
+
+    /**
+     * Hàm chuyển trạng thái đơn hàng thành badge màu sắc giống giao diện
+     */
+    private function getStatusBadge($status)
+    {
+        $badges = [
+            'pending' => 'badge bg-warning',
+            'processing' => 'badge bg-primary',
+            'completed' => 'badge bg-success',
+            'canceled' => 'badge bg-danger',
+        ];
+
+        return $badges[$status] ?? 'badge bg-secondary';
     }
 }
