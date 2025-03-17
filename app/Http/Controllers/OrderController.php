@@ -14,7 +14,6 @@ class OrderController extends Controller
     public function placeOrder(Request $request)
     {
         $cartItem = CartItem::whereIn('id', $request->cart_item_ids)->with('skuses')->get();
-        // dd($cartItem->toArray());
         $total = 0;
         foreach ($cartItem as $item) {
             $total += $item->price * $item->quantity;
