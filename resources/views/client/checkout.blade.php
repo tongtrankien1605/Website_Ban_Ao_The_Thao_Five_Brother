@@ -82,10 +82,10 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    
+
                                 </div>
-                                
-                                
+
+
                             </div>
 
                         </div>
@@ -104,19 +104,21 @@
                                     <ul>
                                         @foreach ($cartItem as $item)
                                             <li>{{ $item->skuses->name }} x {{ $item->quantity }}
-                                                <span>{{ number_format($item->price * $item->quantity) }} Đồng</span></li>
+                                                <span>{{ number_format($item->price * $item->quantity) }} Đồng</span>
+                                            </li>
+                                            <input type="hidden" name="cart_item_ids[]" value="{{ $item->id }}">
                                         @endforeach
                                     </ul>
-                                
+
                                     <p>Sub Total <span id="sub-total">{{ number_format($total) }} Đồng</span></p>
                                     <p>Shipping Fee <span id="shipping-cost">0 Đồng</span></p>
                                     <h4>Grand Total <span id="grand-total">{{ number_format($total) }} Đồng</span></h4>
-                                
+
                                     <!-- Input ẩn để gửi shipping fee và grand total khi thanh toán -->
                                     <input type="hidden" name="shipping_cost" id="shipping-cost-input" value="0">
                                     <input type="hidden" name="grand_total" id="grand-total-input" value="{{ $total }}">
                                 </div>
-                                
+
 
                             </div>
 

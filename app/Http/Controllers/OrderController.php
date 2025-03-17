@@ -13,8 +13,8 @@ class OrderController extends Controller
 {
     public function placeOrder(Request $request)
     {
-        $cart = Cart::firstOrCreate(['id_user' => Auth::id()]);
-        $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
+        $cartItem = CartItem::whereIn('id', $request->cart_item_ids)->with('skuses')->get();
+        // dd($cartItem->toArray());
         $total = 0;
         foreach ($cartItem as $item) {
             $total += $item->price * $item->quantity;
@@ -53,7 +53,7 @@ class OrderController extends Controller
         // $cart->delete();
 
         if ($request->payment_method == 1) {
-            $cart->delete();
+            CartItem::whereIn('id', $request->cart_item_ids)->delete();
             // $order->update(['id_order_status' => 2]); // "Đã thanh toán"
             return redirect()->route('order_success')->with('success', 'Đơn hàng của bạn sẽ được giao COD!');
         }
