@@ -59,7 +59,7 @@
                 <!-- My Account Tab Content Start -->
                 <div class="col-lg-9 col-12 mb-30">
                     <div class="tab-content" id="myaccountContent">
-                        <!-- Single Tab Content Start -->
+                        <!-- Single Tab Content Start - Dashboard -->
                         <div class="tab-pane fade show active" id="dashboad" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Dashboard</h3>
@@ -78,103 +78,9 @@
                         </div>
                         <!-- Single Tab Content End -->
 
-                        <!-- Single Tab Content Start -->
-                        {{-- <div class="tab-pane fade" id="orders" role="tabpanel">
-                            <div class="myaccount-content">
-                                <h3>Orders</h3>
+                        <!-- Single Tab Content Start - Orders & Order Details -->
 
-                                <div class="myaccount-table table-responsive text-center">
-                                    <table class="table table-bordered">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Name</th>
-                                                <th>Date</th>
-                                                <th>Status</th>
-                                                <th>Total</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @foreach ($orders as $order)
-                                                <tr>
-                                                    <td>{{ $order->id }}</td>
-                                                    <td>
-                                                        <ul>
-                                                            @foreach ($orderDetails[$order->id] as $orderDetail)
-                                                                <li class="text-start">
-                                                                    <span class="dot"></span>
-                                                                    {{ $orderDetail->name }}
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </td>
-                                                    <td>{{ $order->created_at->format('d/m/Y') }}</td>
-                                                    <td>{{ $order->order_status_name }}</td>
-                                                    <td>{{ number_format($order->total_amount) }}đ</td>
-
-                                                    <td>
-                                                        <a href="#orders-details" data-order-id="{{ $order->id }}"
-                                                            class="btn btn-dark btn-round order-details-btn"
-                                                            data-bs-toggle="tab">
-                                                            View
-                                                        </a>
-                                                    </td>
-
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    {{ $orders->links() }}
-                                </div>
-                            </div>
-                        </div> --}}
-                        <!-- Single Tab Content End -->
-
-                        <!-- Single Tab Content Start -->
-                        {{-- <div class="tab-pane fade" id="orders-details" role="tabpanel">
-                            <div class="myaccount-content">
-                                <h3>Orders Details</h3>
-
-                                <div id="order-details-content" class="myaccount-table table-responsive text-center">
-                                    <table class="table table-bordered">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Name</th>
-
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @foreach ($orders as $order)
-                                                <tr>
-                                                    <td>{{ $order->id }}</td>
-                                                    <td>
-                                                        <ul>
-                                                            @foreach ($orderDetails[$order->id] as $orderDetail)
-                                                                <li class="text-start">
-                                                                    <span class="dot"></span>
-                                                                    {{ $orderDetail->name }}
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </td>
-
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    {{ $orders->links() }}
-                                </div>
-                            </div>
-                        </div> --}}
-                        <!-- Single Tab Content End -->
-
-
-
-                        <!-- Tab Orders -->
+                        
                         <div class="tab-pane fade" id="orders" role="tabpanel">
                             <div id="orders-list">
                                 <div class="myaccount-content">
@@ -224,7 +130,7 @@
                                 </div>
                             </div>
 
-                            <!-- Chi tiết đơn hàng (Ban đầu ẩn) -->
+                            <!-- Ẩn chi tiết đơn hàng ban đầu, chỉ hiển thị khi bấm "View" -->
                             <div id="order-details-content" style="display: none;">
                                 <button class="btn btn-secondary mb-3" id="back-to-orders">← Back</button>
                                 <h3>Order Details</h3>
@@ -238,11 +144,23 @@
                                         </tr>
                                     </thead>
                                     <tbody id="order-details-body">
-                                        <!-- Dữ liệu chi tiết đơn hàng sẽ được thêm vào đây -->
+                                        @foreach ($orders as $order)
+                                            @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                <tr class="order-detail-row" data-order-id="{{ $order->id }}">
+                                                    <td>{{ $orderDetail->name }}</td>
+                                                    <td>{{ $orderDetail->quantity }}</td>
+                                                    <td>{{ number_format($orderDetail->price) }}đ</td>
+                                                    <td>{{ number_format($orderDetail->quantity * $orderDetail->price) }}đ
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <!-- Single Tab Content End -->
+
 
 
                         <!-- Single Tab Content Start -->
@@ -407,49 +325,41 @@
 
     // JS chuyển tab Order Details khi ấn View ở tab Order
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         let ordersList = document.getElementById("orders-list");
         let orderDetailsContent = document.getElementById("order-details-content");
-        let orderDetailsBody = document.getElementById("order-details-body");
+
+        // Ẩn chi tiết đơn hàng ngay từ đầu
+        orderDetailsContent.style.display = "none";
 
         // Xử lý khi nhấn "View"
         document.querySelectorAll(".order-details-btn").forEach(button => {
-            button.addEventListener("click", function (e) {
+            button.addEventListener("click", function(e) {
                 e.preventDefault();
                 let orderId = this.getAttribute("data-order-id");
 
-                // Gửi AJAX để lấy chi tiết đơn hàng
-                fetch(`/get-order-details/${orderId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Xóa dữ liệu cũ
-                        orderDetailsBody.innerHTML = "";
+                // Ẩn danh sách đơn hàng
+                ordersList.style.display = "none";
+                orderDetailsContent.style.display = "block";
 
-                        // Thêm dữ liệu mới
-                        data.forEach(detail => {
-                            let row = `
-                                <tr>
-                                    <td>${detail.product_name}</td>
-                                    <td>${detail.quantity}</td>
-                                    <td>${new Intl.NumberFormat().format(detail.unit_price)}đ</td>
-                                    <td>${new Intl.NumberFormat().format(detail.total_price)}đ</td>
-                                </tr>`;
-                            orderDetailsBody.innerHTML += row;
-                        });
-
-                        // Ẩn danh sách đơn hàng, hiển thị chi tiết đơn hàng
-                        ordersList.style.display = "none";
-                        orderDetailsContent.style.display = "block";
-                    });
+                // Chỉ hiển thị chi tiết của đơn hàng đã chọn
+                document.querySelectorAll(".order-detail-row").forEach(row => {
+                    if (row.getAttribute("data-order-id") === orderId) {
+                        row.style.display = "table-row";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
             });
         });
 
         // Quay lại danh sách Orders
-        document.getElementById("back-to-orders").addEventListener("click", function () {
+        document.getElementById("back-to-orders").addEventListener("click", function() {
             ordersList.style.display = "block";
             orderDetailsContent.style.display = "none";
         });
     });
-    </script>
+
+</script>
 
 
