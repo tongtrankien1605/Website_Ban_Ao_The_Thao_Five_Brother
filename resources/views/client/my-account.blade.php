@@ -80,7 +80,7 @@
 
                         <!-- Single Tab Content Start - Orders & Order Details -->
 
-                        
+
                         <div class="tab-pane fade" id="orders" role="tabpanel">
                             <div id="orders-list">
                                 <div class="myaccount-content">
@@ -89,19 +89,20 @@
                                         <table class="table table-bordered">
                                             <thead class="thead-light">
                                                 <tr>
-                                                    <th>No1</th>
-                                                    <th>Name</th>
-                                                    <th>Date</th>
-                                                    <th>Status</th>
-                                                    <th>Total</th>
-                                                    <th>Action</th>
+                                                    <th>Order ID</th>
+                                                    {{-- <th>Tên sản phẩm</th> --}}
+                                                    <th>Khách hàng</th>
+                                                    <th>Ngày đặt hàng</th>                                                 
+                                                    <th>Trạng thái đơn hàng</th>
+                                                    <th>Tổng tiền</th>
+                                                    <th>Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($orders as $order)
                                                     <tr>
                                                         <td>{{ $order->id }}</td>
-                                                        <td>
+                                                        {{-- <td>
                                                             <ul>
                                                                 @foreach ($orderDetails[$order->id] as $orderDetail)
                                                                     <li class="text-start">
@@ -110,13 +111,16 @@
                                                                     </li>
                                                                 @endforeach
                                                             </ul>
-                                                        </td>
-                                                        <td>{{ $order->created_at->format('d/m/Y') }}</td>
+                                                        </td> --}}
+                                                        <td>Tên khách hàng</td>
+                                                        <td>{{ $order->created_at->format('d/m/Y H:i:s') }}</td>
+
+
                                                         <td>{{ $order->order_status_name }}</td>
                                                         <td>{{ number_format($order->total_amount) }}đ</td>
                                                         <td>
                                                             <a href="#"
-                                                                class="btn btn-dark btn-round order-details-btn"
+                                                                class="btn btn-info btn-round order-details-btn"
                                                                 data-order-id="{{ $order->id }}">
                                                                 View
                                                             </a>
@@ -133,30 +137,65 @@
                             <!-- Ẩn chi tiết đơn hàng ban đầu, chỉ hiển thị khi bấm "View" -->
                             <div id="order-details-content" style="display: none;">
                                 <button class="btn btn-secondary mb-3" id="back-to-orders">← Back</button>
-                                <h3>Order Details</h3>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Tên Sản phẩm</th>
-                                            <th>Số lượng</th>
-                                            <th>Giá</th>
-                                            <th>Tổng tiền</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="order-details-body">
-                                        @foreach ($orders as $order)
-                                            @foreach ($orderDetails[$order->id] as $orderDetail)
-                                                <tr class="order-detail-row" data-order-id="{{ $order->id }}">
-                                                    <td>{{ $orderDetail->name }}</td>
-                                                    <td>{{ $orderDetail->quantity }}</td>
-                                                    <td>{{ number_format($orderDetail->price) }}đ</td>
-                                                    <td>{{ number_format($orderDetail->quantity * $orderDetail->price) }}đ
-                                                    </td>
+
+                                <h3 class="mb-4">Chi Tiết Đơn Hàng #{{ $order->id }}</h3>
+                                
+                                <div class="container mt-5">
+
+                                    <!-- Thông tin đơn hàng -->
+                                    <div class="card p-3 mb-3">
+                                        <p><strong>Ngày đặt hàng:</strong> {{ $order->created_at }}</p>
+                                        <p><strong>Trạng thái:</strong> <span
+                                                class="badge bg-success">{{ $order->status }}</span></p>
+                                        <p><strong>Phương thức thanh toán:</strong> {{ $order->payment_method }}</p>
+                                        <p><strong>Tổng tiền:</strong> {{ number_format($order->total_price) }}đ</p>
+                                    </div>
+
+                                    <!-- Thông tin khách hàng -->
+                                    <div class="card p-3 mb-3">
+                                        <p><strong>Khách hàng:</strong> {{ $order->customer_name }}</p>
+                                        <p><strong>Điện thoại:</strong> {{ $order->customer_phone }}</p>
+                                        <p><strong>Địa chỉ:</strong> {{ $order->customer_address }}</p>
+                                    </div>
+
+                                    <!-- Danh sách sản phẩm -->
+                                    <div class="card p-3 mb-3">
+                                        <h3>Sản phẩm trong đơn hàng</h3>
+                                        <table class="table table-bordered mt-3">
+                                            <thead>
+                                                <tr>
+                                                    <th>Hình ảnh</th>
+                                                    <th>Tên sản phẩm</th>                                                   
+                                                    <th>Barcode</th>
+                                                    <th>Giá</th>
+                                                    <th>Số Lượng</th>
+                                                    <th>Thành tiền</th>
                                                 </tr>
-                                            @endforeach
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                            </thead>
+                                            <tbody>                                   
+
+                                                @foreach ($orders as $order)
+                                                    @if (isset($orderDetails[$order->id]))
+                                                        @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                            <tr class="order-detail-row"
+                                                                data-order-id="{{ $order->id }}">
+                                                                <td>Hình Ảnh</td>
+                                                                <td>{{ $orderDetail->name }}</td>
+                                                                <td>{{ $orderDetail->barcode }}</td>
+                                                                <td>{{ number_format($orderDetail->price) }}đ</td>
+                                                                <td>{{ $orderDetail->quantity }}</td>                                                               
+                                                                <td>{{ number_format($orderDetail->quantity * $orderDetail->price) }}đ
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    
+                                </div>
                             </div>
                         </div>
                         <!-- Single Tab Content End -->
@@ -322,7 +361,6 @@
 
 
 <script>
-
     // JS chuyển tab Order Details khi ấn View ở tab Order
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -359,7 +397,4 @@
             orderDetailsContent.style.display = "none";
         });
     });
-
 </script>
-
-
