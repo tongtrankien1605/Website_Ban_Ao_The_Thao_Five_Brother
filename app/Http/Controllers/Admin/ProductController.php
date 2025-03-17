@@ -124,7 +124,7 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'name' => $variant['name'],
                         'price' => $variant['price'],
-                        'sale_price' => $variant['sale_price'],
+                        'sale_price' => isset($variant['sale_price']) ? $variant['sale_price'] : $variant['price'],
                         'barcode' => $product->id . $variant['barcode'],
                         'image' => $variant['image']->store('productsVariants', 'public'),
                     ]);
@@ -268,7 +268,7 @@ class ProductController extends Controller
                             'barcode' => $variant['barcode'],
                             'name' => $variant['name'],
                             'price' => $variant['price'],
-                            'sale_price' => $variant['sale_price'],
+                            'sale_price' => isset($variant['sale_price']) ? $variant['sale_price'] : $variant['price'],
                             'updated_at' => Carbon::now(),
                         ];
                         foreach ($variant['attribute_values'] as $attributeValueId) {
@@ -299,7 +299,7 @@ class ProductController extends Controller
                             'product_id' => $product->id,
                             'name' => $variant['name'],
                             'price' => $variant['price'],
-                            'sale_price' => $variant['sale_price'],
+                            'sale_price' => isset($variant['sale_price']) ? $variant['sale_price'] : $variant['price'],
                             'barcode' => $variant['barcode'],
                             'image' => $variant['image']->store('productsVariants', 'public'),
                         ]);

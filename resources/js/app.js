@@ -7,8 +7,8 @@ if (window.userId) {
 
             Swal.fire({
                 title: "Cập nhật đơn hàng!",
-                text: "Đơn hàng của bạn đã được cập nhật. Bạn có muốn xem chi tiết không?",
-                icon: "info",
+                text: "Đơn hàng của bạn đã được cập nhật. Đến xem chi tiết ngay?",
+                icon: "success",
                 showCancelButton: true,
                 confirmButtonText: "Xem đơn hàng",
                 cancelButtonText: "Đóng",

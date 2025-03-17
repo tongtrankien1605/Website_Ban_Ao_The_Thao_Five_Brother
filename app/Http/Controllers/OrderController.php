@@ -45,8 +45,8 @@ class OrderController extends Controller
                 'id_order' => $order->id,
                 'id_product_variant' => $item->id_product_variant,
                 'quantity' => $item->quantity,
-                'unit_price' => $item->skuses->price,
-                'total_price' => $item->quantity * $item->skuses->price,
+                'unit_price' => $item->skuses->sale_price,
+                'total_price' => $item->quantity * $item->skuses->sale_price,
             ]);
         }
 
@@ -73,7 +73,7 @@ class OrderController extends Controller
                     ->select('order_details.*', 'skuses.name');
             }])
             ->first();
-            
+
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }

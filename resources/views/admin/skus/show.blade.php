@@ -30,22 +30,20 @@
                         <div class="card card-primary">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Tên biến thể</label>
-                                    <p>{{ $skus->name }}</p>
+                                    <label>Tên biến thể: </label>
+                                    <span>{{ $skus->name }}</span>
                                 </div>
                                 <div class="form-group">
-                                    <label>Giá</label>
-                                    <p>{{ $skus->price }}</p>
+                                    <label>Giá: </label>
+                                    <span>{{ number_format($skus->price, 0, '', ',') }} VND</span>
                                 </div>
                                 <div class="form-group">
-                                    <label>Giá giảm</label>
-                                    <p>{{ $skus->sale_price }}</p>
+                                    <label>Giá giảm: </label>
+                                    <span>{{ number_format($skus->sale_price, 0, '', ',') }} VND</span>
                                 </div>
                                 <div class="form-group">
-                                    <label>Barcode</label>
-                                    <p>
-                                        {{ $skus->barcode }}
-                                    </p>
+                                    <label>Barcode: </label>
+                                    <span>{{ $skus->barcode }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Ảnh biến thể:</label>
@@ -59,14 +57,12 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Trạng thái</label>
-                                    <div>
-                                        @if ($skus->status)
-                                            <p>Active</p>
-                                        @else
-                                            <p>Deactive</p>
-                                        @endif
-                                    </div>
+                                    <label>Trạng thái: </label>
+                                    @if ($skus->status)
+                                        <span class=" badge bg-success">Active</span>
+                                    @else
+                                        <span class=" badge bg-danger">Deactive</span>
+                                    @endif
                                 </div>
                                 <div class="text-center">
                                     <a href="{{ route('admin.product.show', $product) }}" class="btn btn-danger">Quay lại</a>
