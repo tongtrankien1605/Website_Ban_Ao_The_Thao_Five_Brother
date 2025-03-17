@@ -268,7 +268,7 @@
                                             <table class="table">
                                                 <tr>
                                                     <th style="width:50%">Subtotal:</th>
-                                                    <td>{{ number_format($order->total_amount, 0, '', ',') }} VND</td>
+                                                    <td>{{ number_format($order->total_amount - $order->shipping_methods->cost, 0, '', ',') }} VND</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Shipping:</th>
@@ -277,7 +277,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Total:</th>
-                                                    <td>{{ number_format($order->total_amount + $order->shipping_methods->cost, 0, '', ',') }}
+                                                    <td>{{ number_format($order->total_amount, 0, '', ',') }}
                                                         VND</td>
                                                 </tr>
                                             </table>

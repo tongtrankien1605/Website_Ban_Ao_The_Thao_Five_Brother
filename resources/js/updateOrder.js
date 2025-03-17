@@ -25,7 +25,7 @@ document
                 note: note,
             })
             .then((response) => {
-                document.getElementById("response-message").textContent = "OK!";
+                document.getElementById("response-message").textContent = "Cập nhật trạng thái đơn hàng thành công!";
                 setTimeout(() => {
                    window.location.reload()
                 }, 800);

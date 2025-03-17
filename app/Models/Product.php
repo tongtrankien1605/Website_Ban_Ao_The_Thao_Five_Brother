@@ -36,7 +36,7 @@ class Product extends Model
 
     public function product_images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class,'id_product','id');
     }
     public function skuses()
     {
@@ -51,12 +51,12 @@ class Product extends Model
     public function attributes()
     {
         return $this->hasManyThrough(
-            ProductAttributeController::class, 
-            ProductAtributeValue::class, 
-            'product_id', 
-            'id', 
+            ProductAttributeController::class,
+            ProductAtributeValue::class,
+            'product_id',
             'id',
-            'attribute_id' 
+            'id',
+            'attribute_id'
         );
     }
     public function attributeValues()
@@ -70,7 +70,7 @@ class Product extends Model
             'product_attribute_value_id' // Khóa ngoại trong bảng variants trỏ đến product_attribute_value
         );
     }
-    
+
     public function images()
     {
         return $this->hasMany(ProductImage::class);
