@@ -290,26 +290,40 @@
             const addAttributeValueBtn = document.getElementById("addAttributeValue");
             let variantCounter = document.querySelectorAll(".variant-block").length;
 
-            // Lưu danh sách các thuộc tính đã có giá trị được chọn ban đầu
+            // Lưu danh sách các thuộc tính và giá trị đã có giá trị được chọn ban đầu
             let initialCheckedAttributes = new Set();
+            let initialCheckedValues = new Set(); // ✅ Lưu danh sách ID giá trị ban đầu
+
             attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
                 let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
                 if (hasChecked) {
                     initialCheckedAttributes.add(div.getAttribute("data-key"));
                 }
+
+                div.querySelectorAll("input[type='checkbox']:checked").forEach(input => {
+                    initialCheckedValues.add(input.value); // ✅ Lưu giá trị ban đầu
+                });
             });
 
-            let initialChecked = attributeContainer.querySelectorAll("input[type='checkbox']:checked").length;
-            let hasNewAttributeSelected = false; // Biến kiểm tra xem có thuộc tính mới không
+            let hasNewAttributeSelected = false; // Biến kiểm tra có thuộc tính mới không
 
             function updateButtons() {
                 let foundNewAttribute = false;
+                let checkedKeys = new Set();
+                let checkedValues = new Set(); // ✅ Lưu danh sách giá trị đang được chọn
 
                 attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
                     let key = div.getAttribute("data-key");
                     let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
 
-                    // Kiểm tra xem thuộc tính có giá trị mới được chọn hay không
+                    if (hasChecked) {
+                        checkedKeys.add(key);
+                    }
+
+                    div.querySelectorAll("input[type='checkbox']:checked").forEach(input => {
+                        checkedValues.add(input.value); // ✅ Lưu giá trị mới đang được chọn
+                    });
+
                     if (hasChecked && !initialCheckedAttributes.has(key)) {
                         foundNewAttribute = true;
                     }
@@ -320,11 +334,14 @@
                 // "Cập nhật giá trị" chỉ bật nếu có thuộc tính mới
                 addAttributeValueBtn.disabled = !hasNewAttributeSelected;
 
-                // "Tạo Variant" bị disabled nếu có thuộc tính mới hoặc số lượng chọn <= số lượng ban đầu
-                createVariantBtn.disabled = hasNewAttributeSelected ||
-                    attributeContainer.querySelectorAll("input[type='checkbox']:checked").length <= initialChecked;
+                // ✅ Kiểm tra nếu giá trị nào trong `initialCheckedValues` bị bỏ chọn → disable nút
+                let missingInitialValue = [...initialCheckedValues].some(value => !checkedValues.has(value));
+
+                // "Tạo Variant" bị disabled nếu có thuộc tính mới hoặc thiếu giá trị ban đầu
+                createVariantBtn.disabled = hasNewAttributeSelected || missingInitialValue;
             }
 
+            // Lắng nghe sự kiện thay đổi checkbox
             attributeContainer.addEventListener("change", function(event) {
                 if (event.target.type === "checkbox") {
                     updateButtons();
@@ -335,6 +352,7 @@
                     }
                 }
             });
+
 
             // Khi nhấn "Cập nhật giá trị"
             addAttributeValueBtn.addEventListener("click", function() {
