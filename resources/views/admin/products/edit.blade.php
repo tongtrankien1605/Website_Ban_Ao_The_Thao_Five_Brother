@@ -82,7 +82,7 @@
                                     </div>
                                     <div id="createdVariantContainer" class="mt-4" data-id-product="{{ $product->id }}">
                                         @foreach ($skues as $sku)
-                                            <div class="card mb-3 variant-block">
+                                            <div class="card mb-3 variant-block" data-variant-id="{{ $sku->id }}">
                                                 <div
                                                     class="card-header toggle-variant d-flex justify-content-between align-items-center">
                                                     <h5 class="mb-0">{{ $sku->name }}</h5>
@@ -93,14 +93,19 @@
                                                     @endif --}}
                                                 </div>
                                                 <div class="card-body">
-                                                    <input type="hidden" name="variants[{{ $sku->id }}][name]"
-                                                        value="{{ $sku->name }}">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Name</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[{{ $sku->id }}][name]"
+                                                            value="{{ $sku->name }}">
+                                                    </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Barcode</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[{{ $sku->id }}][barcode]"
                                                             value="{{ $sku->barcode }}" readonly>
                                                     </div>
+                                                    <div class="attribute-select-container"></div>
                                                     <div>
                                                         <label class="form-label">Các giá trị: </label>
                                                         <ul>
@@ -333,29 +338,193 @@
 
             // Khi nhấn "Cập nhật giá trị"
             addAttributeValueBtn.addEventListener("click", function() {
-                // // Cập nhật lại danh sách thuộc tính đã chọn
-                // attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
-                //     let key = div.getAttribute("data-key");
-                //     let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
-                //     if (hasChecked) {
-                //         initialCheckedAttributes.add(key);
-                //     }
-                // });
-
-                // Reset trạng thái sau khi cập nhật
-                // hasNewAttributeSelected = false;
                 addAttributeValueBtn.disabled = true;
-
-                // // Cập nhật lại số lượng thuộc tính đã chọn ban đầu
-                // initialChecked = attributeContainer.querySelectorAll("input[type='checkbox']:checked")
-                //     .length;
-
-                // Khi đã cập nhật giá trị, cho phép "Tạo Variant"
                 createVariantBtn.disabled = false;
+
+                let newAttributes = {}; // Chỉ lưu các giá trị thuộc tính mới
+                // Lấy danh sách các giá trị thuộc tính mới
+                attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
+                    let key = div.getAttribute("data-key");
+                    let checkedBoxes = div.querySelectorAll(
+                        "input[type='checkbox']:checked:not([disabled])");
+
+                    // Chỉ lấy giá trị mới (bỏ qua các giá trị đã chọn trước đó)
+                    if (!initialCheckedAttributes.has(key) && checkedBoxes.length > 0) {
+                        newAttributes[key] = [];
+                        checkedBoxes.forEach(checkbox => {
+                            newAttributes[key].push({
+                                id: checkbox.value,
+                                value: checkbox.nextElementSibling.innerText
+                            });
+                        });
+                    }
+                });
+
+                // Chỉ thêm <select> nếu có giá trị mới
+                if (Object.keys(newAttributes).length > 0) {
+                    document.querySelectorAll(".variant-block").forEach(variant => {
+                        let variantId = variant.getAttribute(
+                            "data-variant-id"); // Đảm bảo lấy đúng ID
+                        if (!variantId) return; // Nếu không có ID, bỏ qua
+
+                        let selectContainer = variant.querySelector(".attribute-select-container");
+                        if (!selectContainer) {
+                            selectContainer = document.createElement("div");
+                            selectContainer.classList.add("mb-3", "attribute-select-container");
+                            variant.querySelector(".card-body").insertBefore(selectContainer,
+                                variant.querySelector(".mb-3:nth-of-type(2)"));
+                        }
+                        selectContainer.innerHTML = ""; // Xóa dữ liệu cũ
+
+                        Object.keys(newAttributes).forEach(attributeKey => {
+                            let label = document.createElement("label");
+                            label.classList.add("form-label");
+                            label.textContent = "Chọn giá trị mới";
+
+                            let select = document.createElement("select");
+                            select.classList.add("form-control", "mt-2",
+                                "attribute-select");
+                            select.name = `variants[${variantId}][new_attribute]`;
+
+                            // Thêm option mặc định
+                            let defaultOption = document.createElement("option");
+                            defaultOption.value = "";
+                            defaultOption.textContent = "-- Chọn giá trị --";
+                            defaultOption.selected = true;
+                            defaultOption.disabled = true;
+                            select.appendChild(defaultOption);
+
+                            newAttributes[attributeKey].forEach(attr => {
+                                let option = document.createElement("option");
+                                option.value = attr.id;
+                                option.textContent = attr.value;
+                                select.appendChild(option);
+                            });
+
+
+                            // Hidden input để lưu giá trị chọn
+                            let hiddenInput = document.createElement("input");
+                            hiddenInput.type = "hidden";
+                            hiddenInput.name = `variants[${variantId}][attribute_values][]`;
+                            hiddenInput.value = select.value;
+
+                            // Cập nhật hidden input khi chọn giá trị mới
+                            select.addEventListener("change", function() {
+                                hiddenInput.value = select.value;
+                            });
+
+                            // Thêm vào DOM
+                            selectContainer.appendChild(label);
+                            selectContainer.appendChild(select);
+                            selectContainer.appendChild(hiddenInput);
+                        });
+                    });
+                }
             });
 
-            // Cập nhật trạng thái ban đầu
             updateButtons();
+
+            document.addEventListener("change", function(event) {
+                if (event.target.classList.contains("attribute-select")) {
+                    let variantBlock = event.target.closest(".variant-block");
+                    let variantId = variantBlock.getAttribute("data-variant-id");
+
+                    // Lấy hidden input hiện tại
+                    let hiddenInputs = variantBlock.querySelectorAll("input[name^='variants[" + variantId +
+                        "][attribute_values]']");
+
+                    // Tạo Set để chứa các giá trị hiện có
+                    let selectedAttributes = new Set();
+
+                    // Lấy dữ liệu từ các hidden input (giữ lại các giá trị cũ)
+                    hiddenInputs.forEach(input => {
+                        if (input.value) {
+                            selectedAttributes.add(parseInt(input.value));
+                        }
+                    });
+
+                    // Lấy giá trị mới từ select box (nếu có)
+                    if (event.target.value) {
+                        selectedAttributes.add(parseInt(event.target.value));
+                    }
+
+                    // Chuyển Set về mảng để cập nhật lại UI
+                    let sortedAttributes = Array.from(selectedAttributes).sort((a, b) => a - b);
+
+                    // Xóa hết các hidden input cũ để tránh trùng lặp
+                    hiddenInputs.forEach(input => input.remove());
+
+                    // Tạo lại danh sách hidden input mới
+                    sortedAttributes.forEach(attrId => {
+                        let hiddenInput = document.createElement("input");
+                        hiddenInput.type = "hidden";
+                        hiddenInput.name = `variants[${variantId}][attribute_values][]`;
+                        hiddenInput.value = attrId;
+                        variantBlock.appendChild(hiddenInput);
+                    });
+
+                    // Cập nhật barcode
+                    updateVariantBarcode(variantBlock);
+                }
+            });
+
+            function updateVariantBarcode(variantBlock) {
+                let productId = document.getElementById("createdVariantContainer").getAttribute("data-id-product");
+                let variantId = variantBlock.getAttribute("data-variant-id");
+
+                // Lấy danh sách giá trị thuộc tính đã có (Dùng Set để tránh trùng lặp)
+                let selectedAttributes = new Set();
+
+                // Lấy tất cả giá trị thuộc tính từ input hidden
+                variantBlock.querySelectorAll("input[name^='variants[" + variantId + "][attribute_values]']")
+                    .forEach(input => {
+                        if (input.value) {
+                            selectedAttributes.add(parseInt(input.value));
+                        }
+                    });
+
+                // Kiểm tra giá trị mới từ select box (nếu có)
+                let selectElement = variantBlock.querySelector(".attribute-select");
+                if (selectElement && selectElement.value) {
+                    selectedAttributes.add(parseInt(selectElement.value));
+                }
+
+                // Chuyển Set về mảng và sắp xếp theo thứ tự tăng dần
+                let sortedAttributes = Array.from(selectedAttributes).sort((a, b) => a - b);
+
+                console.log("Updated Attributes:", sortedAttributes);
+
+                // Cập nhật barcode (thêm dấu `-` để tránh lỗi số)
+                let newBarcode = productId + sortedAttributes.join("");
+                let barcodeInput = variantBlock.querySelector("input[name='variants[" + variantId + "][barcode]']");
+
+                if (barcodeInput) {
+                    barcodeInput.value = newBarcode;
+                }
+
+                console.log("New Barcode:", newBarcode);
+
+                // Kiểm tra xem barcode này đã tồn tại ở biến thể khác chưa
+                removeDuplicateBarcode(newBarcode, variantBlock);
+            }
+
+
+            // Hàm kiểm tra và xóa biến thể trùng lặp (giữ lại biến thể mới nhất)
+            function removeDuplicateBarcode(barcode, currentVariantBlock) {
+                document.querySelectorAll(".variant-block").forEach(variant => {
+                    let variantBarcodeInput = variant.querySelector("input[name*='[barcode]']");
+                    if (variantBarcodeInput) {
+                        let variantBarcode = variantBarcodeInput.value.trim();
+
+                        // Nếu barcode trùng và biến thể này không phải chính nó
+                        if (variant !== currentVariantBlock && variantBarcode === barcode) {
+                            // alert("Đã tìm thấy biến thể trùng barcode: " + barcode +
+                            //     ". Biến thể cũ sẽ bị xóa.");
+                            variant.remove(); // Xóa biến thể trùng
+                        }
+                    }
+                });
+            }
 
             createVariantBtn.addEventListener("click", function() {
                 const productName = document.getElementById("name").value.trim();
@@ -365,21 +534,37 @@
                 }
 
                 const attributeDivs = Array.from(attributeContainer.querySelectorAll("div[data-key]"));
-                let newAttributes = {};
-                let existingAttributes = new Set();
                 let variantCombinations = [];
-                document.querySelectorAll(".variant-block input[name*='attribute_values']").forEach(
-                    input => {
-                        existingAttributes.add(input.value);
-                    });
+                let existingVariantsSet = new Set();
+                let existingBarcodesSet = new Set(); // Lưu danh sách barcode đã có trên FE
 
-                attributeDivs.forEach(function(div) {
-                    const key = div.getAttribute("data-key");
-                    const checkedBoxes = div.querySelectorAll(
+                // Cập nhật danh sách biến thể đã có (kể cả những biến thể mới thêm vào DOM)
+                document.querySelectorAll(".variant-block").forEach(variant => {
+                    let selectedAttributes = [];
+                    variant.querySelectorAll("input[name^='variants[" + variant.getAttribute(
+                            "data-variant-id") + "][attribute_values]']")
+                        .forEach(input => selectedAttributes.push(parseInt(input.value)));
+
+                    selectedAttributes.sort((a, b) => a - b);
+                    if (selectedAttributes.length > 0) {
+                        existingVariantsSet.add(selectedAttributes.join("-")); // Ví dụ: "4-8-10"
+                    }
+
+                    // Lấy barcode của biến thể và thêm vào danh sách kiểm tra
+                    let barcodeInput = variant.querySelector(
+                        "input[name^='variants'][name$='[barcode]']");
+                    if (barcodeInput) {
+                        existingBarcodesSet.add(barcodeInput.value);
+                    }
+                });
+
+                // Lấy danh sách thuộc tính đã chọn từ checkbox
+                attributeDivs.forEach(div => {
+                    let checkedBoxes = div.querySelectorAll(
                         "input[type='checkbox']:checked:not([disabled])");
                     let values = [];
 
-                    checkedBoxes.forEach(function(checkbox) {
+                    checkedBoxes.forEach(checkbox => {
                         values.push({
                             id: checkbox.value,
                             value: checkbox.nextElementSibling.innerText
@@ -388,12 +573,10 @@
 
                     if (values.length > 0) {
                         variantCombinations.push(values);
-                        if (!existingAttributes.has(values[0].id)) {
-                            newAttributes[key] = values;
-                        }
                     }
                 });
 
+                // Hàm tạo tổ hợp biến thể từ danh sách thuộc tính
                 function generateCombinations(arrays, index = 0, result = [], current = []) {
                     if (index === arrays.length) {
                         result.push([...current]);
@@ -409,56 +592,74 @@
                 let combinations = [];
                 generateCombinations(variantCombinations, 0, combinations);
 
-                let existingVariants = document.querySelectorAll(".variant-block");
-                let existingVariantNames = new Set();
+                // Duyệt qua các biến thể mới để kiểm tra trùng lặp trước khi thêm
+                combinations.forEach(combination => {
+                    let sortedCombination = combination.sort((a, b) => parseInt(a.id) - parseInt(b
+                        .id));
+                    let selectedAttributes = sortedCombination.map(attr => parseInt(attr.id));
+                    let attributeKey = selectedAttributes.join("-");
 
-                existingVariants.forEach(variant => {
-                    let variantName = variant.querySelector("h5").innerText;
-                    existingVariantNames.add(variantName);
-                });
+                    //Tạo barcode mới để kiểm tra
+                    let barcode = `${productId}${selectedAttributes.join("")}`;
 
-                combinations.forEach((combination) => {
-                    combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                    let barcode = `${productId}${combination.map(attr => attr.id).join("")}`;
-                    let variantName =
-                        `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
-
-                    if (!existingVariantNames.has(variantName)) {
+                    //Kiểm tra xem biến thể hoặc barcode đã tồn tại chưa
+                    if (!existingVariantsSet.has(attributeKey) && !existingBarcodesSet.has(
+                            barcode)) {
+                        existingVariantsSet.add(attributeKey); // Đánh dấu ngay khi thêm mới
+                        existingBarcodesSet.add(barcode); // 🔹 Đánh dấu barcode mới
                         variantCounter++;
-                        let hiddenAttributeInputs = combination.map(attr =>
-                            `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attr.id}">`
+
+                        let hiddenAttributeInputs = selectedAttributes.map(attrId =>
+                            `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attrId}">`
                         ).join("");
 
+                        let variantName =
+                            `${productName} - ${sortedCombination.map(attr => attr.value).join(" - ")}`;
+
                         let variantHtml = `
-                    <div class="card mb-3 variant-block">
+                    <div class="card mb-3 variant-block" data-variant-id="${variantCounter}">
                         <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">${variantName}</h5>
                             <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
                         </div>
                         <div class="card-body d-none">
-                            <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
-
+                            <label class="form-label">Tên sản phẩm</label>
+                            <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}">
+                            <label class="form-label">Barcode</label>
                             <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                             ${hiddenAttributeInputs}
                             <label class="form-label">Price</label>
                             <input type="number" class="form-control" name="variants[${variantCounter}][price]">
-                                @error('variants[${variantCounter}][price]')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
                             <label class="form-label">Sale price</label>
                             <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
-                                @error('variants[${variantCounter}][sale_price]')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
                             <label class="form-label">Image</label>
                             <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
-                                @error('variants[${variantCounter}][image]')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
                             <img class="img-preview mt-2 d-none" width="100" height="100">
                         </div>
                     </div>`;
                         createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
+
+                        // Cập nhật lại danh sách biến thể ngay sau khi thêm mới
+                        document.querySelectorAll(".variant-block").forEach(variant => {
+                            let selectedAttributes = [];
+                            variant.querySelectorAll("input[name^='variants[" + variant
+                                    .getAttribute("data-variant-id") +
+                                    "][attribute_values]']")
+                                .forEach(input => selectedAttributes.push(parseInt(input
+                                    .value)));
+
+                            selectedAttributes.sort((a, b) => a - b);
+                            if (selectedAttributes.length > 0) {
+                                existingVariantsSet.add(selectedAttributes.join("-"));
+                            }
+
+                            // Lấy barcode và cập nhật vào danh sách kiểm tra
+                            let barcodeInput = variant.querySelector(
+                                "input[name^='variants'][name$='[barcode]']");
+                            if (barcodeInput) {
+                                existingBarcodesSet.add(barcodeInput.value);
+                            }
+                        });
                     }
                 });
             });
