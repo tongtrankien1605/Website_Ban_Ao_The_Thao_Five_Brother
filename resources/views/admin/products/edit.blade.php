@@ -292,7 +292,7 @@
 
             // Lưu danh sách các thuộc tính và giá trị đã có giá trị được chọn ban đầu
             let initialCheckedAttributes = new Set();
-            let initialCheckedValues = new Set(); // ✅ Lưu danh sách ID giá trị ban đầu
+            let initialCheckedValues = new Set(); // Lưu danh sách ID giá trị ban đầu
 
             attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
                 let hasChecked = div.querySelector("input[type='checkbox']:checked") !== null;
@@ -301,7 +301,7 @@
                 }
 
                 div.querySelectorAll("input[type='checkbox']:checked").forEach(input => {
-                    initialCheckedValues.add(input.value); // ✅ Lưu giá trị ban đầu
+                    initialCheckedValues.add(input.value); // Lưu giá trị ban đầu
                 });
             });
 
@@ -310,7 +310,7 @@
             function updateButtons() {
                 let foundNewAttribute = false;
                 let checkedKeys = new Set();
-                let checkedValues = new Set(); // ✅ Lưu danh sách giá trị đang được chọn
+                let checkedValues = new Set(); // Lưu danh sách giá trị đang được chọn
 
                 attributeContainer.querySelectorAll("div[data-key]").forEach(div => {
                     let key = div.getAttribute("data-key");
@@ -321,7 +321,7 @@
                     }
 
                     div.querySelectorAll("input[type='checkbox']:checked").forEach(input => {
-                        checkedValues.add(input.value); // ✅ Lưu giá trị mới đang được chọn
+                        checkedValues.add(input.value); // Lưu giá trị mới đang được chọn
                     });
 
                     if (hasChecked && !initialCheckedAttributes.has(key)) {
@@ -334,7 +334,7 @@
                 // "Cập nhật giá trị" chỉ bật nếu có thuộc tính mới
                 addAttributeValueBtn.disabled = !hasNewAttributeSelected;
 
-                // ✅ Kiểm tra nếu giá trị nào trong `initialCheckedValues` bị bỏ chọn → disable nút
+                // Kiểm tra nếu giá trị nào trong `initialCheckedValues` bị bỏ chọn → disable nút
                 let missingInitialValue = [...initialCheckedValues].some(value => !checkedValues.has(value));
 
                 // "Tạo Variant" bị disabled nếu có thuộc tính mới hoặc thiếu giá trị ban đầu
