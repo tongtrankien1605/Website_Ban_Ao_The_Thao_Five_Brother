@@ -14,10 +14,11 @@ document
     .getElementById("editOrderForm")
     .addEventListener("submit", function (event) {
         event.preventDefault();
+        editOrderForm.querySelector("button[type='submit']").disabled = true;
 
         const orderId = document.getElementById("order_id").value;
         const orderStatusId = document.getElementById("id_order_status").value;
-        const note = document.getElementById("note").value
+        const note = document.getElementById("note").value;
 
         axios
             .put("orders/" + orderId, {
@@ -25,9 +26,10 @@ document
                 note: note,
             })
             .then((response) => {
-                document.getElementById("response-message").textContent = "Cập nhật trạng thái đơn hàng thành công!";
+                document.getElementById("response-message").textContent =
+                    "Cập nhật trạng thái đơn hàng thành công!";
                 setTimeout(() => {
-                   window.location.reload()
+                    window.location.reload();
                 }, 800);
             })
             .catch((error) => {
