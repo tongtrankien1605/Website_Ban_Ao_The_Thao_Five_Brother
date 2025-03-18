@@ -126,7 +126,8 @@
                         <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
                     </div>
                     <div class="card-body d-none">
-                        <input type="hidden" name="variants[${variantCounter}][name]" value="${variantName}">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}">
                         ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 

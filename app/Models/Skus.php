@@ -32,7 +32,7 @@ class Skus extends Model
 
     public function variants()
     {
-        return $this->hasMany(Variant::class);
+        return $this->hasMany(Variant::class,'id_skus','id');
     }
 
     public function cart_items()
