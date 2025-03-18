@@ -5,8 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', '/')</title>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('admin.layouts.css')
+    <link rel="icon" type="image/x-icon"
+        href="{{ Auth::user() ? Storage::url(Auth::user()->avatar) : '/client/assets/images/favicon.ico' }}">
+
+    <style>
+        body {
+            height: 1000px !important;
+        }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini layouts-fixed">

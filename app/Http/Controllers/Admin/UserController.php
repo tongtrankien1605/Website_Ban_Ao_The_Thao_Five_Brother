@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
+use App\Models\AddressUser;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,10 +25,19 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::select('users.*', 'roles.user_role')->join('roles', function ($q) {
-            $q->on('roles.id', '=', 'users.role');
-            $q->whereNull('roles.deleted_at');
-        })->latest('users.updated_at')->paginate(20);
+        // $users = User::select('users.*', 'roles.user_role')->join('roles', function ($q) {
+        //     $q->on('roles.id', '=', 'users.role');
+        //     $q->whereNull('roles.deleted_at');
+        // })->orderBy('users.updated_at','desc')->paginate(20);
+        // return view('admin.users.index', compact('users'));
+        $users = User::select('users.*', 'roles.user_role')
+            ->join('roles', function ($q) {
+                $q->on('roles.id', '=', 'users.role');
+                $q->whereNull('roles.deleted_at');
+            })
+            ->orderBy('users.updated_at', 'desc')
+            ->paginate(20);
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -56,8 +66,7 @@ class UserController extends Controller
             $newUser->role = $request->role;
 
             if ($request->hasFile('avatar')) {
-                $avatarPath = $request->file('avatar')->store('public/avatars');
-                $newUser->avatar = str_replace('public/', '', $avatarPath);
+                $newUser->avatar = $request->file('avatar')->store('avatars', 'public');
             }
             $newUser->save();
 
@@ -73,7 +82,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('admin.users.show', compact('user'));
+        $addresses = AddressUser::where('id_user', $user->id)->orderByDesc('is_default')->get();
+        return view('admin.users.show', compact('user', 'addresses'));
     }
 
     /**
@@ -103,10 +113,9 @@ class UserController extends Controller
             }
             if ($request->hasFile('avatar')) {
                 if ($user->avatar) {
-                    Storage::delete('public/' . $user->avatar);
+                    Storage::disk('public')->delete($user->avatar);
                 }
-                $avatarPath = $request->file('avatar')->store('public/avatars');
-                $user->avatar = str_replace('public/', '', $avatarPath);
+                $user->avatar = $request->file('avatar')->store('avatars', 'public');
             }
 
             $user->save();

@@ -69,7 +69,7 @@ class User extends Authenticatable
     {
         parent::boot();
         static::deleting(function ($model) {
-            $timeFormat = Carbon::now()->format('Ymd');
+            $timeFormat = Carbon::now()->format('dm');
             $model->email = $model->email . '_' . $timeFormat;
             $model->phone_number = $model->phone_number . '_' . $timeFormat;
             $model->save();
@@ -91,5 +91,13 @@ class User extends Authenticatable
     public function voucher_users()
     {
         return $this->hasMany(VoucherUser::class);
+    }
+    public function order_status_histories()
+    {
+        return $this->hasMany(OrderStatusHistory::class, 'user_id', 'id');
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'id_user', 'id');
     }
 }

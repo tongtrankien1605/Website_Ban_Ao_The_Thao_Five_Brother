@@ -15,6 +15,7 @@ class ProductImage extends Model
     protected $fillable = [
         'id_product',
         'image_url',
+        'is_default',
     ];
 
     public function serializeDate($date)
@@ -24,6 +25,6 @@ class ProductImage extends Model
 
     public function products()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class,'id_product','id');
     }
 }

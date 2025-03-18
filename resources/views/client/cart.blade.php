@@ -1,6 +1,9 @@
 @extends('client.layouts.master')
 @section('content')
     <!-- Page Banner Section Start -->
+    @php
+        $total = 0;
+    @endphp
     <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
         <div class="container">
             <div class="row">
@@ -9,7 +12,7 @@
                     <h1>Cart</h1>
                     <ul class="page-breadcrumb">
                         <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('cart') }}">Cart</a></li>
+                        <li><a href="{{ route('show.cart') }}">Cart</a></li>
                     </ul>
 
                 </div>
@@ -28,6 +31,7 @@
                             <table>
                                 <thead>
                                     <tr>
+                                        <th class="pro-select">Select</th>
                                         <th class="pro-thumbnail">Image</th>
                                         <th class="pro-title">Product</th>
                                         <th class="pro-price">Price</th>
@@ -37,38 +41,56 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="pro-thumbnail"><a href="#"><img
-                                                    src="/client/assets/images/product/product-1.jpg" alt="" /></a>
-                                        </td>
-                                        <td class="pro-title"><a href="#">Tmart Baby Dress</a></td>
-                                        <td class="pro-price"><span class="amount">$25</span></td>
-                                        <td class="pro-quantity">
-                                            <div class="pro-qty"><input type="text" value="1"></div>
-                                        </td>
-                                        <td class="pro-subtotal">$25</td>
-                                        <td class="pro-remove"><a href="#">×</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="pro-thumbnail"><a href="#"><img
-                                                    src="/client/assets/images/product/product-2.jpg" alt="" /></a>
-                                        </td>
-                                        <td class="pro-title"><a href="#">Jumpsuit Outfits</a></td>
-                                        <td class="pro-price"><span class="amount">$09</span></td>
-                                        <td class="pro-quantity">
-                                            <div class="pro-qty"><input type="text" value="1"></div>
-                                        </td>
-                                        <td class="pro-subtotal">$09</td>
-                                        <td class="pro-remove"><a href="#">×</a></td>
-                                    </tr>
+                                    @if (!$cartItem->isEmpty())
+                                        @foreach ($cartItem as $cart)
+                                            <tr>
+                                                @php
+                                                    $subtotal = floatval($cart->price) * intval($cart->quantity);
+                                                    $total += $subtotal;
+                                                @endphp
+                                                <td class="pro-select">
+                                                    <input type="checkbox" class="cart-checkbox" name="selected_items[]" 
+                                                        value="{{ $cart->id }}" 
+                                                        data-price="{{ $cart->price }}" 
+                                                        data-quantity="{{ $cart->quantity }}">
+                                                </td>
+                                                                                               
+                                                <td class="pro-thumbnail"><a href="#"><img
+                                                            src="{{ Storage::url($cart->skuses->image) }}"
+                                                            alt="" /></a>
+                                                </td>
+                                                <td class="pro-title"><a href="#">{{ $cart->skuses->name }}</a></td>
+                                                <td class="pro-price" data-price="{{ $cart->price }}">
+                                                    <span class="amount">{{ number_format($cart->price) }} đồng</span>
+                                                </td>
+                                                <td class="pro-quantity">
+                                                    <div class="pro-qty"><input data-id="{{ $cart->id }}"
+                                                            class="dataInput" type="text" value="{{ $cart->quantity }}">
+                                                    </div>
+                                                </td>
+                                                <td class="pro-subtotal" id="subtotal-{{ $cart->id }}">
+                                                    {{ number_format($subtotal) }} đồng
+                                                </td>
+                                                <td class="pro-remove"><a
+                                                        data-url="{{ route('remove.cart', ['id' => $cart->id]) }}"
+                                                        href="{{ route('remove.cart', $cart->id) }}"
+                                                        class="remove-btn">×</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan='7' class='text-center'><strong>Giỏ hàng trống</strong></td>
+                                        </tr>
+                                    @endif
                                 </tbody>
+                                
                             </table>
                         </div>
                     </div>
                     <div class="col-lg-8 col-md-7 col-12 mb-40">
                         <div class="cart-buttons mb-30">
-                            <input type="submit" value="Update Cart" />
-                            <a href="#">Continue Shopping</a>
+                            <a href="{{ route('index') }}">Continue Shopping</a>
                         </div>
                         <div class="cart-coupon">
                             <h4>Coupon</h4>
@@ -80,30 +102,36 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-5 col-12 mb-40">
-                        <div class="cart-total fix">
-                            <h3>Cart Totals</h3>
-                            <table>
-                                <tbody>
-                                    <tr class="cart-subtotal">
-                                        <th>Subtotal</th>
-                                        <td><span class="amount">$306.00</span></td>
-                                    </tr>
-                                    <tr class="order-total">
-                                        <th>Total</th>
-                                        <td>
-                                            <strong><span class="amount">$306.00</span></strong>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="proceed-to-checkout section mt-30">
-                                <a href="#">Proceed to Checkout</a>
+                        @if (!$cartItem->isEmpty())
+                            <div class="cart-total fix">
+                                <h3>Cart Totals</h3>
+                                <table>
+                                    <tbody>
+                                        <tr class="cart-subtotal">
+                                            <th>Subtotal</th>
+                                            <td>
+                                                <span class="amount">{{ number_format($total) }} Đồng</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="order-total">
+                                            <th>Total</th>
+                                            <td>
+                                                <strong><span class="amount">{{ number_format($total) }}
+                                                        Đồng</span></strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="proceed-to-checkout section mt-30">
+                                    <a href="{{ route('indexPayment') }}" class="checkout-btn">Proceed to Checkout</a>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </form>
 
         </div>
     </div><!-- Page Section End -->
+        
 @endsection

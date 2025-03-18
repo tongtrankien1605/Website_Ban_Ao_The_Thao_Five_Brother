@@ -1,4 +1,7 @@
 @extends('client.layouts.master')
+
+
+
 @section('content')
     <!-- Page Banner Section Start -->
     <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
@@ -28,6 +31,12 @@
                         <a href="#dashboad" class="active" data-bs-toggle="tab"><i class="fa fa-dashboard"></i>
                             Dashboard</a>
 
+                        @if (Auth::check() && Auth::user()->role === 3)
+                            <a href="{{ route('admin.index') }}">
+                                <i class="fa fa-user"></i> Quản Lý Admin
+                            </a>
+                        @endif
+
                         <a href="#orders" data-bs-toggle="tab"><i class="fa fa-cart-arrow-down"></i> Orders</a>
 
                         <a href="#download" data-bs-toggle="tab"><i class="fa fa-cloud-download"></i> Download</a>
@@ -35,12 +44,12 @@
                         <a href="#payment-method" data-bs-toggle="tab"><i class="fa fa-credit-card"></i> Payment
                             Method</a>
 
-                        <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> address</a>
+                        <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> Address</a>
 
-                        <a href="{{ route('my-account', $user->id) }}" data-bs-toggle="tab">
-                            <i class="fa fa-user"></i>
-                            Account Details
-                        </a>
+
+                        <a href="#account-info" data-bs-toggle="tab">><i class="fa fa-user"></i> Account Details</a>
+
+
 
                         <a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
@@ -50,14 +59,16 @@
                 <!-- My Account Tab Content Start -->
                 <div class="col-lg-9 col-12 mb-30">
                     <div class="tab-content" id="myaccountContent">
-                        <!-- Single Tab Content Start -->
+                        <!-- Single Tab Content Start - Dashboard -->
                         <div class="tab-pane fade show active" id="dashboad" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Dashboard</h3>
 
                                 <div class="welcome">
-                                    <p>Hello, <strong>{{ $user->name}}</strong> (If Not <strong>{{$user->name}}!</strong><a
-                                            href="login-register.html" class="logout"> Logout</a>)</p>
+                                    <p>Hello, <strong>{{ $user->name }}</strong> (If Not
+                                        <strong>{{ $user->name }}!</strong><a href="{{ route('logout') }}" class="logout">
+                                            Logout</a>)
+                                    </p>
                                 </div>
 
                                 <p class="mb-0">From your account dashboard. you can easily check &amp; view your
@@ -67,55 +78,129 @@
                         </div>
                         <!-- Single Tab Content End -->
 
-                        <!-- Single Tab Content Start -->
+                        <!-- Single Tab Content Start - Orders & Order Details -->
+
+
                         <div class="tab-pane fade" id="orders" role="tabpanel">
-                            <div class="myaccount-content">
-                                <h3>Orders</h3>
+                            <div id="orders-list">
+                                <div class="myaccount-content">
+                                    <h3>Orders</h3>
+                                    <div class="myaccount-table table-responsive text-center">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Order ID</th>
+                                                    {{-- <th>Tên sản phẩm</th> --}}
+                                                    <th>Khách hàng</th>
+                                                    <th>Ngày đặt hàng</th>                                                 
+                                                    <th>Trạng thái đơn hàng</th>
+                                                    <th>Tổng tiền</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($orders as $order)
+                                                    <tr>
+                                                        <td>{{ $order->id }}</td>
+                                                        {{-- <td>
+                                                            <ul>
+                                                                @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>
+                                                                        {{ $orderDetail->name }}
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </td> --}}
+                                                        <td>Tên khách hàng</td>
+                                                        <td>{{ $order->created_at->format('d/m/Y H:i:s') }}</td>
 
-                                <div class="myaccount-table table-responsive text-center">
-                                    <table class="table table-bordered">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Name</th>
-                                                <th>Date</th>
-                                                <th>Status</th>
-                                                <th>Total</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
 
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Moisturizing Oil</td>
-                                                <td>Aug 22, 2022</td>
-                                                <td>Pending</td>
-                                                <td>$45</td>
-                                                <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Katopeno Altuni</td>
-                                                <td>July 22, 2022</td>
-                                                <td>Approved</td>
-                                                <td>$100</td>
-                                                <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>Murikhete Paris</td>
-                                                <td>June 12, 2022</td>
-                                                <td>On Hold</td>
-                                                <td>$99</td>
-                                                <td><a href="cart.html" class="btn btn-dark btn-round">View</a></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                        <td>{{ $order->order_status_name }}</td>
+                                                        <td>{{ number_format($order->total_amount) }}đ</td>
+                                                        <td>
+                                                            <a href="#"
+                                                                class="btn btn-info btn-round order-details-btn"
+                                                                data-order-id="{{ $order->id }}">
+                                                                View
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        {{ $orders->links() }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ẩn chi tiết đơn hàng ban đầu, chỉ hiển thị khi bấm "View" -->
+                            <div id="order-details-content" style="display: none;">
+                                <button class="btn btn-secondary mb-3" id="back-to-orders">← Back</button>
+
+                                <h3 class="mb-4">Chi Tiết Đơn Hàng #{{ $order->id }}</h3>
+                                
+                                <div class="container mt-5">
+
+                                    <!-- Thông tin đơn hàng -->
+                                    <div class="card p-3 mb-3">
+                                        <p><strong>Ngày đặt hàng:</strong> {{ $order->created_at }}</p>
+                                        <p><strong>Trạng thái:</strong> <span
+                                                class="badge bg-success">{{ $order->status }}</span></p>
+                                        <p><strong>Phương thức thanh toán:</strong> {{ $order->payment_method }}</p>
+                                        <p><strong>Tổng tiền:</strong> {{ number_format($order->total_price) }}đ</p>
+                                    </div>
+
+                                    <!-- Thông tin khách hàng -->
+                                    <div class="card p-3 mb-3">
+                                        <p><strong>Khách hàng:</strong> {{ $order->customer_name }}</p>
+                                        <p><strong>Điện thoại:</strong> {{ $order->customer_phone }}</p>
+                                        <p><strong>Địa chỉ:</strong> {{ $order->customer_address }}</p>
+                                    </div>
+
+                                    <!-- Danh sách sản phẩm -->
+                                    <div class="card p-3 mb-3">
+                                        <h3>Sản phẩm trong đơn hàng</h3>
+                                        <table class="table table-bordered mt-3">
+                                            <thead>
+                                                <tr>
+                                                    <th>Hình ảnh</th>
+                                                    <th>Tên sản phẩm</th>                                                   
+                                                    <th>Barcode</th>
+                                                    <th>Giá</th>
+                                                    <th>Số Lượng</th>
+                                                    <th>Thành tiền</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>                                   
+
+                                                @foreach ($orders as $order)
+                                                    @if (isset($orderDetails[$order->id]))
+                                                        @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                            <tr class="order-detail-row"
+                                                                data-order-id="{{ $order->id }}">
+                                                                <td>Hình Ảnh</td>
+                                                                <td>{{ $orderDetail->name }}</td>
+                                                                <td>{{ $orderDetail->barcode }}</td>
+                                                                <td>{{ number_format($orderDetail->price) }}đ</td>
+                                                                <td>{{ $orderDetail->quantity }}</td>                                                               
+                                                                <td>{{ number_format($orderDetail->quantity * $orderDetail->price) }}đ
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    
                                 </div>
                             </div>
                         </div>
                         <!-- Single Tab Content End -->
+
+
 
                         <!-- Single Tab Content Start -->
                         <div class="tab-pane fade" id="download" role="tabpanel">
@@ -167,13 +252,21 @@
                         <div class="tab-pane fade" id="address-edit" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Billing Address</h3>
-
-                                <address>
-                                    <p><strong>Alex Tuntuni</strong></p>
-                                    <p>1355 Market St, Suite 900 <br>
-                                        San Francisco, CA 94103</p>
-                                    <p>Mobile: (123) 456-7890</p>
-                                </address>
+                                <p>{{ $user->phone }}</p>
+                                @foreach ($addresses as $address)
+                                    <address>
+                                        <ul>
+                                            <li>
+                                                <p>
+                                                    @if ($address->is_default == 1)
+                                                        <span><strong>Mặc định: </strong></span>
+                                                    @endif
+                                                    {{ $address->address }}
+                                                </p>
+                                            </li>
+                                        </ul>
+                                    </address>
+                                @endforeach
 
                                 <a href="#" class="btn btn-dark btn-round d-inline-block"><i
                                         class="fa fa-edit"></i>Edit Address</a>
@@ -182,54 +275,68 @@
                         <!-- Single Tab Content End -->
 
                         <!-- Single Tab Content Start -->
+
+
                         <div class="tab-pane fade" id="account-info" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Account Details</h3>
 
                                 <div class="account-details-form">
-                                    <form action="#">
-                                        <div class="row">
-                                            <div class="col-lg-6 col-12 mb-30">
-                                                <input id="first-name" placeholder="First Name" type="text">
-                                            </div>
+                                    <div class="row">
+                                        <!-- Avatar -->
+                                        <div class="col-12 text-center mb-4">
+                                            <img src="{{ Storage::url($user->avatar) }}" alt="Avatar"
+                                                class="img-fluid rounded-circle" width="150">
+                                        </div>
 
-                                            <div class="col-lg-6 col-12 mb-30">
-                                                <input id="last-name" placeholder="Last Name" type="text">
-                                            </div>
+                                        <!-- Name -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Name:</strong></label>
+                                            <p>{{ $user->name }}</p>
+                                        </div>
 
-                                            <div class="col-12 mb-30">
-                                                <input id="display-name" placeholder="Display Name" type="text">
-                                            </div>
+                                        <!-- Email -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Email Address:</strong></label>
+                                            <p>{{ $user->email }}</p>
+                                        </div>
 
-                                            <div class="col-12 mb-30">
-                                                <input id="email" placeholder="Email Address" type="email">
-                                            </div>
+                                        <!-- Phone Number -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Phone Number:</strong></label>
+                                            <p>{{ $user->phone_number }}</p>
+                                        </div>
 
-                                            <div class="col-12 mb-30">
-                                                <h4>Password change</h4>
-                                            </div>
-
-                                            <div class="col-12 mb-30">
-                                                <input id="current-pwd" placeholder="Current Password" type="password">
-                                            </div>
-
-                                            <div class="col-lg-6 col-12 mb-30">
-                                                <input id="new-pwd" placeholder="New Password" type="password">
-                                            </div>
-
-                                            <div class="col-lg-6 col-12 mb-30">
-                                                <input id="confirm-pwd" placeholder="Confirm Password" type="password">
-                                            </div>
-
-                                            <div class="col-12">
-                                                <button class="btn btn-dark btn-round btn-lg">Save Changes</button>
-                                            </div>
+                                        <!-- Gender -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Gender:</strong></label>
+                                            <p>{{ $user->gender ?? 'Chưa cập nhật' }}</p>
 
                                         </div>
-                                    </form>
+
+                                        <!-- Birthday -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Birthday:</strong></label>
+                                            <p>{{ $user->birthday ?? 'Chưa cập nhật' }}</p>
+                                        </div>
+                                        <!-- address -->
+                                        <div class="col-lg-6 col-12 mb-30">
+                                            <label><strong>Địa chỉ mặc định:</strong></label>
+                                            @if (
+                                                $data = collect($addresses)->filter(function ($address) {
+                                                        return $address['is_default'] === 1;
+                                                    })->first())
+                                                <p>{{ $data->address }}</p>
+                                            @endif
+
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
+
+
                         <!-- Single Tab Content End -->
                     </div>
                 </div>
@@ -239,3 +346,55 @@
         </div>
     </div><!-- Page Section End -->
 @endsection
+<style>
+    .dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: #000000;
+        border-radius: 50%;
+        margin-bottom: 3px;
+        margin-right: 3px;
+    }
+</style>
+
+
+
+<script>
+    // JS chuyển tab Order Details khi ấn View ở tab Order
+
+    document.addEventListener("DOMContentLoaded", function() {
+        let ordersList = document.getElementById("orders-list");
+        let orderDetailsContent = document.getElementById("order-details-content");
+
+        // Ẩn chi tiết đơn hàng ngay từ đầu
+        orderDetailsContent.style.display = "none";
+
+        // Xử lý khi nhấn "View"
+        document.querySelectorAll(".order-details-btn").forEach(button => {
+            button.addEventListener("click", function(e) {
+                e.preventDefault();
+                let orderId = this.getAttribute("data-order-id");
+
+                // Ẩn danh sách đơn hàng
+                ordersList.style.display = "none";
+                orderDetailsContent.style.display = "block";
+
+                // Chỉ hiển thị chi tiết của đơn hàng đã chọn
+                document.querySelectorAll(".order-detail-row").forEach(row => {
+                    if (row.getAttribute("data-order-id") === orderId) {
+                        row.style.display = "table-row";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        // Quay lại danh sách Orders
+        document.getElementById("back-to-orders").addEventListener("click", function() {
+            ordersList.style.display = "block";
+            orderDetailsContent.style.display = "none";
+        });
+    });
+</script>

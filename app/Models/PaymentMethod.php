@@ -20,12 +20,12 @@ class PaymentMethod extends Model
     {
         return $date->format('Y/m/d H:i:s');
     }
-    public function payment_method_statuses()
-    {
-        return $this->belongsTo(PaymentMethodStatus::class, 'id_payment_method_status');
-    }
+    // public function payment_method_statuses()
+    // {
+    //     return $this->belongsTo(PaymentMethodStatus::class, 'id_payment_method_status',);
+    // }
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class,'id_payment_method','id_payment_method');
     }
 }

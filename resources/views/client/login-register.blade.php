@@ -9,7 +9,7 @@
                     <h1>Login & Register</h1>
                     <ul class="page-breadcrumb">
                         <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
                     </ul>
 
                 </div>

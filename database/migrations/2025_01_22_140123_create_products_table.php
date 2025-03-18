@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_brand')->constrained('brands');
-            $table->string('name',255)->comment('tên gốc của sản phẩm');
+            $table->string('name', 255)->comment('tên gốc của sản phẩm');
+            $table->string('image')->nullable()->comment('Ảnh đại diện cho sản phẩm');
             $table->text('description')->nullable()->comment('Mô tả sản phẩm');
+            $table->boolean('status')->default(1)->comment('Trạng thái sản phẩm');
             $table->foreignId('id_category')->constrained('categories');
-            $table->string('image', 255)->nullable()->comment('Ảnh chính');
-            $table->decimal('price', 10, 2)->comment('Giá sản phẩm(mặc định)');
             $table->timestamps();
             $table->softDeletes();
         });

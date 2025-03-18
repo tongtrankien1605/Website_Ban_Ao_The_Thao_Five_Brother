@@ -45,18 +45,20 @@
                         </select>
                     </div>
                 </div>
-                @foreach ($data as $product)
+                @foreach ($products as $product)
                     <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-40">
 
                         <div class="product-item">
                             <div class="product-inner">
-
                                 <div class="image">
-                                    <img src="{{$product->image}}" alt="">
-
+                                    <div class="bg-light border rounded d-flex justify-content-center align-items-center">
+                                        <img id="main-image" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
+                                            style="height: 300px; width: 300px;">
+                                    </div>
                                     <div class="image-overlay">
                                         <div class="action-buttons">
-                                            <button>add to cart</button>
+                                            <button data-url="{{ route('add.cart', ['id' => $product->id]) }}"
+                                                class="add_to_cart">Add to cart</button>
                                             <button>add to wishlist</button>
                                         </div>
                                     </div>
@@ -100,7 +102,7 @@
                 @endforeach
                 <div class="col-12">
                     <ul class="page-pagination">
-                        {{ $data->links() }}
+                        {{ $products->links() }}
                         {{-- <li><a href="#"><i class="fa fa-angle-left"></i></a></li>
                         <li class="active"><a href="#">1</a></li>
                         <li><a href="#">2</a></li>

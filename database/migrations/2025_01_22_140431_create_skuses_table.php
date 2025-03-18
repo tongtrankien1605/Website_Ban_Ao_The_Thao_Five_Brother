@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id()->comment('ID sản phẩm biến thể');
             $table->unsignedBigInteger('product_id');
             $table->string('name');
-            $table->integer('quantity');
             $table->integer('price');
-            $table->bigInteger('barcode')->unique()->comment('Mã vạch sản phẩm');
+            $table->integer('sale_price');
+            $table->string('image')->nullable();
+            $table->string('barcode')->unique()->comment('Mã vạch sản phẩm');
+            $table->boolean('status')->default(1)->comment('Trạng thái sản phẩm');
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

@@ -2,14 +2,23 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\ProductAttributeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PostController as UserPostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\SkusController;
+use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WishlistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +71,7 @@ Route::get(
 // Route::get('/login-register', function () {
 //     return view('client.login-register');
 // })->name('login-register');
+
 Route::get('/contact', function () {
     return view('client.contact');
 })->name('contact');
@@ -77,9 +87,14 @@ Route::get('/404', function () {
 })->name('404');
 
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::resource('/user',AdminUserController::class);
-    Route::get('/index_delete_user',[AdminUserController::class,'indexDelete'])->name('user.indexDelUser');
+
+// thêm middleware auth vào các route admin
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function () {
+    //user
+    Route::resource('/user', AdminUserController::class);
+    Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
+    //chạy tem sẵn
     Route::get('/index', function () {
         return view('admin.layouts.index');
     })->name('index');
@@ -89,29 +104,22 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/table', function () {
         return view('admin.table.index');
     })->name('table');
+    //voucher
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
     Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
     Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
     Route::get('/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
     Route::put('/vouchers/{voucher}', [VoucherController::class, 'update'])->name('vouchers.update');
     Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+    Route::resource('product', AdminProductController::class);
+    Route::put('product/{product}/change_status', [AdminProductController::class, 'changeStatus'])->name('product.change_status');
+    //route Category
+
+    Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
     Route::resource('category', CategoryController::class);
-});
-
-Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
-    Route::get('/index', function () {
-        return view('staffs.layout.index');
-    })->name('index');
-    Route::get('/form', function () {
-        return view('staffs.form.index');
-    })->name('form');
-    Route::get('/table', function () {
-        return view('staffs.table.index');
-    })->name('table');
-});
-
-
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    //End route Category
+    Route::resource('product_attribute', ProductAttributeController::class);
+    //post
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('posts', [PostController::class, 'store'])->name('posts.store');
@@ -119,10 +127,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
-});
-
-
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    //brand
     Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
     Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
     Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
@@ -130,7 +135,61 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
     Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
     Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
+
+    Route::resource('product.skus', SkusController::class);
+    Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
+
+    Route::resource('orders',AdminOrderController::class);
 });
 
+Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
+    Route::get('/index', function () {
+        return view('staff.layouts.index');
+    })->name('index');
+    Route::get('/form', function () {
+        return view('staff.form.index');
+    })->name('form');
+    Route::get('/table', function () {
+        return view('staff.table.index');
+    })->name('table');
+});
 
+Route::middleware('auth')->group(function (){
+    Route::post('/cart/add_to_cart/{id}', [CartController::class, 'addToCart'])->name('add.cart');
+    Route::get('/cart', [CartController::class, 'index'])->name('show.cart');
+    Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity']);
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('remove.cart');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('clear.cart');
+
+
+    Route::get('payment', [PaymentController::class, 'index'])->name('indexPayment');
+
+
+    Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
+
+    Route::get('/get-order-details/{id}', function ($id) {
+        $orderDetails = \App\Models\OrderDetail::where('id_order', $id)
+            ->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
+            ->select('skuses.name as product_name', 'order_details.quantity', 'order_details.unit_price', 'order_details.total_price')
+            ->get();
+    
+        return response()->json($orderDetails);
+    });
+    
+
+
+    // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
+    Route::post('/wishlist/add_to_wishlist/{id}', [WishlistController::class, 'store'])->name('add_wishlist');
+    Route::get('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('delete_wishlist');
+
+});
+Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payment.vnpay.callback');
+Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
+Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
+
+Route::get('/success', function () {
+    return view('client.success');
+})->name('order_success');
 

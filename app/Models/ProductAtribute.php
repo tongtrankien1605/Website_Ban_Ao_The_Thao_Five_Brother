@@ -10,7 +10,7 @@ class ProductAtribute extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'product_attributes';
+    protected $table = 'product_atributes';
     protected $fillable = [
         'name',
     ];
@@ -20,7 +20,7 @@ class ProductAtribute extends Model
         return $date->format('Y/m/d H:i:s');
     }
 
-    public function product_attribute_values()
+    public function product_atribute_values()
     {
         return $this->hasMany(ProductAtributeValue::class);
     }
@@ -28,4 +28,9 @@ class ProductAtribute extends Model
     {
         return $this->hasMany(Variant::class);
     }
+    public function values()
+    {
+        return $this->hasMany(ProductAtributeValue::class, 'product_attribute_id');
+    }
+
 }

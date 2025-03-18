@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddressUser;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,9 +48,38 @@ class UserController extends Controller
         if (Auth::id() === null) {
             return abort(403);
         }
-        // dd($user);
-
-        return view('client.my-account', compact('user'));
+        $addresses = AddressUser::where('id_user', $user->id)->orderByDesc('is_default')->get();
+        $orders = Order::where('total_amount', '>', 0)->where('id_user', $user->id)
+            ->latest('id')
+            ->join('order_statuses', function ($q) {
+                $q->on('order_statuses.id', '=', 'orders.id_order_status');
+            })
+            ->join('shipping_methods', function ($q) {
+                $q->on('shipping_methods.id_shipping_method', '=', 'orders.id_shipping_method');
+            })
+            ->join('payment_methods', function ($q) {
+                $q->on('payment_methods.id_payment_method', '=', 'orders.id_payment_method');
+            })
+            ->join('payment_method_statuses', function ($q) {
+                $q->on('payment_method_statuses.id', '=', 'orders.id_payment_method_status');
+            })
+            ->select([
+                'orders.*',
+                'shipping_methods.name as shipping_method_name',
+                'payment_methods.name as payment_method_name',
+                'payment_method_statuses.name as payment_method_status_name',
+                'order_statuses.name as order_status_name'
+            ])
+            ->paginate(10);
+        $orderIds = $orders->pluck('id');
+        $orderDetails = OrderDetail::whereIn('id_order', $orderIds)
+            ->join('skuses', function ($q) {
+                $q->on('skuses.id', '=', 'order_details.id_product_variant');
+                $q->whereNull('skuses.deleted_at');
+            })
+            ->get()
+            ->groupBy('id_order');
+        return view('client.my-account', compact(['user', 'addresses', 'orders', 'orderIds', 'orderDetails']));
     }
 
     /**
@@ -105,4 +137,11 @@ class UserController extends Controller
     {
         //
     }
+
+    public function accountInfo()
+{
+    $user = auth()->user(); // Lấy thông tin user đang đăng nhập
+    return view('client.my-account', compact('user'));
+}
+
 }

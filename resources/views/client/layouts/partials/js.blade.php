@@ -13,3 +13,8 @@
     <script src="/client/assets/js/plugins.js"></script>
     <!-- Main JS -->
     <script src="/client/assets/js/main.js"></script>
+
+    <script src="/client/assets/js/cart.js"></script>
+    <script src="/client/assets/js/wishlist.js"></script>
+    <script src="/client/assets/js/order.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

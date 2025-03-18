@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProductAtribute;
+use App\Models\ProductImage;
+use App\Models\Skus;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,16 +18,22 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = Product::latest('id')->paginate(8);
-        // dd($data);
-        return view('client.shop', compact('data'));
+        $products = Product::latest('id')->paginate(8);
+        foreach ($products as $product) {
+            $product->default_image = ProductImage::where('id_product', $product->id)
+                ->where('is_default', 1)
+                ->first()?->image_url ??
+                ProductImage::where('id_product', $product->id)->first()?->image_url;
+        }
+
+        return view('client.shop', compact('products'));
     }
     public function indexMain()
     {
-        $products = Product::latest('id')->limit(8)->get();
+        $products = Product::where('status', 1)->latest('updated_at')->limit(8)->get();
         $posts = Post::latest('published_at')->limit(2)->get();
-        //  dd($data);
-        return view('client.index', compact(['products','posts']));
+
+        return view('client.index', compact('products', 'posts'));
     }
 
     /**
@@ -44,12 +55,33 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        // dd($product->id);
-        return view('client.single-product', compact('product'));
+        $product = Product::with([
+            'attributeValues.attribute', // Lấy thuộc tính và giá trị
+            'variants'
+        ])->findOrFail($id);
+    // dd($product->toArray());
+        $brand = Brand::find($product->id_brand);
+        $category = Category::find($product->id_category);
+        $productImages = ProductImage::where('id_product', $product->id)->get();
+        $skus = Skus::where('product_id', $product->id)->get();
+    
+        $mainImage = $product->image ?? ($productImages->first() ? $productImages->first()->image_url : null);
+    
+        // Debug để kiểm tra dữ liệu trước khi truyền vào view
+        // dd($product->attributeValues);
+    
+        return view('client.single-product', compact([
+            'brand',
+            'category',
+            'product',
+            'productImages',
+            'mainImage',
+            'skus',
+        ]));
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */

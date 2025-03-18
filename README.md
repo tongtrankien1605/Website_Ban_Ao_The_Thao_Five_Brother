@@ -34,5 +34,9 @@ $ php artisan key:generate
 # run database migration and seed
 $ php artisan migrate:refresh --seed
 
+# generate mixing
+$ npm install
+$ npm run dev
+
 # publish storage
 $ php artisan storage:link

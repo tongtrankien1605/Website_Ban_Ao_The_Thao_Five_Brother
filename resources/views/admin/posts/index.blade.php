@@ -1,7 +1,7 @@
 @extends('admin.layouts.index')
 
 @section('title')
-List Posts
+Danh sách bài viết
 @endsection
 
 @section('content')
@@ -10,12 +10,12 @@ List Posts
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>List Posts</h1>
+                    <h1>Danh sách bài viết</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                        <li class="breadcrumb-item active"><a href="{{ route('admin.posts.index') }}">List Posts</a></li>
+                        <li class="breadcrumb-item active"><a href="{{ route('admin.posts.index') }}">Danh sách bài viết</a></li>
                     </ol>
                 </div>
             </div>
@@ -26,7 +26,7 @@ List Posts
         <div class="card" style="height: 700px; width:1250px">
             <div class="card-header">
                 <h3 class="card-title"></h3>
-                <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">Create New Post</a>
+                <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">Thêm mới bài viết</a>
                 <div class="card-tools">
                     <form action="{{ route('admin.posts.index') }}" method="GET" class="input-group input-group-sm"
                         style="width: 150px;">
@@ -74,14 +74,16 @@ List Posts
                                 </td>
                                 <td>{{ Str::limit($post->short_description, 20) }}</td>
                                 <td>
-                                    <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-warning">Sửa</a>
+                                    <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-warning">
+                                        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    </a>
                                     <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST"
-                                        style="display:inline;">
+                                        onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?')" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Xóa</button>
+                                        <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                                     </form>
-                                    <a href="{{ route('admin.posts.show', $post->id) }}" class="btn btn-info">Xem Chi Tiết</a>
+                                    <a href="{{ route('admin.posts.show', $post->id) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -94,5 +96,4 @@ List Posts
         </div>
     </div>
 </div>
-@extends('admin.table.js')
 @endsection

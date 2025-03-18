@@ -30,14 +30,14 @@
                     </div>
 
                     <div class="header-wishlist">
-                        <a href="{{ route('wishlist') }}"><img src="/client/assets/images/icons/wishlist.png"
+                        <a href="{{ route('index_wishlist') }}"><img src="/client/assets/images/icons/wishlist.png"
                                 alt="Wishlist">
                             <span>02</span></a>
                     </div>
 
                     <div class="header-mini-cart">
-                        <a href="{{ route('cart') }}"><img src="/client/assets/images/icons/cart.png" alt="Cart">
-                            <span>02($250)</span></a>
+                        <a href="{{ route('show.cart') }}"><img src="/client/assets/images/icons/cart.png" alt="Cart">
+                            <span>{{$quantity}}({{number_format($total)}} Đồng)</span></a>
                     </div>
 
                 </div>
@@ -50,18 +50,18 @@
                         <ul>
                             <li class="active"><a href="{{ route('index') }}">HOME</a></li>
                             <li><a href="{{ route('product.index') }}">SHOP</a></li>
-                            <li><a href="#">PAGES</a>
+                            {{-- <li><a href="#">PAGES</a>
                                 <ul class="sub-menu">
-                                    <li><a href="{{ route('cart') }}">Cart</a></li>
+                                    <li><a href="{{ route('show.cart') }}">Cart</a></li>
                                     <li><a href="{{ route('checkout') }}">Checkout</a></li>
-                                    {{-- <li><a href="{{ route('login-register') }}">Login & Register</a></li> --}}
+                                    <li><a href="{{ route('login-register') }}">Login & Register</a></li>
                                     <li><a href="{{ route('login') }}">Login</a></li>
                                     <li><a href="{{ route('register') }}">Register</a></li>
                                     <li><a href="{{ route('my-account') }}">My Account</a></li>
                                     <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
                                     <li><a href="{{ route('404') }}">404 Error</a></li>
                                 </ul>
-                            </li>
+                            </li> --}}
                             <li><a href="{{ route('post.index') }}">BLOG</a>
                                 {{-- <ul class="sub-menu">
                                     <li><a href="{{ route('post.index') }}">Blog</a></li>

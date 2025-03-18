@@ -20,6 +20,6 @@ class ShippingMethod extends Model
         return $date->format('Y/m/d H:i:s');
     }
     public function orders() {
-        return $this->hasMany(Order::class, 'id_shipping_method');
+        return $this->hasMany(Order::class, 'id_shipping_method','id_shipping_method');
     }
 }

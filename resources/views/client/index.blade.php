@@ -1,5 +1,6 @@
 @extends('client.layouts.master')
 @section('content')
+
     <!-- Hero Section Start -->
     <div class="hero-section section">
 
@@ -111,12 +112,15 @@
                             <div class="product-inner">
 
                                 <div class="image">
-                                    <img src="{{$product->image}}" alt="Image">
+                                    <div class="bg-light border rounded d-flex justify-content-center align-items-center">
+                                        <img src="{{ Storage::url($product->image) }}" alt=""
+                                            style="height: 300px;width: 300px; overflow: hidden;">
+                                    </div>
 
                                     <div class="image-overlay">
                                         <div class="action-buttons">
-                                            <button>add to cart</button>
-                                            <button>add to wishlist</button>
+                                            <button><a href="{{route('product.show',$product->id)}}">Add to cart</a></button>
+                                            <button class="add_to_wishlist" data-url="{{route('add_wishlist',['id'=>$product->id])}}">Add to wishlist</button>
                                         </div>
                                     </div>
 
@@ -602,20 +606,22 @@
                             <div class="col-12 mb-40">
                                 <div class="blog-item">
                                     <div class="image-wrap">
-                                        <h4 class="date">{{$post->published_month}}<span>{{$post->published_day}}</span></h4>
+                                        <h4 class="date">
+                                            {{ $post->published_month }}<span>{{ $post->published_day }}</span></h4>
                                         <a class="image" href="{{ route('post.show', $post) }}"><img
                                                 src="/client/assets/images/blog/blog-1.jpg" alt="Image"></a>
                                     </div>
                                     <div class="content">
-                                        <h4 class="title"><a href="{{ route('post.show', $post) }}">{{$post->title}}</a>
+                                        <h4 class="title"><a
+                                                href="{{ route('post.show', $post) }}">{{ $post->title }}</a>
                                         </h4>
                                         <div class="desc">
-                                            <p>{{$post->short_description}}</p>
+                                            <p>{{ $post->short_description }}</p>
                                         </div>
                                         <ul class="meta">
                                             <li>
                                                 <a href="#"><img src="/client/assets/images/blog/blog-author-1.jpg"
-                                                        alt="Blog Author">{{$post->author}}</a>
+                                                        alt="Blog Author">{{ $post->author }}</a>
                                             </li>
                                             <li><a href="#">25 Likes</a></li>
                                             <li><a href="#">05 Views</a></li>
