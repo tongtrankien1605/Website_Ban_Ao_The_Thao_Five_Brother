@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('new_status')->comment('trạng thái mới');
             $table->string('note')->nullable()->comment('ghi chú');
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('user_id')->references('id')->on('orders')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
 
             $table->timestamps();
         });
