@@ -46,6 +46,14 @@
                                     <span>{{ $skus->barcode }}</span>
                                 </div>
                                 <div class="form-group">
+                                    <label>Các giá trị: </label>
+                                    <ul>
+                                        @foreach ($skus->variants as $variant)
+                                            <li>{{$variant->product_atribute_values->value}}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <div class="form-group">
                                     <label>Ảnh biến thể:</label>
                                     <div>
                                         @if ($skus->image)

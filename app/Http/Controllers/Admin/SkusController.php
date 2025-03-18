@@ -41,7 +41,9 @@ class SkusController extends Controller
      */
     public function show(Product $product, $id)
     {
-        $skus = Skus::where("id", $id)->first();
+        $skus = Skus::where("id", $id)
+            ->with(['variants.product_atribute_values'])
+            ->first();
         return view('admin.skus.show', compact('skus', 'product'));
     }
 
