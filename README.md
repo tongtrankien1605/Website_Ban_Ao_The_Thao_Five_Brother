@@ -40,4 +40,3 @@ $ npm run dev
 
 # publish storage
 $ php artisan storage:link
-dd(1);
