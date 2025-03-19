@@ -25,12 +25,13 @@
                     <div class="col-lg-6 col-12 mb-50">
                         <div class="blog-item">
                             <div class="image-wrap">
-                                <h4 class="date">{{ $post->published_month }} <span>{{$post->published_day}}</span> </h4>
-                                <a class="image" href="{{ route('post.show',$post) }}"><img
-                                        src="/client/assets/images/blog/blog-1.jpg" alt=""></a>
+                                <h4 class="date">{{ $post->published_at }} </h4>
+                                @if($post->image)
+                                    <img src="{{ asset('storage/' . $post->image) }}" width="100" alt="image" height="130px">
+                                @endif
                             </div>
                             <div class="content">
-                                <h4 class="title"><a href="{{ route('post.show',$post) }}">{{ $post->title }}</a>
+                                <h4 class="title"><a href="{{ route('post.show', $post) }}">{{ $post->title }}</a>
                                 </h4>
                                 <div class="desc">
                                     <p>{{$post->short_description}}</p>
@@ -78,7 +79,8 @@
                                     src="/client/assets/images/blog/blog-3.jpg" alt=""></a>
                         </div>
                         <div class="content">
-                            <h4 class="title"><a href="{{ route('post.show',$post) }}">Lates and new Trens for baby fashion</a>
+                            <h4 class="title"><a href="{{ route('post.show',$post) }}">Lates and new Trens for baby
+                                    fashion</a>
                             </h4>
                             <div class="desc">
                                 <p>Jadusona is one of the most of a exclusive Baby shop in the</p>
