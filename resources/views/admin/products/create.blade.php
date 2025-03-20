@@ -88,8 +88,12 @@
                                                         Variant</button>
                                                 </div>
                                                 <div class="card-body">
-                                                    <input type="hidden" name="variants[{{ $index }}][name]"
+                                                    <label class="form-label">Name</label>
+                                                    <input type="text" class="form-control" name="variants[{{ $index }}][name]"
                                                         value="{{ $variant['name'] }}">
+                                                    @error("variants.$index.name")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <input type="hidden" class="form-control"
                                                         name="variants[{{ $index }}][barcode]"
                                                         value="{{ $variant['barcode'] }}" readonly>
@@ -111,6 +115,14 @@
                                                         name="variants[{{ $index }}][sale_price]"
                                                         value="{{ old("variants.$index.sale_price") }}">
                                                     @error("variants.$index.sale_price")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
+                                                    <label class="form-label">Quantity</label>
+                                                    <input type="number" class="form-control"
+                                                        name="variants[{{ $index }}][quantity]"
+                                                        value="{{ old("variants.$index.quantity") }}">
+                                                    @error("variants.$index.quantity")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 

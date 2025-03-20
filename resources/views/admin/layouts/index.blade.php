@@ -22,7 +22,7 @@
 
         <header>
             <!-- Preloader -->
-            @include('admin.layouts.preloader')
+            {{-- @include('admin.layouts.preloader') --}}
 
 
             <!-- Navbar -->

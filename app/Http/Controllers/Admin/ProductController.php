@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Brand;
 use App\Models\CartItem;
 use App\Models\Category;
+use App\Models\Inventory;
+use App\Models\InventoryLog;
 use App\Models\Product;
 use App\Models\ProductAtribute;
 use App\Models\ProductAtributeValue;
@@ -14,6 +16,7 @@ use App\Models\ProductImage;
 use App\Models\Skus;
 use App\Models\Variant;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,6 +38,9 @@ class ProductController extends Controller
             $q->on('categories.id', '=', 'products.id_category');
             $q->whereNull('categories.deleted_at');
         })
+            ->leftJoin('inventories', function ($q) {
+                $q->on('inventories.id_product_variant', '=', 'skuses.id');
+            })
             ->join('brands', function ($q) {
                 $q->on('brands.id', '=', 'products.id_brand');
                 $q->whereNull('brands.deleted_at');
@@ -44,6 +50,7 @@ class ProductController extends Controller
                     'categories.name as product_category',
                     'brands.name as product_brand',
                     DB::raw('COUNT(skuses.status) as count_variant'),
+                    DB::raw('SUM(inventories.quantity) as sum_quantity_variant'),
                 ]
             )->groupBy([
                 'products.id',
@@ -119,6 +126,7 @@ class ProductController extends Controller
             }
             if (!empty($request->variants)) {
                 $skuses = [];
+                $inventories = [];
                 foreach ($request->variants as $variant) {
                     $sku = Skus::create([
                         'product_id' => $product->id,
@@ -132,6 +140,7 @@ class ProductController extends Controller
                         'id' => $sku->id,
                         'attribute_values' => $variant['attribute_values'],
                     ];
+                    $inventories[$sku->id] = $variant['quantity'];
                 }
                 $variantsData = [];
                 foreach ($skuses as $skuData) {
@@ -145,11 +154,25 @@ class ProductController extends Controller
                         ];
                     }
                 }
+                foreach ($inventories as $key => $value) {
+                    Inventory::create([
+                        'id_product_variant' => $key,
+                        'quantity' => $value
+                    ]);
+                    InventoryLog::create([
+                        'id_product_variant' => $key,
+                        'user_id' => auth()->user()->id,
+                        'old_quantity' => 0,
+                        'new_quantity' => $value,
+                        'change_quantity' => $value,
+                        'reason' => 'Tạo mới sản phẩm',
+                    ]);
+                }
                 Variant::insert($variantsData);
             }
             DB::commit();
             return redirect()->route('admin.product.index')->with([
-                'status_succeed' => 'Thêm sản phẩm thành công.'
+                'success' => 'Thêm sản phẩm thành công.'
             ]);
         } catch (\Exception $e) {
             dd($e);
@@ -188,7 +211,8 @@ class ProductController extends Controller
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
-        $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->get();
+        $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->with(['inventories'])->get();
+        // dd($skues->toArray());
         $skuesArray = Skus::whereNull('deleted_at')->where('product_id', $product->id)->pluck('name', 'id');
         $skusAttributeValues =  Variant::leftJoin('product_atribute_values', function ($q) {
             $q->on('product_atribute_values.id', '=', 'variants.product_attribute_value_id');
@@ -222,6 +246,7 @@ class ProductController extends Controller
                     ['image_url' => $product->image] // Nếu có, cập nhật ảnh mới
                 );
             }
+            $product->updated_at = Carbon::now();
             $product->save();
 
             if ($request->images) {
@@ -258,6 +283,7 @@ class ProductController extends Controller
                 $skusIds = Skus::where('product_id', $product->id)->pluck('id')->toArray();
                 $skusToUpdate = [];
                 $variantsData = [];
+                $inventories = [];
                 // dd($request->variants);
                 foreach ($request->variants as $key => $variant) {
                     if (in_array($key, $skusIds)) {
@@ -280,6 +306,7 @@ class ProductController extends Controller
                                 'updated_at' => Carbon::now(),
                             ];
                         }
+                        $inventories[$key] = $variant['quantity'];
                         // if (isset($variant['status'])) {
                         //     Skus::where('id', $key)->update([
                         //         'status' => $variant['status']
@@ -312,6 +339,52 @@ class ProductController extends Controller
                                 'updated_at' => Carbon::now(),
                             ];
                         }
+                        $inventories[$sku->id] = $variant['quantity'];
+                    }
+                }
+
+                // dd($inventories);
+                foreach ($inventories as $key => $newQuantity) {
+                    $inventory = Inventory::where('id_product_variant', $key)->first();
+                    // dd($inventory);
+                    if ($inventory) {
+                        $oldQuantity = $inventory->quantity;
+                        $changeQuantity = $newQuantity - $oldQuantity;
+                        if ($changeQuantity == 0) {
+                            continue;
+                        }
+
+                        if (($changeQuantity < 0 && abs($changeQuantity) > $oldQuantity) || $newQuantity == 0) {
+                            throw new Exception("Số lượng cập nhật không hợp lệ! Không thể giảm nhiều hơn số lượng hiện có.");
+                        }
+
+                        $inventory->update([
+                            'quantity' => $newQuantity
+                        ]);
+
+                        InventoryLog::create([
+                            'id_product_variant' => $key,
+                            'user_id' => auth()->user()->id,
+                            'old_quantity' => $oldQuantity,
+                            'new_quantity' => $newQuantity,
+                            'change_quantity' => $changeQuantity,
+                            'reason' => $changeQuantity > 0 ? 'Nhập thêm hàng' : 'Thay dổi số lượng',
+                        ]);
+                    } else {
+
+                        Inventory::create([
+                            'id_product_variant' => $key,
+                            'quantity' => $newQuantity
+                        ]);
+
+                        InventoryLog::create([
+                            'id_product_variant' => $key,
+                            'user_id' => auth()->user()->id,
+                            'old_quantity' => 0,
+                            'new_quantity' => $newQuantity,
+                            'change_quantity' => $newQuantity,
+                            'reason' => 'Tạo mới sản phẩm',
+                        ]);
                     }
                 }
 
@@ -334,7 +407,7 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.product.index')->with('message', 'Sửa sản phẩm thành công!');
+            return redirect()->route('admin.product.index')->with('success', 'Sửa sản phẩm thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e);

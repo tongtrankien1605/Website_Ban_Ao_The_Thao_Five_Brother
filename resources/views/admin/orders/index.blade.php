@@ -64,28 +64,44 @@
                                                     class="table table-bordered table-striped dataTable dtr-inline">
                                                     <thead>
                                                         <tr>
-                                                            <th>Id</th>
-                                                            <th>Người đặt</th>
-                                                            <th>Trạng thái đơn hàng</th>
-                                                            <th>Trạng thái thanh toán</th>
-                                                            <th>Ngày đặt</th>
-                                                            <th>Action</th>
+                                                            <th class="text-nowrap text-center" style="width:1px; padding-right:8px">Id</th>
+                                                            <th class="text-nowrap">Người đặt</th>
+                                                            <th class="text-nowrap">Điện thoại</th>
+                                                            <th class="text-nowrap">Địa chỉ</th>
+                                                            <th class="text-nowrap" style="width:1px; padding-right:8px">Tổng
+                                                                sản phẩm</th>
+                                                            <th class="text-nowrap">Tổng tiền</th>
+                                                            <th class="text-nowrap">Trạng thái</th>
+                                                            <th class="text-nowrap">Thanh toán</th>
+                                                            <th class="text-nowrap">Ngày đặt</th>
+                                                            <th class="text-nowrap">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($orders as $order)
                                                             <tr>
-                                                                <td>{{ $order->id }}</td>
-                                                                <td>{{ $order->user_name }}</td>
-                                                                <td>{{ $order->order_status_name }}</td>
-                                                                <td>{{ $order->payment_method_status_name }}</td>
-                                                                <td>{{ $order->created_at }}</td>
+                                                                <td class="text-nowrap text-center">{{ $order->id }}</td>
+                                                                <td class="text-nowrap">{{ $order->user_name }}</td>
+                                                                <td class="text-nowrap">{{ $order->users->phone_number }}
+                                                                </td>
+                                                                <td class="text-nowrap">{{ $order->address_users->address }}
+                                                                </td>
+                                                                <td class="text-nowrap text-center" style="width:1px">
+                                                                    {{ $order->order_details_sum_quantity }}</td>
+                                                                <td class="text-nowrap">
+                                                                    {{ number_format($order->total_amount, 0, '', ',') }}
+                                                                    VND</td>
+                                                                <td class="text-nowrap">{{ $order->order_status_name }}
+                                                                </td>
+                                                                <td class="text-nowrap">
+                                                                    {{ $order->payment_method_status_name }}</td>
+                                                                <td class="text-nowrap">{{ $order->created_at }}</td>
                                                                 <td class="text-center">
                                                                     <a href="{{ route('admin.orders.show', $order->id) }}"
                                                                         class="btn btn-info">
                                                                         <i class="bi bi-eye"></i>
                                                                     </a>
-                                                                    @if (!in_array($order->id_order_status, [OrderStatus::SUCCESS, OrderStatus::CANCEL, OrderStatus::REFUND]))
+                                                                    {{-- @if (!in_array($order->id_order_status, [OrderStatus::DELIVERED, OrderStatus::CANCEL, OrderStatus::REFUND]))
                                                                         <button type="button"
                                                                             class="btn btn-primary edit-order-btn"
                                                                             data-order-id="{{ $order->id }}"
@@ -95,7 +111,7 @@
                                                                             data-created-at="{{ $order->created_at->format('H:i d/m/Y') }}">
                                                                             <i class="fa-solid fa-screwdriver-wrench"></i>
                                                                         </button>
-                                                                    @endif
+                                                                    @endif --}}
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -112,8 +128,8 @@
                 </div>
 
                 <!-- Modal Chỉnh sửa đơn hàng (Di chuyển ra ngoài vòng lặp) -->
-                <div class="modal fade" id="editOrderModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="editOrderModalLabel"
-                    aria-hidden="true">
+                <div class="modal fade" id="editOrderModal" data-bs-backdrop="static" tabindex="-1"
+                    aria-labelledby="editOrderModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -156,7 +172,8 @@
                                         <textarea name="note" id="note" class="form-control" rows="5" id="summernote"></textarea>
                                     </div>
                                     <div class=" text-center">
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-danger"
+                                            data-bs-dismiss="modal">Đóng</button>
                                         <button type="submit" class="btn btn-success">Lưu thay đổi</button>
                                     </div>
                                 </form>
@@ -208,7 +225,7 @@
                                 validNextStatuses = [{{ OrderStatus::WAITING_FOR_DELIVERING }}];
                                 break;
                             case {{ OrderStatus::WAITING_FOR_DELIVERING }}:
-                                validNextStatuses = [{{ OrderStatus::SUCCESS }},
+                                validNextStatuses = [{{ OrderStatus::DELIVERED }},
                                     {{ OrderStatus::FAILED }}
                                 ];
                                 break;

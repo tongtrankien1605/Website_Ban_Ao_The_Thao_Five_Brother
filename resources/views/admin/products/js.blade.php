@@ -141,6 +141,11 @@
                             @error('variants[${variantCounter}][sale_price]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
+                        <label class="form-label">Quantity</label>
+                        <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
+                            @error('variants[${variantCounter}][quantity]')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         <label class="form-label">Image</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
                             @error('variants[${variantCounter}][image]')

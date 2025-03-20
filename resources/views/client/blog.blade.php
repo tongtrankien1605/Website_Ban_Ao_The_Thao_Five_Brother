@@ -25,10 +25,10 @@
                     <div class="col-lg-6 col-12 mb-50">
                         <div class="blog-item">
                             <div class="image-wrap">
-                                <h4 class="date">{{ $post->published_at }} </h4>
-                                @if($post->image)
-                                    <img src="{{ asset('storage/' . $post->image) }}" width="100" alt="image" height="130px">
-                                @endif
+                                <h4 class="date">{{ $post->published_month }} <span>{{$post->published_day}}</span> </h4>
+                                {{-- @if($post->image) --}}
+                                    <a class="image" href="{{ route('post.show',$post) }}"><img src="{{ Storage::url($post->image) }}" width="100" alt="image post" height="130px"></a>
+                                {{-- @endif --}}
                             </div>
                             <div class="content">
                                 <h4 class="title"><a href="{{ route('post.show', $post) }}">{{ $post->title }}</a>

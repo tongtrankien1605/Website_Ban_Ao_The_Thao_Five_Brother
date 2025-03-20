@@ -8,10 +8,11 @@ final class OrderStatus extends Enum
 {
     const PENDING = 1;
     const CONFIRM = 2;
-    const DELIVERING = 3;
-    const WAITING_FOR_DELIVERING = 4;
-    const SUCCESS = 5;
+    const WAITING_FOR_DELIVERING = 3;
+    const DELIVERING = 4;
+    const DELIVERED = 5;
     const FAILED = 6;
     const REFUND = 7;
     const CANCEL = 8;
+    const SUCCESS = 9;
 }

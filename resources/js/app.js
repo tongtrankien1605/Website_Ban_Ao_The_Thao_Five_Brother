@@ -15,7 +15,7 @@ if (window.userId) {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // window.location.href = "get-order-details/" + event.order.id;
-                    window.location.href = "my-account";
+                    window.location.href = "http://datn.local/my-account";
                 }
             });
         })

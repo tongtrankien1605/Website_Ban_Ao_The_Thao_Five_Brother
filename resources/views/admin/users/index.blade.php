@@ -27,7 +27,7 @@
             <div class="card" style="width:1250px">
                 <div class="card-header">
                     <h3 class="card-title"></h3>
-                    {{-- <a href="{{ route('admin.user.create') }}" class="btn btn-primary">Thêm mới bài viết</a> --}}
+                    <a href="{{ route('admin.user.create') }}" class="btn btn-primary">Thêm mới người dùng</a>
                     <div class="card-tools">
                         <form action="{{ route('admin.user.index') }}" method="GET" class="input-group input-group-sm"
                             style="width: 150px;">
@@ -112,5 +112,4 @@
             </div>
         </div>
     </div>
-    @extends('admin.table.js')
 @endsection
