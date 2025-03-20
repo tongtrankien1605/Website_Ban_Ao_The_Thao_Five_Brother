@@ -36,6 +36,7 @@ class ProductRequest extends FormRequest
             "variants.*.name" => "required|max:255",
             "variants.*.price" => "required|numeric|min:0|max:99999999",
             "variants.*.sale_price" => "nullable|numeric|min:0|lte:variants.*.price",
+            "variants.*.quantity" => "required|numeric|min:0|max:10000",
             "variants.*.image" => "required|image|mimes:jpeg,png,jpg,gif|max:2048",
             "images" => "nullable|min:1|max:10",
             "images.*" => "image|mimes:jpeg,png,jpg,gif|max:2048",
@@ -76,7 +77,12 @@ class ProductRequest extends FormRequest
 
             'variants.*.sale_price.numeric' => 'Giá khuyến mãi phải là số.',
             'variants.*.sale_price.min' => 'Giá khuyến mãi không được nhỏ hơn 0.',
-            'variants.*.sale_price.lt' => 'Giá khuyến mãi phải nhỏ hơn giá gốc.',
+            'variants.*.sale_price.lte' => 'Giá khuyến mãi phải nhỏ hơn giá gốc.',
+
+            'variants.*.quantity.required' => 'Số lượng biến thể không được để trống.',
+            'variants.*.quantity.numeric' => 'Số lượng biến thể phải là số.',
+            'variants.*.quantity.min' => 'Số lượng biến thể phải lớn hơn 0.',
+            'variants.*.quantity.max' => 'Số lượng biến thể không được lớn hơn 10000.',
 
             'variants.*.image.required' => 'Ảnh của biến thể không được để trống.',
             'variants.*.image.image' => 'Ảnh của biến thể phải là hình ảnh.',

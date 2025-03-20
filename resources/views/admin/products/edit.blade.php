@@ -14,6 +14,13 @@
                 </div>
             </div>
         </section>
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
         <section class="content">
             <div class="container-fluid">
                 <form action="{{ route('admin.product.update', $product) }}" method="POST" enctype="multipart/form-data">
@@ -139,6 +146,15 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Quantity</label>
+                                                        <input type="number" class="form-control"
+                                                            name="variants[{{ $sku->id }}][quantity]"
+                                                            value="{{ $sku->inventories->quantity ?? 0 }}">
+                                                        @error("variants.$sku->id.quantity")
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
                                                     {{-- <div class="form-check">
                                                         <input type="checkbox" class="form-check-input" id="check1"
                                                             name="variants[{{ $sku->id }}][status]" value="1"
@@ -167,6 +183,79 @@
                                                             @enderror
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        @php
+                                            $oldVariants = old('variants', []);
+                                            $skuesArray = $skues->groupBy('id')->toArray();
+
+                                            // Lấy danh sách các keys của $skuesArray
+                                            $skuesKeys = array_keys($skuesArray);
+
+                                            // Loại bỏ các phần tử có key trùng trong $skuesArray
+                                            $filteredVariants = array_diff_key($oldVariants, array_flip($skuesKeys));
+
+                                            // dd($filteredVariants); // Kiểm tra kết quả
+
+                                        @endphp
+
+                                        @foreach ($filteredVariants as $index => $variant)
+                                            <div class="card mb-3 variant-block">
+                                                <div
+                                                    class="card-header toggle-variant d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">{{ $variant['name'] }}</h5>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger float-end remove-variant">Xóa
+                                                        Variant</button>
+                                                </div>
+                                                <div class="card-body">
+                                                    <label class="form-label">Name</label>
+                                                    <input type="text" class="form-control"
+                                                        name="variants[{{ $index }}][name]"
+                                                        value="{{ $variant['name'] }}">
+                                                    @error("variants.$index.name")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <input type="hidden" class="form-control"
+                                                        name="variants[{{ $index }}][barcode]"
+                                                        value="{{ $variant['barcode'] }}" readonly>
+                                                    @foreach ($variant['attribute_values'] as $attrValue)
+                                                        <input type="hidden"
+                                                            name="variants[{{ $index }}][attribute_values][]"
+                                                            value="{{ $attrValue }}">
+                                                    @endforeach
+                                                    <label class="form-label">Price</label>
+                                                    <input type="number" class="form-control"
+                                                        name="variants[{{ $index }}][price]"
+                                                        value="{{ old("variants.$index.price") }}">
+                                                    @error("variants.$index.price")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
+                                                    <label class="form-label">Sale price</label>
+                                                    <input type="number" class="form-control"
+                                                        name="variants[{{ $index }}][sale_price]"
+                                                        value="{{ old("variants.$index.sale_price") }}">
+                                                    @error("variants.$index.sale_price")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
+                                                    <label class="form-label">Quantity</label>
+                                                    <input type="number" class="form-control"
+                                                        name="variants[{{ $index }}][quantity]"
+                                                        value="{{ old("variants.$index.quantity") }}">
+                                                    @error("variants.$index.quantity")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
+                                                    <label class="form-label">Image</label>
+                                                    <input type="file" class="form-control variant-image"
+                                                        name="variants[{{ $index }}][image]" accept="image/*"
+                                                        value="{{ old("variants.$index.image") }}" required>
+                                                    @error("variants.$index.image")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         @endforeach
@@ -338,7 +427,11 @@
                 let missingInitialValue = [...initialCheckedValues].some(value => !checkedValues.has(value));
 
                 // "Tạo Variant" bị disabled nếu có thuộc tính mới hoặc thiếu giá trị ban đầu
-                createVariantBtn.disabled = hasNewAttributeSelected || missingInitialValue;
+                if (initialCheckedValues.size === 0) {
+                    createVariantBtn.disabled = true;
+                } else {
+                    createVariantBtn.disabled = hasNewAttributeSelected || missingInitialValue;
+                }
             }
 
             // Lắng nghe sự kiện thay đổi checkbox
@@ -544,97 +637,198 @@
                 });
             }
 
-            createVariantBtn.addEventListener("click", function() {
-                const productName = document.getElementById("name").value.trim();
-                if (!productName) {
-                    alert("Vui lòng nhập tên sản phẩm trước khi tạo biến thể.");
-                    return;
-                }
+            if (initialCheckedValues.size === 0) {
+                createVariantBtn.addEventListener("click", function() {
+                    createdVariantContainer.innerHTML = "";
+                    const productName = document.getElementById("name").value.trim();
 
-                const attributeDivs = Array.from(attributeContainer.querySelectorAll("div[data-key]"));
-                let variantCombinations = [];
-                let existingVariantsSet = new Set();
-                let existingBarcodesSet = new Set(); // Lưu danh sách barcode đã có trên FE
-
-                // Cập nhật danh sách biến thể đã có (kể cả những biến thể mới thêm vào DOM)
-                document.querySelectorAll(".variant-block").forEach(variant => {
-                    let selectedAttributes = [];
-                    variant.querySelectorAll("input[name^='variants[" + variant.getAttribute(
-                            "data-variant-id") + "][attribute_values]']")
-                        .forEach(input => selectedAttributes.push(parseInt(input.value)));
-
-                    selectedAttributes.sort((a, b) => a - b);
-                    if (selectedAttributes.length > 0) {
-                        existingVariantsSet.add(selectedAttributes.join("-")); // Ví dụ: "4-8-10"
-                    }
-
-                    // Lấy barcode của biến thể và thêm vào danh sách kiểm tra
-                    let barcodeInput = variant.querySelector(
-                        "input[name^='variants'][name$='[barcode]']");
-                    if (barcodeInput) {
-                        existingBarcodesSet.add(barcodeInput.value);
-                    }
-                });
-
-                // Lấy danh sách thuộc tính đã chọn từ checkbox
-                attributeDivs.forEach(div => {
-                    let checkedBoxes = div.querySelectorAll(
-                        "input[type='checkbox']:checked:not([disabled])");
-                    let values = [];
-
-                    checkedBoxes.forEach(checkbox => {
-                        values.push({
-                            id: checkbox.value,
-                            value: checkbox.nextElementSibling.innerText
-                        });
-                    });
-
-                    if (values.length > 0) {
-                        variantCombinations.push(values);
-                    }
-                });
-
-                // Hàm tạo tổ hợp biến thể từ danh sách thuộc tính
-                function generateCombinations(arrays, index = 0, result = [], current = []) {
-                    if (index === arrays.length) {
-                        result.push([...current]);
+                    if (!productName) {
+                        alert("Vui lòng nhập tên sản phẩm trước khi tạo biến thể.");
                         return;
                     }
-                    for (let item of arrays[index]) {
-                        current.push(item);
-                        generateCombinations(arrays, index + 1, result, current);
-                        current.pop();
+
+                    const attributeDivs = Array.from(attributeContainer.querySelectorAll("div[data-key]"));
+                    if (attributeDivs.length === 0) {
+                        alert("Vui lòng chọn thuộc tính và đánh dấu giá trị cần thiết.");
+                        return;
                     }
-                }
+                    attributeDivs.sort((a, b) => parseInt(a.dataset.key) - parseInt(b.dataset.key));
 
-                let combinations = [];
-                generateCombinations(variantCombinations, 0, combinations);
+                    let variantCombinations = [];
+                    attributeDivs.forEach(function(div) {
+                        const checkedBoxes = div.querySelectorAll("input[type='checkbox']:checked");
+                        let values = [];
+                        checkedBoxes.forEach(function(checkbox) {
+                            values.push({
+                                id: checkbox.value,
+                                value: checkbox.nextElementSibling.innerText
+                            });
+                        });
+                        if (values.length > 0) {
+                            variantCombinations.push(values);
+                        }
+                    });
 
-                // Duyệt qua các biến thể mới để kiểm tra trùng lặp trước khi thêm
-                combinations.forEach(combination => {
-                    let sortedCombination = combination.sort((a, b) => parseInt(a.id) - parseInt(b
-                        .id));
-                    let selectedAttributes = sortedCombination.map(attr => parseInt(attr.id));
-                    let attributeKey = selectedAttributes.join("-");
+                    function generateCombinations(arrays, index = 0, result = [], current = []) {
+                        if (index === arrays.length) {
+                            result.push([...current]);
+                            return;
+                        }
+                        for (let item of arrays[index]) {
+                            current.push(item);
+                            generateCombinations(arrays, index + 1, result, current);
+                            current.pop();
+                        }
+                    }
 
-                    //Tạo barcode mới để kiểm tra
-                    let barcode = `${productId}${selectedAttributes.join("")}`;
+                    let combinations = [];
+                    generateCombinations(variantCombinations, 0, combinations);
 
-                    //Kiểm tra xem biến thể hoặc barcode đã tồn tại chưa
-                    if (!existingVariantsSet.has(attributeKey) && !existingBarcodesSet.has(
-                            barcode)) {
-                        existingVariantsSet.add(attributeKey); // Đánh dấu ngay khi thêm mới
-                        existingBarcodesSet.add(barcode); // 🔹 Đánh dấu barcode mới
+                    combinations.forEach((combination) => {
                         variantCounter++;
+                        combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                        let barcode = combination.map(attr => attr.id).join("");
+                        let variantName =
+                            `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
 
-                        let hiddenAttributeInputs = selectedAttributes.map(attrId =>
-                            `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attrId}">`
+                        let hiddenAttributeInputs = combination.map(attr =>
+                            `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attr.id}"
+                        data-attribute-value="${attr.id}">`
                         ).join("");
 
-                        let variantName =
-                            `${productName} - ${sortedCombination.map(attr => attr.value).join(" - ")}`;
 
                         let variantHtml = `
+                <div class="card mb-3 variant-block">
+                    <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">${variantName}</h5>
+                        <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
+                    </div>
+                    <div class="card-body d-none">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}">
+                        ${hiddenAttributeInputs}
+                        <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
+
+                        <label class="form-label">Price</label>
+                        <input type="number" class="form-control" name="variants[${variantCounter}][price]">
+                            @error('variants[${variantCounter}][price]')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        <label class="form-label">Sale price</label>
+                        <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
+                            @error('variants[${variantCounter}][sale_price]')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        <label class="form-label">Quantity</label>
+                        <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
+                            @error('variants[${variantCounter}][quantity]')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        <label class="form-label">Image</label>
+                        <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
+                            @error('variants[${variantCounter}][image]')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        <img class="img-preview mt-2 d-none" width="100" height="100">
+                    </div>
+                </div>`;
+                        createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
+                    });
+                });
+            } else {
+                createVariantBtn.addEventListener("click", function() {
+                    const productName = document.getElementById("name").value.trim();
+                    if (!productName) {
+                        alert("Vui lòng nhập tên sản phẩm trước khi tạo biến thể.");
+                        return;
+                    }
+
+                    const attributeDivs = Array.from(attributeContainer.querySelectorAll("div[data-key]"));
+                    let variantCombinations = [];
+                    let existingVariantsSet = new Set();
+                    let existingBarcodesSet = new Set(); // Lưu danh sách barcode đã có trên FE
+
+                    // Cập nhật danh sách biến thể đã có (kể cả những biến thể mới thêm vào DOM)
+                    document.querySelectorAll(".variant-block").forEach(variant => {
+                        let selectedAttributes = [];
+                        variant.querySelectorAll("input[name^='variants[" + variant.getAttribute(
+                                "data-variant-id") + "][attribute_values]']")
+                            .forEach(input => selectedAttributes.push(parseInt(input.value)));
+
+                        selectedAttributes.sort((a, b) => a - b);
+                        if (selectedAttributes.length > 0) {
+                            existingVariantsSet.add(selectedAttributes.join(
+                                "-")); // Ví dụ: "4-8-10"
+                        }
+
+                        // Lấy barcode của biến thể và thêm vào danh sách kiểm tra
+                        let barcodeInput = variant.querySelector(
+                            "input[name^='variants'][name$='[barcode]']");
+                        if (barcodeInput) {
+                            existingBarcodesSet.add(barcodeInput.value);
+                        }
+                    });
+
+                    // Lấy danh sách thuộc tính đã chọn từ checkbox
+                    attributeDivs.forEach(div => {
+                        let checkedBoxes = div.querySelectorAll(
+                            "input[type='checkbox']:checked:not([disabled])");
+                        let values = [];
+
+                        checkedBoxes.forEach(checkbox => {
+                            values.push({
+                                id: checkbox.value,
+                                value: checkbox.nextElementSibling.innerText
+                            });
+                        });
+
+                        if (values.length > 0) {
+                            variantCombinations.push(values);
+                        }
+                    });
+
+                    // Hàm tạo tổ hợp biến thể từ danh sách thuộc tính
+                    function generateCombinations(arrays, index = 0, result = [], current = []) {
+                        if (index === arrays.length) {
+                            result.push([...current]);
+                            return;
+                        }
+                        for (let item of arrays[index]) {
+                            current.push(item);
+                            generateCombinations(arrays, index + 1, result, current);
+                            current.pop();
+                        }
+                    }
+
+                    let combinations = [];
+                    generateCombinations(variantCombinations, 0, combinations);
+
+                    // Duyệt qua các biến thể mới để kiểm tra trùng lặp trước khi thêm
+                    combinations.forEach(combination => {
+                        let sortedCombination = combination.sort((a, b) => parseInt(a.id) -
+                            parseInt(b
+                                .id));
+                        let selectedAttributes = sortedCombination.map(attr => parseInt(attr.id));
+                        let attributeKey = selectedAttributes.join("-");
+
+                        //Tạo barcode mới để kiểm tra
+                        let barcode = `${productId}${selectedAttributes.join("")}`;
+
+                        //Kiểm tra xem biến thể hoặc barcode đã tồn tại chưa
+                        if (!existingVariantsSet.has(attributeKey) && !existingBarcodesSet.has(
+                                barcode)) {
+                            existingVariantsSet.add(attributeKey); // Đánh dấu ngay khi thêm mới
+                            existingBarcodesSet.add(barcode); // 🔹 Đánh dấu barcode mới
+                            variantCounter++;
+
+                            let hiddenAttributeInputs = selectedAttributes.map(attrId =>
+                                `<input type="hidden" name="variants[${variantCounter}][attribute_values][]" value="${attrId}">`
+                            ).join("");
+
+                            let variantName =
+                                `${productName} - ${sortedCombination.map(attr => attr.value).join(" - ")}`;
+
+                            let variantHtml = `
                     <div class="card mb-3 variant-block" data-variant-id="${variantCounter}">
                         <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">${variantName}</h5>
@@ -650,38 +844,40 @@
                             <input type="number" class="form-control" name="variants[${variantCounter}][price]">
                             <label class="form-label">Sale price</label>
                             <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             <label class="form-label">Image</label>
-                            <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
+                            <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
                             <img class="img-preview mt-2 d-none" width="100" height="100">
                         </div>
                     </div>`;
-                        createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
+                            createdVariantContainer.insertAdjacentHTML("beforeend", variantHtml);
 
-                        // Cập nhật lại danh sách biến thể ngay sau khi thêm mới
-                        document.querySelectorAll(".variant-block").forEach(variant => {
-                            let selectedAttributes = [];
-                            variant.querySelectorAll("input[name^='variants[" + variant
-                                    .getAttribute("data-variant-id") +
-                                    "][attribute_values]']")
-                                .forEach(input => selectedAttributes.push(parseInt(input
-                                    .value)));
+                            // Cập nhật lại danh sách biến thể ngay sau khi thêm mới
+                            document.querySelectorAll(".variant-block").forEach(variant => {
+                                let selectedAttributes = [];
+                                variant.querySelectorAll("input[name^='variants[" + variant
+                                        .getAttribute("data-variant-id") +
+                                        "][attribute_values]']")
+                                    .forEach(input => selectedAttributes.push(parseInt(input
+                                        .value)));
 
-                            selectedAttributes.sort((a, b) => a - b);
-                            if (selectedAttributes.length > 0) {
-                                existingVariantsSet.add(selectedAttributes.join("-"));
-                            }
+                                selectedAttributes.sort((a, b) => a - b);
+                                if (selectedAttributes.length > 0) {
+                                    existingVariantsSet.add(selectedAttributes.join("-"));
+                                }
 
-                            // Lấy barcode và cập nhật vào danh sách kiểm tra
-                            let barcodeInput = variant.querySelector(
-                                "input[name^='variants'][name$='[barcode]']");
-                            if (barcodeInput) {
-                                existingBarcodesSet.add(barcodeInput.value);
-                            }
-                        });
-                    }
+                                // Lấy barcode và cập nhật vào danh sách kiểm tra
+                                let barcodeInput = variant.querySelector(
+                                    "input[name^='variants'][name$='[barcode]']");
+                                if (barcodeInput) {
+                                    existingBarcodesSet.add(barcodeInput.value);
+                                }
+                            });
+                        }
+                    });
                 });
-            });
-
+            }
             document.addEventListener("click", function(e) {
                 if (e.target && e.target.classList.contains("remove-variant")) {
                     e.preventDefault();

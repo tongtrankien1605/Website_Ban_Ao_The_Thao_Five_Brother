@@ -21,10 +21,10 @@ class OrderStatusSeeder extends Seeder
                 'name' => 'Đã xác nhận'
             ],
             [
-                'name' => 'Đang giao hàng'
+                'name' => 'Chờ lấy hàng'
             ],
             [
-                'name' => 'Chờ lấy hàng'
+                'name' => 'Đang giao hàng'
             ],
             [
                 'name' => 'Đã giao'
@@ -37,6 +37,9 @@ class OrderStatusSeeder extends Seeder
             ],
             [
                 'name' => 'Đã hủy'
+            ],
+            [
+                'name' => 'Hoàn thành / Đã nhận được hàng'
             ],
         ];
         DB::table('order_statuses')->insert($dataSeeder);

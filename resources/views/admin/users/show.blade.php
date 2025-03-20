@@ -34,29 +34,29 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Họ và tên:</label>
-                                    <p>{{ $user->name }}</p>
+                                    <span>{{ $user->name }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Số điện thoại:</label>
-                                    <p>{{ $user->phone_number }}</p>
+                                    <span>{{ $user->phone_number }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Email:</label>
-                                    <p>{{ $user->email }}</p>
+                                    <span>{{ $user->email }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Giới tính:</label>
-                                    <p>
+                                    <span>
                                         {{ $user->gender }}
-                                    </p>
+                                    </span>
                                 </div>
                                 <div class="form-group">
                                     <label>Ngày sinh:</label>
-                                    <p>{{ $user->birthday }}</p>
+                                    <span>{{ $user->birthday }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Vai trò:</label>
-                                    <p>
+                                    <span>
                                         @switch($user->role)
                                             @case($user->role == 1)
                                                 <span>User</span>
@@ -70,7 +70,7 @@
                                                 <span>Admin</span>
                                             @break
                                         @endswitch
-                                    </p>
+                                    </span>
                                 </div>
                                 <div class="form-group">
                                     <label>Địa chỉ:</label>

@@ -32,7 +32,7 @@ class Skus extends Model
 
     public function variants()
     {
-        return $this->hasMany(Variant::class,'id_skus','id');
+        return $this->hasMany(Variant::class, 'id_skus', 'id');
     }
 
     public function cart_items()
@@ -42,5 +42,13 @@ class Skus extends Model
     public function order_details()
     {
         return $this->hasMany(OrderDetail::class, 'id_product_variants');
+    }
+    public function inventories()
+    {
+        return $this->hasOne(Inventory::class, 'id_product_variant', 'id');
+    }
+    public function inventory_logs()
+    {
+        return $this->hasMany(InventoryLog::class, 'id_product_variant', 'id');
     }
 }

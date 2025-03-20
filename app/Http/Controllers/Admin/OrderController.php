@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus as EnumsOrderStatus;
 use App\Events\OrderStatusUpdate;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentMethodStatus;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,8 +43,10 @@ class OrderController extends Controller
                 'payment_methods.name as payment_method_name',
                 'payment_method_statuses.name as payment_method_status_name',
                 'order_statuses.name as order_status_name',
-                'users.name as user_name'
+                'users.name as user_name',
             ])
+            ->withSum('order_details', 'quantity')
+            ->withCount('order_details')
             ->paginate(10);
         // dd($orders);
         $orderStatuses = OrderStatus::orderBy('id')->get();
@@ -81,11 +85,16 @@ class OrderController extends Controller
             'order_details',
             'order_status_histories',
         ])->find($id);
-        // dd($order->address_users->toArray());
         if (!$order) {
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
-        return view('admin.orders.show', compact('order'));
+        $data = [EnumsOrderStatus::FAILED, EnumsOrderStatus::REFUND];
+        if ($order->id_order_status == 6) {
+            $orderStatuses = OrderStatus::whereIn('id', $data)->orderBy('id')->get();
+        } else {
+            $orderStatuses = OrderStatus::whereNotIn('id', [EnumsOrderStatus::REFUND, EnumsOrderStatus::SUCCESS])->orderBy('id')->get();
+        }
+        return view('admin.orders.show', compact('order', 'orderStatuses'));
     }
 
     /**
@@ -108,6 +117,9 @@ class OrderController extends Controller
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
         $order->id_order_status = $request->id_order_status;
+        if($order->id_order_status == \App\Enums\OrderStatus::DELIVERED){
+            $order->delivered_at = Carbon::now();
+        }
         if (!$order->save()) {
             DB::rollBack();
             return redirect(route('admin.orders.index'))->with('error', 'Đã xảy ra lỗi');
