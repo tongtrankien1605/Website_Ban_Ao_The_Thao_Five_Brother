@@ -68,8 +68,7 @@
                                                             <th class="text-nowrap">Người đặt</th>
                                                             <th class="text-nowrap">Điện thoại</th>
                                                             <th class="text-nowrap">Địa chỉ</th>
-                                                            <th class="text-nowrap" style="width:1px; padding-right:8px">Tổng
-                                                                sản phẩm</th>
+                                                            <th class="text-nowrap" style="width:1px; padding-right:8px">Tổng sản phẩm</th>
                                                             <th class="text-nowrap">Tổng tiền</th>
                                                             <th class="text-nowrap">Trạng thái</th>
                                                             <th class="text-nowrap">Thanh toán</th>
@@ -217,14 +216,15 @@
                                 ];
                                 break;
                             case {{ OrderStatus::CONFIRM }}:
-                                validNextStatuses = [{{ OrderStatus::DELIVERING }},
+                                validNextStatuses = [{{ OrderStatus::WAITING_FOR_DELIVERING }},
                                     {{ OrderStatus::CANCEL }}
                                 ];
                                 break;
-                            case {{ OrderStatus::DELIVERING }}:
-                                validNextStatuses = [{{ OrderStatus::WAITING_FOR_DELIVERING }}];
-                                break;
                             case {{ OrderStatus::WAITING_FOR_DELIVERING }}:
+                                validNextStatuses = [{{ OrderStatus::DELIVERING }}];
+
+                                break;
+                            case {{ OrderStatus::DELIVERING }}:
                                 validNextStatuses = [{{ OrderStatus::DELIVERED }},
                                     {{ OrderStatus::FAILED }}
                                 ];

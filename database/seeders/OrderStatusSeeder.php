@@ -33,7 +33,7 @@ class OrderStatusSeeder extends Seeder
                 'name' => 'Giao thất bại'
             ],
             [
-                'name' => 'Hoàn trả'
+                'name' => 'Hoàn hàng'
             ],
             [
                 'name' => 'Đã hủy'

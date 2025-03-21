@@ -557,13 +557,13 @@
                                                                 OrderStatus::CANCEL,
                                                             ],
                                                             OrderStatus::CONFIRM => [
-                                                                OrderStatus::DELIVERING,
+                                                                OrderStatus::WAITING_FOR_DELIVERING,
                                                                 OrderStatus::CANCEL,
                                                             ],
-                                                            OrderStatus::DELIVERING => [
-                                                                OrderStatus::WAITING_FOR_DELIVERING,
-                                                            ],
                                                             OrderStatus::WAITING_FOR_DELIVERING => [
+                                                                OrderStatus::DELIVERING,
+                                                            ],
+                                                            OrderStatus::DELIVERING => [
                                                                 OrderStatus::DELIVERED,
                                                                 OrderStatus::FAILED,
                                                             ],
