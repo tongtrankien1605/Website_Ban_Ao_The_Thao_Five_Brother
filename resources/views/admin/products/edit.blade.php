@@ -687,7 +687,7 @@
                     combinations.forEach((combination) => {
                         variantCounter++;
                         combination.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                        let barcode = combination.map(attr => attr.id).join("");
+                        let barcode = productId + combination.map(attr => attr.id).join("");
                         let variantName =
                             `${productName} - ${combination.map(attr => attr.value).join(" - ")}`;
 
@@ -706,6 +706,8 @@
                     <div class="card-body d-none">
                         <label class="form-label">Name</label>
                         <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}">
+                        <label class="form-label">Barcode</label>
+                        <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                         ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
