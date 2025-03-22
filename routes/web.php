@@ -62,10 +62,12 @@ Route::get('/wishlist', function () {
 // Route::get('/my-account', function () {
 //     return view('client.my-account');
 // })->name('my-account');
+
 Route::get(
     'my-account',
     [UserController::class, 'show']
 )->name('my-account');
+
 // Route::get('my-account/{user}',    [UserController::class, 'edit'])->name('my-account.edit');
 // Route::put('my-account/{user}',    [UserController::class, 'update'])->name('my-account.update');
 // Route::get('/login-register', function () {
@@ -166,18 +168,7 @@ Route::middleware('auth')->group(function (){
 
 
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
-
-    Route::get('/get-order-details/{id}', function ($id) {
-        $orderDetails = \App\Models\OrderDetail::where('id_order', $id)
-            ->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
-            ->select('skuses.name as product_name', 'order_details.quantity', 'order_details.unit_price', 'order_details.total_price')
-            ->get();
     
-        return response()->json($orderDetails);
-    });
-    
-
-
     // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
     Route::post('/wishlist/add_to_wishlist/{id}', [WishlistController::class, 'store'])->name('add_wishlist');

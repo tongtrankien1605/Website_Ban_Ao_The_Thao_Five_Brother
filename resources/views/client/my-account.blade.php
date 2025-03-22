@@ -1,8 +1,7 @@
 @extends('client.layouts.master')
-
-
-
 @section('content')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <!-- Page Banner Section Start -->
     <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
         <div class="container">
@@ -22,11 +21,11 @@
 
     <!-- Page Section Start -->
     <div class="page-section section section-padding">
-        <div class="container">
+        <div class="m-auto" style="width:90%;">
             <div class="row mbn-30">
 
                 <!-- My Account Tab Menu Start -->
-                <div class="col-lg-3 col-12 mb-30">
+                <div class="col-lg-2 col-12 mb-30">
                     <div class="myaccount-tab-menu nav" role="tablist">
                         <a href="#dashboad" class="active" data-bs-toggle="tab"><i class="fa fa-dashboard"></i>
                             Dashboard</a>
@@ -57,7 +56,7 @@
                 <!-- My Account Tab Menu End -->
 
                 <!-- My Account Tab Content Start -->
-                <div class="col-lg-9 col-12 mb-30">
+                <div class="col-lg-10 col-12 mb-30">
                     <div class="tab-content" id="myaccountContent">
                         <!-- Single Tab Content Start - Dashboard -->
                         <div class="tab-pane fade show active" id="dashboad" role="tabpanel">
@@ -79,118 +78,176 @@
                         <!-- Single Tab Content End -->
 
                         <!-- Single Tab Content Start - Orders & Order Details -->
-                        <div class="tab-pane fade" id="orders" role="tabpanel">
-                            <!-- Danh sách đơn hàng -->
-                            <div id="orders-list" style="display: block;">
+                        <div class="tab-pane fade m-auto" id="orders" role="tabpanel">
+                            <div id="orders-list">
                                 <div class="myaccount-content">
                                     <h3>Orders</h3>
                                     <div class="myaccount-table table-responsive text-center">
                                         <table class="table table-bordered">
                                             <thead class="thead-light">
                                                 <tr>
-                                                    <th>Order ID</th>
-                                                    <th>Khách hàng</th>
-                                                    <th>Ngày đặt hàng</th>
-                                                    <th>Trạng thái đơn hàng</th>
+                                                    <th>Thông tin</th>
+                                                    <th>Sản phẩm</th>
+                                                    <th>Trạng thái</th>
                                                     <th>Tổng tiền</th>
-                                                    <th>Hành động</th>
+                                                    <th class=" text-nowrap" style="width:1px">Chi tiết</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($orders as $order)
+                                                @if ($orders->isEmpty())
                                                     <tr>
-                                                        <td>{{ $order->id }}</td>
-                                                        <td>{{ $order->user_name }}</td>
-                                                        <td>{{ $order->created_at->format('d/m/Y H:i:s') }}</td>
-                                                        <td>{{ $order->order_status_name }}</td>
-                                                        <td>{{ number_format($order->total_amount) }}đ</td>
-                                                        <td>
-                                                            <a href="#"
-                                                                class="btn btn-info btn-round order-details-btn"
-                                                                data-order-id="{{ $order->id }}">
-                                                                View
-                                                            </a>
-                                                        </td>
+                                                        <td colspan="6" class="text-center">Không có đơn hàng nào</td>
                                                     </tr>
-                                                @endforeach
+                                                @else
+                                                    @foreach ($orders as $order)
+                                                        <tr>
+                                                            <td class="text-nowrap" width="1px">
+                                                                <ul>
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>Người đặt:
+                                                                        {{ $order->user_name }}
+                                                                    </li>
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>Điện thoại:
+                                                                        {{ $order->user_phone_number }}
+                                                                    </li>
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>Địa chỉ:
+                                                                        {{ $order->address_user_address }}
+                                                                    </li>
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>Ngày đặt:
+                                                                        {{ $order->created_at->format('d/m/Y') }}
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+
+                                                            <td style="width: 1px" class="text-nowrap">
+                                                                <ul>
+                                                                    @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                                        <li class="text-start">
+                                                                            <span class="dot"></span>
+                                                                            {{ $orderDetail->name }}
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </td>
+
+                                                            <td>
+                                                                <ul>
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>
+                                                                        {{ $order->order_status_name }}
+                                                                    </li>
+                                                                    <li class="text-start">
+                                                                        <span class="dot"></span>
+                                                                        {{ $order->payment_method_status_name }}
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>{{ number_format($order->total_amount, 0, '', ',') }} VND
+                                                            </td>
+                                                            <td>
+                                                                <button class="dropbox-arrow-icon order-details-btn"
+                                                                    data-state="closed">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24"
+                                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path class="arrow-icon" d="M6 9L12 15L18 9"
+                                                                            stroke="#0061FF" stroke-width="2"
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round" />
+                                                                        <path class="close-icon" d="M6 6L18 18M6 18L18 6"
+                                                                            stroke="#FF0000" stroke-width="2"
+                                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                                            style="display: none;" />
+                                                                    </svg>
+                                                                </button>
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr class="order-details-content" style="display: none;">
+                                                            <td colspan="6">
+                                                                <div class="order-details">
+                                                                    <h3 class="mb-4">Chi Tiết Đơn Hàng
+                                                                        #{{ $order->id }}
+                                                                    </h3>
+                                                                    <div class="container mt-5">
+                                                                        <!-- Thông tin đơn hàng -->
+                                                                        <div class="card p-3 mb-3">
+                                                                            <p><strong>Ngày đặt hàng:</strong>
+                                                                                {{ $order->created_at->format('d/m/Y') }}
+                                                                            </p>
+                                                                            <p><strong>Trạng thái:</strong>
+                                                                                {{ $order->order_status_name }}
+                                                                            </p>
+                                                                            <p><strong>Phương thức thanh toán:</strong>
+                                                                                {{ $order->payment_method_name }}</p>
+                                                                            <p><strong>Tổng tiền:</strong>
+                                                                                {{ number_format($order->total_amount, 0, '', ',') }}
+                                                                                VND
+                                                                            </p>
+                                                                        </div>
+                                                                        <!-- Thông tin khách hàng -->
+                                                                        <div class="card p-3 mb-3">
+                                                                            <p><strong>Khách hàng:</strong>
+                                                                                {{ $order->user_name }}</p>
+                                                                            <p><strong>Điện thoại:</strong>
+                                                                                {{ $order->user_phone_number }}</p>
+                                                                            <p><strong>Địa chỉ:</strong>
+                                                                                {{ $order->address_user_address }}</p>
+                                                                        </div>
+                                                                        <!-- Danh sách sản phẩm -->
+                                                                        <div class="card p-3 mb-3">
+                                                                            <h3>Sản phẩm trong đơn hàng</h3>
+                                                                            <table class="table table-bordered mt-3">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Hình ảnh</th>
+                                                                                        <th>Tên sản phẩm</th>
+                                                                                        <th>Giá</th>
+                                                                                        <th class=" text-nowrap"
+                                                                                            style="width:1px">Số Lượng</th>
+                                                                                        <th class=" text-nowrap"
+                                                                                            style="width:1px">Thành tiền
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @foreach ($orderDetails[$order->id] as $orderDetail)
+                                                                                        <tr class="order-detail-row">
+                                                                                            <td class="text-center"><img
+                                                                                                    src="{{ Storage::url($orderDetail->image) }}"
+                                                                                                    alt=""
+                                                                                                    width="100px">
+                                                                                            </td>
+                                                                                            <td>{{ $orderDetail->name }}
+                                                                                            </td>
+                                                                                            <td>{{ number_format($orderDetail->sale_price, 0, '', ',') }}
+                                                                                                VND
+                                                                                            </td>
+                                                                                            <td>{{ $orderDetail->quantity }}
+                                                                                            </td>
+                                                                                            <td>{{ number_format($orderDetail->quantity * $orderDetail->sale_price, 0, '', ',') }}
+                                                                                                VND
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
                                             </tbody>
                                         </table>
                                         {{ $orders->links() }}
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Chi tiết đơn hàng (ẩn mặc định) -->
-                            <div id="order-details-content" style="display: none;">
-                                <button class="btn btn-secondary mb-3" id="back-to-orders">← Back</button>
-
-                                @foreach ($orders as $order)
-                                    <div class="order-detail-section" data-order-id="{{ $order->id }}"
-                                        style="display: none;">
-                                        <h3 class="mb-4">Chi Tiết Đơn Hàng #{{ $order->id }}</h3>
-
-                                        <div class="container mt-5">
-                                            <!-- Thông tin đơn hàng -->
-                                            <div class="card p-3 mb-3">
-                                                <p><strong>Ngày đặt hàng:</strong>
-                                                    {{ $order->created_at->format('d/m/Y H:i:s') }}</p>
-                                                <p><strong>Trạng thái:</strong> <span
-                                                        class="badge bg-success">{{ $order->order_status_name }}</span></p>
-                                                <p><strong>Phương thức thanh toán:</strong>
-                                                    {{ $order->payment_method_name }}</p>
-                                                <p><strong>Tổng tiền:</strong> {{ number_format($order->total_amount) }}đ
-                                                </p>
-                                            </div>
-
-                                            <!-- Thông tin khách hàng -->
-                                            <div class="card p-3 mb-3">
-                                                <p><strong>Khách hàng:</strong> {{ $order->user_name }}</p>
-                                                <p><strong>Điện thoại:</strong> {{ $order->user_phone_number }}</p>
-                                                <p><strong>Địa chỉ:</strong> {{ $order->address_user_address }}</p>
-                                            </div>
-
-                                            <!-- Danh sách sản phẩm -->
-                                            <div class="card p-3 mb-3">
-                                                <h3>Sản phẩm trong đơn hàng</h3>
-                                                <table class="table table-bordered mt-3">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Hình ảnh</th>
-                                                            <th>Tên sản phẩm</th>
-                                                            <th>Barcode</th>
-                                                            <th>Giá</th>
-                                                            <th>Số lượng</th>
-                                                            <th>Thành tiền</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if (isset($orderDetails[$order->id]))
-                                                            @foreach ($orderDetails[$order->id] as $orderDetail)
-                                                                <tr>
-                                                                    <td>Hình ảnh</td>
-                                                                    <!-- Thêm logic hiển thị ảnh nếu có -->
-                                                                    <td>{{ $orderDetail->name ?? 'N/A' }}</td>
-                                                                    <td>{{ $orderDetail->barcode ?? 'N/A' }}</td>
-                                                                    <td>{{ number_format($orderDetail->price) }}đ</td>
-                                                                    <td>{{ $orderDetail->quantity }}</td>
-                                                                    <td>{{ number_format($orderDetail->price * $orderDetail->quantity) }}đ
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        @else
-                                                            <tr>
-                                                                <td colspan="6">Không có chi tiết sản phẩm.</td>
-                                                            </tr>
-                                                        @endif
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
                         </div>
-
                         <!-- Single Tab Content End -->
 
 
@@ -216,13 +273,15 @@
                                                 <td>Moisturizing Oil</td>
                                                 <td>Aug 22, 2022</td>
                                                 <td>Yes</td>
-                                                <td><a href="#" class="btn btn-dark btn-round">Download File</a></td>
+                                                <td><a href="#" class="btn btn-dark btn-round">Download File</a>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>Katopeno Altuni</td>
                                                 <td>Sep 12, 2022</td>
                                                 <td>Never</td>
-                                                <td><a href="#" class="btn btn-dark btn-round">Download File</a></td>
+                                                <td><a href="#" class="btn btn-dark btn-round">Download File</a>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -338,7 +397,13 @@
             </div>
         </div>
     </div><!-- Page Section End -->
+
+
+
 @endsection
+
+
+
 <style>
     .dot {
         display: inline-block;
@@ -349,42 +414,35 @@
         margin-bottom: 3px;
         margin-right: 3px;
     }
+
+
+
+    .dropbox-arrow-icon {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #D3D3D3;
+        /* Viền xám nhạt */
+        border-radius: 4px;
+        /* Bo góc nhẹ, giống phong cách Dropbox */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        /* Nền trong suốt */
+        cursor: pointer;
+        /* Con trỏ chuột giống nút bấm */
+        transition: border-color 0.3s ease;
+        /* Hiệu ứng hover */
+    }
+
+
+    .dropbox-arrow-icon:hover {
+        border-color: #0061FF;
+        /* Viền đổi màu xanh khi hover */
+    }
+
+    .dropbox-arrow-icon svg {
+        width: 20px;
+        height: 20px;
+    }
 </style>
-
-
-
-
-<!-- JavaScript để chuyển đổi hiển thị -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ordersList = document.getElementById('orders-list');
-        const orderDetailsContent = document.getElementById('order-details-content');
-        const viewOrderButtons = document.querySelectorAll('.order-details-btn');
-        const backButton = document.getElementById('back-to-orders');
-
-        // Khi nhấn "View"
-        viewOrderButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
-                const orderId = this.getAttribute('data-order-id');
-                const orderDetailSection = document.querySelector(
-                    `.order-detail-section[data-order-id="${orderId}"]`);
-
-                // Ẩn danh sách đơn hàng, hiện chi tiết đơn hàng
-                ordersList.style.display = 'none';
-                orderDetailsContent.style.display = 'block';
-                orderDetailSection.style.display = 'block';
-            });
-        });
-
-        // Khi nhấn "Back"
-        backButton.addEventListener('click', function() {
-            // Hiện danh sách đơn hàng, ẩn chi tiết đơn hàng
-            ordersList.style.display = 'block';
-            orderDetailsContent.style.display = 'none';
-            document.querySelectorAll('.order-detail-section').forEach(section => {
-                section.style.display = 'none';
-            });
-        });
-    });
-</script>

@@ -1,4 +1,5 @@
 import "./bootstrap";
+import "./orderDetails";
 
 if (window.userId) {
     window.Echo.private("orders." + window.userId)
