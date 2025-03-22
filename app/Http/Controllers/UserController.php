@@ -42,6 +42,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
+   
     public function show(User $user)
     {
         $user = Auth::user();
@@ -49,7 +50,7 @@ class UserController extends Controller
             return abort(403);
         }
         $addresses = AddressUser::where('id_user', $user->id)->orderByDesc('is_default')->get();
-        $orders = Order::where('total_amount', '>', 0)->where('id_user', $user->id)
+        $orders = Order::where('total_amount', '>', 0)->where('orders.id_user', $user->id)
             ->latest('id')
             ->join('order_statuses', function ($q) {
                 $q->on('order_statuses.id', '=', 'orders.id_order_status');
@@ -63,12 +64,21 @@ class UserController extends Controller
             ->join('payment_method_statuses', function ($q) {
                 $q->on('payment_method_statuses.id', '=', 'orders.id_payment_method_status');
             })
+            ->join('address_users', function ($q) {
+                $q->on('address_users.id', '=', 'orders.id_address');
+            })
+            ->join('users', function ($q) {
+                $q->on('users.id', '=', 'orders.id_user');
+            })
             ->select([
                 'orders.*',
                 'shipping_methods.name as shipping_method_name',
                 'payment_methods.name as payment_method_name',
                 'payment_method_statuses.name as payment_method_status_name',
-                'order_statuses.name as order_status_name'
+                'order_statuses.name as order_status_name',
+                'address_users.address as address_user_address',
+                'users.name as user_name',
+                'users.phone_number as user_phone_number',
             ])
             ->paginate(10);
         $orderIds = $orders->pluck('id');
@@ -79,8 +89,10 @@ class UserController extends Controller
             })
             ->get()
             ->groupBy('id_order');
+        // dd($orderDetails->toArray());
         return view('client.my-account', compact(['user', 'addresses', 'orders', 'orderIds', 'orderDetails']));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -139,9 +151,8 @@ class UserController extends Controller
     }
 
     public function accountInfo()
-{
-    $user = auth()->user(); // Lấy thông tin user đang đăng nhập
-    return view('client.my-account', compact('user'));
-}
-
+    {
+        $user = auth()->user(); // Lấy thông tin user đang đăng nhập
+        return view('client.my-account', compact('user'));
+    }
 }
