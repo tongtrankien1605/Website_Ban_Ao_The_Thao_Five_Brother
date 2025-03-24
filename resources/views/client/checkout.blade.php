@@ -104,7 +104,7 @@
                                     <ul>
                                         @foreach ($cartItem as $item)
                                             <li>{{ $item->skuses->name }} x {{ $item->quantity }}
-                                                <span>{{ number_format($item->price * $item->quantity) }} Đồng</span>
+                                                <span>{{ number_format($new_total) }} Đồng</span>
                                             </li>
                                             <input type="hidden" name="cart_item_ids[]" value="{{ $item->id }}">
                                         @endforeach
