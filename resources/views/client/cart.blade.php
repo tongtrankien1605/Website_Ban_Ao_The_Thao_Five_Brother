@@ -71,6 +71,7 @@
                                                 <td class="pro-subtotal" id="subtotal-{{ $cart->id }}">
                                                     {{ number_format($subtotal) }} đồng
                                                 </td>
+                                                <input type="hidden" id="cart-total" value="{{ $total }}">
                                                 <td class="pro-remove"><a
                                                         data-url="{{ route('remove.cart', ['id' => $cart->id]) }}"
                                                         href="{{ route('remove.cart', $cart->id) }}"
@@ -96,10 +97,20 @@
                             <h4>Coupon</h4>
                             <p>Enter your coupon code if you have one.</p>
                             <div class="cuppon-form">
-                                <input type="text" placeholder="Coupon code" />
-                                <input type="submit" value="Apply Coupon" />
+                                <select id="voucher" class="form-control">
+                                    <option value="">Chọn voucher</option>
+                                    @foreach ($listVoucher as $voucher)
+                                        <option value="{{ $voucher->id }}" 
+                                                data-discount="{{ $voucher->vouchers->discount_value }}" 
+                                                data-type="{{ $voucher->vouchers->discount_type }}">
+                                           Giảm {{ $voucher->vouchers->discount_value }} {{ $voucher->vouchers->discount_type == 'percentage' ? '%' : 'đ' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                
+                                <input id="apply-voucher" type="submit" value="Apply Coupon" />
                             </div>
-                        </div>
+                        </div>                        
                     </div>
                     <div class="col-lg-4 col-md-5 col-12 mb-40">
                         @if (!$cartItem->isEmpty())

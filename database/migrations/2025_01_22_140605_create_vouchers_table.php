@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->enum('discount_type', ['percentage', 'fixed'])->default('percentage')->comment('Loại giảm giá');
-            $table->decimal('discount_value', 10, 2)->comment('Giá trị giảm giá');
+            $table->string('discount_value')->comment('Giá trị giảm giá');
             $table->integer('total_usage')->comment('Tổng số lượt sử dụng được phép');
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();

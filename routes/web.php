@@ -160,11 +160,12 @@ Route::middleware('auth')->group(function (){
     Route::post('/cart/add_to_cart/{id}', [CartController::class, 'addToCart'])->name('add.cart');
     Route::get('/cart', [CartController::class, 'index'])->name('show.cart');
     Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity']);
+    Route::post('/cart/apply-voucher', [CartController::class, 'applyVoucher'])->name('applyVoucher');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('remove.cart');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('clear.cart');
 
 
-    Route::get('payment', [PaymentController::class, 'index'])->name('indexPayment');
+    Route::get('/payment', [PaymentController::class, 'index'])->name('indexPayment');
 
 
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');

@@ -162,9 +162,9 @@ class ProductController extends Controller
                     InventoryLog::create([
                         'id_product_variant' => $key,
                         'user_id' => auth()->user()->id,
-                        'old_quantity' => 0,
-                        'new_quantity' => $value,
-                        'change_quantity' => $value,
+                        'old_quantity' => $value,
+                        'new_quantity' => 0,
+                        'change_quantity' => 0,
                         'reason' => 'Tạo mới sản phẩm',
                     ]);
                 }

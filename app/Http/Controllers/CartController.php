@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Inventory;
+use App\Models\InventoryLog;
 use App\Models\Product;
 use App\Models\Skus;
 use App\Models\Variant;
+use App\Models\Voucher;
+use App\Models\VoucherUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +53,9 @@ class CartController extends Controller
     
         // Lấy thông tin sản phẩm từ bảng Skus
         $productVariant = Skus::where('id', $data->id_skus)->first();
+
+        $inventory = Inventory::where('id', $productVariant->id)->first();
+        // dd($inventory);
     
         if (!$productVariant) {
             return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
@@ -72,18 +79,60 @@ class CartController extends Controller
                 'quantity' => $request->quantity,
                 'price' => $productVariant->sale_price ?? 0,
             ]);
+            $inventory->update([
+                'quantity' => $inventory->quantity - $request->quantity
+            ]);
+            $inventory->save();
+            $inventory_log = InventoryLog::where('id', $inventory->id)->first();
+            // dd($inventory_log);
+            if ($inventory_log!=null) {
+                $inventory_log->update([
+                'old_quantity' => $inventory->quantity,
+                'change_quantity' => $request->quantity,
+                'new_quantity' => $inventory->quantity - $request->quantity,
+                'reason' => 'Đã thêm vào giỏ hàng'
+                ]);
+                $inventory_log->save();
+            } else {
+                return response()->json(['message' => 'Không tìm thấy inventory_log'], 404);
+            }
         }
     
         return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
     }
+
+    public function applyVoucher(Request $request)
+{
+    $subtotal = CartItem::where('id_user', Auth::id())->sum(DB::raw('price * quantity'));
+    $discountValue = $request->discount_value;
+    $discountType = $request->discount_type;
+    $newTotal = $subtotal;
+
+    if ($discountType == 'percentage') {
+        $newTotal = $subtotal - ($subtotal * $discountValue / 100);
+    } elseif ($discountType == 'fixed') {
+        $newTotal = $subtotal - $discountValue;
+    }
+
+    
+
+    return response()->json([
+        'success' => true,
+        'new_total' => max($newTotal, 0) // Đảm bảo total không bị âm
+    ]);
+}
+
     
     public function index()
     {
         $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
+        $listVoucher = VoucherUser::where('id_user', Auth::id())->with('vouchers')->get();
+        
+        // dd($listVoucher->toArray());
         // echo '<pre>';
         // print_r($cartItem);
         // dd($cartItem->toArray());
-        return view('client.cart', compact('cartItem'));
+        return view('client.cart', compact('cartItem', 'listVoucher'));
     }
 
     public function updateQuantity(Request $request, $id)

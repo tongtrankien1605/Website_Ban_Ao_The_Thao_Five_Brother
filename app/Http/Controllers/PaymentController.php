@@ -17,7 +17,11 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
 {
-    $selectedItems = $request->input('items'); // Lấy danh sách sản phẩm từ AJAX
+    // dd($request->all());
+    $selectedItems = $request->input('items'); // Nhận danh sách sản phẩm từ AJAX
+    $new_total = $request->input('new_total', 0); // Nhận new_total từ URL (mặc định = 0)
+    // dd($new_total);
+
     $address_user = AddressUser::where('id_user', Auth::id())->get();
     $shipping = ShippingMethod::all();
     $paymentMethods = PaymentMethod::all();
@@ -31,13 +35,17 @@ class PaymentController extends Controller
             ->get();
     }
 
-    $total = 0;
-    foreach ($cartItem as $item) {
-        $total += $item->price * $item->quantity;
+    // Nếu new_total không có, tính lại tổng tiền từ giỏ hàng
+    if ($new_total == 0) {
+        $new_total = 0;
+        foreach ($cartItem as $item) {
+            $new_total += $item->price * $item->quantity;
+        }
     }
 
-    return view('client.checkout', compact('address_user', 'cartItem', 'total', 'shipping', 'paymentMethods'));
+    return view('client.checkout', compact('address_user', 'cartItem', 'new_total', 'shipping', 'paymentMethods'));
 }
+
 
 
     public function processPayment(Request $request, $order)
