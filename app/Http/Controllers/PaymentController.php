@@ -17,7 +17,7 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
 {
-    dd($request->all());
+    // dd($request->all());
     $selectedItems = $request->input('items'); // Nhận danh sách sản phẩm từ AJAX
     $new_total = $request->input('new_total', 0); // Nhận new_total từ URL (mặc định = 0)
     // dd($new_total);
