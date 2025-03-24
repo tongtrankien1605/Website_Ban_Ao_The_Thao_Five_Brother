@@ -38,6 +38,7 @@ $(document).ready(function () {
                 alert(response.message);
             },
             error: function (xhr) {
+                alert('Bạn cần đăng nhập để thêm vào giỏ hàng!');
                 console.log("❌ Lỗi:", xhr.responseText);
             }
         });
@@ -264,6 +265,39 @@ $(document).ready(function () {
     // Khi load trang, cập nhật subtotal nếu có sản phẩm đã chọn
     updateCartSummary();
 });
+$(document).ready(function () {
+    $("#apply-voucher").click(function (e) {
+        e.preventDefault(); // Ngăn load lại trang
 
+        let selectedOption = $("#voucher option:selected");
+        let discountValue = parseFloat(selectedOption.data("discount")) || 0;
+        let discountType = selectedOption.data("type");
+        let total = parseFloat($("#cart-total").val()) || 0;
 
+        console.log("Total ban đầu:", total);
+        console.log("Discount Value:", discountValue);
+        console.log("Discount Type:", discountType);
+
+        // Tính tổng sau giảm giá
+        let newTotal = total;
+        if (discountType === "percentage") {
+            newTotal = total - (total * discountValue / 100);
+        } else {
+            newTotal = total - discountValue;
+        }
+
+        newTotal = Math.max(0, newTotal); // Đảm bảo giá trị không âm
+
+        console.log("New Total:", newTotal);
+
+        // Cập nhật hiển thị tổng tiền mới trên trang
+        $(".order-total .amount").text(newTotal.toLocaleString() + " Đồng");
+
+        // Cập nhật URL của nút Checkout
+        let checkoutUrl = "{{ route('indexPayment') }}" + "?new_total=" + newTotal;
+$(".checkout-btn").attr("href", checkoutUrl);
+        console.log("Checkout URL:", checkoutUrl);
+        
+    });
+});
 

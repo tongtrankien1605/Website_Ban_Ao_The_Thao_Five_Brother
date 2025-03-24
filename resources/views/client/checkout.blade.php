@@ -110,13 +110,13 @@
                                         @endforeach
                                     </ul>
 
-                                    <p>Sub Total <span id="sub-total">{{ number_format($total) }} Đồng</span></p>
+                                    <p>Sub Total <span id="sub-total">{{ number_format($new_total) }} Đồng</span></p>
                                     <p>Shipping Fee <span id="shipping-cost">0 Đồng</span></p>
-                                    <h4>Grand Total <span id="grand-total">{{ number_format($total) }} Đồng</span></h4>
+                                    <h4>Grand Total <span id="grand-total">{{ number_format($new_total) }} Đồng</span></h4>
 
                                     <!-- Input ẩn để gửi shipping fee và grand total khi thanh toán -->
                                     <input type="hidden" name="shipping_cost" id="shipping-cost-input" value="0">
-                                    <input type="hidden" name="grand_total" id="grand-total-input" value="{{ $total }}">
+                                    <input type="hidden" name="grand_total" id="grand-total-input" value="{{ $new_total }}">
                                 </div>
 
 

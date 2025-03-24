@@ -4728,6 +4728,47 @@ img.mfp-img {
   color: #1a161e;
   margin-bottom: 15px;
 }
+
+.cart-coupon .cuppon-form {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Tạo khoảng cách giữa select và button */
+}
+
+.cuppon-form select {
+  width: 200px; /* Độ rộng phù hợp */
+  height: 42px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px; /* Bo góc */
+  background-color: white;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.cuppon-form select:focus {
+  border-color: #ff708a; /* Màu viền khi focus */
+}
+
+.cuppon-form input[type="submit"] {
+  height: 42px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #1a161e;
+  color: white;
+  border: none;
+  border-radius: 10px; /* Bo góc button */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.cuppon-form input[type="submit"]:hover {
+  background-color: #ff708a;
+}
+
+
 .checkout-form input[type=checkbox] {
   width: auto;
 }

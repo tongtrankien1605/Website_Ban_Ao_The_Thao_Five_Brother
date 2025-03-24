@@ -22,7 +22,7 @@ class VoucherUser extends Model
 
     public function vouchers()
     {
-        return $this->belongsTo(Voucher::class);
+        return $this->belongsTo(Voucher::class,'id_voucher');
     }
     public function users()
     {

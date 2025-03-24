@@ -109,7 +109,6 @@
                                         @foreach ($product->attributeValues->groupBy('attribute.name') as $attributeName => $values)
                                         @php
                                             $uniqueValues = $values->unique('value');
-                                            // dd($uniqueValues); // Loại bỏ giá trị trùng lặp
                                         @endphp
                                         <div class="mb-3">
                                             <h5>{{ $attributeName }}:</h5>
@@ -124,16 +123,18 @@
                                                         id="variant-{{ $value->id }}"
                                                         name="variant[{{ Str::slug($attributeName) }}]"
                                                         value="{{ $value->id }}" data-image="{{ $variantImage }}">
-                                                    <label class="btn btn-outline-dark" for="variant-{{ $value->id }}">
-                                                        {{ $value->value }}
-                                                    </label>
+                                    
                                                     @if ($attributeName == 'Màu sắc')
-                                                            @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
-                                                            <label class="btn color-btn border border-secondary"
-                                                                for="{{ Str::slug($attributeName) }}-{{ $value->id }}"
-                                                                style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%;">
-                                                            </label>
-                                                        @endif
+                                                        @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
+                                                        <label class="btn color-btn border border-secondary"
+                                                            for="variant-{{ $value->id }}"
+                                                            style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%; display: inline-block;">
+                                                        </label>
+                                                    @else
+                                                        <label class="btn btn-outline-dark" for="variant-{{ $value->id }}">
+                                                            {{ $value->value }}
+                                                        </label>
+                                                    @endif
                                                 @endforeach
                                             </div>
                                         </div>
@@ -146,8 +147,15 @@
                                 <div class="actions">
                                     <button class="add_to_cart" data-url="{{route('add.cart',['id'=>$product->id])}}"><i class="ti-shopping-cart"></i><span>ADD TO CART</span></button>
                                     <button class="box" data-tooltip="Compare"><i
-                                            class="ti-control-shuffle"></i></button>
-                                    <button class="box" data-tooltip="Wishlist"><i class="ti-heart"></i></button>
+                                    class="ti-control-shuffle"></i></button>
+                                    @isset($wishlist)
+                                            <button class="box pro-remove"><a href="{{route('delete_wishlist',$product->id)}}"><i
+                                                    class="ti-heart"></i></button>
+                                        @else
+                                        <button class="box add_to_wishlist" data-url="{{route('add_wishlist',['id'=>$product->id])}} "  data-tooltip="Add to Wishlist"><i
+                                            class="ti-heart"></i></button>
+                                    @endisset
+                                        
                                 </div>
                             </div>
                         </div>

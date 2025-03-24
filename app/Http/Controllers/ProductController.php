@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductAtribute;
 use App\Models\ProductImage;
 use App\Models\Skus;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -65,6 +66,7 @@ class ProductController extends Controller
         $brand = Brand::find($product->id_brand);
         $category = Category::find($product->id_category);
         $productImages = ProductImage::where('id_product', $product->id)->get();
+        $wishlist = Wishlist::where('id_product', $product->id)->where('id_user', auth()->id())->first();
         $skus = Skus::where('product_id', $product->id)->get();
     
         $mainImage = $product->image ?? ($productImages->first() ? $productImages->first()->image_url : null);
@@ -79,6 +81,7 @@ class ProductController extends Controller
             'productImages',
             'mainImage',
             'skus',
+            'wishlist'
         ]));
     }
     
