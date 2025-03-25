@@ -38,8 +38,6 @@
 
                         <a href="#orders" data-bs-toggle="tab"><i class="fa fa-cart-arrow-down"></i> Orders</a>
 
-                        <a href="#download" data-bs-toggle="tab"><i class="fa fa-cloud-download"></i> Download</a>
-
                         <a href="#payment-method" data-bs-toggle="tab"><i class="fa fa-credit-card"></i> Payment
                             Method</a>
 
@@ -169,25 +167,21 @@
                                                             <td colspan="6">
                                                                 <div class="order-details">
                                                                     <h3 class="mb-4">Chi Tiết Đơn Hàng
-                                                                        #{{ $order->id }}
-                                                                    </h3>
+                                                                        #{{ $order->id }}</h3>
                                                                     <div class="container mt-5">
-                                                                        <!-- Thông tin đơn hàng -->
                                                                         <div class="card p-3 mb-3">
                                                                             <p><strong>Ngày đặt hàng:</strong>
                                                                                 {{ $order->created_at->format('d/m/Y') }}
                                                                             </p>
                                                                             <p><strong>Trạng thái:</strong>
-                                                                                {{ $order->order_status_name }}
-                                                                            </p>
+                                                                                {{ $order->order_status_name }}</p>
                                                                             <p><strong>Phương thức thanh toán:</strong>
                                                                                 {{ $order->payment_method_name }}</p>
                                                                             <p><strong>Tổng tiền:</strong>
                                                                                 {{ number_format($order->total_amount, 0, '', ',') }}
-                                                                                VND
-                                                                            </p>
+                                                                                VND</p>
                                                                         </div>
-                                                                        <!-- Thông tin khách hàng -->
+
                                                                         <div class="card p-3 mb-3">
                                                                             <p><strong>Khách hàng:</strong>
                                                                                 {{ $order->user_name }}</p>
@@ -196,7 +190,7 @@
                                                                             <p><strong>Địa chỉ:</strong>
                                                                                 {{ $order->address_user_address }}</p>
                                                                         </div>
-                                                                        <!-- Danh sách sản phẩm -->
+
                                                                         <div class="card p-3 mb-3">
                                                                             <h3>Sản phẩm trong đơn hàng</h3>
                                                                             <table class="table table-bordered mt-3">
@@ -205,35 +199,88 @@
                                                                                         <th>Hình ảnh</th>
                                                                                         <th>Tên sản phẩm</th>
                                                                                         <th>Giá</th>
-                                                                                        <th class=" text-nowrap"
-                                                                                            style="width:1px">Số Lượng</th>
-                                                                                        <th class=" text-nowrap"
-                                                                                            style="width:1px">Thành tiền
-                                                                                        </th>
+                                                                                        <th>Số lượng</th>
+                                                                                        <th>Thành tiền</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
                                                                                     @foreach ($orderDetails[$order->id] as $orderDetail)
-                                                                                        <tr class="order-detail-row">
-                                                                                            <td class="text-center"><img
-                                                                                                    src="{{ Storage::url($orderDetail->image) }}"
+                                                                                        <tr>
+                                                                                            <td class="text-center">
+                                                                                                <img src="{{ Storage::url($orderDetail->image) }}"
                                                                                                     alt=""
                                                                                                     width="100px">
                                                                                             </td>
                                                                                             <td>{{ $orderDetail->name }}
                                                                                             </td>
                                                                                             <td>{{ number_format($orderDetail->sale_price, 0, '', ',') }}
-                                                                                                VND
-                                                                                            </td>
+                                                                                                VND</td>
                                                                                             <td>{{ $orderDetail->quantity }}
                                                                                             </td>
                                                                                             <td>{{ number_format($orderDetail->quantity * $orderDetail->sale_price, 0, '', ',') }}
-                                                                                                VND
-                                                                                            </td>
+                                                                                                VND</td>
                                                                                         </tr>
                                                                                     @endforeach
                                                                                 </tbody>
                                                                             </table>
+                                                                        </div>
+                                                                        <div class="card p-4 mt-4 shadow-sm">
+                                                                            @if ($order->order_status_name == 'Đã giao')
+                                                                                <div id="confirm-section"
+                                                                                    class="text-center mb-3">
+                                                                                    <form
+                                                                                        action="{{ route('admin.orders.confirmReceived', $order->id) }}"
+                                                                                        method="POST"
+                                                                                        style="display:inline;">
+                                                                                        @csrf
+                                                                                        <button type="submit"
+                                                                                            class="btn btn-success me-2">Đã
+                                                                                            nhận được hàng</button>
+                                                                                    </form>
+                                                                                    <button class="btn btn-warning"
+                                                                                        onclick="showNotReceivedForm()">Chưa
+                                                                                        nhận được hàng</button>
+                                                                                </div>
+
+                                                                                <div id="not-received-form"
+                                                                                    style="display:none;">
+                                                                                    <h5 class="text-center mb-3">Bạn chưa
+                                                                                        nhận được hàng? Vui lòng điền lý do:
+                                                                                    </h5>
+                                                                                    <form
+                                                                                        action="{{ route('admin.orders.handleNotReceived', $order->id) }}"
+                                                                                        method="POST"
+                                                                                        onsubmit="showPendingMessage()">
+                                                                                        @csrf
+                                                                                        <textarea name="reason" class="form-control mb-2" rows="3" placeholder="Nhập lý do..." required></textarea>
+                                                                                        <div class="text-center">
+                                                                                            <button type="submit"
+                                                                                                class="btn btn-danger me-2">Gửi
+                                                                                                lý do</button>
+                                                                                            <button type="button"
+                                                                                                class="btn btn-secondary"
+                                                                                                onclick="hideNotReceivedForm()">Hủy</button>
+                                                                                        </div>
+                                                                                    </form>
+                                                                                </div>
+
+                                                                            @elseif ($order->order_status_name == 'Giao thất bại')
+                                                                                <div
+                                                                                    class="alert alert-warning text-center mt-3">
+                                                                                    Đang chờ xác nhận hoàn hàng từ shop.
+                                                                                </div>
+                                                                            @elseif ($order->order_status_name == 'Hoàn thành / Đã nhận được hàng')
+                                                                                <div
+                                                                                    class="alert alert-success text-center">
+                                                                                    Cảm ơn quý khách đã mua hàng của shop
+                                                                                    chúng tớ!
+                                                                                </div>
+                                                                            @elseif ($order->order_status_name == 'Hoàn hàng')
+                                                                                <div
+                                                                                    class="alert alert-danger text-center">
+                                                                                    Đơn hàng của bạn đã được hoàn trả.
+                                                                                </div>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -402,7 +449,18 @@
 
 @endsection
 
+<script>
+    function showNotReceivedForm() {
+        document.getElementById('confirm-section').style.display = 'none';
+        document.getElementById('not-received-form').style.display = 'block';
+    }
 
+    function hideNotReceivedForm() {
+        document.getElementById('confirm-section').style.display = 'block';
+        document.getElementById('not-received-form').style.display = 'none';
+    }
+
+</script>
 
 <style>
     .dot {

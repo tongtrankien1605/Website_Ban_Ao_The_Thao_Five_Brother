@@ -28,8 +28,8 @@ class CartController extends Controller
         // Validate request
         $request->validate([
             'quantity' => 'required|integer|min:1',
-            'variant_ids' => 'required|array',
-            'variant_ids.*' => 'integer|exists:variants,id',
+            // 'variant_ids' => 'required|array',
+            // 'variant_ids.*' => 'integer|exists:variants,id',
         ]);
     
         // Chuyển variant_ids thành mảng nếu cần
