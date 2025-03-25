@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\OrderStatusHistory;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -59,6 +60,45 @@ class OrderController extends Controller
 
         $paymentController = new PaymentController();
         return $paymentController->processPayment($request, $order);
+    }
+
+    public function confirmReceived($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        $oldStatus = $order->id_order_status;
+
+        $newStatus = 9;
+
+        $order->update(['id_order_status' => $newStatus]);
+
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'user_id' => Auth::id(),
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'note' => 'Khách hàng xác nhận đã nhận được hàng'
+        ]);
+
+        return redirect()->back()->with('success', 'Cảm ơn quý khách đã mua hàng của shop chúng tớ!');
+    }
+    public function handleNotReceived(Request $request, $orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        $oldStatus = $order->id_order_status;
+
+        $newStatus = 6;
+
+        $order->update(['id_order_status' => $newStatus]);
+
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'user_id' => Auth::id(),
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'note' => $request->reason
+        ]);
+
+        return redirect()->back()->with('warning', 'Đang chờ xác nhận hoàn hàng từ shop.');
     }
 
 

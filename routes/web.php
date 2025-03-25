@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\WishlistController;
 
 /*
@@ -142,6 +143,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
 
     Route::resource('orders',AdminOrderController::class);
+    Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
+    Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
+
+
+    Route::resource('refunds', RefundController::class);
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
