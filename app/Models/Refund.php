@@ -9,10 +9,10 @@ class Refund extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['order_id', 'reason', 'refund_amount', 'status'];
+    protected $fillable = ['id_order', 'reason', 'refund_amount', 'refund_quantity', 'status'];
 
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class, 'id_order');
     }
 }
