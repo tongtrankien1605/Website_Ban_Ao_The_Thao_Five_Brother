@@ -62,9 +62,10 @@ class Order extends Model
     public function order_status_histories()
     {
         return $this->hasMany(OrderStatusHistory::class, 'order_id', 'id');
-    }public function refunds()
+    }
+    public function refunds()
     {
-        return $this->hasMany(Refund::class);
+        return $this->hasMany(Refund::class,'id_order','id');
     }
 
 }

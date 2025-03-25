@@ -104,19 +104,49 @@
                                     <ul>
                                         @foreach ($cartItem as $item)
                                             <li>{{ $item->skuses->name }} x {{ $item->quantity }}
-                                                <span>{{ number_format($new_total) }} Đồng</span>
+                                                <span>{{ number_format($item->price * $item->quantity) }} Đồng</span>
                                             </li>
                                             <input type="hidden" name="cart_item_ids[]" value="{{ $item->id }}">
                                         @endforeach
                                     </ul>
 
-                                    <p>Sub Total <span id="sub-total">{{ number_format($new_total) }} Đồng</span></p>
+                                    <p>Sub Total <span>{{ number_format($total) }} Đồng</span></p>
+                                    @if ($new_total)
+                                        <p hidden><span id="sub-total">{{ number_format($new_total) }} Đồng</span></p>
+                                    @else
+                                        <p hidden><span id="sub-total">{{ number_format($total) }} Đồng</span></p>
+                                    @endif
+
+                                    @if ($voucher)
+                                        <p>Voucher
+                                            <span>Giảm
+                                                @if ($voucher->discount_type == 'percentage')
+                                                    {{ number_format($voucher->discount_value) }}%
+                                                @else
+                                                    {{ number_format($voucher->discount_value) }} Đồng
+                                                @endif
+                                            </span>
+                                        </p>
+                                        @if ($voucher->discount_type == 'percentage')
+                                            <p>Sale total
+                                                <span>
+                                                    {{ number_format($saleTotal) }} Đồng
+                                                </span>
+                                            </p>
+                                        @endif
+                                        <p>Total
+                                            <span>
+                                                {{ number_format($new_total) }} Đồng
+                                            </span>
+                                        </p>
+                                    @endif
                                     <p>Shipping Fee <span id="shipping-cost">0 Đồng</span></p>
-                                    <h4>Grand Total <span id="grand-total">{{ number_format($new_total) }} Đồng</span></h4>
+                                    <h4 class=" mt-2">Grand Total <span id="grand-total"></span></h4>
+
 
                                     <!-- Input ẩn để gửi shipping fee và grand total khi thanh toán -->
                                     <input type="hidden" name="shipping_cost" id="shipping-cost-input" value="0">
-                                    <input type="hidden" name="grand_total" id="grand-total-input" value="{{ $new_total }}">
+                                    <input type="hidden" name="grand_total" id="grand-total-input">
                                 </div>
 
 

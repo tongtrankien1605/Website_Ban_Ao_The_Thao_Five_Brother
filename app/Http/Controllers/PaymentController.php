@@ -9,6 +9,7 @@ use App\Models\Order;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use App\Models\PaymentMethod;
 use App\Models\ShippingMethod;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -19,8 +20,16 @@ class PaymentController extends Controller
 {
     // dd($request->all());
     $selectedItems = $request->input('items'); // Nhận danh sách sản phẩm từ AJAX
-    $new_total = $request->input('new_total', 0); // Nhận new_total từ URL (mặc định = 0)
+    $new_total = $request->input('new_total'); // Nhận new_total từ URL (mặc định = 0)
     // dd($new_total);
+
+    $total = $request->input('total');
+    $saleTotal = $total - $new_total;
+    $discount = $request->input('discount');
+    $discountType = $request->input('discountType');
+
+    // dd($discount);
+    $voucher = Voucher::where([['status', 0], ['discount_type', $discountType], ['discount_value', $discount]])->first();
 
     $address_user = AddressUser::where('id_user', Auth::id())->get();
     $shipping = ShippingMethod::all();
@@ -36,14 +45,25 @@ class PaymentController extends Controller
     }
 
     // Nếu new_total không có, tính lại tổng tiền từ giỏ hàng
-    if ($new_total == 0) {
-        $new_total = 0;
-        foreach ($cartItem as $item) {
-            $new_total += $item->price * $item->quantity;
-        }
-    }
+    // if ($new_total == 0) {
+    //     $new_total = 0;
+    //     foreach ($cartItem as $item) {
+    //         $new_total += $item->price * $item->quantity;
+    //     }
+    // }
 
-    return view('client.checkout', compact('address_user', 'cartItem', 'new_total', 'shipping', 'paymentMethods'));
+    return view('client.checkout', compact(
+        [
+            'address_user',
+            'cartItem',
+            'new_total',
+            'shipping',
+            'paymentMethods',
+            'total',
+            'saleTotal',
+            'voucher'
+        ]
+    ));
 }
 
 
@@ -117,15 +137,14 @@ class PaymentController extends Controller
         if (isset($_POST['redirect'])) {
             $order->id_payment_method_status = 2;
             $order->save();
-                // dd($order);
-                return redirect()->away($vnp_Url);
+            // dd($order);
+            return redirect()->away($vnp_Url);
         } else {
             $order->id_payment_method_status = 2;
             $order->save();
-                // dd($order);
+            // dd($order);
             return redirect()->away($vnp_Url);
         }
-
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -63,137 +64,47 @@ class OrderController extends Controller
         return $paymentController->processPayment($request, $order);
     }
 
-    public function confirmReceived($orderId)
-    {
-        $order = Order::findOrFail($orderId);
-
-        $oldStatus = $order->id_order_status;
-    
-        $newStatus = 9;
-    
-        $order->update(['id_order_status' => $newStatus]);
-    
-        OrderStatusHistory::create([
-            'order_id' => $order->id,
-            'user_id' => Auth::id(),
-            'old_status' => $oldStatus,
-            'new_status' => $newStatus,
-            'note' => 'Khách hàng xác nhận đã nhận được hàng'
-        ]);
-    
-        return redirect()->back()->with('success', 'Cảm ơn quý khách đã mua hàng của shop chúng tớ!');
-    }
-    
-    public function handleNotReceived(Request $request, $orderId)
+    public function update(Request $request, $orderId)
     {
         $order = Order::with('order_details')->findOrFail($orderId);
-    
-        if ($order->users->id !== Auth::id()) {
+
+        if ($order->id_user !== Auth::id()) {
             return redirect()->back()->with('error', 'Bạn không có quyền yêu cầu hoàn hàng cho đơn hàng này.');
         }
-    
-        $oldStatus = $order->order_statuses->id;
-        $newStatus = 6;
-    
-        $order->update(['id_order_status' => $newStatus]);
-    
-        OrderStatusHistory::create([
-            'order_id' => $order->id,
-            'user_id' => Auth::id(),
-            'old_status' => $oldStatus,
-            'new_status' => $newStatus,
-            'note' => 'Yêu cầu hoàn hàng lý do: ' . $request->reason
-        ]);
-        Refund::create([
-            'id_order' => $order->id,
-            'reason' => $request->reason,
-            'refund_amount' => $order->total_amount,
-            'refund_quantity' => $order->order_details->sum('quantity'),
-            'status' => 'Đang chờ xử lý'
-        ]);
-    
+
+        $oldStatus = $order->id_order_status;
+        $newStatus = $request->id_order_status;
+
+
+        if ($newStatus == OrderStatus::SUCCESS) {
+            $order->id_payment_method_status = 2;
+            $order->id_order_status = $newStatus;
+            $order->save();
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'user_id' => Auth::id(),
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'note' => 'Khách hàng đã nhận hàng',
+            ]);
+        } else {
+            $order->id_order_status = $newStatus;
+            $order->save();
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'user_id' => Auth::id(),
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'note' => 'Yêu cầu hoàn hàng: ' . $request->reason,
+            ]);
+            Refund::create([
+                'id_order' => $order->id,
+                'reason' => $request->reason,
+                'refund_amount' => $order->total_amount,
+                'refund_quantity' => $order->order_details->sum('quantity'),
+                'status' => 'Đang chờ xử lý'
+            ]);
+        }
         return redirect()->back()->with('warning', 'Đang chờ xác nhận hoàn hàng từ shop.');
     }
-    
-    // public function getOrderDetails($id)
-    // {
-    
-
-        
-        
-    //     $order = Order::where('id', $id)
-    //         ->with([
-    //             'orderDetails' => function ($query) {
-    //                 $query->join('skuses', 'skuses.id', '=', 'order_details.id_product_variant')
-    //                     ->select(
-    //                         'order_details.*',
-    //                         'skuses.name',
-    //                         'skuses.image',
-    //                         'skuses.price',
-    //                         'skuses.sale_price',
-    //                         'skuses.barcode',
-    //                         'skuses.status',
-    //                         'skuses.color', // Thêm màu sắc nếu có trong bảng `skuses`
-    //                         'skuses.size'   // Thêm size nếu có trong bảng `skuses`
-    //                     );
-    //             },
-    //             'customer',
-    //             'customer.addresses' => function ($query) {
-    //                 $query->where('is_default', 1);
-    //             }
-    //         ])
-    //         ->first();
-
-    //     if (!$order) {
-    //         return response()->json(['error' => 'Order not found'], 404);
-    //     }
-
-        
-
-    //     return response()->json([
-    //         'id' => $order->id,
-    //         'date' => $order->created_at->format('d/m/Y'),
-    //         'status' => [
-    //             'text' => $order->status,
-    //             'badge' => $this->getStatusBadge($order->status), // Hàm hiển thị badge trạng thái giống giao diện
-    //         ],
-    //         'payment_method' => $order->payment_method,
-    //         'total' => number_format($order->total_price) . 'đ',
-
-    //         'customer' => [
-    //             'name' => $order->customer->name ?? 'N/A',
-    //             'phone' => $order->customer->phone ?? 'N/A',
-    //             'address' => optional($order->customer->addresses->first())->address ?? 'N/A',
-    //         ],
-
-    //         'items' => $order->orderDetails->map(function ($item) {
-    //             return [
-    //                 'image' => $item->image ?? '/default-image.jpg', // Nếu không có ảnh thì gán ảnh mặc định
-    //                 'name' => $item->name,
-    //                 'color' => $item->color ?? 'Không xác định',
-    //                 'size' => $item->size ?? 'Không xác định',
-    //                 'quantity' => $item->quantity,
-    //                 'price' => number_format($item->price) . 'đ',
-    //                 'total' => number_format($item->quantity * $item->price) . 'đ',
-    //             ];
-    //         }),
-
-            
-    //     ]);
-    // }
-
-    // /**
-    //  * Hàm chuyển trạng thái đơn hàng thành badge màu sắc giống giao diện
-    //  */
-    // private function getStatusBadge($status)
-    // {
-    //     $badges = [
-    //         'pending' => 'badge bg-warning',
-    //         'processing' => 'badge bg-primary',
-    //         'completed' => 'badge bg-success',
-    //         'canceled' => 'badge bg-danger',
-    //     ];
-
-    //     return $badges[$status] ?? 'badge bg-secondary';
-    // }
 }

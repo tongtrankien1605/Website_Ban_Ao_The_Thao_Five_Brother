@@ -143,8 +143,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
 
     Route::resource('orders',AdminOrderController::class);
-    Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
-    Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
+    // Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
+    // Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
 
 
     Route::resource('refunds', RefundController::class);
@@ -175,6 +175,7 @@ Route::middleware('auth')->group(function (){
 
 
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
+    Route::resource('order',OrderController::class)->only(['update']);
     
     // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
