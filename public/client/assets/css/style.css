@@ -4595,7 +4595,7 @@ img.mfp-img {
   border: medium none;
   color: #fff;
   display: block;
-  float: left;
+  /* float: left; */
   font-size: 14px;
   font-weight: 600;
   height: 40px;
@@ -4603,10 +4603,17 @@ img.mfp-img {
   padding: 8px 25px;
   text-transform: uppercase;
   border-radius: 50px;
-  position: absolute;
+  /* position: absolute;
   right: 0;
-  top: 0;
+  top: 0; */
 }
+#apply-voucher:disabled {
+  background-color: #8d8496 !important;
+  color: #ffffff; /* Đổi màu chữ nếu cần */
+  cursor: not-allowed; /* Thêm hiệu ứng chuột */
+  opacity: 0.7; /* Làm mờ nhẹ */
+}
+
 .cart-coupon .cuppon-form input[type=submit]:hover {
   background-color: #ff708a;
 }
@@ -4727,45 +4734,6 @@ img.mfp-img {
   font-size: 14px;
   color: #1a161e;
   margin-bottom: 15px;
-}
-
-.cart-coupon .cuppon-form {
-  display: flex;
-  align-items: center;
-  gap: 12px; /* Tạo khoảng cách giữa select và button */
-}
-
-.cuppon-form select {
-  width: 200px; /* Độ rộng phù hợp */
-  height: 42px;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 10px; /* Bo góc */
-  background-color: white;
-  outline: none;
-  transition: border-color 0.3s ease-in-out;
-}
-
-.cuppon-form select:focus {
-  border-color: #ff708a; /* Màu viền khi focus */
-}
-
-.cuppon-form input[type="submit"] {
-  height: 42px;
-  padding: 8px 20px;
-  font-size: 14px;
-  font-weight: bold;
-  background-color: #1a161e;
-  color: white;
-  border: none;
-  border-radius: 10px; /* Bo góc button */
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.cuppon-form input[type="submit"]:hover {
-  background-color: #ff708a;
 }
 
 

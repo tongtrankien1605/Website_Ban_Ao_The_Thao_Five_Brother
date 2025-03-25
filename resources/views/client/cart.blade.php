@@ -49,12 +49,11 @@
                                                     $total += $subtotal;
                                                 @endphp
                                                 <td class="pro-select">
-                                                    <input type="checkbox" class="cart-checkbox" name="selected_items[]" 
-                                                        value="{{ $cart->id }}" 
-                                                        data-price="{{ $cart->price }}" 
+                                                    <input type="checkbox" class="cart-checkbox" name="selected_items[]"
+                                                        value="{{ $cart->id }}" data-price="{{ $cart->price }}"
                                                         data-quantity="{{ $cart->quantity }}">
                                                 </td>
-                                                                                               
+
                                                 <td class="pro-thumbnail"><a href="#"><img
                                                             src="{{ Storage::url($cart->skuses->image) }}"
                                                             alt="" /></a>
@@ -85,7 +84,7 @@
                                         </tr>
                                     @endif
                                 </tbody>
-                                
+
                             </table>
                         </div>
                     </div>
@@ -95,22 +94,27 @@
                         </div>
                         <div class="cart-coupon">
                             <h4>Coupon</h4>
-                            <p>Enter your coupon code if you have one.</p>
-                            <div class="cuppon-form">
-                                <select id="voucher" class="form-control">
-                                    <option value="">Chọn voucher</option>
-                                    @foreach ($listVoucher as $voucher)
-                                        <option value="{{ $voucher->id }}" 
-                                                data-discount="{{ $voucher->vouchers->discount_value }}" 
+                            <p>Choose your coupon code if you have one.</p>
+                            <div class="cuppon-form border-0 d-flex gap-3">
+                                <div>
+                                    <select id="voucher" class="form-control text-center"
+                                        style="height: 40px;width: 300px; border-radius: 50px;">
+                                        <option value="">--Chọn voucher--</option>
+                                        @foreach ($listVoucher as $voucher)
+                                            <option value="{{ $voucher->id }}"
+                                                data-discount="{{ $voucher->vouchers->discount_value }}"
                                                 data-type="{{ $voucher->vouchers->discount_type }}">
-                                           Giảm {{ $voucher->vouchers->discount_value }} {{ $voucher->vouchers->discount_type == 'percentage' ? '%' : 'đ' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                
-                                <input id="apply-voucher" type="submit" value="Apply Coupon" />
+                                                Giảm
+                                                {{ number_format($voucher->vouchers->discount_value) }}{{ $voucher->vouchers->discount_type == 'percentage' ? '%' : 'đ' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <input id="apply-voucher" type="submit" value="Apply Coupon" disabled />
+                                </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div class="col-lg-4 col-md-5 col-12 mb-40">
                         @if (!$cartItem->isEmpty())

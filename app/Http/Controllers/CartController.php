@@ -20,114 +20,115 @@ class CartController extends Controller
 
     public function addToCart(Request $request, $id)
     {
-        // Kiểm tra đăng nhập
         if (!Auth::check()) {
             return response()->json(['message' => 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng'], 401);
         }
-    
-        // Validate request
+
         $request->validate([
             'quantity' => 'required|integer|min:1',
-            // 'variant_ids' => 'required|array',
-            // 'variant_ids.*' => 'integer|exists:variants,id',
+            'variant_ids' => 'required|array',
+            'variant_ids.*' => 'exists:product_atribute_values,id',
         ]);
-    
-        // Chuyển variant_ids thành mảng nếu cần
+        DB::beginTransaction();
         $variantIds = is_array($request->variant_ids) ? $request->variant_ids : [$request->variant_ids];
-    
-        // Lấy hoặc tạo giỏ hàng của user
+
         $cart = Cart::firstOrCreate(['id_user' => Auth::id()]);
-    
-        // Tìm SKU phù hợp với các biến thể
+
         $data = Variant::select('id_skus')
             ->where('product_id', $id)
             ->whereIn('product_attribute_value_id', $variantIds)
             ->groupBy('id_skus')
             ->havingRaw('COUNT(DISTINCT product_attribute_value_id) = ?', [count($variantIds)])
             ->first();
-    
-        // Nếu không tìm thấy SKU phù hợp
+
         if (!$data) {
             return response()->json(['message' => 'Không tìm thấy biến thể nào'], 404);
         }
-    
-        // Lấy thông tin sản phẩm từ bảng Skus
+
         $productVariant = Skus::where('id', $data->id_skus)->first();
 
-        $inventory = Inventory::where('id', $productVariant->id)->first();
-        // dd($inventory);
-    
         if (!$productVariant) {
             return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
         }
-    
-        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        $inventory = Inventory::where('id_product_variant', $productVariant->id)->first();
+        $oldQuantity = $inventory->quantity;
+        if ($oldQuantity < 1) {
+            return response()->json(['message' => 'Sản phẩm đã hết hàng, vui lòng chọn sản phẩm khác.'], 500);
+        }
         $cartItem = CartItem::where('id_cart', $cart->id)
             ->where('id_product_variant', $productVariant->id)
             ->first();
-    
+
         if ($cartItem) {
-            // Nếu sản phẩm đã có, tăng số lượng
             $cartItem->quantity += $request->quantity;
             $cartItem->save();
+
+            $inventory->quantity = $oldQuantity - $request->quantity;
+            if (!$inventory->save()) {
+                DB::rollBack();
+                return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
+            }
+            InventoryLog::create([
+                'id_product_variant' => $productVariant->id,
+                'user_id' => auth()->user()->id,
+                'old_quantity' => $oldQuantity,
+                'change_quantity' => $request->quantity,
+                'new_quantity' => $inventory->quantity,
+                'reason' => 'Đã thêm vào giỏ hàng'
+            ]);
         } else {
-            // Nếu chưa có, tạo mới
             CartItem::create([
                 'id_cart' => $cart->id,
                 'id_product_variant' => $productVariant->id,
                 'id_user' => Auth::id(),
                 'quantity' => $request->quantity,
-                'price' => $productVariant->sale_price ?? 0,
+                'price' => $productVariant->sale_price,
             ]);
-            $inventory->update([
-                'quantity' => $inventory->quantity - $request->quantity
-            ]);
-            $inventory->save();
-            $inventory_log = InventoryLog::where('id', $inventory->id)->first();
-            // dd($inventory_log);
-            if ($inventory_log!=null) {
-                $inventory_log->update([
-                'old_quantity' => $inventory->quantity,
-                'change_quantity' => $request->quantity,
-                'new_quantity' => $inventory->quantity - $request->quantity,
-                'reason' => 'Đã thêm vào giỏ hàng'
-                ]);
-                $inventory_log->save();
-            } else {
-                return response()->json(['message' => 'Không tìm thấy inventory_log'], 404);
+            $inventory->quantity = $oldQuantity - $request->quantity;
+            if (!$inventory->save()) {
+                DB::rollBack();
+                return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
             }
+            InventoryLog::create([
+                'id_product_variant' => $productVariant->id,
+                'user_id' => auth()->user()->id,
+                'old_quantity' => $oldQuantity,
+                'change_quantity' => $request->quantity,
+                'new_quantity' => $inventory->quantity,
+                'reason' => 'Đã thêm vào giỏ hàng'
+            ]);
         }
-    
+        DB::commit();
         return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
     }
 
     public function applyVoucher(Request $request)
-{
-    $subtotal = CartItem::where('id_user', Auth::id())->sum(DB::raw('price * quantity'));
-    $discountValue = $request->discount_value;
-    $discountType = $request->discount_type;
-    $newTotal = $subtotal;
+    {
+        $subtotal = CartItem::where('id_user', Auth::id())->sum(DB::raw('price * quantity'));
+        $discountValue = $request->discount_value;
+        $discountType = $request->discount_type;
+        $newTotal = $subtotal;
 
-    if ($discountType == 'percentage') {
-        $newTotal = $subtotal - ($subtotal * $discountValue / 100);
-    } elseif ($discountType == 'fixed') {
-        $newTotal = $subtotal - $discountValue;
+        if ($discountType == 'percentage') {
+            $newTotal = $subtotal - ($subtotal * $discountValue / 100);
+        } elseif ($discountType == 'fixed') {
+            $newTotal = $subtotal - $discountValue;
+        }
+
+
+
+        return response()->json([
+            'success' => true,
+            'new_total' => max($newTotal, 0) // Đảm bảo total không bị âm
+        ]);
     }
 
-    
 
-    return response()->json([
-        'success' => true,
-        'new_total' => max($newTotal, 0) // Đảm bảo total không bị âm
-    ]);
-}
-
-    
     public function index()
     {
         $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
         $listVoucher = VoucherUser::where('id_user', Auth::id())->with('vouchers')->get();
-        
+
         // dd($listVoucher->toArray());
         // echo '<pre>';
         // print_r($cartItem);
@@ -154,15 +155,16 @@ class CartController extends Controller
         ]);
     }
 
-    public function remove($id) {
+    public function remove($id)
+    {
         // dd(1);
         $cartItem = CartItem::find($id);
-    
+
         if (isset($cartItem)) {
             $cartItem->delete();
             return response()->json(['message' => 'Xóa thành công'], 200);
         }
-    
+
         return response()->json(['error' => 'Xóa thất bại'], 404);
     }
 }
