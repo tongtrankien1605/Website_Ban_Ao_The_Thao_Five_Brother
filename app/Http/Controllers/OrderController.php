@@ -8,6 +8,7 @@ use App\Models\OrderDetail;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\OrderStatusHistory;
+use App\Models\Refund;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -65,12 +66,13 @@ class OrderController extends Controller
     public function confirmReceived($orderId)
     {
         $order = Order::findOrFail($orderId);
+
         $oldStatus = $order->id_order_status;
-
+    
         $newStatus = 9;
-
+    
         $order->update(['id_order_status' => $newStatus]);
-
+    
         OrderStatusHistory::create([
             'order_id' => $order->id,
             'user_id' => Auth::id(),
@@ -78,32 +80,41 @@ class OrderController extends Controller
             'new_status' => $newStatus,
             'note' => 'Khách hàng xác nhận đã nhận được hàng'
         ]);
-
+    
         return redirect()->back()->with('success', 'Cảm ơn quý khách đã mua hàng của shop chúng tớ!');
     }
+    
     public function handleNotReceived(Request $request, $orderId)
     {
-        $order = Order::findOrFail($orderId);
-        $oldStatus = $order->id_order_status;
-
+        $order = Order::with('order_details')->findOrFail($orderId);
+    
+        if ($order->users->id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Bạn không có quyền yêu cầu hoàn hàng cho đơn hàng này.');
+        }
+    
+        $oldStatus = $order->order_statuses->id;
         $newStatus = 6;
-
+    
         $order->update(['id_order_status' => $newStatus]);
-
+    
         OrderStatusHistory::create([
             'order_id' => $order->id,
             'user_id' => Auth::id(),
             'old_status' => $oldStatus,
             'new_status' => $newStatus,
-            'note' => $request->reason
+            'note' => 'Yêu cầu hoàn hàng lý do: ' . $request->reason
         ]);
-
+        Refund::create([
+            'id_order' => $order->id,
+            'reason' => $request->reason,
+            'refund_amount' => $order->total_amount,
+            'refund_quantity' => $order->order_details->sum('quantity'),
+            'status' => 'Đang chờ xử lý'
+        ]);
+    
         return redirect()->back()->with('warning', 'Đang chờ xác nhận hoàn hàng từ shop.');
     }
-
-
-
-
+    
     // public function getOrderDetails($id)
     // {
     

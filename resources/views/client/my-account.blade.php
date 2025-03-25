@@ -1,6 +1,7 @@
 @extends('client.layouts.master')
 @section('content')
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+    </script>
 
     <!-- Page Banner Section Start -->
     <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
@@ -232,16 +233,13 @@
                                                                                         action="{{ route('admin.orders.confirmReceived', $order->id) }}"
                                                                                         method="POST"
                                                                                         style="display:inline;">
-                                                                                        @csrf
-                                                                                        <button type="submit"
+                                                                                        @csrf<button type="submit"
                                                                                             class="btn btn-success me-2">Đã
-                                                                                            nhận được hàng</button>
-                                                                                    </form>
+                                                                                            nhận được hàng</button></form>
                                                                                     <button class="btn btn-warning"
                                                                                         onclick="showNotReceivedForm()">Chưa
                                                                                         nhận được hàng</button>
                                                                                 </div>
-
                                                                                 <div id="not-received-form"
                                                                                     style="display:none;">
                                                                                     <h5 class="text-center mb-3">Bạn chưa
@@ -249,37 +247,51 @@
                                                                                     </h5>
                                                                                     <form
                                                                                         action="{{ route('admin.orders.handleNotReceived', $order->id) }}"
-                                                                                        method="POST"
-                                                                                        onsubmit="showPendingMessage()">
-                                                                                        @csrf
+                                                                                        method="POST">@csrf
                                                                                         <textarea name="reason" class="form-control mb-2" rows="3" placeholder="Nhập lý do..." required></textarea>
-                                                                                        <div class="text-center">
-                                                                                            <button type="submit"
+                                                                                        <div class="text-center"><button
+                                                                                                type="submit"
                                                                                                 class="btn btn-danger me-2">Gửi
-                                                                                                lý do</button>
-                                                                                            <button type="button"
+                                                                                                lý do</button><button
+                                                                                                type="button"
                                                                                                 class="btn btn-secondary"
                                                                                                 onclick="hideNotReceivedForm()">Hủy</button>
                                                                                         </div>
                                                                                     </form>
                                                                                 </div>
-
                                                                             @elseif ($order->order_status_name == 'Giao thất bại')
                                                                                 <div
                                                                                     class="alert alert-warning text-center mt-3">
                                                                                     Đang chờ xác nhận hoàn hàng từ shop.
                                                                                 </div>
-                                                                            @elseif ($order->order_status_name == 'Hoàn thành / Đã nhận được hàng')
+                                                                            @elseif ($order->order_status_name == 'Hoàn thành' || $order->order_status_name == 'Đã nhận được hàng')
                                                                                 <div
                                                                                     class="alert alert-success text-center">
                                                                                     Cảm ơn quý khách đã mua hàng của shop
-                                                                                    chúng tớ!
-                                                                                </div>
+                                                                                    chúng tớ!</div>
                                                                             @elseif ($order->order_status_name == 'Hoàn hàng')
-                                                                                <div
-                                                                                    class="alert alert-danger text-center">
-                                                                                    Đơn hàng của bạn đã được hoàn trả.
-                                                                                </div>
+                                                                                @if ($order->refund && $order->refund->status == 'Đang chờ xử lý')
+                                                                                    <div
+                                                                                        class="alert alert-warning text-center">
+                                                                                        Yêu cầu hoàn hàng của bạn đang được
+                                                                                        xử lý. Vui lòng chờ phản hồi từ
+                                                                                        shop!</div>
+                                                                                @elseif ($order->refund && $order->refund->status == 'Đã chấp nhận')
+                                                                                    <div
+                                                                                        class="alert alert-success text-center">
+                                                                                        Yêu cầu hoàn hàng của bạn đã được
+                                                                                        chấp nhận. Số tiền sẽ được hoàn trả
+                                                                                        sớm nhất!</div>
+                                                                                @elseif ($order->refund && $order->refund->status == 'Đã từ chối')
+                                                                                    <div
+                                                                                        class="alert alert-danger text-center">
+                                                                                        Yêu cầu hoàn hàng của bạn đã bị từ
+                                                                                        chối. Vui lòng liên hệ với shop để
+                                                                                    biết thêm chi tiết!</div>@else<div
+                                                                                        class="alert alert-danger text-center">
+                                                                                        Đơn hàng của bạn đã được hoàn trả.
+                                                                                    </div>
+                                                                                @endif
                                                                             @endif
                                                                         </div>
                                                                     </div>
@@ -452,15 +464,17 @@
 <script>
     function showNotReceivedForm() {
         document.getElementById('confirm-section').style.display = 'none';
+
         document.getElementById('not-received-form').style.display = 'block';
     }
 
     function hideNotReceivedForm() {
         document.getElementById('confirm-section').style.display = 'block';
+
         document.getElementById('not-received-form').style.display = 'none';
     }
-
 </script>
+
 
 <style>
     .dot {
