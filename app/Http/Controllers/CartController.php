@@ -26,8 +26,8 @@ class CartController extends Controller
 
         $request->validate([
             'quantity' => 'required|integer|min:1',
-            'variant_ids' => 'required|array',
-            'variant_ids.*' => 'exists:product_atribute_values,id',
+            // 'variant_ids' => 'required|array',
+            // 'variant_ids.*' => 'exists:product_atribute_values,id',
         ]);
         DB::beginTransaction();
         $variantIds = is_array($request->variant_ids) ? $request->variant_ids : [$request->variant_ids];
