@@ -8,8 +8,8 @@
 
                     <h1>Single Product</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="single-product.html">Shop</a></li>
+                        <li><a href="{{ route('index') }}">Home</a></li>
+                        <li><a href="{{ route('product.index') }}">Shop</a></li>
                     </ul>
 
                 </div>
