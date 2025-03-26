@@ -65,7 +65,7 @@ class Order extends Model
     }
     public function refunds()
     {
-        return $this->hasMany(Refund::class,'id_order','id');
+        return $this->hasOne(Refund::class,'id_order','id');
     }
 
 }

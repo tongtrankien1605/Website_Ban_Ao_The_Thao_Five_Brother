@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatus as EnumsOrderStatus;
 use App\Events\OrderStatusUpdate;
 use App\Http\Controllers\Controller;
+use App\Models\Inventory;
+use App\Models\InventoryLog;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\OrderStatus;
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentMethodStatus;
+use App\Models\Refund;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -84,16 +88,13 @@ class OrderController extends Controller
             'vouchers',
             'order_details',
             'order_status_histories',
+            'refunds'
         ])->find($id);
         if (!$order) {
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
-        $data = [EnumsOrderStatus::FAILED, EnumsOrderStatus::REFUND];
-        if ($order->id_order_status == 6) {
-            $orderStatuses = OrderStatus::whereIn('id', $data)->orderBy('id')->get();
-        } else {
-            $orderStatuses = OrderStatus::whereNotIn('id', [EnumsOrderStatus::REFUND, EnumsOrderStatus::SUCCESS])->orderBy('id')->get();
-        }
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS];
+        $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         return view('admin.orders.show', compact('order', 'orderStatuses'));
     }
 
@@ -117,7 +118,7 @@ class OrderController extends Controller
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
         $order->id_order_status = $request->id_order_status;
-        if($order->id_order_status == \App\Enums\OrderStatus::DELIVERED){
+        if ($order->id_order_status == EnumsOrderStatus::DELIVERED) {
             $order->delivered_at = Carbon::now();
         }
         if (!$order->save()) {
@@ -135,7 +136,61 @@ class OrderController extends Controller
         DB::commit();
 
         broadcast(new OrderStatusUpdate($order))->toOthers();
-        return response()->json('hay lắm cu');
+        return response()->json('Đơn hàng đã được cập nhật');
+    }
+
+    public function updateRefund(Request $request, $id)
+    {
+        DB::beginTransaction();
+        $order = Order::findOrFail($id);
+        if (!$order) {
+            return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
+        }
+        $oldStatus = $order->id_order_status;
+        $refund = Refund::where('id_order', $order->id)->first();
+
+        if ($request->status == 'approved') {
+            $order->id_order_status = EnumsOrderStatus::REFUND;
+            $newStatus = $order->id_order_status;
+            $note = "Đơn hàng đã được cập nhật thành 'Hoàn hàng'";
+            $refund->status = 'Đã chấp nhận';
+            $orderDetails = OrderDetail::where('id_order', $order->id)->get();
+            foreach ($orderDetails as $orderDetail) {
+                $inventory = Inventory::where('id_product_variant', $orderDetail->id_product_variant)->first();
+                $oldQuantity = $inventory->quantity;
+                $newQuantity = $inventory->quantity + $orderDetail->quantity;
+                $inventory->quantity += $orderDetail->quantity;
+                $inventory->save();
+                InventoryLog::create([
+                    'id_product_variant' => $orderDetail->id_product_variant,
+                    'user_id' => auth()->user()->id,
+                    'old_quantity' => $oldQuantity,
+                    'new_quantity' => $newQuantity,
+                    'change_quantity' => $orderDetail->quantity,
+                    'reason' => "Hoàn hàng",
+                ]);
+            }
+        } else {
+            $order->id_order_status = EnumsOrderStatus::REFUND_FAILED;
+            $newStatus = $order->id_order_status;
+            $note = "Đơn hàng không được chấp nhận hoàn hàng";
+            $refund->status = 'Đã từ chối';
+        }
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'user_id' => auth()->user()->id,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'note' => $note,
+        ]);
+
+        if (!$refund->save() || !$order->save()) {
+            DB::rollBack();
+            return redirect(route('admin.orders.index'))->with('error', 'Đã xảy ra lỗi');
+        }
+        DB::commit();
+        broadcast(new OrderStatusUpdate($order))->toOthers();
+        return response()->json('Đơn hàng đã được cập nhật');
     }
 
     /**

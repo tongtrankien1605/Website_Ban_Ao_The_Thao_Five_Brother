@@ -90,7 +90,7 @@
                                                                 <td class="text-nowrap">
                                                                     {{ number_format($order->total_amount, 0, '', ',') }}
                                                                     VND</td>
-                                                                <td class="text-nowrap">{{ $order->order_status_name }}
+                                                                <td>{{ $order->order_status_name }}
                                                                 </td>
                                                                 <td class="text-nowrap">
                                                                     {{ $order->payment_method_status_name }}</td>

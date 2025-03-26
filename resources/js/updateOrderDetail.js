@@ -38,3 +38,32 @@ document
                     "Có lỗi xảy ra, vui lòng thử lại.";
             });
     });
+
+document
+    .getElementById("updateRefundForm")
+    .addEventListener("submit", function (event) {
+        event.preventDefault();
+        editOrderForm.querySelector("button[type='submit']").disabled = true;
+
+        const submitButton = event.submitter;
+        const orderId = document.getElementById("order_id").value;
+        const status = submitButton.getAttribute("data-status");
+        console.log(1);
+        
+        axios
+            .put(orderId + '/refund', {
+                status: status,
+            })
+            .then((response) => {
+                document.getElementById("response-message").textContent =
+                    "Đã xác nhận trạng thái hoàn hàng!";
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            })
+            .catch((error) => {
+                console.error("Có lỗi xảy ra:", error);
+                document.getElementById("response-message").textContent =
+                    "Có lỗi xảy ra, vui lòng thử lại.";
+            });
+    });
