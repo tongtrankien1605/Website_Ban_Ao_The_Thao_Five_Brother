@@ -41,6 +41,9 @@ class OrderStatusSeeder extends Seeder
             [
                 'name' => 'Hoàn thành / Đã nhận được hàng'
             ],
+            [
+                'name' => 'Không chấp nhận hoàn hàng'
+            ],
         ];
         DB::table('order_statuses')->insert($dataSeeder);
     }
