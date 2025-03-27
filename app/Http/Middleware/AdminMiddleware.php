@@ -19,7 +19,7 @@ class AdminMiddleware
 
         // check Auth, nếu user role không phải admin thì không thể truy cập
 
-        if (!Auth::check() || Auth::user()->role !== 3) {
+        if (!Auth::check() || Auth::user()->role == 1) {
             return redirect('/')->with('error', 'Bạn không có quyền truy cập trang này!');
         }
 

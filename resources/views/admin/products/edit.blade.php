@@ -39,12 +39,14 @@
                                         @enderror
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="description" class="form-label">Mô tả sản phẩm</label>
-                                        <textarea name="description" class="form-control" rows="5" id="summernote">{{ old('description', $product->description) }}</textarea>
-                                        @error('description')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                    <div class="container">
+                                        <div class="form-group">
+                                            <label for="description" class="form-label">Mô tả sản phẩm</label>
+                                            <textarea name="description" class="form-control" rows="5" id="summernote">{{ old('description', $product->description) }}</textarea>
+                                            @error('description')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="image">Ảnh đại diện</label>
@@ -128,7 +130,7 @@
                                                                 value="{{ $skusAttributeValue['product_attribute_value_id'] }}">
                                                         @endforeach
                                                     </div>
-                                                    <div class="mb-3">
+                                                    {{-- <div class="mb-3">
                                                         <label class="form-label">Price</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][price]"
@@ -154,7 +156,7 @@
                                                         @error("variants.$sku->id.quantity")
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
-                                                    </div>
+                                                    </div> --}}
                                                     {{-- <div class="form-check">
                                                         <input type="checkbox" class="form-check-input" id="check1"
                                                             name="variants[{{ $sku->id }}][status]" value="1"
@@ -225,7 +227,7 @@
                                                             name="variants[{{ $index }}][attribute_values][]"
                                                             value="{{ $attrValue }}">
                                                     @endforeach
-                                                    <label class="form-label">Price</label>
+                                                    {{-- <label class="form-label">Price</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][price]"
                                                         value="{{ old("variants.$index.price") }}">
@@ -247,7 +249,7 @@
                                                         value="{{ old("variants.$index.quantity") }}">
                                                     @error("variants.$index.quantity")
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
                                                     <label class="form-label">Image</label>
                                                     <input type="file" class="form-control variant-image"
@@ -369,6 +371,21 @@
         </section>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var summernoteElement = document.getElementById("summernote");
+            if (summernoteElement) {
+                $(summernoteElement).summernote({
+                    height: 300,
+                    toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['fontname', 'fontsize', 'color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', 'codeview']]
+                    ]
+                });
+            }
+        });
         var attributeValues = @json($attributeValues);
         document.addEventListener("DOMContentLoaded", function() {
             const variantsCard = document.getElementById("variantsCard");
@@ -711,21 +728,12 @@
                         ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
-                        <label class="form-label">Price</label>
+                        {{-- <label class="form-label">Price</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][price]">
-                            @error('variants[${variantCounter}][price]')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         <label class="form-label">Sale price</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
-                            @error('variants[${variantCounter}][sale_price]')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         <label class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
-                            @error('variants[${variantCounter}][quantity]')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                        <input type="number" class="form-control" name="variants[${variantCounter}][quantity]"> --}}
                         <label class="form-label">Image</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
                             @error('variants[${variantCounter}][image]')
@@ -842,12 +850,12 @@
                             <label class="form-label">Barcode</label>
                             <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                             ${hiddenAttributeInputs}
-                            <label class="form-label">Price</label>
+                            {{-- <label class="form-label">Price</label>
                             <input type="number" class="form-control" name="variants[${variantCounter}][price]">
                             <label class="form-label">Sale price</label>
                             <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
                             <label class="form-label">Quantity</label>
-                            <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
+                            <input type="number" class="form-control" name="variants[${variantCounter}][quantity]"> --}}
                             <label class="form-label">Image</label>
                             <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
                             <img class="img-preview mt-2 d-none" width="100" height="100">

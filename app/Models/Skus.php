@@ -51,4 +51,8 @@ class Skus extends Model
     {
         return $this->hasMany(InventoryLog::class, 'id_product_variant', 'id');
     }
+    public function inventory_entries()
+    {
+        return $this->hasMany(InventoryEntry::class, 'id_skus', 'id');
+    }
 }

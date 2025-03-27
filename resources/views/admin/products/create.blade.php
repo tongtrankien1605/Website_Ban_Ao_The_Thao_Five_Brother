@@ -89,7 +89,8 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <label class="form-label">Name</label>
-                                                    <input type="text" class="form-control" name="variants[{{ $index }}][name]"
+                                                    <input type="text" class="form-control"
+                                                        name="variants[{{ $index }}][name]"
                                                         value="{{ $variant['name'] }}">
                                                     @error("variants.$index.name")
                                                         <div class="text-danger">{{ $message }}</div>
@@ -102,7 +103,7 @@
                                                             name="variants[{{ $index }}][attribute_values][]"
                                                             value="{{ $attrValue }}">
                                                     @endforeach
-                                                    <label class="form-label">Price</label>
+                                                    {{-- <label class="form-label">Price</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][price]"
                                                         value="{{ old("variants.$index.price") }}">
@@ -124,7 +125,7 @@
                                                         value="{{ old("variants.$index.quantity") }}">
                                                     @error("variants.$index.quantity")
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
                                                     <label class="form-label">Image</label>
                                                     <input type="file" class="form-control variant-image"
