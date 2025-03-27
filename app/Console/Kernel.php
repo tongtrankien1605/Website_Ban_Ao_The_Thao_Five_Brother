@@ -14,8 +14,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('orders:auto-confirm-received')->daily();
+        $schedule->command('inventory_entries:auto-confirm-inventory-entry')->daily();
     }
-
+    //start php artisan command
+    //start php artisan schedule:work
     /**
      * Register the commands for the application.
      */

@@ -1,4 +1,19 @@
 <script>
+     document.addEventListener("DOMContentLoaded", function() {
+            var summernoteElement = document.getElementById("summernote");
+            if (summernoteElement) {
+                $(summernoteElement).summernote({
+                    height: 300,
+                    toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['fontname', 'fontsize', 'color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', 'codeview']]
+                    ]
+                });
+            }
+        });
     var attributeValues = @json($attributeValues);
     document.addEventListener("DOMContentLoaded", function() {
         const toggleBtn = document.getElementById('toggleVariantsBtn');
@@ -131,7 +146,7 @@
                         ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
-                        <label class="form-label">Price</label>
+                        {{-- <label class="form-label">Price</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][price]">
                             @error('variants[${variantCounter}][price]')
                                 <div class="text-danger">{{ $message }}</div>
@@ -145,7 +160,7 @@
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            @enderror --}}
                         <label class="form-label">Image</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
                             @error('variants[${variantCounter}][image]')

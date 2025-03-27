@@ -33,14 +33,14 @@
                                     <label>Tên biến thể: </label>
                                     <span>{{ $skus->name }}</span>
                                 </div>
-                                <div class="form-group">
+                                {{-- <div class="form-group">
                                     <label>Giá: </label>
                                     <span>{{ number_format($skus->price, 0, '', ',') }} VND</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Giá giảm: </label>
                                     <span>{{ number_format($skus->sale_price, 0, '', ',') }} VND</span>
-                                </div>
+                                </div> --}}
                                 <div class="form-group">
                                     <label>Barcode: </label>
                                     <span>{{ $skus->barcode }}</span>

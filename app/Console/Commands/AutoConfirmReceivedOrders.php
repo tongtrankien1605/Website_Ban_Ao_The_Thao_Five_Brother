@@ -30,7 +30,7 @@ class AutoConfirmReceivedOrders extends Command
     public function handle()
     {
         $orders = Order::where('id_order_status', OrderStatus::DELIVERED)
-            ->where('delivered_at', '<=', Carbon::now()->subDays(7))
+            ->where('delivered_at', '<=', Carbon::now()->subDays(3))
             ->get();
         foreach ($orders as $order) {
             $oldStatus = $order->id_order_status;

@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsTo(Role::class,'role','id');
+        return $this->belongsTo(Role::class, 'role', 'id');
     }
 
     public function voucher_users()
@@ -103,5 +103,9 @@ class User extends Authenticatable
     public function inventory_logs()
     {
         return $this->hasMany(InventoryLog::class, 'user_id', 'id');
+    }
+    public function inventory_entries()
+    {
+        return $this->hasMany(InventoryEntry::class, 'user_id', 'id');
     }
 }
