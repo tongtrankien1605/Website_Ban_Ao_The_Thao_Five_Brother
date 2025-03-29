@@ -38,6 +38,22 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
        with font-awesome or any other icon font library -->
+
+                {{-- <i class="metismenu-icon pe-7s-rocket"></i> --}}
+
+                <li class="nav-item menu-close">
+
+                    <a href="{{ Route('admin.dashboard.index') }}" class="nav-link">
+                        <i class="fa-solid fa-rocket"></i>
+                        <p>
+                            Dashboard
+                           
+                        </p>
+                    </a>
+
+                </li>
+
+
                 <li class="nav-item menu-close">
 
                     <a href="{{ route('admin.user.index') }}" class="nav-link">
@@ -62,6 +78,7 @@
                         </li>
                     </ul>
                 </li>
+
                 <li class="nav-item menu-close">
                     <a href="{{ route('admin.category.index') }}" class="nav-link">
                         <i class="fa-solid fa-table-list"></i>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductAttributeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -94,19 +95,31 @@ Route::get('/404', function () {
 // thêm middleware auth vào các route admin
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function () {
+
     //user
     Route::resource('/user', AdminUserController::class);
     Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
-    //chạy tem sẵn
+
+    // chạy template sẵn
     Route::get('/index', function () {
         return view('admin.layouts.index');
+        // return view('admin.dashboard.index');
     })->name('index');
+
+    // end template sẵn
+    
     Route::get('/form', function () {
         return view('admin.form.index');
     })->name('form');
     Route::get('/table', function () {
         return view('admin.table.index');
     })->name('table');
+
+
+    // dashboard admin
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
     //voucher
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
     Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
@@ -116,11 +129,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
     Route::resource('product', AdminProductController::class);
     Route::put('product/{product}/change_status', [AdminProductController::class, 'changeStatus'])->name('product.change_status');
+
     //route Category
 
     Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
     Route::resource('category', CategoryController::class);
     //End route Category
+
     Route::resource('product_attribute', ProductAttributeController::class);
     //post
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
@@ -130,6 +145,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
     //brand
     Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
     Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
@@ -138,6 +154,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
     Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
     Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
+
 
     Route::resource('product.skus', SkusController::class);
     Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
@@ -184,6 +201,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('delete_wishlist');
 
 });
+
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payment.vnpay.callback');
 Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
