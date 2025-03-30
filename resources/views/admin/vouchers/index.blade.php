@@ -27,7 +27,7 @@
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
                     <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.vouchers.create') }}" class="btn btn-primary">Thêm mới bài viết</a>
+                    <a href="{{ route('admin.vouchers.create') }}" class="btn btn-primary">Thêm mới danh mục</a>
                     <div class="card-tools">
                         <form action="{{ route('admin.vouchers.index') }}" method="GET" class="input-group input-group-sm"
                             style="width: 150px;">
