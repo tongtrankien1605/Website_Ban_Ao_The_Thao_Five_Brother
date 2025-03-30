@@ -46,6 +46,12 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
+                                        <label for="max_discount_amount">Giảm giá tối đa</label>
+                                        <input type="number" class="form-control" id="max_discount_amount"
+                                            name="max_discount_amount"
+                                            value="{{ old('max_discount_amount', $voucher->max_discount_amount ?? '') }}">
+                                    </div>
+                                    <div class="form-group">
                                         <label for="total_usage">Số lần sử dụng</label>
                                         <input type="number" class="form-control" id="total_usage" name="total_usage"
                                             value="{{ old('total_usage') }}">
@@ -71,8 +77,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="status">Trạng thái</label>
-                                        <input type="checkbox" value="1" class="form-control" id="status"
-                                            name="status">
+                                        <input type="checkbox" value="1" class="form-control" id="status" name="status">
                                         @error('status')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -91,5 +96,3 @@
             </div>
     </div>
 @endsection
-
-

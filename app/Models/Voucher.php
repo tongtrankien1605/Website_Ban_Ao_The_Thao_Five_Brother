@@ -19,6 +19,7 @@ class Voucher extends Model
         'start_date',
         'end_date',
         'status',
+        'max_discount_amount'
     ];
     public function serializeDate($date)
     {

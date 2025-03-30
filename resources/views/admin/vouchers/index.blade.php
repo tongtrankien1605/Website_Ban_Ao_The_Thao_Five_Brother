@@ -62,7 +62,10 @@
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
                                     aria-label="Platform(s): activate to sort column ascending">
-                                    Giá trị</th>
+                                    Giá trị giảm</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
+                                    aria-label="Platform(s): activate to sort column ascending">
+                                    Giảm tối đa</th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
                                     aria-label="Engine version: activate to sort column ascending">
                                     Số lần sử dụng
@@ -86,6 +89,7 @@
                                     </td>
                                     <td>{{ $voucher->discount_type }}</td>
                                     <td>{{ $voucher->discount_value }}</td>
+                                    <td>{{ $voucher->max_discount_amount ?? 'Không giới hạn' }}</td>
                                     <td>{{ $voucher->total_usage }}</td>
                                     <td>{{ $voucher->start_date }}</td>
                                     <td>{{ $voucher->end_date }}</td>
@@ -99,7 +103,7 @@
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.vouchers.destroy', $voucher->id) }}"" method="POST"
+                                        <form action="{{ route('admin.vouchers.destroy', $voucher->id) }}"" method=" POST"
                                             onsubmit="return confirm('Bạn có chắc muốn xóa voucher này?')"
                                             style="display:inline;">
                                             @csrf
