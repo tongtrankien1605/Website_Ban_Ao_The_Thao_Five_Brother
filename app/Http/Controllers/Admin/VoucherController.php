@@ -35,16 +35,16 @@ class VoucherController extends Controller
             'code' => 'required|unique:vouchers',
             'discount_type' => 'required|in:percentage,fixed',
             'discount_value' => 'required|numeric',
+            'max_discount_amount' => 'nullable|numeric|min:0',
             'total_usage' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'status' => ['boolean,nullable',Rule::in([0,1])],
+            'status' => ['nullable', Rule::in([0, 1])],
         ]);
 
         Voucher::create($request->all());
 
         return redirect()->route('admin.vouchers.index')->with('success', 'Voucher created successfully');
-
     }
 
     /**
@@ -68,19 +68,20 @@ class VoucherController extends Controller
      */
     public function update(Request $request, Voucher $voucher)
     {
-        $data=$request->validate([
-            'code' => 'required|unique:vouchers,code,' . $voucher->id,
+        $data = $request->validate([
+            'code' => 'required|unique:vouchers',
             'discount_type' => 'required|in:percentage,fixed',
             'discount_value' => 'required|numeric',
+            'max_discount_amount' => 'nullable|numeric|min:0',
             'total_usage' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'status' => ['nullable',Rule::in([0,1])],
+            'status' => ['nullable', Rule::in([0, 1])],
         ]);
 
         $data['is_active'] ??= 0;
 
-        dd($data);
+        // dd($data);
         $voucher->update($data);
 
         return redirect()->route('admin.vouchers.index')->with('success', 'Voucher updated successfully');
