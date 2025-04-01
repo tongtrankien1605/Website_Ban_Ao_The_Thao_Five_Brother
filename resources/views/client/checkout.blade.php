@@ -17,12 +17,20 @@
         </div>
     </div><!-- Page Banner Section End -->
 
+    <!-- Countdown Timer -->
+    <div class="countdown-timer"
+        style="background-color: #f8f9fa; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <span style="font-weight: bold;">Time remaining: </span>
+        <span id="timer" style="color: #e83e8c; font-size: 1.2em; font-weight: bold;"></span>
+        <span id="attempts" style="margin-left: 20px; color: #dc3545;"></span>
+    </div>
+
     <!-- Page Section Start -->
-    <div class="page-section section section-padding">
+    <div class="page-section section section-padding" style="margin-top: 60px;">
         <div class="container">
 
             <!-- Checkout Form s-->
-            <form action="{{ route('payOrder') }}" class="checkout-form" method="POST">
+            <form action="{{ route('payOrder') }}" class="checkout-form" method="POST" id="checkoutForm">
                 @csrf
                 @method('POST')
                 <div class="row row-50 mbn-40">
@@ -180,4 +188,122 @@
 
         </div>
     </div><!-- Page Section End -->
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const timerElement = document.getElementById('timer');
+                const attemptsElement = document.getElementById('attempts');
+                const checkoutForm = document.getElementById('checkoutForm');
+                let attemptsRemaining = {{ Auth::user()->failed_attempts ?? 0 }};
+                let timeLeft = 10; // 60 seconds timeout
+
+                // Update attempts display
+                attemptsElement.textContent = `Số lần thử còn lại: ${3 - attemptsRemaining}`;
+
+                function updateTimerDisplay() {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                    // Visual feedback for remaining time
+                    if (timeLeft <= 30) {
+                        timerElement.style.color = '#dc3545';
+                        timerElement.style.fontWeight = 'bold';
+                    }
+
+                    if (timeLeft <= 10) {
+                        timerElement.style.animation = "blink 1s infinite";
+                    }
+                }
+
+                // Initial display
+                updateTimerDisplay();
+
+                // Countdown timer
+                const timer = setInterval(function() {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timer);
+                        handleTimeout();
+                    }
+                }, 1000);
+
+                function handleTimeout() {
+                    // Disable form submission
+                    checkoutForm.querySelectorAll('input, button').forEach(element => {
+                        element.disabled = true;
+                    });
+
+                    // Show error message
+                    // const errorDiv = document.createElement('div');
+                    // errorDiv.className = 'alert alert-danger mt-3';
+                    // errorDiv.textContent = 'Phiên thanh toán đã hết hạn. Vui lòng thử lại.';
+                    // checkoutForm.insertBefore(errorDiv, checkoutForm.firstChild);
+                    alert('Phiên thanh toán đã hết hạn. Vui lòng thử lại.');
+                    // Redirect to cart page
+                    $.ajax({
+                        url: '/create-payment-attempt',
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            console.log('Success:', data);
+                            // alert('Payment Attempt Created!');
+
+                            if (data.attempts_remaining <= 0) {
+                                alert('Tài khoản của bạn đã bị khóa!');
+                                window.location.href = data.redirect;
+                            } else {
+                                window.location.href = "/cart";
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('Lỗi:', xhr.responseText);
+                            alert('Lỗi xảy ra! Kiểm tra console.');
+                        }
+                    });
+
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = "/cart";
+                    }, 2000);
+                }
+
+                // // Handle form submission
+                // checkoutForm.addEventListener('submit', function(e) {
+                //     if (timeLeft <= 0) {
+                //         e.preventDefault();
+                //         handleTimeout();
+                //     }
+                //     $.ajax({
+                //         url: '/create-payment-attempt',
+                //         type: 'POST',
+                //         headers: {
+                //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //         },
+                //         success: function(data) {
+                //             console.log('Success:', data);
+                //             alert('Payment Attempt Created!');
+
+                //             if (data.attempts_remaining <= 0) {
+                //                 alert('Tài khoản của bạn đã bị khóa!');
+                //                 window.location.href = data.redirect;
+                //             } else {
+                //                 window.location.href = "/cart";
+                //             }
+                //         },
+                //         error: function(xhr) {
+                //             console.error('Lỗi:', xhr.responseText);
+                //             alert('Lỗi xảy ra! Kiểm tra console.');
+                //         }
+                //     });
+                // });
+            });
+        </script>
+    @endpush
+
 @endsection

@@ -24,6 +24,9 @@ return new class extends Migration
             $table->boolean('status')->default(true)->comment('Trạng thái tài khoản');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('remember_token', 100)->nullable()->comment('Ghi nhớ token');
+            $table->integer('failed_attempts')->default(0)->comment('Số lần thanh toán thất bại');
+            $table->boolean('is_locked')->default(false);
+            $table->timestamp('locked_until')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
