@@ -150,7 +150,17 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error("Lỗi AJAX:", xhr);
-                alert("Lỗi: " + xhr.responseJSON.message);
+                if (xhr.status === 422) {
+                    // Nếu lỗi do vượt quá số lượng tồn kho
+                    alert(xhr.responseJSON.message);
+                    // Reset số lượng về giá trị tối đa cho phép
+                    let maxQuantity = xhr.responseJSON.max_quantity;
+                    $('input[data-id="' + cartItemId + '"]').val(maxQuantity);
+                    // Cập nhật lại với số lượng tối đa
+                    updateCartQuantity(cartItemId, maxQuantity, price);
+                } else {
+                    alert("Lỗi: " + xhr.responseJSON.message);
+                }
             }
         });
     }

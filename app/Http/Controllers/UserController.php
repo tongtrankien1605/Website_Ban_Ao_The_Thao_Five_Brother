@@ -81,11 +81,14 @@ class UserController extends Controller
                 'users.phone_number as user_phone_number',
             ])
             ->paginate(10);
+            // dd($orders->toArray());
         $orderIds = $orders->pluck('id');
         $orderDetails = OrderDetail::whereIn('id_order', $orderIds)
             ->join('skuses', function ($q) {
                 $q->on('skuses.id', '=', 'order_details.id_product_variant');
                 $q->whereNull('skuses.deleted_at');
+            })->join('inventory_entries', function ($q) {
+                $q->on('inventory_entries.id_skus', '=', 'skuses.id');
             })
             ->get()
             ->groupBy('id_order');

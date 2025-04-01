@@ -199,6 +199,9 @@ Route::middleware('auth')->group(function (){
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
     Route::post('/wishlist/add_to_wishlist/{id}', [WishlistController::class, 'store'])->name('add_wishlist');
     Route::get('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('delete_wishlist');
+    Route::post('/lock-account', [OrderController::class, 'lockAccount'])->name('lock.account');
+    Route::post('/create-payment-attempt', [OrderController::class, 'createPaymentAttempt'])
+    ->name('create.payment.attempt');
 
 });
 

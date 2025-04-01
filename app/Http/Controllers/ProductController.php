@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductAtribute;
 use App\Models\ProductImage;
 use App\Models\Skus;
 use App\Models\Wishlist;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -59,32 +61,49 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::with([
-            'attributeValues.attribute', // Lấy thuộc tính và giá trị
-            'variants'
+            'attributeValues.attribute',
+            'variants.latestStock'
         ])->findOrFail($id);
-    // dd($product->toArray());
+
         $brand = Brand::find($product->id_brand);
         $category = Category::find($product->id_category);
         $productImages = ProductImage::where('id_product', $product->id)->get();
         $wishlist = Wishlist::where('id_product', $product->id)->where('id_user', auth()->id())->first();
+        
+        // Get all SKUs for this product
         $skus = Skus::where('product_id', $product->id)->get();
-    
+        
+        // Get all variants for this product
+        $variants = Variant::where('product_id', $product->id)
+            ->with(['latestStock', 'product_atribute_values'])
+            ->get();
+
+        // Get inventory data for all variants
+        $inventoryData = Inventory::whereIn('id_product_variant', $variants->pluck('id'))
+            ->latest('created_at')
+            ->get()
+            ->groupBy('id_product_variant')
+            ->map(function($group) {
+                return $group->first()->quantity;
+            })
+            ->toArray();
+
+        // Get the main image
         $mainImage = $product->image ?? ($productImages->first() ? $productImages->first()->image_url : null);
-    
-        // Debug để kiểm tra dữ liệu trước khi truyền vào view
-        // dd($product->attributeValues);
-    
-        return view('client.single-product', compact([
+
+        return view('client.single-product', compact(
             'brand',
             'category',
             'product',
             'productImages',
             'mainImage',
             'skus',
-            'wishlist'
-        ]));
+            'wishlist',
+            'variants',
+            'inventoryData'
+        ));
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      */
