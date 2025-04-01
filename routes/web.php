@@ -202,6 +202,8 @@ Route::middleware('auth')->group(function (){
     Route::post('/lock-account', [OrderController::class, 'lockAccount'])->name('lock.account');
     Route::post('/create-payment-attempt', [OrderController::class, 'createPaymentAttempt'])
     ->name('create.payment.attempt');
+    Route::get('/check-stock', [OrderController::class, 'checkStock'])
+    ->name('check_stock');
 
 });
 

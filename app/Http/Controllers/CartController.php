@@ -193,66 +193,23 @@ class CartController extends Controller
 
     public function updateQuantity(Request $request, $id)
     {
-        DB::beginTransaction();
-        try {
-            $cartItem = CartItem::find($id);
+        $cartItem = CartItem::find($id);
 
-            if (!$cartItem) {
-                return response()->json(['message' => 'Sản phẩm không tồn tại'], 404);
-            }
-
-            // Get current inventory
-            $inventory = Inventory::where('id_product_variant', $cartItem->id_product_variant)->first();
-            
-            if (!$inventory) {
-                return response()->json(['message' => 'Không tìm thấy thông tin tồn kho'], 404);
-            }
-
-            // Calculate available inventory (current inventory + current cart quantity)
-            $availableInventory = $inventory->quantity + $cartItem->quantity;
-            
-            // Check if requested quantity exceeds available inventory
-            if ($request->quantity > $availableInventory) {
-                return response()->json([
-                    'message' => 'Số lượng sản phẩm trong kho không đủ. Chỉ còn ' . $availableInventory . ' sản phẩm.',
-                    'max_quantity' => $availableInventory
-                ], 422);
-            }
-
-            // Calculate the difference in quantity
-            $quantityDiff = $request->quantity - $cartItem->quantity;
-            
-            // Update inventory
-            $inventory->quantity = $inventory->quantity - $quantityDiff;
-            $inventory->save();
-
-            // Log inventory change
-            InventoryLog::create([
-                'id_product_variant' => $cartItem->id_product_variant,
-                'user_id' => auth()->user()->id,
-                'old_quantity' => $inventory->quantity + $quantityDiff,
-                'new_quantity' => $inventory->quantity,
-                'change_quantity' => -$quantityDiff,
-                'reason' => 'Cập nhật số lượng giỏ hàng'
-            ]);
-
-            // Update cart item quantity
-            $cartItem->quantity = $request->quantity;
-            $cartItem->save();
-
-            $total = CartItem::where('id_user', Auth::id())->sum(DB::raw('price * quantity'));
-
-            DB::commit();
-            return response()->json([
-                'message' => 'Cập nhật giỏ hàng thành công',
-                'subtotal' => $cartItem->quantity * $cartItem->price,
-                'total' => $total
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Có lỗi xảy ra khi cập nhật giỏ hàng'], 500);
+        if (!$cartItem) {
+            return response()->json(['message' => 'Sản phẩm không tồn tại'], 404);
         }
+
+        $cartItem->quantity = $request->quantity;
+        $cartItem->save();
+        $total = CartItem::where('id_user', Auth::id())->sum(DB::raw('price * quantity'));
+
+        return response()->json([
+            'message' => 'Cập nhật giỏ hàng thành công',
+            'subtotal' => $cartItem->quantity * $cartItem->price,
+            'total' => $total
+        ]);
     }
+
 
     public function remove($id)
     {

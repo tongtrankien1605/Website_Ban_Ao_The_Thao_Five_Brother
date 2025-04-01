@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Inventory;
 use App\Models\InventoryEntry;
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentAttempt;
@@ -16,6 +17,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use LengthException;
 
 class OrderController extends Controller
 {
@@ -27,7 +29,7 @@ class OrderController extends Controller
         }
         
         if ($user->is_locked && $user->locked_until > now()) {
-            return redirect()->route('cart.index')->withErrors('Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau ' . $user->locked_until->format('H:i:s'));
+            return redirect()->route('show.cart')->withErrors('Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau ' . $user->locked_until->format('H:i:s'));
         }
     
         $cartItem = CartItem::whereIn('id', $request->cart_item_ids)->with('skuses')->get();
@@ -231,6 +233,41 @@ class OrderController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function checkStock()
+    {
+        $cartItems = CartItem::where('id_user', Auth::id())->with('skuses')->get();
+        
+        if ($cartItems->isEmpty()) {
+            return response()->json(['out_of_stock' => false]);
+        }
+    
+        // Lấy danh sách tồn kho của các sản phẩm trong giỏ hàng
+        $inventory = Inventory::whereIn('id_product_variant', $cartItems->pluck('id_product_variant'))->get()->keyBy('id_product_variant');
+    
+    
+        foreach ($cartItems as $item) {
+            $variantId = $item->id_product_variant;
+            
+            // Kiểm tra sản phẩm có tồn tại trong danh sách inventory không
+            if (isset($inventory[$variantId])) {
+                $stockQuantity = $inventory[$variantId]->quantity;
+                // dd($stockQuantity);
+    
+                // Nếu có hàng trong kho nhiều hơn hoặc bằng số lượng giỏ hàng yêu cầu -> chưa hết hàng
+                if ($stockQuantity <= $item->quantity) {
+                    $outOfStock = true;
+                    break;
+                }else{
+                    $outOfStock = false;
+                }
+            }
+        }
+    
+        return response()->json(['out_of_stock' => $outOfStock]);
+    }
+    
+
 }
 
 
