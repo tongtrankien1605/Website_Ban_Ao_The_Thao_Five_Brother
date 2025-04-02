@@ -38,25 +38,25 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
+                                <div class="card-header bg-white d-flex align-items-center justify-content-end">
+                                    <form id="search-form" class="d-flex">
+                                        <input type="text" id="search-input"
+                                            class="form-control border-light border border-1 border-dark"
+                                            placeholder="🔍 Tìm kiếm sản phẩm..." value="{{ request('search') }}">
+                                        {{-- <button type="submit" class="btn btn-outline-secondary ms-2"><i
+                                                class="fas fa-search"></i></button> --}}
+                                    </form><div class="card-tools ms-3">
+                                        <button type="button" id="downloadSelected" class="btn btn-info" disabled>
+                                            <i class="fas fa-download"></i> Tải PDF đã chọn
+                                        </button>
+                                    </div>
+                                    {{-- <div class="ms-3">
+                                            <button id="select-all-btn" class="btn btn-outline-dark">Chọn tất cả</button>
+                                            <button id="deselect-all-btn" class="btn btn-outline-dark">Bỏ chọn</button>
+                                        </div> --}}
+                                </div>
                                 <div class="card-body">
                                     <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6"></div>
-                                            <div class="col-sm-12 col-md-6">
-                                                <form action="{{ route('admin.category.search') }}" method="GET"
-                                                    class="pb-3">
-                                                    <div id="example1_filter" class="dataTables_filter">
-                                                        <label>Search:
-                                                            <input type="search" class="form-control form-control-sm"
-                                                                placeholder="" name="keyword">
-                                                        </label>
-                                                        <button class="btn btn-success" type="submit">
-                                                            <i class="fa fa-search"></i>
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
 
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -64,11 +64,16 @@
                                                     class="table table-bordered table-striped dataTable dtr-inline">
                                                     <thead>
                                                         <tr>
-                                                            <th class="text-nowrap text-center" style="width:1px; padding-right:8px">Id</th>
+                                                            <th>
+                                                                <input type="checkbox" id="selectAll">
+                                                            </th>
+                                                            <th class="text-nowrap text-center"
+                                                                style="width:1px; padding-right:8px">Id</th>
                                                             <th class="text-nowrap">Người đặt</th>
                                                             <th class="text-nowrap">Điện thoại</th>
                                                             <th class="text-nowrap">Địa chỉ</th>
-                                                            <th class="text-nowrap" style="width:1px; padding-right:8px">Tổng sản phẩm</th>
+                                                            <th class="text-nowrap" style="width:1px; padding-right:8px">
+                                                                Tổng sản phẩm</th>
                                                             <th class="text-nowrap">Tổng tiền</th>
                                                             <th class="text-nowrap">Trạng thái</th>
                                                             <th class="text-nowrap">Thanh toán</th>
@@ -79,6 +84,10 @@
                                                     <tbody>
                                                         @foreach ($orders as $order)
                                                             <tr>
+                                                                <td>
+                                                                    <input type="checkbox" class="order-checkbox"
+                                                                        value="{{ $order->id }}">
+                                                                </td>
                                                                 <td class="text-nowrap text-center">{{ $order->id }}</td>
                                                                 <td class="text-nowrap">{{ $order->user_name }}</td>
                                                                 <td class="text-nowrap">{{ $order->users->phone_number }}
@@ -183,7 +192,7 @@
                 </div>
             </section>
         </div>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>
             let userId = {{ auth()->id() }};
             console.log(userId);
@@ -257,6 +266,66 @@
                     saveButton.disabled = orderStatusSelect.value === originalStatus;
                 });
             });
+            $(document).ready(function() {
+                $('input#search-input').on("keyup", function() {
+                    let value = $(this).val().toLowerCase();
+
+                    $("table tbody tr").filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                    });
+                });
+                // Xử lý chọn tất cả
+                $('#selectAll').change(function() {
+                    $('.order-checkbox').prop('checked', $(this).prop('checked'));
+                    updateDownloadButton();
+                });
+
+                // Xử lý chọn từng checkbox
+                $('.order-checkbox').change(function() {
+                    updateDownloadButton();
+                });
+
+                // Cập nhật trạng thái nút tải xuống
+                function updateDownloadButton() {
+                    const checkedCount = $('.order-checkbox:checked').length;
+                    $('#downloadSelected').prop('disabled', checkedCount === 0);
+                }
+
+                // Xử lý tải xuống nhiều đơn hàng
+                $('#downloadSelected').click(function() {
+                    const selectedOrders = $('.order-checkbox:checked').map(function() {
+                        return $(this).val();
+                    }).get();
+
+                    // Tạo form ẩn để submit
+                    const form = $('<form>', {
+                        'method': 'POST',
+                        'action': '{{ route('admin.orders.download_multiple_pdf') }}'
+                    });
+
+                    // Thêm CSRF token
+                    form.append($('<input>', {
+                        'type': 'hidden',
+                        'name': '_token',
+                        'value': '{{ csrf_token() }}'
+                    }));
+
+                    // Thêm các order ID
+                    selectedOrders.forEach(orderId => {
+                        form.append($('<input>', {
+                            'type': 'hidden',
+                            'name': 'order_ids[]',
+                            'value': orderId
+                        }));
+                    });
+
+                    // Thêm form vào body và submit
+                    $('body').append(form);
+                    form.submit();
+                    form.remove();
+                });
+            });
         </script>
         @vite('resources/js/updateOrder.js')
-    @endsection
+    </section>
+@endsection

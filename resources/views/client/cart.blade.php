@@ -103,7 +103,8 @@
                                         @foreach ($listVoucher as $voucher)
                                             <option value="{{ $voucher->id }}"
                                                 data-discount="{{ $voucher->vouchers->discount_value }}"
-                                                data-type="{{ $voucher->vouchers->discount_type }}">
+                                                data-type="{{ $voucher->vouchers->discount_type }}"
+                                                data-code="{{ $voucher->vouchers->code }}">
                                                 Giảm
                                                 {{ number_format($voucher->vouchers->discount_value) }}{{ $voucher->vouchers->discount_type == 'percentage' ? '%' : 'đ' }}
                                             </option>

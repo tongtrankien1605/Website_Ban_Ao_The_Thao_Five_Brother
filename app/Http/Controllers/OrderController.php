@@ -14,6 +14,7 @@ use App\Models\OrderStatusHistory;
 use App\Models\PaymentAttempt;
 use App\Models\Refund;
 use App\Models\User;
+use App\Models\VoucherUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -44,6 +45,7 @@ class OrderController extends Controller
             'payment_method' => 'required|exists:payment_methods,id_payment_method',
             'shipping_cost' => 'required|numeric',
             'grand_total' => 'required|numeric',
+            'id_voucher' => 'nullable|exists:vouchers,id',
         ]);
     
         DB::beginTransaction(); // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
@@ -55,11 +57,13 @@ class OrderController extends Controller
                 'phone_number' => $request->phone_number,
                 'id_shipping_method' => $request->shipping_id,
                 'id_payment_method' => $request->payment_method,
+                'id_voucher'=> $request->id_voucher,
                 'total_amount' => $request->grand_total,
                 'id_order_status' => 1, // Đơn hàng mới
                 'id_payment_method_status' => 1, // "Chưa thanh toán"
             ]);
     
+            VoucherUser::where('id_voucher',$request->id_voucher)->delete();
             foreach ($cartItem as $item) {
                 OrderDetail::create([
                     'id_order' => $order->id,

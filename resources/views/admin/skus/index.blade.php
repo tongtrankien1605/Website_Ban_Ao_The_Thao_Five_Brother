@@ -40,7 +40,7 @@
                         <input type="text" id="search-input"
                             class="form-control border-light border border-1 border-dark"
                             placeholder="🔍 Tìm kiếm sản phẩm..." value="{{ request('search') }}">
-                        <button type="submit" class="btn btn-outline-secondary ms-2"><i class="fas fa-search"></i></button>
+                        {{-- <button type="submit" class="btn btn-outline-secondary ms-2"><i class="fas fa-search"></i></button> --}}
                     </form>
                     {{-- <div class="ms-3">
                             <button id="select-all-btn" class="btn btn-outline-dark">Chọn tất cả</button>
