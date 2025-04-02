@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('vouchers', function (Blueprint $table) {
-            $table->integer('max_discount_amount')->nullable()->after('discount_value')->comment('Số tiền giảm giá tối đa');
+        Schema::table('inventory_entries', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_shopper')->comment('id của người duyệt hàng')->nullable()->after('user_id');
+            $table->foreign('id_shopper')->references('id')->on('users');
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('vouchers', function (Blueprint $table) {
-            $table->dropColumn('max_discount_amount');
+        Schema::table('inventoriy_entries', function (Blueprint $table) {
+            //
         });
     }
 };

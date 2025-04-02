@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductAttributeController;
+use App\Http\Controllers\Admin\SkusQuantityController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Auth\AuthController;
@@ -164,6 +165,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     // Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
     // Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
 
+    Route::resource('skus', SkusQuantityController::class);
+    Route::get('skus_comfirm', [SkusQuantityController::class, 'indexConfirm'])->name('skus_confirm');
+    Route::post('comfirm', [SkusQuantityController::class, 'confirm'])->name('confirm');
+    Route::get('skus_history', [SkusQuantityController::class, 'indexHistory'])->name('skus_history');
+    Route::post('history', [SkusQuantityController::class, 'confirm'])->name('history');
 
     Route::resource('refunds', RefundController::class);
 });

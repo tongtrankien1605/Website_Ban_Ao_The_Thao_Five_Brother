@@ -1,19 +1,19 @@
 <script>
-     document.addEventListener("DOMContentLoaded", function() {
-            var summernoteElement = document.getElementById("summernote");
-            if (summernoteElement) {
-                $(summernoteElement).summernote({
-                    height: 300,
-                    toolbar: [
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['fontname', 'fontsize', 'color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['insert', ['link', 'picture', 'video']],
-                        ['view', ['fullscreen', 'codeview']]
-                    ]
-                });
-            }
-        });
+    document.addEventListener("DOMContentLoaded", function() {
+        var summernoteElement = document.getElementById("summernote");
+        if (summernoteElement) {
+            $(summernoteElement).summernote({
+                height: 300,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['fontname', 'fontsize', 'color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+        }
+    });
     var attributeValues = @json($attributeValues);
     document.addEventListener("DOMContentLoaded", function() {
         const toggleBtn = document.getElementById('toggleVariantsBtn');

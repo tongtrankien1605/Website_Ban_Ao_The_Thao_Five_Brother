@@ -108,7 +108,8 @@ class OrderController extends Controller
     
         } catch (\Exception $e) {
             DB::rollBack(); // ❌ Hoàn tác nếu có lỗi
-            return redirect()->route('cart.index')->withErrors('Lỗi khi đặt hàng: ' . $e->getMessage());
+            dd($e);
+            return redirect()->route('show.cart')->withErrors('Lỗi khi đặt hàng: ' . $e->getMessage());
         }
     }
     
