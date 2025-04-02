@@ -263,7 +263,9 @@
                             </a>
                         </li>
                     </ul> --}}
-
+                <li class="nav-item menu-close"><a href="{{ route('admin.refunds.index') }}" class="nav-link">
+                        <p><i class="fa-solid fa-undo"></i>Quản lý Yêu cầu hoàn hàng</p>
+                    </a></li>
                 </li>
                 <li class="nav-item menu-close">
                     <a href="{{ route('index') }}" class="nav-link">

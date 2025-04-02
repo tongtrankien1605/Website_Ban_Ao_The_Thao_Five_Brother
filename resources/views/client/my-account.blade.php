@@ -277,60 +277,165 @@
                                                                                         class="btn btn-warning btnbtn">Chưa
                                                                                         nhận được hàng</button>
                                                                                 </div>
+
                                                                                 <div id="not-received-form"
                                                                                     style="display:none;">
-                                                                                    <form
-                                                                                        action="{{ route('order.update', $order->id) }}"
-                                                                                        method="POST">
-                                                                                        @csrf
-                                                                                        @method('PUT')
-                                                                                        <h5 class="text-center mb-3 fs-4">
-                                                                                            Bạn chưa nhận được hàng? Vui
-                                                                                            lòng điền lý do:</h5>
-                                                                                        <textarea name="reason" class="form-control mb-2" rows="3" placeholder="Nhập lý do..." required></textarea>
-                                                                                        <input type="hidden"
-                                                                                            name="id_order_status"
-                                                                                            value="{{ OrderStatus::FAILED }}">
-                                                                                        <div class="text-center">
-                                                                                            <button type="submit"
-                                                                                                class="btn btn-danger me-2">Gửi
-                                                                                                lý do</button>
-                                                                                            <button type="button"
-                                                                                                class="btn btn-secondary btnbtn">Hủy</button>
-                                                                                        </div>
-                                                                                    </form>
+                                                                                    @if ($order->payment_method_status_name === 'Đã thanh toán')
+                                                                                        <form
+                                                                                            action="{{ route('order.update', $order->id) }}"
+                                                                                            method="POST"
+                                                                                            enctype="multipart/form-data">
+                                                                                            @csrf
+                                                                                            @method('PUT')
+
+                                                                                            <h5
+                                                                                                class="text-center mb-3 fs-4">
+                                                                                                Bạn chưa nhận được hàng? Vui
+                                                                                                lòng điền thông tin:</h5>
+
+                                                                                            <textarea name="reason" class="form-control mb-2" rows="3" placeholder="Nhập lý do..." required>{{ old('reason') }}</textarea>
+                                                                                            @error('reason')
+                                                                                                <div class="text-danger">
+                                                                                                    {{ $message }}</div>
+                                                                                            @enderror
+
+                                                                                            <label class="form-label">Tải
+                                                                                                lên ảnh hoặc video minh
+                                                                                                họa:</label>
+                                                                                            <input type="file"
+                                                                                                name="evidence"
+                                                                                                class="form-control mb-2"
+                                                                                                accept="image/*,video/*">
+                                                                                            @error('evidence')
+                                                                                                <div class="text-danger">
+                                                                                                    {{ $message }}</div>
+                                                                                            @enderror
+
+                                                                                            <label class="form-label">Số
+                                                                                                tài khoản ngân hàng:</label>
+                                                                                            <input type="text"
+                                                                                                name="bank_account"
+                                                                                                class="form-control mb-2"
+                                                                                                placeholder="Nhập số tài khoản"
+                                                                                                value="{{ old('bank_account') }}"
+                                                                                                required>
+                                                                                            @error('bank_account')
+                                                                                                <div class="text-danger">
+                                                                                                    {{ $message }}</div>
+                                                                                            @enderror
+
+                                                                                            <label class="form-label">Tên
+                                                                                                ngân hàng:</label>
+                                                                                            <input type="text"
+                                                                                                name="bank_name"
+                                                                                                class="form-control mb-2"
+                                                                                                placeholder="Nhập tên ngân hàng"
+                                                                                                value="{{ old('bank_name') }}"
+                                                                                                required>
+                                                                                            @error('bank_name')
+                                                                                                <div class="text-danger">
+                                                                                                    {{ $message }}</div>
+                                                                                            @enderror
+
+                                                                                            <label class="form-label">Tên
+                                                                                                chủ tài khoản:</label>
+                                                                                            <input type="text"
+                                                                                                name="account_holder_name"
+                                                                                                class="form-control mb-2"
+                                                                                                placeholder="Nhập tên chủ tài khoản"
+                                                                                                value="{{ old('account_holder_name') }}"
+                                                                                                required>
+                                                                                            @error('account_holder_name')
+                                                                                                <div class="text-danger">
+                                                                                                    {{ $message }}</div>
+                                                                                            @enderror
+
+                                                                                            <p
+                                                                                                class="text-danger text-center">
+                                                                                                <strong>Lưu ý:</strong>
+                                                                                                Không gửi mã QR, nếu gửi sẽ
+                                                                                                không được hoàn trả.
+                                                                                            </p>
+
+                                                                                            <input type="hidden"
+                                                                                                name="id_order_status"
+                                                                                                value="{{ OrderStatus::FAILED }}">
+
+                                                                                            <div class="text-center">
+                                                                                                <button type="submit"
+                                                                                                    class="btn btn-danger me-2">Gửi
+                                                                                                    yêu cầu</button>
+                                                                                                <button type="button"
+                                                                                                    class="btn btn-secondary"
+                                                                                                    onclick="cancelForm('refund-form-1', 'confirm-section')">Hủy</button>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    @elseif($order->payment_method_status_name === 'Chưa thanh toán')
+                                                                                        <form
+                                                                                            action="{{ route('order.update', $order->id) }}"
+                                                                                            method="POST"
+                                                                                            enctype="multipart/form-data">
+                                                                                            @csrf
+                                                                                            @method('PUT')
+
+                                                                                            <h5
+                                                                                                class="text-center mb-3 fs-4">
+                                                                                                Bạn chưa thanh toán? Vui
+                                                                                                lòng điền lý do:</h5>
+
+                                                                                            <textarea name="reason" class="form-control mb-2" rows="3" placeholder="Nhập lý do..." required>{{ old('reason') }}</textarea>
+                                                                                            @error('reason')
+                                                                                                <div class="text-danger">
+                                                                                                    {{ $message }}</div>
+                                                                                            @enderror
+                                                                                            <input
+                                                                                                type="hidden"name="id_order_status"
+                                                                                                value="{{ OrderStatus::FAILED }}">
+                                                                                            <div class="text-center">
+                                                                                                <button
+                                                                                                    type="submit"class="btn btn-danger me-2">Gửi yêu
+                                                                                                    cầu</button><button
+                                                                                                    type="button"class="btn btn-secondary"
+                                                                                                    onclick="cancelForm('refund-form-2', 'confirm-section')">Hủy</button>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    @endif
                                                                                 </div>
-                                                                            </div>
-                                                                        @elseif ($order->id_order_status == OrderStatus::FAILED)
-                                                                            <div
-                                                                                class="alert alert-warning text-center mt-3">
-                                                                                Đang chờ xác nhận hoàn hàng từ shop.
-                                                                            </div>
-                                                                        @elseif ($order->id_order_status == OrderStatus::SUCCESS)
-                                                                            <div class="alert alert-success text-center">
-                                                                                Cảm ơn quý khách đã mua hàng của shop
-                                                                                chúng tớ!
-                                                                            </div>
-                                                                        @elseif ($order->id_order_status == OrderStatus::REFUND)
-                                                                            @if ($order->refund && $order->refund->status == 'Đang chờ xử lý')
+                                                                            @elseif ($order->id_order_status == OrderStatus::FAILED)
                                                                                 <div
-                                                                                    class="alert alert-warning text-center">
-                                                                                    Yêu cầu hoàn hàng của bạn đang được
-                                                                                    xử lý. Vui lòng chờ phản hồi từ
-                                                                                    shop!</div>
-                                                                            @elseif ($order->refund && $order->refund->status == 'Đã chấp nhận')
+                                                                                    class="alert alert-warning text-center mt-3">
+                                                                                    Đang chờ xác nhận hoàn hàng từ shop.
+                                                                                </div>
+                                                                            @elseif ($order->id_order_status == OrderStatus::SUCCESS)
                                                                                 <div
                                                                                     class="alert alert-success text-center">
-                                                                                    Yêu cầu hoàn hàng của bạn đã được
-                                                                                    chấp nhận. Số tiền sẽ được hoàn trả
-                                                                                    sớm nhất!</div>
-                                                                            @elseif ($order->refund && $order->refund->status == 'Đã từ chối')
-                                                                                <div
-                                                                                    class="alert alert-danger text-center">
-                                                                                    Yêu cầu hoàn hàng của bạn đã bị từ
-                                                                                    chối. Vui lòng liên hệ với shop để
-                                                                                    biết thêm chi tiết!</div>
-                                                                            @endif
+                                                                                    Cảm ơn quýkhách đã mua hàng của
+                                                                                    shopchúng tớ!
+                                                                                </div>
+                                                                            @elseif ($order->id_order_status == OrderStatus::REFUND)
+                                                                                @if ($order->refund && $order->refund->status == 'Đang chờ xử lý')
+                                                                                    <div
+                                                                                        class="alert alert-warning text-center">
+                                                                                        Yêu cầu hoàn hàng của bạn đang được
+                                                                                        xử lý. Vui lòng chờ phản hồi từ
+                                                                                        shop!
+                                                                                    </div>
+                                                                                @elseif ($order->refund && $order->refund->status == 'Đã chấp nhận')
+                                                                                    <div
+                                                                                        class="alert alert-success text-center">
+                                                                                        Yêu cầu hoàn hàng của bạn đã được
+                                                                                        chấp nhận. Số
+                                                                                        tiền sẽ được hoàn trả sớm nhất!
+                                                                                    </div>
+                                                                                @elseif ($order->refund && $order->refund->status == 'Đã từ chối')
+                                                                                    <div
+                                                                                        class="alert alert-danger text-center">
+                                                                                        Yêu cầu hoàn hàng của bạn đã bị từ
+                                                                                        chối. Vui lòng
+                                                                                        liên hệ với shop để biết thêm chi
+                                                                                        tiết!
+                                                                                    </div>
+                                                                                @endif
                                                                         @endif
                                                                     </div>
                                                                 </div>
@@ -418,7 +523,8 @@
                                 @endforeach
 
                                 <a href="#" class="btn btn-dark btn-round d-inline-block"><i
-                                        class="fa fa-edit"></i>Edit Address</a>
+                                        class="fa fa-edit"></i>Edit
+                                    Address</a>
                             </div>
                         </div>
                         <!-- Single Tab Content End -->
