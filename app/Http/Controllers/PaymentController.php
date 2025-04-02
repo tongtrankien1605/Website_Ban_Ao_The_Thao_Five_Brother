@@ -28,12 +28,10 @@ class PaymentController extends Controller
 
         $total = $request->input('total');
         $saleTotal = $total - $new_total;
-        $discount = $request->input('discount');
-        $discountType = $request->input('discountType');
+        $code = $request->input('code');
 
         // dd($discount);
-        $voucher = Voucher::where([['status', 0], ['discount_type', $discountType], ['discount_value', $discount]])->first();
-
+        $voucher = Voucher::where([['status', 0], ['code',$code]])->first();
         $address_user = AddressUser::where('id_user', Auth::id())->get();
         $shipping = ShippingMethod::all();
         $paymentMethods = PaymentMethod::all();

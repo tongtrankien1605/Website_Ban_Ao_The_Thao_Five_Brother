@@ -300,6 +300,9 @@
                                     <div class="text-center">
                                         <a href="{{ route('admin.orders.index') }}" class="btn btn-danger my-5">Quay
                                             lại</a>
+                                        <a href="{{ route('admin.orders.download_pdf', $order->id) }}" class="btn btn-info my-5">
+                                            <i class="fas fa-download"></i> Tải PDF
+                                        </a>
                                         @if ($order->id_order_status == OrderStatus::FAILED)
                                             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModal"
                                                 @if (in_array($order->id_order_status, [OrderStatus::CANCEL, OrderStatus::DELIVERED, OrderStatus::REFUND])) disabled @endif>

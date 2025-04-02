@@ -16,6 +16,7 @@ use App\Models\Refund;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -191,6 +192,68 @@ class OrderController extends Controller
         DB::commit();
         broadcast(new OrderStatusUpdate($order))->toOthers();
         return response()->json('Đơn hàng đã được cập nhật');
+    }
+
+    public function downloadPdf($id)
+    {
+        $order = Order::with(['users', 'address_users', 'payment_methods', 'shipping_methods', 'order_statuses', 'order_details.product_variants'])
+            ->findOrFail($id);
+
+        $pdf = PDF::loadView('admin.orders.pdf', compact('order'));
+        
+        return $pdf->download('don-hang-' . $id . '.pdf');
+    }
+
+    public function downloadMultiplePdf(Request $request)
+    {
+        $orderIds = $request->input('order_ids', []);
+        
+        if (empty($orderIds)) {
+            return back()->with('error', 'Vui lòng chọn ít nhất một đơn hàng');
+        }
+
+        $orders = Order::with(['users', 'address_users', 'payment_methods', 'shipping_methods', 'order_statuses', 'order_details.product_variants'])
+            ->whereIn('id', $orderIds)
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return back()->with('error', 'Không tìm thấy đơn hàng');
+        }
+
+        // Tạo PDF cho từng đơn hàng
+        $pdfs = [];
+        foreach ($orders as $order) {
+            $pdf = PDF::loadView('admin.orders.pdf', compact('order'));
+            $pdfs[] = [
+                'content' => $pdf->output(),
+                'filename' => 'don-hang-' . $order->id . '.pdf'
+            ];
+        }
+
+        // Nếu chỉ có 1 đơn hàng, tải xuống trực tiếp
+        if (count($pdfs) === 1) {
+            return response($pdfs[0]['content'])
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $pdfs[0]['filename'] . '"');
+        }
+
+        // Nếu có nhiều đơn hàng, tạo file ZIP
+        $zip = new \ZipArchive();
+        $zipName = 'danh-sach-don-hang-' . time() . '.zip';
+        $zipPath = storage_path('app/public/' . $zipName);
+        
+        if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
+            foreach ($pdfs as $pdf) {
+                $zip->addFromString($pdf['filename'], $pdf['content']);
+            }
+            $zip->close();
+            
+            $response = response()->download($zipPath, $zipName);
+            $response->deleteFileAfterSend(true);
+            return $response;
+        }
+
+        return back()->with('error', 'Có lỗi xảy ra khi tạo file ZIP');
     }
 
     /**

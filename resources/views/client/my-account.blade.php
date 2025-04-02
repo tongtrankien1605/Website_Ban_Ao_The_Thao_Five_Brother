@@ -127,7 +127,7 @@
                                                                     @foreach ($orderDetails[$order->id] as $orderDetail)
                                                                         <li class="text-start">
                                                                             <span class="dot"></span>
-                                                                            {{ $orderDetail->name }}
+                                                                            {{ $orderDetail->product_variants->name }}
                                                                         </li>
                                                                     @endforeach
                                                                 </ul>
@@ -179,6 +179,35 @@
                                                                                 {{ $order->order_status_name }}</p>
                                                                             <p><strong>Phương thức thanh toán:</strong>
                                                                                 {{ $order->payment_method_name }}</p>
+                                                                            @php
+                                                                                $sum = 0;
+                                                                                foreach (
+                                                                                    $orderDetails[$order->id]
+                                                                                    as $orderDetail
+                                                                                ) {
+                                                                                    $sum +=
+                                                                                        $orderDetail->quantity *
+                                                                                        $orderDetail->unit_price;
+                                                                                }
+                                                                            @endphp
+
+                                                                            <p><strong>Tổng:</strong>
+                                                                                {{ number_format($sum, 0, '', ',') }}
+                                                                                VND</p>
+                                                                            @if ($order->vouchers)
+                                                                                <p><strong>Voucher:</strong>
+                                                                                    Giảm
+                                                                                    @if ($order->vouchers->discount_type == 'percentage')
+                                                                                        {{ $order->vouchers->discount_value }}
+                                                                                        VND
+                                                                                    @else
+                                                                                        {{ number_format(($sum * $order->vouchers->discount_value) / 100, 0, '', ',') }}VND
+                                                                                    @endif
+                                                                                </p>
+                                                                            @endif
+                                                                            <p><strong>Phí ship:</strong>
+                                                                                {{ number_format($order->shipping_methods->cost, 0, '', ',') }}
+                                                                                VND</p>
                                                                             <p><strong>Tổng tiền:</strong>
                                                                                 {{ number_format($order->total_amount, 0, '', ',') }}
                                                                                 VND</p>
@@ -209,17 +238,17 @@
                                                                                     @foreach ($orderDetails[$order->id] as $orderDetail)
                                                                                         <tr>
                                                                                             <td class="text-center">
-                                                                                                <img src="{{ Storage::url($orderDetail->image) }}"
+                                                                                                <img src="{{ Storage::url($orderDetail->product_variants->image) }}"
                                                                                                     alt=""
                                                                                                     width="100px">
                                                                                             </td>
-                                                                                            <td>{{ $orderDetail->name }}
+                                                                                            <td> {{ $orderDetail->product_variants->name }}
                                                                                             </td>
-                                                                                            <td>{{ number_format($orderDetail->sale_price, 0, '', ',') }}
+                                                                                            <td>{{ number_format($orderDetail->unit_price, 0, '', ',') }}
                                                                                                 VND</td>
                                                                                             <td>{{ $orderDetail->quantity }}
                                                                                             </td>
-                                                                                            <td>{{ number_format($orderDetail->quantity * $orderDetail->sale_price, 0, '', ',') }}
+                                                                                            <td>{{ number_format($orderDetail->quantity * $orderDetail->unit_price, 0, '', ',') }}
                                                                                                 VND</td>
                                                                                         </tr>
                                                                                     @endforeach

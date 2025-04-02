@@ -172,6 +172,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::post('history', [SkusQuantityController::class, 'confirm'])->name('history');
 
     Route::resource('refunds', RefundController::class);
+
+    Route::get('orders/{id}/download_pdf', [AdminOrderController::class, 'downloadPdf'])->name('orders.download_pdf');
+    Route::post('orders/download-multiple_pdf', [AdminOrderController::class, 'downloadMultiplePdf'])->name('orders.download_multiple_pdf');
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {

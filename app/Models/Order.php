@@ -53,7 +53,7 @@ class Order extends Model
     }
     public function vouchers()
     {
-        return $this->belongsTo(Voucher::class);
+        return $this->belongsTo(Voucher::class,'id_voucher','id');
     }
     public function order_details()
     {

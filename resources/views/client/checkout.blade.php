@@ -126,6 +126,7 @@
                                     @endif
 
                                     @if ($voucher)
+                                        <input type="hidden" name="id_voucher" value="{{ $voucher->id }}">
                                         <p>Voucher
                                             <span>Giảm
                                                 @if ($voucher->discount_type == 'percentage')

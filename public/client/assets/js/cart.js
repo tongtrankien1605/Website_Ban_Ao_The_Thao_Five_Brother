@@ -253,6 +253,7 @@ $(document).ready(function () {
         let selectedOption = $("#voucher option:selected");
         discountValue = parseFloat(selectedOption.data("discount")) || 0;
         discountType = selectedOption.data("type");
+        code = selectedOption.data("code");
 
         console.log("Total ban đầu:", total);
         console.log("Discount Value:", discountValue);
@@ -294,7 +295,7 @@ $(document).ready(function () {
 
         console.log("🟢 Đang chuyển hướng với:", selectedItems, "New Total:", newTotal);
 
-        let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, discount: discountValue, discountType: discountType });
+        let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, code: code });
 
         window.location.href = "/payment?" + queryString; // Chuyển hướng với new_total
     });
