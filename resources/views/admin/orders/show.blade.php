@@ -301,14 +301,12 @@
                                         <a href="{{ route('admin.orders.index') }}" class="btn btn-danger my-5">Quay
                                             lại</a>
                                         @if ($order->id_order_status == OrderStatus::FAILED)
-                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#modalRefund"
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModal"
                                                 @if (in_array($order->id_order_status, [OrderStatus::CANCEL, OrderStatus::DELIVERED, OrderStatus::REFUND])) disabled @endif>
                                                 Hoàn trả đơn hàng
                                             </button>
                                         @else
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#myModal"
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
                                                 @if (in_array($order->id_order_status, [
                                                         OrderStatus::CANCEL,
                                                         OrderStatus::DELIVERED,
@@ -330,14 +328,14 @@
 
                 </div><!-- /.container-fluid   data-bs-backdrop="static"-->
 
-                <div class="modal fade" id="modalRefund">
+                <div class="modal" id="modalRefund">
                     <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
+                      <div class="modal-content">
 
                             <!-- Modal Header -->
                             <div class="modal-header">
                                 <h4 class="modal-title">Cập nhật đơn hàng #{{ $order->id }}</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <button type="button" class="btn-close" data-dismiss="modal"></button>
                             </div>
 
                             <!-- Modal body -->
@@ -596,7 +594,7 @@
                             <!-- Modal Header -->
                             <div class="modal-header">
                                 <h4 class="modal-title">Cập nhật đơn hàng #{{ $order->id }}</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <button type="button" class="btn-close" data-dismiss="modal"></button>
                             </div>
 
                             <!-- Modal body -->

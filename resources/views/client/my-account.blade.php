@@ -32,7 +32,7 @@
                         <a href="#dashboad" class="active" data-bs-toggle="tab"><i class="fa fa-dashboard"></i>
                             Dashboard</a>
 
-                        @if (Auth::check() && Auth::user()->role === 3)
+                        @if (Auth::check() && Auth::user()->role !== 1)
                             <a href="{{ route('admin.index') }}">
                                 <i class="fa fa-user"></i> Quản Lý Admin
                             </a>

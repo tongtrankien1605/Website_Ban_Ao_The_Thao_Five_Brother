@@ -26,12 +26,12 @@ class Product extends Model
 
     public function brands()
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class,'id_brand','id');
     }
 
     public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class,'id_category','id');
     }
 
     public function product_images()

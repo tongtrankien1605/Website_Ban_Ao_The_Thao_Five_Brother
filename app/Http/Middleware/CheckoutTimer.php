@@ -30,7 +30,7 @@ class CheckoutTimer
         
         if ($elapsed > 60) {
             session()->forget('checkout_start_time');
-            return redirect()->route('cart.index')
+            return redirect()->route('show.cart')
                 ->withErrors('Phiên thanh toán đã hết hạn. Vui lòng thử lại.');
         }
 

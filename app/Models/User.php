@@ -160,5 +160,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(PaymentAttempt::class, 'user_id');
     }
+    public function approver()
+    {
+        return $this->hasMany(InventoryEntry::class, 'id_shopper', 'id');
+    }
 
 }
