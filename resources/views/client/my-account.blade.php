@@ -197,7 +197,7 @@
                                                                             @if ($order->vouchers)
                                                                                 <p><strong>Voucher:</strong>
                                                                                     Giảm
-                                                                                    @if ($order->vouchers->discount_type == 'percentage')
+                                                                                    @if ($order->vouchers->discount_type == 'fixed')
                                                                                         {{ $order->vouchers->discount_value }}
                                                                                         VND
                                                                                     @else
