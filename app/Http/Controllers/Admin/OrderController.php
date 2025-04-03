@@ -54,7 +54,8 @@ class OrderController extends Controller
             ->withCount('order_details')
             ->paginate(10);
         // dd($orders);
-        $orderStatuses = OrderStatus::orderBy('id')->get();
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS];
+        $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         $paymentMethodStatuses = PaymentMethodStatus::orderBy('id')->get();
         return view('admin.orders.index', compact(['orders', 'orderStatuses', 'paymentMethodStatuses']));
     }
@@ -220,40 +221,10 @@ class OrderController extends Controller
             return back()->with('error', 'Không tìm thấy đơn hàng');
         }
 
-        // Tạo PDF cho từng đơn hàng
-        $pdfs = [];
-        foreach ($orders as $order) {
-            $pdf = PDF::loadView('admin.orders.pdf', compact('order'));
-            $pdfs[] = [
-                'content' => $pdf->output(),
-                'filename' => 'don-hang-' . $order->id . '.pdf'
-            ];
-        }
-
-        // Nếu chỉ có 1 đơn hàng, tải xuống trực tiếp
-        if (count($pdfs) === 1) {
-            return response($pdfs[0]['content'])
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $pdfs[0]['filename'] . '"');
-        }
-
-        // Nếu có nhiều đơn hàng, tạo file ZIP
-        $zip = new \ZipArchive();
-        $zipName = 'danh-sach-don-hang-' . time() . '.zip';
-        $zipPath = storage_path('app/public/' . $zipName);
+        // Tạo một file PDF duy nhất chứa tất cả các đơn hàng
+        $pdf = PDF::loadView('admin.orders.multiple_pdf', compact('orders'));
         
-        if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
-            foreach ($pdfs as $pdf) {
-                $zip->addFromString($pdf['filename'], $pdf['content']);
-            }
-            $zip->close();
-            
-            $response = response()->download($zipPath, $zipName);
-            $response->deleteFileAfterSend(true);
-            return $response;
-        }
-
-        return back()->with('error', 'Có lỗi xảy ra khi tạo file ZIP');
+        return $pdf->download('danh-sach-don-hang-' . time() . '.pdf');
     }
 
     /**
@@ -262,5 +233,56 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function updateMultipleStatus(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $orderIds = $request->input('order_ids', []);
+            $newStatus = $request->input('new_status');
+            $note = $request->input('note');
+
+            foreach ($orderIds as $orderId) {
+                $order = Order::findOrFail($orderId);
+                $oldStatus = $order->id_order_status;
+
+                // Cập nhật trạng thái đơn hàng
+                $order->id_order_status = $newStatus;
+                if ($newStatus == EnumsOrderStatus::DELIVERED) {
+                    $order->delivered_at = Carbon::now();
+                }
+
+                if (!$order->save()) {
+                    throw new \Exception('Không thể cập nhật đơn hàng #' . $orderId);
+                }
+
+                // Tạo lịch sử thay đổi trạng thái
+                OrderStatusHistory::create([
+                    'order_id' => $order->id,
+                    'user_id' => auth()->id(),
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus,
+                    'note' => $note,
+                ]);
+
+                // Broadcast sự kiện cập nhật trạng thái
+                broadcast(new OrderStatusUpdate($order))->toOthers();
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật trạng thái đơn hàng thành công'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

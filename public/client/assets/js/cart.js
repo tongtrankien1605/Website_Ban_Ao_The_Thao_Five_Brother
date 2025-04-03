@@ -221,6 +221,7 @@ $(document).ready(function () {
     let newTotal = 0; // Biến lưu tổng tiền mới sau khi áp voucher
     let discountValue = 0;
     let discountType = null;
+    let code = null;
     
     // 🟢 Hàm cập nhật tổng tiền giỏ hàng
     function updateCartSummary() {

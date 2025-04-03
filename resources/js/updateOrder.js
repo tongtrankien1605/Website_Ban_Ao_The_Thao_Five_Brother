@@ -8,10 +8,10 @@ import "./bootstrap";
 //     .error((error) => {
 //         console.error("Lỗi kết nối tới kênh:", error);
 //     });
-const editOrderModal = document.getElementById("editOrderModal");
+const editOrderModal = document.getElementById("updateMultipleStatusForm");
 
 document
-    .getElementById("editOrderForm")
+    .getElementById("updateMultipleStatusForm")
     .addEventListener("submit", function (event) {
         event.preventDefault();
         editOrderForm.querySelector("button[type='submit']").disabled = true;

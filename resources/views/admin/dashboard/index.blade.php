@@ -1,8 +1,3 @@
-@extends('admin.layouts.index')
-
-@section('title', 'Dashboard')
-
-@section('content')
     <div class="content-wrapper">
         <section class="content">
             <div class="container-fluid">
@@ -64,7 +59,6 @@
             </div>
         </section>
     </div>
-@endsection
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-3">
                     <div class="col-md-8">
-                        <h1 class="me-3 text-primary fw-bold">📦 Danh sách sản phẩm</h1>
+                        <h1 class="me-3 text-primary fw-bold">📦 Quản lý nhập kho sản phẩm</h1>
                     </div>
                     <div class="col-md-4 text-center">
                         <ol class="">
@@ -19,7 +19,6 @@
                                 <a class="btn btn-outline-primary ms-2" href="{{ route('admin.skus_confirm') }}">Danh sách
                                     cần duyệt</a>
                             @endif
-
                         </ol>
                     </div>
                 </div>
@@ -34,453 +33,819 @@
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
-            <div class="card" style="height: 700px; width:1250px">
-                <div class="card-header bg-white d-flex align-items-center justify-content-end">
-                    <form id="search-form" class="d-flex">
-                        <input type="text" id="search-input"
-                            class="form-control border-light border border-1 border-dark"
-                            placeholder="🔍 Tìm kiếm sản phẩm..." value="{{ request('search') }}">
-                        {{-- <button type="submit" class="btn btn-outline-secondary ms-2"><i class="fas fa-search"></i></button> --}}
-                    </form>
-                    {{-- <div class="ms-3">
-                            <button id="select-all-btn" class="btn btn-outline-dark">Chọn tất cả</button>
-                            <button id="deselect-all-btn" class="btn btn-outline-dark">Bỏ chọn</button>
-                        </div> --}}
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="card-title">Thông tin người nhập kho</h4>
                 </div>
-                <div class="card-body table-responsive p-0">
-                    <div class="card-body table-responsive">
-                        <table class="table table-striped border border-1 rounded rounded-pill">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>Thông tin sản phẩm</th>
-                                    <th class="text-center">Ảnh</th>
-                                    <th class="text-center">Số lượng biến thể</th>
-                                    <th class="text-center">Ngày tạo</th>
-                                    <th class="text-center">Trạng thái</th>
-                                    <th class="text-center">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($products as $product)
-                                    <tr>
-                                        {{-- <td class="text-center"><input type="checkbox" class="sku-checkbox"
-                                                value="{{ $product->id }}" hiddenhidden></td> --}}
-                                        <td data-toggle="collapse" data-target="#demoProduct-{{ $product->id }}">
-                                            <strong>{{ $product->name }}</strong><br>
-                                            <small>Thương hiệu: {{ $product->brands->name }}</small><br>
-                                            <small>Danh mục: {{ $product->categories->name }}</small>
-                                        </td>
-                                        <td class="text-center"><img src="{{ Storage::url($product->image) }}"
-                                                width="80px" alt="" data-toggle="collapse"
-                                                data-target="#demoProduct-{{ $product->id }}"></td>
-                                        <td class="text-center" data-toggle="collapse"
-                                            data-target="#demoProduct-{{ $product->id }}">{{ $product->skuses_count }}
-                                        </td>
-                                        <td class="text-center" data-toggle="collapse"
-                                            data-target="#demoProduct-{{ $product->id }}">
-                                            {{ $product->created_at->format('d/m/Y') }}</td>
-                                        <td class="text-center" data-toggle="collapse"
-                                            data-target="#demoProduct-{{ $product->id }}">
-                                            <span
-                                                class="badge {{ $product->status ? 'bg-success' : 'bg-danger' }}">{{ $product->status ? 'Active' : 'Deactive' }}</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <button class="btn btn-sm btn-info" data-toggle="modal"
-                                                data-target="#modalProduct-{{ $product->id }}">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="demoProduct-{{ $product->id }}" class="collapse">
-                                        <td colspan="8" class="">
-                                            <table class="table table-head-fixed text-nowrap">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center">Chọn</th>
-                                                        <th>Thông tin</th>
-                                                        <th class="text-center">Ảnh</th>
-                                                        <th class="text-center">Số lượng trong kho</th>
-                                                        <th class="">Giá</th>
-                                                        <th class="text-center">Ngày tạo</th>
-                                                        <th class="text-center">Trạng thái</th>
-                                                        <th class="text-center">Hành động</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($product->skuses as $skus)
-                                                        <tr>
-                                                            <td class="text-center"><input type="checkbox"
-                                                                    class="sku-checkbox" value="{{ $skus->id }}"
-                                                                    data-toggle="collapse"
-                                                                    data-target="#demoSkus-{{ $skus->id }}">
-                                                            <td>
-                                                                <strong>{{ $skus->name }}</strong><br>
-                                                                <small>Barcode: {{ $skus->barcode }}</small><br>
-                                                            </td>
-                                                            <td class="text-center"><img
-                                                                    src="{{ Storage::url($skus->image) }}" width="80px"
-                                                                    alt=""></td>
-                                                            <td class="text-center">{{ $skus->inventories->quantity }}</td>
-                                                            @php
-                                                                $approved_entry = collect($skus->inventory_entries)
-                                                                    ->sortByDesc('created_at')
-                                                                    ->where('status', 'Đã duyệt')
-                                                                    ->first();
-                                                            @endphp
-                                                            <td>
-                                                                <small>Giá nhập:
-                                                                    {{ $approved_entry ? $approved_entry['cost_price'] : 0 }}</small><br>
-                                                                <small>Giá bán:
-                                                                    {{ $approved_entry ? $approved_entry['price'] : 0 }}</small><br>
-                                                                <small>Giá giảm: @if (
-                                                                    $approved_entry &&
-                                                                        $approved_entry['discount_start'] <= Date::now() &&
-                                                                        $approved_entry['discount_end'] >= Date::now())
-                                                                        {{ $approved_entry['sale_price'] }}
-                                                                    @else
-                                                                        Không giảm giá
-                                                                    @endif
-                                                                </small><br>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                {{ $skus->created_at->format('d/m/Y') }}</td>
-                                                            <td class="text-center">
-                                                                <span
-                                                                    class="badge {{ $skus->status ? 'bg-success' : 'bg-danger' }}">{{ $product->status ? 'Active' : 'Deactive' }}</span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button class="btn btn-sm btn-info" data-toggle="modal"
-                                                                    data-target="#modalSkus-{{ $skus->id }}">
-                                                                    <i class="bi bi-eye"></i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr id="demoSkus-{{ $skus->id }}" class="collapse">
-                                                            <td colspan="8" class="">
-                                                                <div class="text-center mt-3">
-                                                                    <div id="submit-selected">
-                                                                        <form method="POST"
-                                                                            action="{{ route('admin.skus.store') }}"
-                                                                            enctype="multipart/form-data">
-                                                                            @csrf
-                                                                            <div class="card-body a">
-                                                                                <input type="hidden" name="sku_ids"
-                                                                                    id="sku_ids">
-                                                                                <div class="card">
-                                                                                    <div
-                                                                                        class="card-body table-responsive p-0">
-                                                                                        <h4 class="text-center my-5">
-                                                                                            Quản lý số lượng
-                                                                                        </h4>
-                                                                                        <div
-                                                                                            class="d-flex flex-column align-items-center justify-content-center">
-                                                                                            <div
-                                                                                                class="row w-100 justify-content-center">
-                                                                                                <div class="col-sm-4">
-                                                                                                    <div
-                                                                                                        class="form-group text-center">
-                                                                                                        <label
-                                                                                                            for="quantity">Quantity</label>
-                                                                                                        <input
-                                                                                                            type="number"
-                                                                                                            name="quantity"
-                                                                                                            class="form-control text-center"
-                                                                                                            id="quantity"
-                                                                                                            value="{{ old('quantity') }}">
-                                                                                                        @error('quantity')
-                                                                                                            <div
-                                                                                                                class="text-danger">
-                                                                                                                {{ $message }}
-                                                                                                            </div>
-                                                                                                        @enderror
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-sm-4">
-                                                                                                    <div
-                                                                                                        class="form-group text-center">
-                                                                                                        <label
-                                                                                                            for="cost_price">Cost
-                                                                                                            price</label>
-                                                                                                        <input
-                                                                                                            type="number"
-                                                                                                            name="cost_price"
-                                                                                                            class="form-control text-center"
-                                                                                                            id="cost_price"
-                                                                                                            value="{{ old('cost_price') }}">
-                                                                                                        @error('cost_price')
-                                                                                                            <div
-                                                                                                                class="text-danger">
-                                                                                                                {{ $message }}
-                                                                                                            </div>
-                                                                                                        @enderror
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-sm-4">
-                                                                                                    <div
-                                                                                                        class="form-group text-center">
-                                                                                                        <label
-                                                                                                            for="price">Price</label>
-                                                                                                        <input
-                                                                                                            type="number"
-                                                                                                            name="price"
-                                                                                                            class="form-control text-center"
-                                                                                                            id="price"
-                                                                                                            value="{{ old('price') }}">
-                                                                                                        @error('price')
-                                                                                                            <div
-                                                                                                                class="text-danger">
-                                                                                                                {{ $message }}
-                                                                                                            </div>
-                                                                                                        @enderror
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="form-group mt-3">
-                                                                                                <input type="checkbox"
-                                                                                                    id="toggle_sale_price">
-                                                                                                <label
-                                                                                                    for="toggle_sale_price">Áp
-                                                                                                    dụng giá khuyến
-                                                                                                    mãi</label>
-                                                                                            </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="user_name">Họ và tên:</label>
+                                <input type="text" class="form-control" id="user_name" value="{{$user->name}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="user_email">Email:</label>
+                                <input type="email" class="form-control" id="user_email" value="{{$user->email}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="user_position">Số điện thoại:</label>
+                                <input type="text" class="form-control" id="user_position" value="{{$user->phone_number}}"
+                                    readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="user_name">Giới tính:</label>
+                                <input type="text" class="form-control" id="user_name" value="{{$user->name}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="user_email">Ngày sinh:</label>
+                                <input type="email" class="form-control" id="user_email"
+                                    value="{{$user->birthday ? $user->birthday->format('d/m/Y') : ''}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="user_position">Chức vụ:</label>
+                                <input type="text" class="form-control" id="user_position"
+                                    value="{{$user->roles->user_role}}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                                                                            <div class="form-group sale_price"
-                                                                                                id="sale_price_group"
-                                                                                                style="display: none; width: 100%;">
-                                                                                                <div
-                                                                                                    class="row w-100 justify-content-center align-items-center g-3">
-                                                                                                    <div class="col-sm-4">
-                                                                                                        <label
-                                                                                                            for="sale_price">Sale
-                                                                                                            price</label>
-                                                                                                        <input
-                                                                                                            type="number"
-                                                                                                            name="sale_price"
-                                                                                                            class="form-control text-center"
-                                                                                                            id="sale_price"
-                                                                                                            value="{{ old('sale_price') }}">
-                                                                                                        @error('sale_price')
-                                                                                                            <div
-                                                                                                                class="text-danger">
-                                                                                                                {{ $message }}
-                                                                                                            </div>
-                                                                                                        @enderror
-                                                                                                    </div>
-                                                                                                    <div class="col-sm-4">
-                                                                                                        <label
-                                                                                                            for="sale_start_date">Ngày
-                                                                                                            bắt đầu khuyến
-                                                                                                            mãi</label>
-                                                                                                        <input
-                                                                                                            type="text"
-                                                                                                            name="sale_start_date"
-                                                                                                            class="form-control flatpickr text-center"
-                                                                                                            id="sale_start_date"
-                                                                                                            value="{{ old('sale_start_date') }}"
-                                                                                                            placeholder="Chọn ngày bắt đầu">
-                                                                                                        @error('sale_start_date')
-                                                                                                            <div
-                                                                                                                class="text-danger">
-                                                                                                                {{ $message }}
-                                                                                                            </div>
-                                                                                                        @enderror
-                                                                                                    </div>
-                                                                                                    <div class="col-sm-4">
-                                                                                                        <label
-                                                                                                            for="sale_end_date">Ngày
-                                                                                                            kết thúc khuyến
-                                                                                                            mãi</label>
-                                                                                                        <input
-                                                                                                            type="text"
-                                                                                                            name="sale_end_date"
-                                                                                                            class="form-control flatpickr text-center"
-                                                                                                            id="sale_end_date"
-                                                                                                            value="{{ old('sale_end_date') }}"
-                                                                                                            placeholder="Chọn ngày kết thúc">
-                                                                                                        @error('sale_end_date')
-                                                                                                            <div
-                                                                                                                class="text-danger">
-                                                                                                                {{ $message }}
-                                                                                                            </div>
-                                                                                                        @enderror
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="text-center my-3">
-                                                                                        <button type="submit"
-                                                                                            class="btn btn-primary"
-                                                                                            id="submit-btn">Thêm vào
-                                                                                            kho</button>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <br>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <div class="modal" id="modalSkus-{{ $skus->id }}">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h4 class="modal-title">{{ $skus->id }}</h4>
-                                                                        <button type="button" class="close"
-                                                                            data-dismiss="modal">&times;</button>
-                                                                    </div>
-
-                                                                    <div class="modal-body">
-                                                                        Modal body..
-                                                                    </div>
-
-
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-danger"
-                                                                            data-dismiss="modal">Close</button>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <div class="modal" id="modalProduct-{{ $product->id }}">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-
-
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">{{ $product->id }}</h4>
-                                                    <button type="button" class="close"
-                                                        data-dismiss="modal">&times;</button>
-                                                </div>
-
-
-                                                <div class="modal-body">
-                                                    Modal body..
-                                                </div>
-
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-danger"
-                                                        data-dismiss="modal">Close</button>
-                                                </div>
-
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h4 class="card-title">Chọn sản phẩm nhập kho</h4>
+                </div>
+                <div class="card-body">
+                    <form id="products-form" method="POST" action="{{ route('admin.skus.store') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="product-select">Tìm và chọn sản phẩm:</label>
+                                    <div class="dropdown-select-container">
+                                        <button type="button"
+                                            class="btn btn-outline-secondary dropdown-select-btn w-100 d-flex justify-content-between align-items-center"
+                                            data-bs-toggle="dropdown">
+                                            <span class="dropdown-select-text">Chọn sản phẩm</span>
+                                            <span><i class="bi bi-chevron-down"></i></span>
+                                        </button>
+                                        <div class="dropdown-menu w-100 p-3">
+                                            <div class="mb-2">
+                                                <input type="text" class="form-control product-search"
+                                                    placeholder="Tìm kiếm sản phẩm...">
+                                            </div>
+                                            <div class="dropdown-product-list">
+                                                @foreach ($products as $product)
+                                                    <div class="form-check">
+                                                        <input class="form-check-input product-check" type="checkbox"
+                                                            value="{{ $product->id }}" id="product-{{ $product->id }}"
+                                                            data-product-name="{{ $product->name }}">
+                                                        <label class="form-check-label w-100" for="product-{{ $product->id }}">
+                                                            {{$product->name}}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                    <div id="selected-badges" class="mt-2 d-flex flex-wrap gap-1"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 variants-selection" style="display: none;">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="variant-select">Tìm và chọn biến thể:</label>
+                                    <div class="dropdown-select-container">
+                                        <button type="button"
+                                            class="btn btn-outline-secondary dropdown-select-btn w-100 d-flex justify-content-between align-items-center"
+                                            data-bs-toggle="dropdown">
+                                            <span class="dropdown-select-text">Chọn biến thể</span>
+                                            <span><i class="bi bi-chevron-down"></i></span>
+                                        </button>
+                                        <div class="dropdown-menu w-100 p-3">
+                                            <div class="mb-2">
+                                                <input type="text" class="form-control variant-search"
+                                                    placeholder="Tìm kiếm biến thể...">
+                                            </div>
+                                            <div class="dropdown-variant-list">
+                                                <!-- Biến thể sẽ được điền động bằng JavaScript -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="btn-group me-2">
+                                                <button type="button" id="check-all-variants" class="btn btn-sm btn-outline-secondary">Chọn tất cả</button>
+                                                <button type="button" id="uncheck-all-variants" class="btn btn-sm btn-outline-secondary">Bỏ chọn tất cả</button>
+                                            </div>
+                                            <div class="search-box-inline">
+                                                <input type="text" id="search-variant-badges" class="form-control form-control-sm" placeholder="Tìm biến thể...">
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">Đã chọn: <span id="checked-count">0</span> biến thể</small>
+                                    </div>
+                                    <div id="selected-variant-badges" class="mt-2 d-flex flex-wrap gap-1"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form nhập kho chung -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div id="bulk-inventory-form" class="card shadow" style="display: none;">
+                                    <div class="card-header bg-dark text-white">
+                                        <h5 class="mb-0">Nhập kho cho các biến thể đã chọn</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="bulk-quantity">Số lượng</label>
+                                                    <input type="number" class="form-control" id="bulk-quantity" name="bulk_quantity" value="1" min="1">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="bulk-cost-price">Giá nhập</label>
+                                                    <input type="number" class="form-control" id="bulk-cost-price" name="bulk_cost_price" value="100000" min="10000">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="bulk-price">Giá bán</label>
+                                                    <input type="number" class="form-control" id="bulk-price" name="bulk_price" value="150000" min="10000">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-check mt-3">
+                                            <input type="checkbox" class="form-check-input" id="bulk-toggle-sale-price">
+                                            <label class="form-check-label" for="bulk-toggle-sale-price">Áp dụng giá khuyến mãi</label>
+                                        </div>
+                                        
+                                        <div id="bulk-sale-price-section" class="mt-3" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="bulk-sale-price">Giá khuyến mãi</label>
+                                                        <input type="number" class="form-control" id="bulk-sale-price" name="bulk_sale_price" value="" min="10000">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="bulk-discount-start">Ngày bắt đầu</label>
+                                                        <input type="text" class="form-control flatpickr" id="bulk-discount-start" name="bulk_discount_start" placeholder="Chọn ngày bắt đầu">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="bulk-discount-end">Ngày kết thúc</label>
+                                                        <input type="text" class="form-control flatpickr" id="bulk-discount-end" name="bulk_discount_end" placeholder="Chọn ngày kết thúc">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3 text-center">
+                                            <button type="button" id="bulk-apply-btn" class="btn btn-secondary">Áp dụng cho các sản phẩm đã chọn</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        .dropdown-select-container .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
 
+        .dropdown-product-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .dropdown-product-list .form-check {
+            padding: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+
+        .dropdown-product-list .form-check:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-select-btn:focus,
+        .dropdown-select-btn:active {
+            box-shadow: none;
+        }
+
+        .selected-badge {
+            background-color: #6c757d;
+            color: white;
+            border-radius: 4px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .badge-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .variant-checkbox {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .variant-name {
+            margin-right: 5px;
+        }
+
+        .badge-actions {
+            display: flex;
+            align-items: center;
+            margin-left: 8px;
+        }
+
+        .badge-remove,
+        .variant-badge-remove {
+            margin-left: 3px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 1;
+            padding: 0 3px;
+        }
+
+        .product-search {
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            padding: 5px 10px;
+        }
+
+        .search-box-inline {
+            width: 250px;
+        }
+        
+        .selected-badge.hidden {
+            display: none;
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        $(document).ready(function() {
-            // Sửa lại hàm search để chỉ tìm trong bảng chính
-            $('input#search-input').on("keyup", function() {
-                let value = $(this).val().toLowerCase();
+        $(document).ready(function () {
+            // Mảng lưu các sản phẩm và biến thể đã chọn
+            let selectedProducts = [];
+            let selectedVariants = [];
+            let checkedVariants = []; // Mảng lưu các biến thể được check để nhập kho
+            let checkedVariantsHistory = {}; // Lưu trữ lịch sử trạng thái checked
+            let productNames = {};
+            let variantNames = {};
+            let productVariantsData = {};
 
-                // Chỉ tìm kiếm trong bảng chính (bảng đầu tiên)
-                $(".table:first > tbody > tr").each(function() {
-                    if (!$(this).hasClass('collapse') && !$(this).attr('id')) {
-                        let rowText = $(this).find('td:not(:last-child)').text().toLowerCase();
-                        $(this).toggle(rowText.indexOf(value) > -1);
-                    }
+            // Lưu thông tin tất cả sản phẩm và biến thể
+            @foreach ($products as $product)
+                productVariantsData[{{ $product->id }}] = {
+                    name: "{{ $product->name }}",
+                    variants: [
+                        @foreach ($product->skuses as $variant)
+                                {
+                            id: {{ $variant->id }},
+                            name: "{{ $variant->name }}",
+                            barcode: "{{ $variant->barcode }}",
+                            quantity: {{ $variant->inventories ? $variant->inventories->quantity : 0 }}
+                                },
+                        @endforeach
+                            ]
+                };
+            @endforeach
+
+            console.log('Product data:', productVariantsData);
+
+            // Lưu tên sản phẩm
+            $('.product-check').each(function () {
+                const id = $(this).val();
+                const name = $(this).data('product-name') || $(this).next('label').text().trim();
+                productNames[id] = name;
+            });
+
+            // Xử lý tìm kiếm sản phẩm trong dropdown
+            $('.product-search').on('input', function () {
+                const searchText = $(this).val().toLowerCase();
+                $('.dropdown-product-list .form-check').each(function () {
+                    const productText = $(this).text().toLowerCase();
+                    $(this).toggle(productText.includes(searchText));
                 });
             });
-            $("#sale_price_group, #sale_date_group").toggle($("#toggle_sale_price").is(":checked"));
 
-            $("#toggle_sale_price").change(function() {
-                $("#sale_price_group, #sale_date_group").toggle(this.checked);
+            // Xử lý tìm kiếm biến thể trong dropdown
+            $('.variant-search').on('input', function () {
+                const searchText = $(this).val().toLowerCase();
+                $('.dropdown-variant-list .form-check').each(function () {
+                    const variantText = $(this).text().toLowerCase();
+                    $(this).toggle(variantText.includes(searchText));
+                });
             });
 
-            let today = new Date().toISOString().split("T")[0]; // Lấy ngày hôm nay ở định dạng YYYY-MM-DD
+            // Xử lý khi chọn sản phẩm
+            $('.product-check').on('change', function () {
+                const productId = $(this).val();
+                const isChecked = $(this).prop('checked');
 
-            let saleStartPicker = flatpickr("#sale_start_date", {
-                dateFormat: "Y-m-d",
-                minDate: today, // Không cho chọn ngày trước hôm nay
-                onChange: function(selectedDates, dateStr) {
-                    saleEndPicker.set("minDate",
-                        dateStr); // Ngày kết thúc phải sau hoặc bằng ngày bắt đầu
+                if (isChecked) {
+                    // Thêm sản phẩm vào danh sách đã chọn
+                    if (!selectedProducts.includes(productId)) {
+                        selectedProducts.push(productId);
+                        updateSelectedBadges();
+                        updateVariantDropdown();
+                        $('.variants-selection').show();
+                    }
+                } else {
+                    // Xóa sản phẩm khỏi danh sách đã chọn
+                    selectedProducts = selectedProducts.filter(id => id !== productId);
+                    // Xóa các biến thể của sản phẩm này khỏi danh sách đã chọn
+                    if (productVariantsData[productId]) {
+                        const variantIds = productVariantsData[productId].variants.map(v => v.id.toString());
+                        selectedVariants = selectedVariants.filter(id => !variantIds.includes(id));
+                    }
+                    updateSelectedBadges();
+                    updateVariantDropdown();
+                    updateSelectedVariantBadges();
+                    updateProductCards();
+
+                    if (selectedProducts.length === 0) {
+                        $('.variants-selection').hide();
+                    }
                 }
+
+                // Cập nhật nút dropdown
+                updateDropdownButton();
             });
 
-            let saleEndPicker = flatpickr("#sale_end_date", {
-                dateFormat: "Y-m-d",
-                onChange: function(selectedDates, dateStr) {
-                    saleStartPicker.set("maxDate",
-                        dateStr); // Ngày bắt đầu phải trước hoặc bằng ngày kết thúc
+            // Xử lý khi chọn/bỏ chọn biến thể
+            $('.variant-checkbox').off('change').on('change', function () {
+                const variantId = $(this).data('id').toString();
+                const isChecked = $(this).prop('checked');
+                
+                if (isChecked) {
+                    // Chỉ thêm vào nếu chưa có trong danh sách
+                    if (!checkedVariants.includes(variantId)) {
+                        checkedVariants.push(variantId);
+                    }
+                    // Lưu trạng thái vào lịch sử
+                    checkedVariantsHistory[variantId] = true;
+                } else {
+                    // Xóa khỏi danh sách đã check
+                    checkedVariants = checkedVariants.filter(id => id !== variantId);
+                    // Lưu trạng thái vào lịch sử
+                    checkedVariantsHistory[variantId] = false;
                 }
+                
+                // Hiện/ẩn form nhập kho chung
+                if (checkedVariants.length > 0) {
+                    $('#bulk-inventory-form').show();
+                } else {
+                    $('#bulk-inventory-form').hide();
+                }
+                
+                console.log('Checked variants:', checkedVariants);
+                console.log('Checked variants history:', checkedVariantsHistory);
             });
 
-            // Validate quantity: required, max 10000
-            $("#quantity").on("input blur", function() {
-                let quantity = parseInt($(this).val());
-                if (isNaN(quantity) || quantity <= 0 || quantity > 10000) {
-                    showError(this, "Số lượng phải từ 1 đến 10,000");
-                } else {
-                    showError(this, "");
+            // Cập nhật dropdown biến thể dựa trên sản phẩm đã chọn
+            function updateVariantDropdown() {
+                const variantList = $('.dropdown-variant-list');
+                variantList.empty();
+                
+                // Nếu không có sản phẩm nào được chọn, ẩn dropdown biến thể
+                if (selectedProducts.length === 0) {
+                    return;
                 }
-            });
+                
+                // Thêm biến thể cho mỗi sản phẩm đã chọn
+                selectedProducts.forEach(productId => {
+                    if (productVariantsData[productId] && productVariantsData[productId].variants.length > 0) {
+                        // Thêm tiêu đề sản phẩm
+                        variantList.append(`<div class="product-title mb-2 fw-bold">${productVariantsData[productId].name}</div>`);
+                        
+                        // Thêm các biến thể
+                        productVariantsData[productId].variants.forEach(variant => {
+                            const variantId = variant.id.toString();
+                            // Kiểm tra xem biến thể này có trong danh sách đã chọn chưa
+                            const isSelected = selectedVariants.includes(variantId);
+                            
+                            // Xác định trạng thái checkbox dựa trên biến thể đã được chọn hay chưa
+                            let isChecked = '';
+                            if (isSelected) {
+                                isChecked = 'checked';
+                            }
+                            
+                            const variantItem = `
+                                <div class="form-check">
+                                    <input class="form-check-input variant-check" type="checkbox" value="${variantId}" 
+                                        id="variant-${variantId}" data-product-id="${productId}" ${isChecked}>
+                                    <label class="form-check-label w-100" for="variant-${variantId}">
+                                        ${variant.name} (Barcode: ${variant.barcode}, Số lượng: ${variant.quantity})
+                                    </label>
+                                </div>
+                            `;
+                            variantList.append(variantItem);
+                            
+                            // Lưu tên biến thể
+                            variantNames[variantId] = variant.name;
+                        });
+                    }
+                });
+                
+                // Đăng ký sự kiện cho các checkbox biến thể mới
+                $('.variant-check').off('change').on('change', function() {
+                    const variantId = $(this).val().toString();
+                    const isChecked = $(this).prop('checked');
+                    const productId = $(this).data('product-id').toString();
+                    
+                    if (isChecked) {
+                        // Thêm biến thể vào danh sách đã chọn nếu chưa có
+                        if (!selectedVariants.includes(variantId)) {
+                            selectedVariants.push(variantId);
+                            
+                            // Kiểm tra lịch sử để xem biến thể này đã từng được check hay chưa
+                            if (checkedVariantsHistory[variantId] === true) {
+                                // Nếu đã từng được check, thêm vào danh sách checked
+                                if (!checkedVariants.includes(variantId)) {
+                                    checkedVariants.push(variantId);
+                                }
+                            }
+                            
+                            updateSelectedVariantBadges();
+                        }
+                    } else {
+                        // Xóa biến thể khỏi danh sách đã chọn
+                        selectedVariants = selectedVariants.filter(id => id !== variantId);
+                        // Xóa khỏi danh sách checked
+                        checkedVariants = checkedVariants.filter(id => id !== variantId);
+                        // Cập nhật lịch sử
+                        checkedVariantsHistory[variantId] = false;
+                        
+                        updateSelectedVariantBadges();
+                    }
+                    
+                    // Cập nhật nút dropdown
+                    updateDropdownButton();
+                });
+            }
 
-            function validatePrices() {
-                let cost_price = parseFloat($("#cost_price").val());
-                let price = parseFloat($("#price").val());
-                let sale_price = parseFloat($("#sale_price").val());
+            // Cập nhật badges hiển thị sản phẩm đã chọn
+            function updateSelectedBadges() {
+                const badgesContainer = $('#selected-badges');
+                badgesContainer.empty();
 
-                // Kiểm tra giá nhập
-                if (cost_price < 10000 || cost_price > 10000000) {
-                    showError("#cost_price", "Giá nhập phải từ 10000 đến 10,000,000");
-                } else if (cost_price >= price) {
-                    showError("#cost_price", "Giá nhập không được lớn hơn giá bán");
+                selectedProducts.forEach(productId => {
+                    const badge = `
+                            <div class="selected-badge">
+                                ${productNames[productId]}
+                                <button type="button" class="badge-remove" data-id="${productId}">×</button>
+                            </div>
+                        `;
+                    badgesContainer.append(badge);
+                });
+            }
+
+            // Cập nhật badges hiển thị biến thể đã chọn
+            function updateSelectedVariantBadges() {
+                // Reset search filter before updating badges
+                resetSearchFilter();
+                
+                const badgesContainer = $('#selected-variant-badges');
+                badgesContainer.empty();
+                
+                selectedVariants.forEach(variantId => {
+                    // Kiểm tra xem biến thể này đã được check chưa, ưu tiên dùng lịch sử
+                    const isChecked = (checkedVariantsHistory[variantId] === true || checkedVariants.includes(variantId.toString())) ? 'checked' : '';
+                    
+                    const badge = `
+                        <div class="selected-badge">
+                            <div class="badge-left">
+                                <input type="checkbox" class="variant-checkbox" data-id="${variantId}" id="variant-checkbox-${variantId}" ${isChecked}>
+                                <span class="variant-name">${variantNames[variantId]}</span>
+                            </div>
+                            <button type="button" class="badge-remove variant-badge-remove" data-id="${variantId}">×</button>
+                        </div>
+                    `;
+                    badgesContainer.append(badge);
+                });
+                
+                // Thêm sự kiện cho checkbox mới
+                $('.variant-checkbox').off('change').on('change', function () {
+                    const variantId = $(this).data('id').toString();
+                    const isChecked = $(this).prop('checked');
+                    
+                    if (isChecked) {
+                        // Chỉ thêm vào nếu chưa có trong danh sách
+                        if (!checkedVariants.includes(variantId)) {
+                            checkedVariants.push(variantId);
+                        }
+                        // Lưu trạng thái vào lịch sử
+                        checkedVariantsHistory[variantId] = true;
+                    } else {
+                        // Xóa khỏi danh sách đã check
+                        checkedVariants = checkedVariants.filter(id => id !== variantId);
+                        // Lưu trạng thái vào lịch sử
+                        checkedVariantsHistory[variantId] = false;
+                    }
+                    
+                    // Cập nhật số lượng đã chọn
+                    updateCheckedCount();
+                    
+                    // Hiện/ẩn form nhập kho chung
+                    if (checkedVariants.length > 0) {
+                        $('#bulk-inventory-form').show();
+                    } else {
+                        $('#bulk-inventory-form').hide();
+                    }
+                    
+                    console.log('Checked variants:', checkedVariants);
+                    console.log('Checked variants history:', checkedVariantsHistory);
+                });
+                
+                // Cập nhật số lượng đã chọn
+                updateCheckedCount();
+                
+                // Kiểm tra nếu có ít nhất một variant được check thì hiển thị form
+                if (checkedVariants.length > 0) {
+                    $('#bulk-inventory-form').show();
                 } else {
-                    showError("#cost_price", "");
-                }
-
-                if (price < 10000 || price > 10000000) {
-                    showError("#price", "Giá bán phải từ 10000 đến 10,000,000");
-                } else {
-                    showError("#price", "")
-                }
-
-                // Kiểm tra giá khuyến mãi
-                if (sale_price >= price) {
-                    showError("#sale_price", "Giá khuyến mãi không được lớn hơn bằng giá bán");
-                } else if (sale_price < 10000 || sale_price > 10000000) {
-                    showError("#sale_price", "Giá khuyến mãi phải từ 10000 đến 10,000,000");
-                } else {
-                    showError("#sale_price", "");
+                    $('#bulk-inventory-form').hide();
                 }
             }
 
-            // Gọi validatePrices khi có thay đổi trong các input giá
-            $("#cost_price, #price, #sale_price").on("input blur", validatePrices);
-
-            function showError(selector, message) {
-                let element = $(selector);
-                let errorDiv = element.next(".text-danger");
-
-                if (message) {
-                    if (errorDiv.length === 0) {
-                        element.after(`<div class="text-danger">${message}</div>`);
-                    } else {
-                        errorDiv.text(message);
-                    }
-                } else {
-                    errorDiv.remove();
+            // Xử lý xóa sản phẩm từ badge
+            $(document).on('click', '.badge-remove', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const productId = $(this).data('id');
+                console.log('Removing product ID:', productId);
+                
+                // Bỏ chọn checkbox
+                $(`#product-${productId}`).prop('checked', false);
+                
+                // Xóa khỏi danh sách đã chọn
+                selectedProducts = selectedProducts.filter(id => id != productId);
+                
+                // Lưu lại các biến thể đã check
+                const previousCheckedVariants = [...checkedVariants];
+                
+                // Xóa các biến thể của sản phẩm này khỏi danh sách đã chọn
+                if (productVariantsData[productId]) {
+                    const variantIds = productVariantsData[productId].variants.map(v => v.id.toString());
+                    selectedVariants = selectedVariants.filter(id => !variantIds.includes(id.toString()));
+                    
+                    // Xóa các biến thể của sản phẩm này khỏi danh sách đã check
+                    checkedVariants = checkedVariants.filter(id => !variantIds.includes(id));
                 }
+                
+                updateSelectedBadges();
+                updateSelectedVariantBadges();
+                updateVariantDropdown();
+                
+                if (selectedProducts.length === 0) {
+                    $('.variants-selection').hide();
+                }
+            });
+
+            // Xử lý xóa biến thể từ badge
+            $(document).on('click', '.variant-badge-remove', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const variantId = $(this).data('id').toString();
+                console.log('Removing variant ID:', variantId);
+                
+                // Xóa khỏi danh sách đã chọn
+                selectedVariants = selectedVariants.filter(id => id.toString() !== variantId);
+                
+                // Cũng xóa khỏi danh sách đã check nếu có
+                checkedVariants = checkedVariants.filter(id => id !== variantId);
+                
+                // Cập nhật UI
+                updateSelectedVariantBadges();
+                
+                // Bỏ chọn trong dropdown
+                $(`#variant-${variantId}`).prop('checked', false);
+            });
+
+            // Xử lý xóa biến thể khi nhấn nút xóa trên card
+            $(document).on('click', '.remove-variant', function () {
+                const variantId = $(this).data('id');
+
+                // Bỏ chọn checkbox
+                $(`#variant-${variantId}`).prop('checked', false);
+
+                // Xóa khỏi danh sách đã chọn
+                selectedVariants = selectedVariants.filter(id => id != variantId);
+                updateSelectedVariantBadges();
+                updateProductCards();
+            });
+
+            // Cập nhật nút dropdown
+            function updateDropdownButton() {
+                const btn = $('.dropdown-select-btn:first .dropdown-select-text');
+                if (selectedProducts.length === 0) {
+                    btn.text('Chọn sản phẩm');
+                }
+
+                const variantBtn = $('.dropdown-select-btn:last .dropdown-select-text');
+                if (selectedVariants.length === 0) {
+                    variantBtn.text('Chọn biến thể');
+                } else {
+                    variantBtn.text(`Đã chọn ${selectedVariants.length} biến thể`);
+                }
+            }
+
+            // Xử lý submit form
+            $('#products-form').submit(function (e) {
+                if (selectedVariants.length === 0) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn ít nhất một biến thể sản phẩm');
+                    return false;
+                }
+
+                // Validation có thể được thêm ở đây
+                return true;
+            });
+
+            // Ngăn đóng dropdown khi click vào nội dung bên trong
+            $(document).on('click', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+
+            // Date picker
+            flatpickr(".flatpickr", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+
+            // Xử lý toggle giá khuyến mãi
+            $('#bulk-toggle-sale-price').change(function() {
+                $('#bulk-sale-price-section').toggle(this.checked);
+            });
+            
+            // Xử lý nút áp dụng cho các sản phẩm đã chọn
+            $('#bulk-apply-btn').click(function() {
+                if (checkedVariants.length === 0) {
+                    alert('Vui lòng chọn ít nhất một biến thể để nhập kho');
+                    return;
+                }
+                
+                // Lấy giá trị từ form chung
+                const quantity = $('#bulk-quantity').val();
+                const costPrice = $('#bulk-cost-price').val();
+                const price = $('#bulk-price').val();
+                const hasSalePrice = $('#bulk-toggle-sale-price').is(':checked');
+                const salePrice = hasSalePrice ? $('#bulk-sale-price').val() : '';
+                const discountStart = hasSalePrice ? $('#bulk-discount-start').val() : '';
+                const discountEnd = hasSalePrice ? $('#bulk-discount-end').val() : '';
+                
+                // Áp dụng cho các biến thể đã chọn
+                checkedVariants.forEach(variantId => {
+                    // Cập nhật các input trong card biến thể
+                    $(`#quantity-${variantId}`).val(quantity);
+                    $(`#cost-price-${variantId}`).val(costPrice);
+                    $(`#price-${variantId}`).val(price);
+                    
+                    // Cập nhật trường khuyến mãi nếu có
+                    if (hasSalePrice) {
+                        $(`#sale-price-${variantId}`).val(salePrice);
+                        $(`#discount-start-${variantId}`).val(discountStart);
+                        $(`#discount-end-${variantId}`).val(discountEnd);
+                        $(`#has-sale-${variantId}`).prop('checked', true).trigger('change');
+                    }
+                });
+                
+                alert(`Đã áp dụng thông tin nhập kho cho ${checkedVariants.length} biến thể`);
+            });
+
+          // Xử lý nút chọn tất cả biến thể
+$('#check-all-variants').click(function() {
+    // Chỉ chọn các checkbox của biến thể đang hiển thị (không bị ẩn)
+    data = $('.selected-badge:not(.hidden) .variant-checkbox').prop('checked', true);
+    console.log(data);
+
+    // Cập nhật danh sách biến thể đã chọn - chỉ với các biến thể đang hiển thị
+    $('.selected-badge:not(.hidden)').each(function() {                    
+        const variantCheckbox = $(this).find('.variant-checkbox');
+        
+        // Kiểm tra sự tồn tại của data-id
+        const variantId = variantCheckbox.data('id');
+        
+        if (variantId !== undefined && !checkedVariants.includes(variantId.toString())) {
+            checkedVariants.push(variantId.toString());
+        }
+
+        checkedVariantsHistory[variantId] = true;
+    });
+    
+    console.log(1);
+
+    // Cập nhật số lượng đã chọn
+    updateCheckedCount();
+
+    // Hiển thị form nhập kho nếu có biến thể được chọn
+    if (checkedVariants.length > 0) {
+        $('#bulk-inventory-form').show();
+    }
+});
+
+            
+            // Xử lý nút bỏ chọn tất cả biến thể
+            $('#uncheck-all-variants').click(function() {
+                // Bỏ chọn các checkbox của biến thể đang hiển thị (không bị ẩn)
+                $('.selected-badge:not(.hidden) .variant-checkbox').prop('checked', false);
+                
+                // Cập nhật danh sách biến thể đã chọn - chỉ với các biến thể đang hiển thị
+                $('.selected-badge:not(.hidden)').each(function() {
+                    const variantId = $(this).find('.variant-checkbox').data('id').toString();
+                    
+                    // Xóa khỏi danh sách đã check
+                    checkedVariants = checkedVariants.filter(id => id !== variantId);
+                    // Cập nhật lịch sử
+                    checkedVariantsHistory[variantId] = false;
+                });
+                
+                // Cập nhật số lượng đã chọn
+                updateCheckedCount();
+                
+                // Ẩn form nhập kho nếu không còn biến thể nào được chọn
+                if (checkedVariants.length === 0) {
+                    $('#bulk-inventory-form').hide();
+                }
+            });
+            
+            // Cập nhật số lượng biến thể đã chọn
+            function updateCheckedCount() {
+                $('#checked-count').text(checkedVariants.length);
+            }
+
+            // Xử lý tìm kiếm trong danh sách biến thể đã chọn
+            $('#search-variant-badges').on('input', function() {
+                const searchText = $(this).val().toLowerCase().trim();
+                
+                // Nếu không có text tìm kiếm, hiển thị tất cả
+                if (searchText === '') {
+                    $('.selected-badge').removeClass('hidden');
+                    return;
+                }
+                
+                // Lọc các badge theo text tìm kiếm
+                $('.selected-badge').each(function() {
+                    const variantName = $(this).find('.variant-name').text().toLowerCase();
+                    if (variantName.includes(searchText)) {
+                        $(this).removeClass('hidden');
+                    } else {
+                        $(this).addClass('hidden');
+                    }
+                });
+            });
+            
+            // Xóa text tìm kiếm khi cập nhật lại danh sách badge
+            function resetSearchFilter() {
+                $('#search-variant-badges').val('');
+                $('.selected-badge').removeClass('hidden');
             }
         });
     </script>

@@ -27,7 +27,7 @@
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
                     <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.vouchers.create') }}" class="btn btn-primary">Thêm mới danh mục</a>
+                    <a href="{{ route('admin.vouchers.create') }}" class="btn btn-primary">Thêm mới voucher</a>
                     <div class="card-tools">
                         <form action="{{ route('admin.vouchers.index') }}" method="GET" class="input-group input-group-sm"
                             style="width: 150px;">
@@ -91,8 +91,8 @@
                                     <td>{{ $voucher->discount_value }}</td>
                                     <td>{{ $voucher->max_discount_amount ?? 'Không giới hạn' }}</td>
                                     <td>{{ $voucher->total_usage }}</td>
-                                    <td>{{ $voucher->start_date }}</td>
-                                    <td>{{ $voucher->end_date }}</td>
+                                    <td>{{ $voucher->start_date->format('d/m/Y') }}</td>
+                                    <td>{{ $voucher->end_date->format('d/m/Y') }}</td>
                                     <td>{{ $voucher->status ? 'Còn' : 'Hết' }}</td>
                                     <td>
                                         <a href="{{ route('admin.vouchers.edit', $voucher->id) }}" class="btn btn-warning">
