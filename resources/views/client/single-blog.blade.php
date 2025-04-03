@@ -22,9 +22,12 @@
                 <div class="col-xl-9 col-lg-8 col-12 order-1 order-lg-2 mb-40">
                     <div class="single-blog">
                         <div class="image-wrap">
-                            <h4 class="date">{{ $post->published_month }} <span>{{ $post->published_day }}</span></h4>
-                            <a class="image" href="single-blog.html"><img src="/client/assets/images/blog/single-blog.jpg"
-                                    alt=""></a>
+                            {{-- <h4 class="date">{{ $post->published_month }} <span>{{ $post->published_day }}</span></h4> --}}
+                            <h4 class="date">{{ $post->published_at }}</h4>
+                            {{-- <a class="image" href="single-blog.html"><img
+                                    src="/client/assets/images/blog/single-blog.jpg" alt=""></a> --}}
+                            <a class="image" href="{{ route('post.show', $post) }}"><img
+                                    src="{{ Storage::url($post->image) }}" alt="image post" ></a>
                         </div>
                         <div class="content">
                             <ul class="meta">
@@ -100,8 +103,7 @@
                                 <ul class="child-comment">
                                     <li>
                                         <div class="single-comment">
-                                            <div class="image"><img src="/client/assets/images/blog/author-3.jpg"
-                                                    alt="">
+                                            <div class="image"><img src="/client/assets/images/blog/author-3.jpg" alt="">
                                             </div>
                                             <div class="content">
                                                 <h4>Ronald Black</h4>
@@ -179,16 +181,16 @@
                             @foreach ($data as $post)
                                 <div class="sidebar-blog">
                                     <a href="{{ route('post.show', $post->id) }}" class="image"><img
-                                            src="/client/assets/images/blog/blog-1.jpg" alt=""></a>
+                                            src="{{ Storage::url($post->image) }}" alt=""></a>
                                     <div class="content">
                                         <a href="{{ route('post.show', $post->id) }}" class="title">{{$post->title}}</a>
-                                        <span class="date">{{$post->published_time}}</span>
+                                        <span class="date">{{$post->published_at}}</span>
                                     </div>
                                 </div>
                             @endforeach
                             {{-- <div class="sidebar-blog">
-                                <a href="single-blog.html" class="image"><img
-                                        src="/client/assets/images/blog/blog-2.jpg" alt=""></a>
+                                <a href="single-blog.html" class="image"><img src="/client/assets/images/blog/blog-2.jpg"
+                                        alt=""></a>
                                 <div class="content">
                                     <a href="{{ route('post.show',$post) }}" class="title">New Collection New Trend all New
                                         Style</a>
@@ -196,8 +198,8 @@
                                 </div>
                             </div>
                             <div class="sidebar-blog">
-                                <a href="single-blog.html" class="image"><img
-                                        src="/client/assets/images/blog/blog-3.jpg" alt=""></a>
+                                <a href="single-blog.html" class="image"><img src="/client/assets/images/blog/blog-3.jpg"
+                                        alt=""></a>
                                 <div class="content">
                                     <a href="{{ route('post.show',$post) }}" class="title">Lates and new Trens for baby
                                         fashion</a>
