@@ -69,19 +69,19 @@ class CartController extends Controller
             $cartItem->quantity += $request->quantity;
             $cartItem->save();
 
-            $inventory->quantity = $oldQuantity - $request->quantity;
-            if (!$inventory->save()) {
-                DB::rollBack();
-                return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
-            }
-            InventoryLog::create([
-                'id_product_variant' => $productVariant->id,
-                'user_id' => auth()->user()->id,
-                'old_quantity' => $oldQuantity,
-                'change_quantity' => $request->quantity,
-                'new_quantity' => $inventory->quantity,
-                'reason' => 'Đã thêm vào giỏ hàng'
-            ]);
+            // $inventory->quantity = $oldQuantity - $request->quantity;
+            // if (!$inventory->save()) {
+            //     DB::rollBack();
+            //     return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
+            // }
+            // InventoryLog::create([
+            //     'id_product_variant' => $productVariant->id,
+            //     'user_id' => auth()->user()->id,
+            //     'old_quantity' => $oldQuantity,
+            //     'change_quantity' => $request->quantity,
+            //     'new_quantity' => $inventory->quantity,
+            //     'reason' => 'Đã thêm vào giỏ hàng'
+            // ]);
         } else {
             CartItem::create([
                 'id_cart' => $cart->id,
@@ -90,19 +90,19 @@ class CartController extends Controller
                 'quantity' => $request->quantity,
                 'price' => $inventory->sale_price,
             ]);
-            $inventory->quantity = $oldQuantity - $request->quantity;
-            if (!$inventory->save()) {
-                DB::rollBack();
-                return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
-            }
-            InventoryLog::create([
-                'id_product_variant' => $productVariant->id,
-                'user_id' => auth()->user()->id,
-                'old_quantity' => $oldQuantity,
-                'change_quantity' => $request->quantity,
-                'new_quantity' => $inventory->quantity,
-                'reason' => 'Đã thêm vào giỏ hàng'
-            ]);
+            // $inventory->quantity = $oldQuantity - $request->quantity;
+            // if (!$inventory->save()) {
+            //     DB::rollBack();
+            //     return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
+            // }
+            // InventoryLog::create([
+            //     'id_product_variant' => $productVariant->id,
+            //     'user_id' => auth()->user()->id,
+            //     'old_quantity' => $oldQuantity,
+            //     'change_quantity' => $request->quantity,
+            //     'new_quantity' => $inventory->quantity,
+            //     'reason' => 'Đã thêm vào giỏ hàng'
+            // ]);
         }
         DB::commit();
         return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
@@ -116,19 +116,19 @@ class CartController extends Controller
             $cartItem->quantity += $request->quantity;
             $cartItem->save();
 
-            $inventory->quantity = $oldQuantity - $request->quantity;
-            if (!$inventory->save()) {
-                DB::rollBack();
-                return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
-            }
-            InventoryLog::create([
-                'id_product_variant' => $productVariant->id,
-                'user_id' => auth()->user()->id,
-                'old_quantity' => $oldQuantity,
-                'change_quantity' => $request->quantity,
-                'new_quantity' => $inventory->quantity,
-                'reason' => 'Đã thêm vào giỏ hàng'
-            ]);
+            // $inventory->quantity = $oldQuantity - $request->quantity;
+            // if (!$inventory->save()) {
+            //     DB::rollBack();
+            //     return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
+            // }
+            // InventoryLog::create([
+            //     'id_product_variant' => $productVariant->id,
+            //     'user_id' => auth()->user()->id,
+            //     'old_quantity' => $oldQuantity,
+            //     'change_quantity' => $request->quantity,
+            //     'new_quantity' => $inventory->quantity,
+            //     'reason' => 'Đã thêm vào giỏ hàng'
+            // ]);
         } else {
             CartItem::create([
                 'id_cart' => $cart->id,
@@ -137,19 +137,19 @@ class CartController extends Controller
                 'quantity' => $request->quantity,
                 'price' => $inventory->price,
             ]);
-            $inventory->quantity = $oldQuantity - $request->quantity;
-            if (!$inventory->save()) {
-                DB::rollBack();
-                return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
-            }
-            InventoryLog::create([
-                'id_product_variant' => $productVariant->id,
-                'user_id' => auth()->user()->id,
-                'old_quantity' => $oldQuantity,
-                'change_quantity' => $request->quantity,
-                'new_quantity' => $inventory->quantity,
-                'reason' => 'Đã thêm vào giỏ hàng'
-            ]);
+            // $inventory->quantity = $oldQuantity - $request->quantity;
+            // if (!$inventory->save()) {
+            //     DB::rollBack();
+            //     return response()->json(['message' => 'Đã xảy ra lỗi'], 500);
+            // }
+            // InventoryLog::create([
+            //     'id_product_variant' => $productVariant->id,
+            //     'user_id' => auth()->user()->id,
+            //     'old_quantity' => $oldQuantity,
+            //     'change_quantity' => $request->quantity,
+            //     'new_quantity' => $inventory->quantity,
+            //     'reason' => 'Đã thêm vào giỏ hàng'
+            // ]);
         }
         DB::commit();
         return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);

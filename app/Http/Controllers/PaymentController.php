@@ -28,10 +28,35 @@ class PaymentController extends Controller
 
         $total = $request->input('total');
         $saleTotal = $total - $new_total;
+        // dd($total, $saleTotal);
         $code = $request->input('code');
 
-        // dd($discount);
-        $voucher = Voucher::where([['status', 0], ['code',$code]])->first();
+        // dd($code);
+        $voucher = Voucher::where('code',$code)->first();
+        // dd($voucher);
+
+        // if ($voucher) {
+        //     $voucherUser = DB::table('voucher_user')->where([['id_voucher', $voucher->id], ['id_user', Auth::id()]])->first();
+        //     if ($voucherUser) {
+        //         return response()->json(['message' => 'Mã giảm giá đã được sử dụng'], 500);
+        //     }
+        //     if ($voucher->start_date > now()) {
+        //         return response()->json(['message' => 'Mã giảm giá chưa đến thời gian sử dụng'], 500);
+        //     }
+        //     if ($voucher->end_date < now()) {
+        //         return response()->json(['message' => 'Mã giảm giá đã hết hạn'], 500);
+        //     }
+        // }
+        // if ($voucher && $voucher->status == 0) {
+        //     if ($voucher->quantity > 0) {
+        //         $voucher->quantity -= 1;
+        //         $voucher->save();
+        //     } else {
+        //         return response()->json(['message' => 'Mã giảm giá đã hết lượt sử dụng'], 500);
+        //     }
+        // } else {
+        //     return response()->json(['message' => 'Mã giảm giá không hợp lệ'], 500);
+        // }
         $address_user = AddressUser::where('id_user', Auth::id())->get();
         $shipping = ShippingMethod::all();
         $paymentMethods = PaymentMethod::all();
@@ -45,13 +70,6 @@ class PaymentController extends Controller
                 ->get();
         }
 
-        // Nếu new_total không có, tính lại tổng tiền từ giỏ hàng
-        // if ($new_total == 0) {
-        //     $new_total = 0;
-        //     foreach ($cartItem as $item) {
-        //         $new_total += $item->price * $item->quantity;
-        //     }
-        // }
 
         return view('client.checkout', compact(
             [

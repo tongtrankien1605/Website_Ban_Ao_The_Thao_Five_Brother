@@ -101,12 +101,18 @@
                                         style="height: 40px;width: 300px; border-radius: 50px;">
                                         <option value="">--Chọn voucher--</option>
                                         @foreach ($listVoucher as $voucher)
-                                            <option value="{{ $voucher->id }}"
-                                                data-discount="{{ $voucher->vouchers->discount_value }}"
-                                                data-type="{{ $voucher->vouchers->discount_type }}"
-                                                data-code="{{ $voucher->vouchers->code }}">
+                                            <option value="{{ $voucher->id }}" 
+                                                data-code="{{$voucher->vouchers->code}}" 
+                                                data-id="{{$voucher->vouchers->id}}"
+                                                data-discount="{{$voucher->vouchers->discount_value}}"
+                                                data-type="{{$voucher->vouchers->discount_type}}" 
+                                                data-max-discount="{{$voucher->vouchers->max_discount_amount}}" 
+                                                data-usage-left="{{$voucher->vouchers->total_usage}}"
+                                                data-start-date="{{$voucher->vouchers->start_date}}" 
+                                                data-end-date="{{$voucher->vouchers->end_date}}">
                                                 Giảm
                                                 {{ number_format($voucher->vouchers->discount_value) }}{{ $voucher->vouchers->discount_type == 'percentage' ? '%' : 'đ' }}
+                                            Tối đa {{ number_format($voucher->vouchers->max_discount_amount) }}đ
                                             </option>
                                         @endforeach
                                     </select>
@@ -149,5 +155,5 @@
 
         </div>
     </div><!-- Page Section End -->
-        
+
 @endsection
