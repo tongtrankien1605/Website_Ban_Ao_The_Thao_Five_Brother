@@ -58,6 +58,7 @@ class User extends Authenticatable
     [
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime:Y/m/d H:i:s',
+        'birthday' => 'datetime:Y/m/d H:i:s',
         'password' => 'hashed',
         'is_locked' => 'boolean',
         'locked_until' => 'datetime'
@@ -84,7 +85,7 @@ class User extends Authenticatable
 
     public function address_users()
     {
-        return $this->hasMany(AddressUser::class);
+        return $this->hasMany(AddressUser::class,'id_user','id');
     }
 
     public function roles()

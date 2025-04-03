@@ -9,6 +9,7 @@ use App\Models\InventoryEntry;
 use App\Models\InventoryLog;
 use App\Models\Product;
 use App\Models\Skus;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,12 +22,13 @@ class SkusQuantityController extends Controller
      */
     public function index(Request $request)
     {
+        $user = User::where('id',auth()->user()->id)->with('roles','address_users')->first();
         // $skuses = Skus::with(['inventories', 'inventory_entries'])
         //     ->latest('id')->get()->groupBy('product_id');
         $builder = Product::latest('id')->with('skuses.inventories','skuses.inventory_entries','brands','categories')->withCount('skuses')->get();
         $products = $builder->where('skuses_count','!=',0);
         // dd($products->toArray());
-        return view('admin.skus.index', compact('products'));
+        return view('admin.skus.index', compact('products','user'));
     }
 
 
@@ -41,8 +43,9 @@ class SkusQuantityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SkusQuantityRequest $request)
+    public function store(Request $request)
     {
+        dd($request->all());
         $skuIds = explode(',', $request->sku_ids);
         if (Auth::user()->role == 3) {
             $status = 'Đã duyệt';

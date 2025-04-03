@@ -37,7 +37,7 @@
 
 
             <!-- Content Wrapper. Contains page content -->
-            @yield('content')
+            @yield('content',view('admin.dashboard.index'))
 
         </main>
 

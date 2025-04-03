@@ -198,7 +198,7 @@
                 const countdown = document.getElementById('countdown');
                 const checkoutForm = document.getElementById('checkoutForm');
                 let attemptsRemaining = {{ Auth::user()->failed_attempts ?? 0 }};
-                let timeLeft = 10; // 60 seconds timeout
+                let timeLeft = 60; // 60 seconds timeout
 
                 // Kiểm tra hàng tồn kho
                 $.ajax({

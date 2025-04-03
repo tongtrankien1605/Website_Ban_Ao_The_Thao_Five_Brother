@@ -46,7 +46,7 @@
                         <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> Address</a>
 
 
-                        <a href="#account-info" data-bs-toggle="tab">><i class="fa fa-user"></i> Account Details</a>
+                        <a href="#account-info" data-bs-toggle="tab"><i class="fa fa-user"></i> Account Details</a>
 
 
 

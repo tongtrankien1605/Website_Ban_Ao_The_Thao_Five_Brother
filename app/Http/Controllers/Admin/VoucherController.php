@@ -14,7 +14,7 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        $vouchers = Voucher::paginate(10);
+        $vouchers = Voucher::latest('updated_at')->paginate(10);
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
@@ -33,9 +33,14 @@ class VoucherController extends Controller
     {
         $request->validate([
             'code' => 'required|unique:vouchers',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric',
-            'max_discount_amount' => 'nullable|numeric|min:0',
+            'discount_type' => ['required', Rule::in(['percentage', 'fixed'])],
+            'discount_value' => [
+                'required',
+                'numeric',
+                Rule::when($request->discount_type === 'percentage', ['between:1,50']),
+                Rule::when($request->discount_type === 'fixed', ['between:10000,500000']),
+            ],
+            'max_discount_amount' => 'nullable|numeric|min:0|max:500000|required_if:discount_type,percentage',
             'total_usage' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
@@ -69,10 +74,18 @@ class VoucherController extends Controller
     public function update(Request $request, Voucher $voucher)
     {
         $data = $request->validate([
-            'code' => 'required|unique:vouchers',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric',
-            'max_discount_amount' => 'nullable|numeric|min:0',
+            'code' => [
+                'required',
+                Rule::unique('vouchers','id')->ignore($voucher->id)
+            ],
+        'discount_type' => ['required', Rule::in(['percentage', 'fixed'])],
+            'discount_value' => [
+                'required',
+                'numeric',
+                Rule::when($request->discount_type === 'percentage', ['between:1,50']),
+                Rule::when($request->discount_type === 'fixed', ['between:10000,500000']),
+            ],
+            'max_discount_amount' => 'nullable|numeric|min:0|max:500000|required_if:discount_type,percentage',
             'total_usage' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date',

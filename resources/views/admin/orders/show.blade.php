@@ -578,7 +578,7 @@
                                     @endif
                                     <div class=" text-center">
                                         <button type="button" class="btn btn-danger"
-                                            data-bs-dismiss="modal">Đóng</button>
+                                            data-dismiss="modal">Đóng</button>
                                         <button type="submit" class="btn btn-success" data-status="approved">Xác nhận</button>
                                         <button type="submit" class="btn btn-warning" data-status="rejected">Từ chối</button>
                                     </div>
@@ -891,7 +891,7 @@
                                     </div>
                                     <div class=" text-center">
                                         <button type="button" class="btn btn-danger"
-                                            data-bs-dismiss="modal">Đóng</button>
+                                            data-dismiss="modal">Đóng</button>
                                         <button type="submit" class="btn btn-success" disabled>Lưu thay đổi</button>
                                     </div>
                                 </form>

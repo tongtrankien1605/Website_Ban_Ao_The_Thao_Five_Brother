@@ -161,6 +161,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::resource('product.skus', SkusController::class);
     Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
 
+    Route::put('orders/update-multiple-status', [AdminOrderController::class, 'updateMultipleStatus'])->name('orders.update_multiple_status');
     Route::resource('orders',AdminOrderController::class);
     Route::put('orders/{order}/refund',[AdminOrderController::class,'updateRefund']);
     // Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
