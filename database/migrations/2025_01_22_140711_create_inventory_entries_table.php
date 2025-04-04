@@ -24,9 +24,10 @@ return new class extends Migration
             $table->integer('sale_price')->comment('Giá khuyến mãi')->nullable();
             $table->dateTime('discount_start')->comment('Thời gian bắt đầu khuyến mãi')->nullable();
             $table->dateTime('discount_end')->comment('Thời gian kết thúc khuyến mãi')->nullable();
-            $table->string('note')->comment('comment khi nhập hàng')->nullable();
+            $table->string('import')->comment('cho biết đợt nhập khi nhập hàng')->default(1);
             $table->enum('status', ['Đang chờ xử lý', 'Đã duyệt'])->comment('Trạng thái xử lý xuất nhập kho');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

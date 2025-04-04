@@ -29,4 +29,8 @@ class InventoryLog extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function inventory_entries()
+    {
+        return $this->belongsTo(InventoryEntry::class,'inventory_entry_id','id');
+    }
 }

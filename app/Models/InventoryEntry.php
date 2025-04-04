@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InventoryEntry extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $table = 'inventory_entries';
     protected $fillable = [
         'id_skus',
@@ -35,5 +36,9 @@ class InventoryEntry extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'id_shopper', 'id');
+    }
+    public function inventory_logs()
+    {
+        return $this->hasMany(InventoryLog::class, 'inventory_entry_id', 'id');
     }
 }

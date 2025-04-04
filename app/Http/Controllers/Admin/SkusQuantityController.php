@@ -22,13 +22,22 @@ class SkusQuantityController extends Controller
      */
     public function index(Request $request)
     {
-        $user = User::where('id',auth()->user()->id)->with('roles','address_users')->first();
-        // $skuses = Skus::with(['inventories', 'inventory_entries'])
-        //     ->latest('id')->get()->groupBy('product_id');
-        $builder = Product::latest('id')->with('skuses.inventories','skuses.inventory_entries','brands','categories')->withCount('skuses')->get();
-        $products = $builder->where('skuses_count','!=',0);
+        $user = User::where('id', auth()->user()->id)->with('roles', 'address_users')->first();
+
+        // Tải sản phẩm với biến thể và inventory entries mới nhất có trạng thái "Đã duyệt"
+        $builder = Product::latest('id')->with([
+            'skuses.inventories',
+            'skuses.inventory_entries' => function ($q) {
+                $q->where('status', 'Đã duyệt')
+                    ->orderBy('created_at', 'desc');
+            },
+            'brands',
+            'categories'
+        ])->withCount('skuses')->get();
+
+        $products = $builder->where('skuses_count', '!=', 0);
         // dd($products->toArray());
-        return view('admin.skus.index', compact('products','user'));
+        return view('admin.skus.index', compact('products', 'user'));
     }
 
 
@@ -45,40 +54,45 @@ class SkusQuantityController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
-        $skuIds = explode(',', $request->sku_ids);
+        $count = InventoryEntry::orderBy('created_at','desc')->first();
+        $import = 0;
+        if($count){
+            $import = $count->import;
+        }
         if (Auth::user()->role == 3) {
             $status = 'Đã duyệt';
         } else {
             $status = 'Đang chờ xử lý';
         }
         $inventoryEntry = [];
-        foreach ($skuIds as $skuId) {
+        foreach ($request->variants as $key => $value) {
+            $hasSale = isset($value['has_sale']) && $value['has_sale'] === 'on';
             $inventoryEntry[] = [
-                'id_skus' => $skuId,
-                'user_id' => auth()->id(),
+                'id_skus' => $value['id'],
+                'user_id' => Auth::user()->id,
                 'id_shopper' => (Auth::user()->role == 3) ? Auth::user()->id : null,
-                'quantity' => $request->quantity,
-                'cost_price' => $request->cost_price,
-                'price' => $request->price,
-                'sale_price' => $request->sale_price,
-                'discount_start' => $request->sale_start_date,
-                'discount_end' => $request->sale_end_date,
+                'quantity' => $value['quantity'],
+                'cost_price' => $value['cost_price'],
+                'price' => $value['price'],
+                'sale_price' => $hasSale ? $value['sale_price'] : null,
+                'discount_start' => $hasSale ? $value['discount_start'] : null,
+                'discount_end' => $hasSale ? $value['discount_end'] : null,
+                'import' => $import + 1,
                 'status' => $status,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ];
             if (Auth::user()->role == 3) {
-                $invenTory = Inventory::where('id_product_variant', $skuId)->first();
+                $invenTory = Inventory::where('id_product_variant', $value['id'])->first();
                 $oldQuantity = $invenTory->quantity;
-                $invenTory->quantity += $request->quantity;
+                $invenTory->quantity += $value['quantity'];
                 $invenTory->save();
                 InventoryLog::create([
-                    'id_product_variant' => $skuId,
+                    'id_product_variant' => $value['id'],
                     'user_id' => Auth::user()->id,
                     'old_quantity' => $oldQuantity,
                     'new_quantity' => $invenTory->quantity,
-                    'change_quantity' => $request->quantity,
+                    'change_quantity' => $value['quantity'],
                     'reason' => 'Nhập hàng',
                 ]);
             }
