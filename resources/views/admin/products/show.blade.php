@@ -50,7 +50,7 @@
                                 <div class="form-group">
                                     <label>Mô tả</label>
                                     <p>
-                                        {{ $product->description }}
+                                        {!! $product->description !!}
                                     </p>
                                 </div>
                                 <div>

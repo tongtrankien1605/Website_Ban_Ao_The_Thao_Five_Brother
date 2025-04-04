@@ -61,6 +61,8 @@ class AuthController extends Controller
     }
     public function register(RegisterRequest $request)
     {
+        // dd($request->toArray());
+
         $user = User::create($request->toArray());
 
         Auth::login($user);

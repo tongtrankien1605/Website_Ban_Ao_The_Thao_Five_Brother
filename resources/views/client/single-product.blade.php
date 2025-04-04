@@ -72,13 +72,13 @@
                                             <i class="fa fa-star-o"></i>
                                         </div>
                                     </div>
-                                    <div class="head-right">
+                                    {{-- <div class="head-right">
                                         <span class="price">${{ number_format($product->price, 2) }}</span>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <div class="description">
-                                    <p>{{ $product->description }}</p>
+                                    <p>{!! $product->description !!}</p>
                                 </div>
 
                                 <span class="availability">Availability: <span>In Stock</span></span>
@@ -172,7 +172,7 @@
                         <!-- Tab panes -->
                         <div class="tab-content col-12">
                             <div class="pro-info-tab tab-pane active" id="more-info">
-                                <p>{{ $product->description }}</p>
+                                <p>{!! $product->description !!}</p>
                             </div>
                             <div class="pro-info-tab tab-pane" id="data-sheet">
                                 <table class="table-data-sheet">
