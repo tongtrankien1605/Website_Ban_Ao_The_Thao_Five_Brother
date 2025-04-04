@@ -1,4 +1,11 @@
+@extends('admin.layouts.index')
 
+@section('title')
+    Dashboard
+@endsection
+
+@section('content')
+    <div class="content-wrapper bg-light">
         <section class="content">
             <div class="container-fluid">
                 <h2 class="mb-4 text-dark">Dashboard</h2>
@@ -199,6 +206,9 @@
             </div>
         </section>
     </div>
+
+
+
 
 
 
