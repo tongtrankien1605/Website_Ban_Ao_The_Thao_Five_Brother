@@ -19,7 +19,8 @@ class InventoryEntry extends Model
         'sale_price',
         'discount_start',
         'discount_end',
-        'status'
+        'status',
+        'import',
     ];
     public function serializeDate($date)
     {

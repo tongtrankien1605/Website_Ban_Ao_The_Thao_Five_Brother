@@ -52,8 +52,9 @@ class SkusQuantityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SkusQuantityRequest $request)
     {
+        DB::beginTransaction();
         $count = InventoryEntry::orderBy('created_at','desc')->first();
         $import = 0;
         if($count){
@@ -64,10 +65,9 @@ class SkusQuantityController extends Controller
         } else {
             $status = 'Đang chờ xử lý';
         }
-        $inventoryEntry = [];
         foreach ($request->variants as $key => $value) {
             $hasSale = isset($value['has_sale']) && $value['has_sale'] === 'on';
-            $inventoryEntry[] = [
+            $inventoryEntry = InventoryEntry::create([
                 'id_skus' => $value['id'],
                 'user_id' => Auth::user()->id,
                 'id_shopper' => (Auth::user()->role == 3) ? Auth::user()->id : null,
@@ -79,28 +79,25 @@ class SkusQuantityController extends Controller
                 'discount_end' => $hasSale ? $value['discount_end'] : null,
                 'import' => $import + 1,
                 'status' => $status,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
+            ]);
             if (Auth::user()->role == 3) {
                 $invenTory = Inventory::where('id_product_variant', $value['id'])->first();
                 $oldQuantity = $invenTory->quantity;
                 $invenTory->quantity += $value['quantity'];
                 $invenTory->save();
-                InventoryLog::create([
+                $InventoryLog = InventoryLog::create([
                     'id_product_variant' => $value['id'],
                     'user_id' => Auth::user()->id,
                     'old_quantity' => $oldQuantity,
                     'new_quantity' => $invenTory->quantity,
                     'change_quantity' => $value['quantity'],
                     'reason' => 'Nhập hàng',
+                    'inventory_entry_id' => $inventoryEntry->id,
                 ]);
+                dd($InventoryLog);
             }
         }
-        if (!$inventoryEntry) {
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi');
-        }
-        InventoryEntry::insert($inventoryEntry);
+        DB::commit();
         return redirect()->route('admin.skus.index')->with('success', 'Đã thêm vào kho!');
     }
 

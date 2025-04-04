@@ -16,6 +16,7 @@ class InventoryLog extends Model
         'new_quantity',
         'user_id',
         'reason',
+        'inventory_entry_id',
     ];
     public function serializeDate($date)
     {
