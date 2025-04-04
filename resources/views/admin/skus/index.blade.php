@@ -197,6 +197,19 @@
         </div>
     </div>
 
+    <!-- Toast cho thông báo lỗi -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto"><i class="bi bi-exclamation-triangle"></i> Lỗi Validation</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Vui lòng kiểm tra các lỗi trong form.
+            </div>
+        </div>
+    </div>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -309,6 +322,61 @@
             font-weight: bold;
             margin-bottom: 10px;
         }
+        
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Định dạng dành cho input có lỗi */
+        .input-error {
+            border: 2px solid #dc3545 !important;
+            background-color: #fff8f8 !important;
+        }
+        
+        /* Định dạng cho thông báo lỗi */
+        .error-message {
+            color: #dc3545 !important;
+            font-weight: 500 !important;
+            margin-top: 5px !important;
+            font-size: 14px !important;
+            display: block !important;
+            padding-left: 5px !important;
+        }
+        
+        /* Biểu tượng lỗi */
+        .error-icon {
+            margin-right: 5px !important;
+        }
+
+        /* Thêm CSS cho các input date có ràng buộc */
+        .date-input {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .date-input:hover {
+            background-color: #e9ecef;
+        }
+        
+        .date-linked {
+            position: relative;
+        }
+        
+        .date-linked::after {
+            content: "\F282"; /* Mã biểu tượng link từ Bootstrap Icons */
+            font-family: "Bootstrap Icons";
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -326,14 +394,62 @@
             }
             
             // Hàm khởi tạo flatpickr cho phần tử mới
-            function initFlatpickr(selector) {
+            function initFlatpickr(selector, options = {}) {
                 try {
                     flatpickr(selector, {
                         dateFormat: "Y-m-d",
-                        minDate: "today"
+                        minDate: "today",
+                        ...options
                     });
                 } catch (e) {
                     console.error('Lỗi khởi tạo flatpickr:', e);
+                }
+            }
+            
+            // Khởi tạo flatpickr cho các date picker trong form biến thể
+            function initDatePickers(variantId) {
+                const startDateField = `#discount-start-${variantId}`;
+                const endDateField = `#discount-end-${variantId}`;
+                
+                // Khởi tạo date picker cho ngày bắt đầu
+                const startPicker = flatpickr(startDateField, {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    onChange: function(selectedDates, dateStr) {
+                        // Khi chọn ngày bắt đầu, cập nhật minDate của ngày kết thúc
+                        const endDatePicker = document.querySelector(endDateField)._flatpickr;
+                        endDatePicker.set('minDate', dateStr);
+                        
+                        // Nếu ngày kết thúc hiện tại nhỏ hơn ngày bắt đầu mới chọn
+                        if (endDatePicker.selectedDates[0] && endDatePicker.selectedDates[0] < selectedDates[0]) {
+                            endDatePicker.setDate(dateStr); // Đặt ngày kết thúc = ngày bắt đầu
+                        }
+                    }
+                });
+                
+                // Khởi tạo date picker cho ngày kết thúc
+                const endPicker = flatpickr(endDateField, {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    onChange: function(selectedDates, dateStr) {
+                        // Khi chọn ngày kết thúc, cập nhật maxDate của ngày bắt đầu
+                        const startDatePicker = document.querySelector(startDateField)._flatpickr;
+                        startDatePicker.set('maxDate', dateStr);
+                        
+                        // Nếu ngày bắt đầu hiện tại lớn hơn ngày kết thúc mới chọn
+                        if (startDatePicker.selectedDates[0] && startDatePicker.selectedDates[0] > selectedDates[0]) {
+                            startDatePicker.setDate(dateStr); // Đặt ngày bắt đầu = ngày kết thúc
+                        }
+                    }
+                });
+                
+                // Nếu đã có giá trị ban đầu, đảm bảo ràng buộc đúng
+                if ($(startDateField).val()) {
+                    endPicker.set('minDate', $(startDateField).val());
+                }
+                
+                if ($(endDateField).val()) {
+                    startPicker.set('maxDate', $(endDateField).val());
                 }
             }
             
@@ -583,21 +699,33 @@
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
                                             <label for="discount-start-${variantId}">Ngày bắt đầu</label>
-                                            <input type="text" class="form-control date-input" 
-                                                   id="discount-start-${variantId}" 
-                                                   name="variants[${variantId}][discount_start]" 
-                                                   value="${discountStart}"
-                                                   placeholder="Chọn ngày bắt đầu">
+                                            <div class="input-group date-container">
+                                                <input type="text" class="form-control date-input date-start" 
+                                                       id="discount-start-${variantId}" 
+                                                       name="variants[${variantId}][discount_start]" 
+                                                       value="${discountStart}"
+                                                       placeholder="Chọn ngày bắt đầu">
+                                                <div class="input-group-text bg-light border-start-0">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                </div>
+                                            </div>
+                                            <small class="form-text text-muted">Không được trước ngày hiện tại</small>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
                                             <label for="discount-end-${variantId}">Ngày kết thúc</label>
-                                            <input type="text" class="form-control date-input" 
-                                                   id="discount-end-${variantId}" 
-                                                   name="variants[${variantId}][discount_end]"
-                                                   value="${discountEnd}" 
-                                                   placeholder="Chọn ngày kết thúc">
+                                            <div class="input-group date-container">
+                                                <input type="text" class="form-control date-input date-end" 
+                                                       id="discount-end-${variantId}" 
+                                                       name="variants[${variantId}][discount_end]"
+                                                       value="${discountEnd}" 
+                                                       placeholder="Chọn ngày kết thúc">
+                                                <div class="input-group-text bg-light border-start-0">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                </div>
+                                            </div>
+                                            <small class="form-text text-muted">Không được trước ngày bắt đầu</small>
                                         </div>
                                     </div>
                                 </div>
@@ -611,8 +739,7 @@
                     // Khởi tạo flatpickr cho date inputs mới - sử dụng setTimeout để đảm bảo DOM đã được cập nhật
                     setTimeout(function() {
                         try {
-                            initFlatpickr(`#discount-start-${variantId}`);
-                            initFlatpickr(`#discount-end-${variantId}`);
+                            initDatePickers(variantId);
                         } catch (e) {
                             console.error('Lỗi khởi tạo flatpickr:', e);
                         }
@@ -620,7 +747,15 @@
                     
                     // Xử lý sự kiện toggle giá khuyến mãi
                     $(`#has-sale-${variantId}`).change(function() {
-                        $(`#sale-section-${variantId}`).toggle(this.checked);
+                        const isChecked = $(this).is(':checked');
+                        $(`#sale-section-${variantId}`).toggle(isChecked);
+                        
+                        // Khởi tạo date pickers nếu vừa bật khuyến mãi
+                        if (isChecked) {
+                            setTimeout(function() {
+                                initDatePickers(variantId);
+                            }, 100);
+                        }
                     });
                 }
             }
@@ -878,14 +1013,168 @@
 
             // Xử lý submit form
             $('#products-form').submit(function (e) {
+                // Ngăn form tự động submit
+                e.preventDefault();
+                
+                console.log("Form submission started");
+                
                 if (selectedVariants.length === 0) {
-                    e.preventDefault();
                     alert('Vui lòng chọn ít nhất một biến thể sản phẩm');
                     return false;
                 }
-
-                // Validation có thể được thêm ở đây
-                return true;
+                
+                // Reset tất cả thông báo lỗi cũ
+                $('.text-danger').remove();
+                $('.is-invalid').removeClass('is-invalid');
+                
+                // Biến để kiểm tra tất cả form hợp lệ
+                let isValid = true;
+                
+                // Kiểm tra từng biến thể đã chọn
+                checkedVariants.forEach(function(variantId) {
+                    console.log("Validating variant ID:", variantId);
+                    
+                    // Lấy giá trị các trường nhập
+                    const quantityField = $(`#quantity-${variantId}`);
+                    const costPriceField = $(`#cost-price-${variantId}`);
+                    const priceField = $(`#price-${variantId}`);
+                    const hasSale = $(`#has-sale-${variantId}`).is(':checked');
+                    const salePriceField = $(`#sale-price-${variantId}`);
+                    const discountStartField = $(`#discount-start-${variantId}`);
+                    const discountEndField = $(`#discount-end-${variantId}`);
+                    
+                    const costPrice = Number(costPriceField.val());
+                    const price = Number(priceField.val());
+                    
+                    // Kiểm tra số lượng
+                    if (!quantityField.val() || quantityField.val() <= 0 || quantityField.val() > 10001) {
+                        showError(quantityField, "Số lượng nhập thêm không được để trống và phải lớn hơn nằm trong khoảng từ 1 đến 10000");
+                        isValid = false;
+                    }
+                    
+                    // Kiểm tra giá nhập
+                    if (!costPrice || costPrice <= 0) {
+                        showError(costPriceField, "Giá nhập không được để trống và phải lớn hơn 0");
+                        isValid = false;
+                    }
+                    
+                    // Kiểm tra giá bán
+                    if (!price || price <= 0) {
+                        showError(priceField, "Giá bán không được để trống và phải lớn hơn 0");
+                        isValid = false;
+                    }
+                    
+                    // Kiểm tra giá bán phải lớn hơn giá nhập
+                    if (costPrice && price && costPrice >= price) {
+                        showError(priceField, "Giá bán phải lớn hơn giá nhập");
+                        isValid = false;
+                    }
+                    
+                    // Nếu có khuyến mãi, kiểm tra các trường bổ sung
+                    if (hasSale) {
+                        const salePrice = Number(salePriceField.val());
+                        
+                        // Kiểm tra giá khuyến mãi
+                        if (!salePrice || salePrice <= 0) {
+                            showError(salePriceField, "Giá khuyến mãi không được để trống và phải lớn hơn 0");
+                            isValid = false;
+                        }
+                        
+                        // Kiểm tra giá khuyến mãi nằm giữa giá nhập và giá bán
+                        if (salePrice && costPrice && price) {
+                            if (salePrice <= costPrice) {
+                                showError(salePriceField, "Giá khuyến mãi phải lớn hơn giá nhập");
+                                isValid = false;
+                            }
+                            
+                            if (salePrice >= price) {
+                                showError(salePriceField, "Giá khuyến mãi phải nhỏ hơn giá bán");
+                                isValid = false;
+                            }
+                        }
+                        
+                        // Kiểm tra ngày bắt đầu và kết thúc
+                        if (!discountStartField.val()) {
+                            showError(discountStartField, "Ngày bắt đầu không được để trống");
+                            isValid = false;
+                        }
+                        
+                        if (!discountEndField.val()) {
+                            showError(discountEndField, "Ngày kết thúc không được để trống");
+                            isValid = false;
+                        }
+                        
+                        if (discountStartField.val() && discountEndField.val()) {
+                            const startDate = new Date(discountStartField.val());
+                            const endDate = new Date(discountEndField.val());
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            
+                            if (startDate < today) {
+                                showError(discountStartField, "Ngày bắt đầu không được nhỏ hơn ngày hiện tại");
+                                isValid = false;
+                            }
+                            
+                            if (endDate < today) {
+                                showError(discountEndField, "Ngày kết thúc không được nhỏ hơn ngày hiện tại");
+                                isValid = false;
+                            }
+                            
+                            if (startDate > endDate) {
+                                showError(discountEndField, "Ngày kết thúc không được nhỏ hơn ngày bắt đầu");
+                                isValid = false;
+                            }
+                        }
+                    }
+                });
+                
+                // Nếu có lỗi validation, hiển thị thông báo và không submit form
+                if (!isValid) {
+                    // Hiển thị Toast thông báo lỗi
+                    const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                    errorToast.show();
+                    
+                    // Cuộn trang đến trường lỗi đầu tiên
+                    const firstErrorField = $('.is-invalid').first();
+                    if (firstErrorField.length) {
+                        $('html, body').animate({
+                            scrollTop: firstErrorField.offset().top - 100
+                        }, 500);
+                    }
+                    
+                    return false;
+                }
+                
+                // Nếu không có lỗi, submit form
+                this.submit();
+            });
+            
+            // Hàm hiển thị lỗi bên dưới trường nhập liệu
+            function showError(field, message) {
+                // Xóa thông báo lỗi cũ nếu có
+                field.parent().find('.error-message').remove();
+                
+                // Thêm class cho trường input
+                field.addClass('is-invalid input-error');
+                
+                // Tạo phần tử hiển thị lỗi
+                const errorElement = $(`<div class="error-message"><i class="bi bi-exclamation-circle error-icon"></i>${message}</div>`);
+                
+                // Thêm vào sau input
+                field.after(errorElement);
+                
+                console.log('Error added:', message, 'for field:', field);
+            }
+            
+            // Xửa thông báo lỗi khi người dùng thay đổi giá trị
+            $(document).on('input', 'input[type="number"], input[type="text"]', function() {
+                $(this).removeClass('is-invalid input-error');
+                $(this).parent().find('.error-message').remove();
+            });
+            
+            $(document).on('change', '.date-input, input[type="checkbox"]', function() {
+                $(this).removeClass('is-invalid input-error');
+                $(this).parent().find('.error-message').remove();
             });
 
             // Ngăn đóng dropdown khi click vào nội dung bên trong
@@ -930,8 +1219,7 @@
                         
                         // Khởi tạo lại flatpickr nếu cần
                         setTimeout(function() {
-                            initFlatpickr(`#discount-start-${variantId}`);
-                            initFlatpickr(`#discount-end-${variantId}`);
+                            initDatePickers(variantId);
                         }, 100);
                     }
                 });
