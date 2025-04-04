@@ -36,16 +36,19 @@ return [
             'url' => env('VNPAY_URL'),
     ],
     'paypal' => [
-            'mode'    => env('PAYPAL_MODE', 'sandbox'),
-    'sandbox' => [
-        'client_id'     => env('PAYPAL_SANDBOX_CLIENT_ID'),
-        'client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
-        'app_id'        => 'APP-80W284485P519543T',
-    ],
-    'payment_action' => 'Sale',  // BỔ SUNG DÒNG NÀY
-    'currency'       => 'USD',
-    'notify_url'     => '', 
-    'locale'         => 'en_US',
-    'validate_ssl'   => true,
+        'mode' => env('PAYPAL_MODE', 'sandbox'),
+        'sandbox' => [
+            'client_id' => env('PAYPAL_SANDBOX_CLIENT_ID'),
+            'client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
+        ],
+        'live' => [
+            'client_id' => env('PAYPAL_LIVE_CLIENT_ID'),
+            'client_secret' => env('PAYPAL_LIVE_CLIENT_SECRET'),
+        ],
+        'payment_action' => 'Sale',
+        'currency' => 'USD',
+        'notify_url' => '',
+        'locale' => 'en_US',
+        'validate_ssl' => true,
     ],
 ];

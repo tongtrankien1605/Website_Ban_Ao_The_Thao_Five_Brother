@@ -27,7 +27,7 @@
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
                     <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.vouchers.create') }}" class="btn btn-primary">Thêm mới bài viết</a>
+                    <a href="{{ route('admin.vouchers.create') }}" class="btn btn-primary">Thêm mới voucher</a>
                     <div class="card-tools">
                         <form action="{{ route('admin.vouchers.index') }}" method="GET" class="input-group input-group-sm"
                             style="width: 150px;">
@@ -64,6 +64,9 @@
                                     aria-label="Platform(s): activate to sort column ascending">
                                     Giá trị</th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
+                                    aria-label="Platform(s): activate to sort column ascending">
+                                    Giảm tối đa</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
                                     aria-label="Engine version: activate to sort column ascending">
                                     Số lần sử dụng
                                 </th>
@@ -86,9 +89,10 @@
                                     </td>
                                     <td>{{ $voucher->discount_type }}</td>
                                     <td>{{ $voucher->discount_value }}</td>
+                                    <td>{{ $voucher->max_discount_amount ?? 'Không giới hạn' }}</td>
                                     <td>{{ $voucher->total_usage }}</td>
-                                    <td>{{ $voucher->start_date }}</td>
-                                    <td>{{ $voucher->end_date }}</td>
+                                    <td>{{ $voucher->start_date->format('d/m/Y') }}</td>
+                                    <td>{{ $voucher->end_date->format('d/m/Y') }}</td>
                                     <td>{{ $voucher->status ? 'Còn' : 'Hết' }}</td>
                                     <td>
                                         <a href="{{ route('admin.vouchers.edit', $voucher->id) }}" class="btn btn-warning">
@@ -99,7 +103,7 @@
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.vouchers.destroy', $voucher->id) }}"" method="POST"
+                                        <form action="{{ route('admin.vouchers.destroy', $voucher->id) }}"" method=" POST"
                                             onsubmit="return confirm('Bạn có chắc muốn xóa voucher này?')"
                                             style="display:inline;">
                                             @csrf

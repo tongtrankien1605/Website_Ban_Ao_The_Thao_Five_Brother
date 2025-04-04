@@ -70,6 +70,7 @@ class UserController extends Controller
             ->join('users', function ($q) {
                 $q->on('users.id', '=', 'orders.id_user');
             })
+            ->with('vouchers')
             ->select([
                 'orders.*',
                 'shipping_methods.name as shipping_method_name',
@@ -81,12 +82,10 @@ class UserController extends Controller
                 'users.phone_number as user_phone_number',
             ])
             ->paginate(10);
+            // dd($orders->toArray());
         $orderIds = $orders->pluck('id');
         $orderDetails = OrderDetail::whereIn('id_order', $orderIds)
-            ->join('skuses', function ($q) {
-                $q->on('skuses.id', '=', 'order_details.id_product_variant');
-                $q->whereNull('skuses.deleted_at');
-            })
+            ->with('product_variants')
             ->get()
             ->groupBy('id_order');
         // dd($orderDetails->toArray());

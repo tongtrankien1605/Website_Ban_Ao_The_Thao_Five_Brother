@@ -37,4 +37,8 @@ class Variant extends Model
     {
         return $this->belongsTo(Skus::class, 'id_skus', 'id');
     }
+    public function latestStock()
+    {
+        return $this->hasOne(Inventory::class, 'id_product_variant', 'id')->latest('created_at');
+    }
 }

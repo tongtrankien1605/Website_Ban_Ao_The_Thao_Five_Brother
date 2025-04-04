@@ -15,17 +15,43 @@ class Voucher extends Model
         'code',
         'discount_type',
         'discount_value',
+        'max_discount_amount',
         'total_usage',
         'start_date',
         'end_date',
         'status',
+        'max_discount_amount'
     ];
     public function serializeDate($date)
     {
         return $date->format('Y/m/d H:i:s');
     }
+    protected $casts =
+    [ 
+        'start_date' => 'datetime:Y/m/d H:i:s',
+        'end_date' => 'datetime:Y/m/d H:i:s',
+        'created_at' => 'datetime:Y/m/d H:i:s',
+        'updated_at' => 'datetime:Y/m/d H:i:s',
+    ];
     public function voucher_users()
     {
         return $this->hasMany(VoucherUser::class);
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'id_voucher', 'id');
+    }
+    protected $attribute = [
+        'status' => 0,
+    ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (is_null($model->max_discount_amount)) {
+                $model->max_discount_amount = $model->discount_value;
+            }
+        });
     }
 }

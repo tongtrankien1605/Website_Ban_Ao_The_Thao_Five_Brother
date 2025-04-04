@@ -17,7 +17,6 @@
     @extends('client.layouts.partials.css')
     @extends('client.layouts.partials.js')
     @vite('resources/js/app.js')
-
 </head>
 
 <body>
@@ -54,7 +53,7 @@
         </footer>
     </div>
 
-
+    @stack('scripts')
 
 </body>
 

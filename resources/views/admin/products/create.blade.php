@@ -33,7 +33,7 @@
 
                                     <div class="form-group">
                                         <label for="description" class="form-label">Mô tả sản phẩm</label>
-                                        <textarea name="description" class="form-control" rows="5" placeholder="Nhập nội dung bài viết" id="summernote"> {{ old('description') }}</textarea>
+                                        <textarea name="description" class="form-control" rows="5" id="summernote">{{ old('description') }}</textarea>
                                         @error('description')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -243,7 +243,6 @@
             </div>
         </section>
     </div>
-    @extends('admin.layouts.js')
     @include('admin.products.js')
 @endsection
 <style>

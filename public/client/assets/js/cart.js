@@ -150,7 +150,17 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error("Lỗi AJAX:", xhr);
-                alert("Lỗi: " + xhr.responseJSON.message);
+                if (xhr.status === 422) {
+                    // Nếu lỗi do vượt quá số lượng tồn kho
+                    alert(xhr.responseJSON.message);
+                    // Reset số lượng về giá trị tối đa cho phép
+                    let maxQuantity = xhr.responseJSON.max_quantity;
+                    $('input[data-id="' + cartItemId + '"]').val(maxQuantity);
+                    // Cập nhật lại với số lượng tối đa
+                    updateCartQuantity(cartItemId, maxQuantity, price);
+                } else {
+                    alert("Lỗi: " + xhr.responseJSON.message);
+                }
             }
         });
     }
@@ -211,6 +221,7 @@ $(document).ready(function () {
     let newTotal = 0; // Biến lưu tổng tiền mới sau khi áp voucher
     let discountValue = 0;
     let discountType = null;
+    let code = null;
     
     // 🟢 Hàm cập nhật tổng tiền giỏ hàng
     function updateCartSummary() {
@@ -239,55 +250,67 @@ $(document).ready(function () {
     // 🟢 Xử lý khi áp voucher
     $("#apply-voucher").click(function (e) {
         e.preventDefault();
-
+    
         let selectedOption = $("#voucher option:selected");
-        discountValue = parseFloat(selectedOption.data("discount")) || 0;
-        discountType = selectedOption.data("type");
-
-        console.log("Total ban đầu:", total);
-        console.log("Discount Value:", discountValue);
-        console.log("Discount Type:", discountType);
-
-        if (discountType === "percentage") {
-            newTotal = total - (total * discountValue / 100);
-        } else {
-            newTotal = total - discountValue;
+        let discountValue = parseFloat(selectedOption.data("discount")) || 0;
+        let discountType = selectedOption.data("type");
+        let maxDiscount = parseFloat(selectedOption.data("max-discount")) || 0;
+        let total = parseFloat($(".order-total .amount").text().replace(/\D/g, '')) || 0; // Lấy giá trị số từ HTML
+        let discountAmount = (discountType === "percentage") ? (total * discountValue / 100) : discountValue;
+        let code = selectedOption.data("code");
+        console.log("Mã voucher gửi đi:", code);
+    
+        if (maxDiscount > 0) {
+            discountAmount = Math.min(discountAmount, maxDiscount);
         }
-
-        newTotal = Math.max(0, newTotal); // Không âm
-
+    
+        newTotal = Math.max(0, total - discountAmount); // 🟢 Cập nhật giá trị toàn cục
+        
         console.log("New Total sau giảm:", newTotal);
+        
         $(".order-total .amount").text(newTotal.toLocaleString() + " Đồng");
+    
+        // 🟢 Lưu `newTotal` vào sessionStorage để sử dụng khi thanh toán
+        sessionStorage.setItem("newTotal", newTotal);
+        sessionStorage.setItem("code", code);
+    
+        alert(`Bạn đã áp dụng mã giảm giá! Tổng tiền sau giảm: ${newTotal.toLocaleString()} Đồng`);
     });
+    
+    
+    
 
     // 🟢 Xử lý khi nhấn nút Checkout
     $(".checkout-btn").on("click", function (e) {
         e.preventDefault();
-
+    
         let selectedItems = [];
-
+    
         $(".cart-checkbox:checked").each(function () {
             let row = $(this).closest("tr");
             let productId = $(this).val();
             let quantity = row.find(".dataInput").val();
-
+    
             selectedItems.push({
                 id: productId,
                 quantity: quantity
             });
         });
-
+    
         if (selectedItems.length === 0) {
             alert("❌ Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
             return;
         }
-
-        console.log("🟢 Đang chuyển hướng với:", selectedItems, "New Total:", newTotal);
-
-        let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, discount: discountValue, discountType: discountType });
-
-        window.location.href = "/payment?" + queryString; // Chuyển hướng với new_total
+    
+        let code = $("#voucher option:selected").data("code") || ""; // ✅ Lấy mã giảm giá
+        let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, code: code });
+    
+        console.log("🟢 Chuyển hướng với URL:", "/payment?" + queryString); // ✅ Debug URL
+    
+        window.location.href = "/payment?" + queryString; // ✅ Chuyển hướng
     });
+    
+    
 
     updateCartSummary(); // Cập nhật khi load trang
 });

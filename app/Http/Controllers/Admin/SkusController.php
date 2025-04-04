@@ -84,6 +84,7 @@ class SkusController extends Controller
         $inventoryEntry->discount_end = $request->sale_end_date;
         if (Auth::user()->role == 3) {
             $inventoryEntry->status = 'Đã duyệt';
+            $inventoryEntry->id_shopper = auth()->user()->id;
             $invenTory = Inventory::where('id_product_variant',$id)->first();
             $oldQuantity = $invenTory->quantity;
             $invenTory->quantity += $request->quantity;

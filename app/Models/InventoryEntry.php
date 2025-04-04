@@ -32,4 +32,8 @@ class InventoryEntry extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'id_shopper', 'id');
+    }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductAttributeController;
+use App\Http\Controllers\Admin\SkusQuantityController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Auth\AuthController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\RefundController as AdminRefundController;
 use App\Http\Controllers\Admin\SkusController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\CartController;
@@ -159,13 +161,22 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::resource('product.skus', SkusController::class);
     Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
 
+    Route::put('orders/update-multiple-status', [AdminOrderController::class, 'updateMultipleStatus'])->name('orders.update_multiple_status');
     Route::resource('orders',AdminOrderController::class);
     Route::put('orders/{order}/refund',[AdminOrderController::class,'updateRefund']);
     // Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
     // Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
 
+    Route::resource('skus', SkusQuantityController::class);
+    Route::get('skus_comfirm', [SkusQuantityController::class, 'indexConfirm'])->name('skus_confirm');
+    Route::post('comfirm', [SkusQuantityController::class, 'confirm'])->name('confirm');
+    Route::get('skus_history', [SkusQuantityController::class, 'indexHistory'])->name('skus_history');
+    Route::post('history', [SkusQuantityController::class, 'confirm'])->name('history');
 
-    Route::resource('refunds', RefundController::class);
+    Route::resource('refunds', AdminRefundController::class);
+
+    Route::get('orders/{id}/download_pdf', [AdminOrderController::class, 'downloadPdf'])->name('orders.download_pdf');
+    Route::post('orders/download-multiple_pdf', [AdminOrderController::class, 'downloadMultiplePdf'])->name('orders.download_multiple_pdf');
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
@@ -199,6 +210,11 @@ Route::middleware('auth')->group(function (){
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
     Route::post('/wishlist/add_to_wishlist/{id}', [WishlistController::class, 'store'])->name('add_wishlist');
     Route::get('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('delete_wishlist');
+    Route::post('/lock-account', [OrderController::class, 'lockAccount'])->name('lock.account');
+    Route::post('/create-payment-attempt', [OrderController::class, 'createPaymentAttempt'])
+    ->name('create.payment.attempt');
+    Route::get('/check-stock', [OrderController::class, 'checkStock'])
+    ->name('check_stock');
 
 });
 

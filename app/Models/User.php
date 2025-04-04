@@ -35,6 +35,8 @@ class User extends Authenticatable
         'status',
         'email_verified_at',
         'remember_token',
+        'is_locked',
+        'locked_until'
     ];
 
     /**
@@ -56,7 +58,10 @@ class User extends Authenticatable
     [
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime:Y/m/d H:i:s',
+        'birthday' => 'datetime:Y/m/d H:i:s',
         'password' => 'hashed',
+        'is_locked' => 'boolean',
+        'locked_until' => 'datetime'
     ];
 
 
@@ -80,7 +85,7 @@ class User extends Authenticatable
 
     public function address_users()
     {
-        return $this->hasMany(AddressUser::class);
+        return $this->hasMany(AddressUser::class,'id_user','id');
     }
 
     public function roles()
@@ -108,4 +113,57 @@ class User extends Authenticatable
     {
         return $this->hasMany(InventoryEntry::class, 'user_id', 'id');
     }
+    /**
+     * Check if the user's account is currently locked
+     *
+     * @return bool
+     */
+    public function isLocked(): bool
+    {
+        if (!$this->is_locked) {
+            return false;
+        }
+
+        if ($this->locked_until && $this->locked_until->isPast()) {
+            $this->unlock();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Lock the user's account for a specified number of hours
+     *
+     * @param int $hours
+     * @return bool
+     */
+    public function lock(int $hours = 24): bool
+    {
+        $this->is_locked = true;
+        $this->locked_until = now()->addHours($hours);
+        return $this->save();
+    }
+
+    /**
+     * Unlock the user's account
+     *
+     * @return bool
+     */
+    public function unlock(): bool
+    {
+        $this->is_locked = false;
+        $this->locked_until = null;
+        return $this->save();
+    }
+
+    public function paymentAttempts()
+    {
+        return $this->hasMany(PaymentAttempt::class, 'user_id');
+    }
+    public function approver()
+    {
+        return $this->hasMany(InventoryEntry::class, 'id_shopper', 'id');
+    }
+
 }

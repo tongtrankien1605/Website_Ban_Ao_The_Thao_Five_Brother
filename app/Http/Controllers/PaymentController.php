@@ -13,60 +13,77 @@ use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use App\Models\PaymentAttempt;
 
 class PaymentController extends Controller
 {
     public function index(Request $request)
-{
-    // dd($request->all());
-    $selectedItems = $request->input('items'); // Nhận danh sách sản phẩm từ AJAX
-    $new_total = $request->input('new_total'); // Nhận new_total từ URL (mặc định = 0)
-    // dd($new_total);
+    {
+        // dd($request->all());
+        $selectedItems = $request->input('items'); // Nhận danh sách sản phẩm từ AJAX
+        $new_total = $request->input('new_total'); // Nhận new_total từ URL (mặc định = 0)
+        // dd($new_total);
 
-    $total = $request->input('total');
-    $saleTotal = $total - $new_total;
-    $discount = $request->input('discount');
-    $discountType = $request->input('discountType');
+        $total = $request->input('total');
+        $saleTotal = $total - $new_total;
+        // dd($total, $saleTotal);
+        $code = $request->input('code');
 
-    // dd($discount);
-    $voucher = Voucher::where([['status', 0], ['discount_type', $discountType], ['discount_value', $discount]])->first();
+        // dd($code);
+        $voucher = Voucher::where('code',$code)->first();
+        // dd($voucher);
 
-    $address_user = AddressUser::where('id_user', Auth::id())->get();
-    $shipping = ShippingMethod::all();
-    $paymentMethods = PaymentMethod::all();
+        // if ($voucher) {
+        //     $voucherUser = DB::table('voucher_user')->where([['id_voucher', $voucher->id], ['id_user', Auth::id()]])->first();
+        //     if ($voucherUser) {
+        //         return response()->json(['message' => 'Mã giảm giá đã được sử dụng'], 500);
+        //     }
+        //     if ($voucher->start_date > now()) {
+        //         return response()->json(['message' => 'Mã giảm giá chưa đến thời gian sử dụng'], 500);
+        //     }
+        //     if ($voucher->end_date < now()) {
+        //         return response()->json(['message' => 'Mã giảm giá đã hết hạn'], 500);
+        //     }
+        // }
+        // if ($voucher && $voucher->status == 0) {
+        //     if ($voucher->quantity > 0) {
+        //         $voucher->quantity -= 1;
+        //         $voucher->save();
+        //     } else {
+        //         return response()->json(['message' => 'Mã giảm giá đã hết lượt sử dụng'], 500);
+        //     }
+        // } else {
+        //     return response()->json(['message' => 'Mã giảm giá không hợp lệ'], 500);
+        // }
+        $address_user = AddressUser::where('id_user', Auth::id())->get();
+        $shipping = ShippingMethod::all();
+        $paymentMethods = PaymentMethod::all();
 
-    $cartItem = collect(); // Tạo danh sách rỗng
+        $cartItem = collect(); // Tạo danh sách rỗng
 
-    if ($selectedItems) {
-        $cartItem = CartItem::whereIn('id', collect($selectedItems)->pluck('id'))
-            ->where('id_user', Auth::id())
-            ->with('skuses')
-            ->get();
+        if ($selectedItems) {
+            $cartItem = CartItem::whereIn('id', collect($selectedItems)->pluck('id'))
+                ->where('id_user', Auth::id())
+                ->with('skuses')
+                ->get();
+        }
+
+
+        return view('client.checkout', compact(
+            [
+                'address_user',
+                'cartItem',
+                'new_total',
+                'shipping',
+                'paymentMethods',
+                'total',
+                'saleTotal',
+                'voucher'
+            ]
+        ));
     }
-
-    // Nếu new_total không có, tính lại tổng tiền từ giỏ hàng
-    // if ($new_total == 0) {
-    //     $new_total = 0;
-    //     foreach ($cartItem as $item) {
-    //         $new_total += $item->price * $item->quantity;
-    //     }
-    // }
-
-    return view('client.checkout', compact(
-        [
-            'address_user',
-            'cartItem',
-            'new_total',
-            'shipping',
-            'paymentMethods',
-            'total',
-            'saleTotal',
-            'voucher'
-        ]
-    ));
-}
-
-
 
     public function processPayment(Request $request, $order)
     {
@@ -147,48 +164,144 @@ class PaymentController extends Controller
         }
     }
 
-
     public function processPayPal($order)
     {
-        // ✅ Khởi tạo PayPal SDK với config từ Laravel
-        // dd(config('services.paypal'));
-        dd(new PayPalClient());
-        $provider = new PayPalClient();
-        $provider->setApiCredentials(config('services.paypal'));
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials([
+                'mode' => config('services.paypal.mode'),
+                'client_id' => config('services.paypal.sandbox.client_id'),
+                'client_secret' => config('services.paypal.sandbox.client_secret'),
+            ]);
 
-        // ✅ Kiểm tra lại xem có client_id không
-        $config = config('services.paypal');
-        if (empty($config['client_id'])) {
-            return back()->withErrors('PayPal Client ID bị thiếu! Kiểm tra lại .env.');
-        }
+            // Get access token
+            $provider->getAccessToken();
 
-
-        // ✅ Tạo đơn hàng PayPal
-        $response = $provider->createOrder([
-            "intent" => "CAPTURE",
-            "purchase_units" => [
-                [
-                    "amount" => [
-                        "currency_code" => "USD",
-                        "value" => $order->total_amount
+            // Create PayPal order
+            $response = $provider->createOrder([
+                "intent" => "CAPTURE",
+                "purchase_units" => [
+                    [
+                        "amount" => [
+                            "currency_code" => config('services.paypal.currency'),
+                            "value" => number_format($order->total_amount, 2)
+                        ],
+                        "description" => "Order #" . $order->id,
+                        "items" => [
+                            [
+                                "name" => "Order #" . $order->id,
+                                "quantity" => "1",
+                                "unit_amount" => [
+                                    "currency_code" => config('services.paypal.currency'),
+                                    "value" => number_format($order->total_amount, 2)
+                                ]
+                            ]
+                        ]
                     ]
+                ],
+                "application_context" => [
+                    "return_url" => route('payment.paypal.success'),
+                    "cancel_url" => route('payment.paypal.cancel'),
+                    "brand_name" => config('app.name'),
+                    "landing_page" => "NO_PREFERENCE",
+                    "user_action" => "PAY_NOW"
                 ]
-            ],
-            "application_context" => [
-                "return_url" => route('payment.paypal.success'),
-                "cancel_url" => route('payment.paypal.cancel'),
-            ]
-        ]);
+            ]);
 
-        // ✅ Kiểm tra response từ PayPal
-        if (isset($response['id']) && $response['status'] == "CREATED") {
-            foreach ($response['links'] as $link) {
-                if ($link['rel'] == 'approve') {
-                    return redirect($link['href']);
+            // Check if order was created successfully
+            if (isset($response['id']) && $response['status'] == "CREATED") {
+                // Find the approval URL
+                foreach ($response['links'] as $link) {
+                    if ($link['rel'] == 'approve') {
+                        // Update order status
+                        $order->id_payment_method_status = 2; // Payment pending
+                        $order->save();
+                        
+                        // Redirect to PayPal
+                        return redirect($link['href']);
+                    }
                 }
             }
-        }
 
-        return back()->withErrors('Lỗi khi tạo thanh toán PayPal.');
+            throw new \Exception('Failed to create PayPal order');
+
+        } catch (\Exception $e) {
+            // Log the detailed error
+            Log::error('PayPal Payment Error', [
+                'order_id' => $order->id,
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Update order status to failed
+            $order->id_payment_method_status = 1; // Payment failed
+            $order->save();
+
+            // Check for specific error types
+            if (str_contains($e->getMessage(), 'INVALID_CLIENT')) {
+                return back()->withErrors('PayPal configuration error: Invalid client credentials. Please check your PayPal settings.');
+            } elseif (str_contains($e->getMessage(), 'INVALID_REQUEST')) {
+                return back()->withErrors('Invalid request to PayPal. Please try again.');
+            } elseif (str_contains($e->getMessage(), 'INVALID_CURRENCY')) {
+                return back()->withErrors('Invalid currency code. Please check your PayPal configuration.');
+            } elseif (str_contains($e->getMessage(), 'INVALID_AMOUNT')) {
+                return back()->withErrors('Invalid amount format. Please check the order total.');
+            } elseif (str_contains($e->getMessage(), 'CERTIFICATE')) {
+                return back()->withErrors('SSL certificate error. Please check your server configuration.');
+            } else {
+                return back()->withErrors('Payment processing failed: ' . $e->getMessage());
+            }
+        }
     }
+
+    public function paypalSuccess(Request $request)
+    {
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials([
+                'mode' => config('services.paypal.mode'),
+                'client_id' => config('services.paypal.sandbox.client_id'),
+                'client_secret' => config('services.paypal.sandbox.client_secret'),
+            ]);
+
+            $provider->getAccessToken();
+            $response = $provider->capturePaymentOrder($request->token);
+
+            if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+                // Find the order and update its status
+                $order = Order::where('id', $response['purchase_units'][0]['description'])->first();
+                if ($order) {
+                    $order->id_payment_method_status = 2; // Payment completed
+                    $order->id_order_status = 2; // Order confirmed
+                    $order->save();
+
+                    // Clear cart items
+                    CartItem::where('id_user', Auth::id())->delete();
+
+                    return redirect()->route('order_success')->with('success', 'Payment completed successfully!');
+                }
+            }
+
+            return redirect()->route('checkout')->withErrors('Payment verification failed.');
+        } catch (\Exception $e) {
+            Log::error('PayPal Success Error', [
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->route('checkout')->withErrors('Payment verification failed: ' . $e->getMessage());
+        }
+    }
+
+    public function paypalCancel()
+    {
+        return redirect()->route('checkout')->withErrors('Payment was cancelled.');
+    }
+
+ 
 }

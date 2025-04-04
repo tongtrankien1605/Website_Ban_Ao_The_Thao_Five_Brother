@@ -47,7 +47,7 @@
                         <i class="fa-solid fa-rocket"></i>
                         <p>
                             Dashboard
-                           
+
                         </p>
                     </a>
 
@@ -235,6 +235,37 @@
                             Quản lý đơn hàng
                         </p>
                     </a>
+                </li>
+                <li class="nav-item menu-close">
+                    <a href="{{ route('admin.skus.index') }}" class="nav-link">
+                        <i class="fa-solid fa-warehouse"></i>
+                        <p>
+                            Nhập lượng sản phẩm
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
+                        </p>
+                    </a>
+                    {{-- @if (Auth::user()->role === 3)
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.posts.index') }}" class="nav-link">
+                                    <i class="fa-solid fa-square-check"></i>
+                                    <p>Duyệt vào kho</p>
+                                </a>
+                            </li>
+                        </ul>
+                    @endif
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.posts.index') }}" class="nav-link">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                <p>Lịch sử nhập kho</p>
+                            </a>
+                        </li>
+                    </ul> --}}
+                <li class="nav-item menu-close"><a href="{{ route('admin.refunds.index') }}" class="nav-link">
+                        <p><i class="fa-solid fa-undo"></i> Quản lý Yêu cầu hoàn hàng</p>
+                    </a></li>
                 </li>
                 <li class="nav-item menu-close">
                     <a href="{{ route('index') }}" class="nav-link">
