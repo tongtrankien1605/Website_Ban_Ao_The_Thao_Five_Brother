@@ -10,6 +10,7 @@ class Refund extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'id_order',
         'reason',
         'refund_amount',
@@ -25,5 +26,9 @@ class Refund extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'id_order', 'id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

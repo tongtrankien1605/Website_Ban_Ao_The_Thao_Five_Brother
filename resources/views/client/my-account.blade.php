@@ -255,7 +255,21 @@
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
-
+                                                                        @if ($order->id_order_status == OrderStatus::PENDING && $order->payment_method_status_name == 'Chưa thanh toán')
+                                                                            <div class="text-center">
+                                                                                <form
+                                                                                    action="{{ route('order.update', $order->id) }}"
+                                                                                    method="post">
+                                                                                    @csrf
+                                                                                    @method('PUT')
+                                                                                    <input type="hidden"
+                                                                                        name="id_order_status"
+                                                                                        value="{{ OrderStatus::CANCEL }}">
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-danger me-2">Hủy đơn hàng</button>
+                                                                                </form>
+                                                                            </div>
+                                                                        @endif
                                                                         @if ($order->id_order_status == OrderStatus::DELIVERED)
                                                                             <div class="card p-4 mt-4 shadow-sm">
                                                                                 <div id="confirm-section"
@@ -393,7 +407,8 @@
                                                                                                 value="{{ OrderStatus::FAILED }}">
                                                                                             <div class="text-center">
                                                                                                 <button
-                                                                                                    type="submit"class="btn btn-danger me-2">Gửi yêu
+                                                                                                    type="submit"class="btn btn-danger me-2">Gửi
+                                                                                                    yêu
                                                                                                     cầu</button><button
                                                                                                     type="button"class="btn btn-secondary"
                                                                                                     onclick="cancelForm('refund-form-2', 'confirm-section')">Hủy</button>

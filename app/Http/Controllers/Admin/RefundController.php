@@ -13,7 +13,7 @@ class RefundController extends Controller
      */
     public function index()
     {
-        $refunds = Refund::latest()->paginate(10);
+        $refunds = Refund::with('user')->latest()->paginate(10);
         return view('admin.refunds.index', compact('refunds'));
     }
 
