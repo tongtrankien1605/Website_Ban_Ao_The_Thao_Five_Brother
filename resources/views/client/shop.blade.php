@@ -57,8 +57,8 @@
                                     </div>
                                     <div class="image-overlay">
                                         <div class="action-buttons">
-                                            <button data-url="{{ route('add.cart', ['id' => $product->id]) }}"
-                                                class="add_to_cart">Add to cart</button>
+                                            <button
+                                                ><a href="{{route('product.show',$product->id)}}">Add to cart</a></button>
                                             <button>add to wishlist</button>
                                         </div>
                                     </div>

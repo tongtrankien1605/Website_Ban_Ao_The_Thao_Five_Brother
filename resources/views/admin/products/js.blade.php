@@ -248,4 +248,16 @@
             });
         });
     });
+
+    $(document).ready(function() {
+    $('#summernote').summernote({
+        height: 300,
+        callbacks: {
+            onChange: function(contents, $editable) {
+                $('#summernote').val(contents);
+            }
+        }
+    });
+});
+
 </script>
