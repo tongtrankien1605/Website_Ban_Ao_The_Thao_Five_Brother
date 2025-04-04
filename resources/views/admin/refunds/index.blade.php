@@ -34,13 +34,12 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Thông tin tài khoản</th>
+                                                    <th>Tên tài khoản</th>
                                                     <th>Lý do</th>
                                                     <th>Số tiền hoàn</th>
                                                     <th>Số lượng hoàn</th>
                                                     <th>Trạng thái</th>
-                                                    <th>Ảnh</th>
-                                                    <th>Video</th>
+                                                    <th>Chứng từ</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -48,44 +47,42 @@
                                                 @foreach ($refunds as $refund)
                                                     <tr>
                                                         <td>
-                                                            <p><strong>Số tài khoản:</strong>
-                                                                {{ $refund->bank_account }}<br></p>
-                                                            <p><strong>Tên ngân hàng:</strong> {{ $refund->bank_name }}<br>
-                                                            </p>
-                                                            <p><strong>Tên chủ tài khoản:</strong>
-                                                                {{ $refund->account_holder_name }}</p>
+                                                            {{ $refund->user->name }}
                                                         </td>
                                                         <td>{{ $refund->reason }}</td>
                                                         <td>{{ number_format($refund->refund_amount, 0, ',', '.') }} VND
                                                         </td>
                                                         <td>{{ $refund->refund_quantity }}</td>
-                                                        <td>{{ $refund->status }}</td>
+                                                        <td class="text-center">
+                                                            @if ($refund->status == 'Đang chờ xử lý')
+                                                                <span class="badge bg-warning">{{ $refund->status }}</span>
+                                                            @elseif ($refund->status == 'Đã chấp nhận')
+                                                                <span class="badge bg-success">{{ $refund->status }}</span>
+                                                            @elseif ($refund->status == 'Đã từ chối')
+                                                                <span class="badge bg-danger">{{ $refund->status }}</span>
+                                                            @endif
+                                                        </td>
+                                                        
                                                         <td>
                                                             @if ($refund->image_path)
-                                                                <img src="{{ asset('storage/' . $refund->image_path) }}"
-                                                                    width="60" alt="Image">
-                                                            @else
-                                                                <span>Không có ảnh</span>
+                                                                <span>Có ảnh minh họa</span>
+                                                            @elseif ($refund->video_path)
+                                                                <span>Có video minh họa/span>
+                                                                @else
+                                                                    <span>Không có ảnh minh họa</span>
                                                             @endif
                                                         </td>
 
                                                         <td>
-                                                            @if ($refund->video_path)
-                                                                <video width="100" controls>
-                                                                    <source src="{{ asset('storage/' . $refund->video_path) }}" type="video/mp4">
-                                                                    Trình duyệt của bạn không hỗ trợ video.
-                                                                </video>
-                                                            @else
-                                                                <span>Không có video</span>
-                                                            @endif
+                                                            <a class="btn btn-primary"
+                                                                href="{{ route('admin.refunds.show', $refund->id) }}"><i
+                                                                    class="bi bi-eye"></i></a>
                                                         </td>
-                                                        
-                                                        <td></td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                     <div class="row">
                                         <div class="col-sm-12 col-md-12">
                                             {{ $refunds->links() }}

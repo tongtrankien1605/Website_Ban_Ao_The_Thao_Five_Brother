@@ -137,10 +137,18 @@ class OrderController extends Controller
         if ($newStatus == OrderStatus::SUCCESS) {
             $order->update(['id_payment_method_status' => 2, 'id_order_status' => $newStatus]);
             OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Khách hàng đã nhận hàng',]);
-        } else {
+        }elseif ($newStatus == OrderStatus::CANCEL) {
+            $order->update(['id_order_status' => $newStatus]);
+            OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Khách hàng đã hủy đơn hàng',]);
+        }else {
             $order->update(['id_order_status' => $newStatus]);
             OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Yêu cầu hoàn hàng: ' . $request->reason,]);
-            Refund::create(['id_order' => $order->id, 'reason' => $request->reason, 'refund_amount' => $order->total_amount, 'refund_quantity' => $order->order_details->sum('quantity'), 'status' => 'Đang chờ xử lý', 'image_path' => $imagePath ?? null, 'video_path' => $videoPath ?? null, 'bank_account' => $validatedData['bank_account'] ?? null, 'bank_name' => $validatedData['bank_name'] ?? null, 'account_holder_name' => $validatedData['account_holder_name'] ?? null,]);
+            $validatedData = $request->validate([
+                'bank_account' => 'required|string',
+                'bank_name' => 'required|string',
+                'account_holder_name' => 'required|string',
+            ]);
+            Refund::create(['id_order' => $order->id, 'reason' => $request->reason, 'refund_amount' => $order->total_amount, 'refund_quantity' => $order->order_details->sum('quantity'), 'status' => 'Đang chờ xử lý', 'image_path' => $imagePath ?? null, 'video_path' => $videoPath ?? null, 'bank_account' => $validatedData['bank_account'] ?? null, 'bank_name' => $validatedData['bank_name'] ?? null, 'account_holder_name' => $validatedData['account_holder_name'] ?? null, 'user_id' => Auth::id()]);
         }
         return redirect()->back()->with('success', 'Yêu cầu hoàn hàng đã được gửi thành công.');
     }
