@@ -104,8 +104,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // chạy template sẵn
     Route::get('/index', function () {
-        return view('admin.layouts.index');
-        // return view('admin.dashboard.index');
+        // return view('admin.layouts.index');
+        return view('admin.dashboard.index');
     })->name('index');
 
     // end template sẵn
