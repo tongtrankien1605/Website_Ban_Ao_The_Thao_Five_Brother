@@ -99,6 +99,7 @@ class PaymentController extends Controller
     public function processVNPay($order)
     {
         // dd($order);
+        $cartItem = CartItem::where('id_user', Auth::id())->get();
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl = env('VNP_RETURN_URL');
         $vnp_TmnCode = env('VNP_TMN_CODE');
@@ -154,11 +155,15 @@ class PaymentController extends Controller
         if (isset($_POST['redirect'])) {
             $order->id_payment_method_status = 2;
             $order->save();
+            // dd(1);
             // dd($order);
             return redirect()->away($vnp_Url);
         } else {
             $order->id_payment_method_status = 2;
             $order->save();
+            $cartItem->each(function ($item) {
+                $item->delete();
+            });
             // dd($order);
             return redirect()->away($vnp_Url);
         }

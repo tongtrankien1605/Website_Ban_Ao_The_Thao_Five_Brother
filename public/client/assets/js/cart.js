@@ -34,11 +34,23 @@ $(document).ready(function () {
                 variant_ids: selectedVariants // ✅ Chuyển về mảng thay vì object
             },
             success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: response.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 console.log("✅ Thành công:", response);
-                alert(response.message);
             },
             error: function (xhr) {
-                alert('Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng.');
+                let res = xhr.responseJSON;
+                // Nếu có message từ server, hiển thị
+                if (res && res.message) {
+                    alert(res.message);
+                } else {
+                    alert('❌ Đã xảy ra lỗi không xác định!');
+                }
                 console.log("❌ Lỗi:", xhr.responseText);
             }
         });
@@ -101,33 +113,126 @@ $(document).ready(function () {
 });
 
 
-$(document).ready(function () {
-    $('.pro-qty').prepend('<span class="dec qtybtn"><i class="ti-minus"></i></span>');
-    $('.pro-qty').append('<span class="inc qtybtn"><i class="ti-plus"></i></span>');
+// $(document).ready(function () {
+//     $('.pro-qty').prepend('<span class="dec qtybtn"><i class="ti-minus"></i></span>');
+//     $('.pro-qty').append('<span class="inc qtybtn"><i class="ti-plus"></i></span>');
 
-    $('.qtybtn').on('click', function () {
-        var $button = $(this);
-        var inputField = $button.siblings('input'); // Lấy input số lượng
-        var cartItemId = inputField.data('id'); // Lấy ID sản phẩm
-        var price = $button.closest('tr').find('.pro-price').data('price'); // Lấy giá sản phẩm
-        var checkbox = $button.closest('tr').find('.cart-checkbox'); // Lấy checkbox của sản phẩm
+//     $('.qtybtn').on('click', function () {
+//         var $button = $(this);
+//         var inputField = $button.siblings('input'); // Lấy input số lượng
+//         var cartItemId = inputField.data('id'); // Lấy ID sản phẩm
+//         var price = $button.closest('tr').find('.pro-price').data('price'); // Lấy giá sản phẩm
+//         var checkbox = $button.closest('tr').find('.cart-checkbox'); // Lấy checkbox của sản phẩm
 
-        var oldValue = parseInt(inputField.val());
-        var newVal = oldValue;
+//         var oldValue = parseInt(inputField.val());
+//         var newVal = oldValue;
 
-        if ($button.hasClass('inc')) {
-            newVal = oldValue + 1;
-        } else if ($button.hasClass('dec') && oldValue > 1) {
-            newVal = oldValue - 1;
-        }
+//         if ($button.hasClass('inc')) {
+//             newVal = oldValue + 1;
+//         } else if ($button.hasClass('dec') && oldValue > 1) {
+//             newVal = oldValue - 1;
+//         }
 
-        inputField.val(newVal); // Cập nhật số lượng trên giao diện
+//         inputField.val(newVal); // Cập nhật số lượng trên giao diện
 
-        // Nếu sản phẩm đã được chọn thì mới cập nhật tổng tiền
-        if (checkbox.prop("checked")) {
-            updateCartQuantity(cartItemId, newVal, price);
-        }
-    });
+//         // Nếu sản phẩm đã được chọn thì mới cập nhật tổng tiền
+//         if (checkbox.prop("checked")) {
+//             updateCartQuantity(cartItemId, newVal, price);
+//         }
+//     });
+
+    $(document).ready(function () {
+        // Thêm nút tăng giảm
+        $('.pro-qty').prepend('<span class="dec qtybtn"><i class="ti-minus"></i></span>');
+        $('.pro-qty').append('<span class="inc qtybtn"><i class="ti-plus"></i></span>');
+    
+        // Khi nhấn vào nút tăng giảm
+        $(document).ready(function () {
+            $('.qtybtn').on('click', function () {
+                var $button = $(this);
+                var inputField = $button.siblings('input'); // Lấy input số lượng
+                var cartItemId = inputField.data('id'); // Lấy ID sản phẩm
+                var price = $button.closest('tr').find('.pro-price').data('price'); // Lấy giá sản phẩm
+                var checkbox = $button.closest('tr').find('.cart-checkbox'); // Lấy checkbox của sản phẩm
+        
+                var oldValue = parseInt(inputField.val());
+                var maxQuantity = parseInt(inputField.data('max')); // Lấy số lượng tồn kho
+                var newVal = oldValue;
+        
+                if ($button.hasClass('inc')) {
+                    // Nếu giá trị cũ nhỏ hơn hoặc bằng số lượng tối đa, thì tăng thêm
+                    if (oldValue < maxQuantity) {
+                        newVal = oldValue + 1;
+                    } else {
+                        // Nếu vượt quá số lượng tồn kho, hiển thị cảnh báo
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Vượt quá tồn kho',
+                            text: 'Chỉ còn tối đa ' + maxQuantity + ' sản phẩm.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        return; // Dừng lại, không thay đổi giá trị
+                    }
+                } else if ($button.hasClass('dec') && oldValue > 1) {
+                    // Giảm số lượng xuống nếu còn lớn hơn 1
+                    newVal = oldValue - 1;
+                }
+        
+                inputField.val(newVal);
+        
+                // Nếu sản phẩm đã được chọn thì mới cập nhật tổng tiền
+                if (checkbox.prop("checked")) {
+                    updateCartQuantity(cartItemId, newVal, price);
+                }
+            });
+        
+            // Khi người dùng nhập số lượng trực tiếp
+            $('.dataInput').on('input', function () {
+                let $input = $(this);
+                let val = parseInt($input.val());
+                let max = parseInt($input.data('max')); // Lấy tồn kho
+        
+                // Kiểm tra nếu là số hợp lệ và trong phạm vi cho phép
+                if (isNaN(val) || val < 1) {
+                    $input.val(1);
+                    return;
+                }
+        
+                // Nếu nhập lớn hơn số lượng tồn kho, giới hạn lại
+                if (val > max) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Vượt quá tồn kho',
+                        text: 'Chỉ còn tối đa ' + max + ' sản phẩm trong kho!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    $input.val(max);
+                    val = max;
+                }
+        
+                // Gửi AJAX cập nhật lại giỏ hàng
+                let cartItemId = $input.data('id');
+                let price = $input.closest('tr').find('.pro-price').data('price');
+        
+                updateCartQuantity(cartItemId, val, price);
+            });
+        });
+        
+    
+        // Chặn các phím không hợp lệ như e, +, -, .
+        $('.dataInput').on('keydown', function (e) {
+            if (
+                e.key === 'e' || e.key === 'E' ||
+                e.key === '+' || e.key === '-' ||
+                e.key === '.' || e.key === ','
+            ) {
+                e.preventDefault();
+            }
+        });
+    
+    
 
     // Hàm cập nhật giỏ hàng
     function updateCartQuantity(cartItemId, newQuantity, price) {
@@ -222,7 +327,7 @@ $(document).ready(function () {
     let discountValue = 0;
     let discountType = null;
     let code = null;
-    
+
     // 🟢 Hàm cập nhật tổng tiền giỏ hàng
     function updateCartSummary() {
         let subtotal = 0;
@@ -250,7 +355,7 @@ $(document).ready(function () {
     // 🟢 Xử lý khi áp voucher
     $("#apply-voucher").click(function (e) {
         e.preventDefault();
-    
+
         let selectedOption = $("#voucher option:selected");
         let discountValue = parseFloat(selectedOption.data("discount")) || 0;
         let discountType = selectedOption.data("type");
@@ -259,58 +364,58 @@ $(document).ready(function () {
         let discountAmount = (discountType === "percentage") ? (total * discountValue / 100) : discountValue;
         let code = selectedOption.data("code");
         console.log("Mã voucher gửi đi:", code);
-    
+
         if (maxDiscount > 0) {
             discountAmount = Math.min(discountAmount, maxDiscount);
         }
-    
+
         newTotal = Math.max(0, total - discountAmount); // 🟢 Cập nhật giá trị toàn cục
-        
+
         console.log("New Total sau giảm:", newTotal);
-        
+
         $(".order-total .amount").text(newTotal.toLocaleString() + " Đồng");
-    
+
         // 🟢 Lưu `newTotal` vào sessionStorage để sử dụng khi thanh toán
         sessionStorage.setItem("newTotal", newTotal);
         sessionStorage.setItem("code", code);
-    
+
         alert(`Bạn đã áp dụng mã giảm giá! Tổng tiền sau giảm: ${newTotal.toLocaleString()} Đồng`);
     });
-    
-    
-    
+
+
+
 
     // 🟢 Xử lý khi nhấn nút Checkout
     $(".checkout-btn").on("click", function (e) {
         e.preventDefault();
-    
+
         let selectedItems = [];
-    
+
         $(".cart-checkbox:checked").each(function () {
             let row = $(this).closest("tr");
             let productId = $(this).val();
             let quantity = row.find(".dataInput").val();
-    
+
             selectedItems.push({
                 id: productId,
                 quantity: quantity
             });
         });
-    
+
         if (selectedItems.length === 0) {
             alert("❌ Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
             return;
         }
-    
+
         let code = $("#voucher option:selected").data("code") || ""; // ✅ Lấy mã giảm giá
         let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, code: code });
-    
+
         console.log("🟢 Chuyển hướng với URL:", "/payment?" + queryString); // ✅ Debug URL
-    
+
         window.location.href = "/payment?" + queryString; // ✅ Chuyển hướng
     });
-    
-    
+
+
 
     updateCartSummary(); // Cập nhật khi load trang
 });
