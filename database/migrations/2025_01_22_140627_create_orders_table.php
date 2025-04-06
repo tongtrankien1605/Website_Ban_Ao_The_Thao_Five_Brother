@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_order_status');
             $table->unsignedBigInteger('id_shipping_method');
             $table->unsignedBigInteger('id_payment_method');
-            $table->decimal('total_amount', 10, 2)->comment('Tổng số lượng sản phẩm');
+            $table->decimal('total_amount', 28, 2)->comment('Tổng số lượng sản phẩm');
             $table->unsignedBigInteger('id_voucher')->nullable();
             $table->foreign('id_user')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('id_address')->references('id')->on('address_users')->cascadeOnDelete();

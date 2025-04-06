@@ -94,7 +94,7 @@ class SkusQuantityController extends Controller
                     'reason' => 'Nhập hàng',
                     'inventory_entry_id' => $inventoryEntry->id,
                 ]);
-                dd($InventoryLog);
+                // dd($InventoryLog);
             }
         }
         DB::commit();

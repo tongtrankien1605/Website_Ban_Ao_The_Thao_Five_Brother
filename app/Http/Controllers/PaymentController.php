@@ -59,7 +59,7 @@ class PaymentController extends Controller
         // }
         $address_user = AddressUser::where('id_user', Auth::id())->get();
         $shipping = ShippingMethod::all();
-        $paymentMethods = PaymentMethod::all();
+        $paymentMethods = PaymentMethod::whereNot('id_payment_method', 2)->get();
 
         $cartItem = collect(); // Tạo danh sách rỗng
 
