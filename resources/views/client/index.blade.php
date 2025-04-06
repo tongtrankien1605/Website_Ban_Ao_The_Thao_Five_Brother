@@ -1,6 +1,5 @@
 @extends('client.layouts.master')
 @section('content')
-
     <!-- Hero Section Start -->
     <div class="hero-section section">
 
@@ -13,8 +12,8 @@
                 <!-- Hero Content -->
                 <div class="hero-content">
 
-                    <h1>Get 35% off <br>Latest Baby Product</h1>
-                    <a href="{{ route('product.index') }}">SHOP NOW</a>
+                    <h1 style="color: rgb(2, 15, 186)">Khám phá bộ sưu tập áo thể thao 2025 <br>– Sale cực mạnh - </h1>
+                    <a href="{{ route('product.index') }}">MUA NGAY</a>
 
                 </div>
 
@@ -27,8 +26,8 @@
                 <!-- Hero Content -->
                 <div class="hero-content">
 
-                    <h1>Get 35% off <br>Latest Baby Product</h1>
-                    <a href="{{ route('product.index') }}">SHOP NOW</a>
+                    <h1>Giảm giá 35% <br>Áo đấu mùa giải mới</h1>
+                    <a href="{{ route('product.index') }}">MUA NGAY</a>
 
                 </div>
 
@@ -49,27 +48,47 @@
                 <div class="col-lg-4 col-md-6 col-12 mb-20">
                     <div class="banner banner-1 content-left content-middle">
 
-                        <a href="#" class="image"><img src="/client/assets/images/banner/banner-1.jpg"
+                        <a href="" class="image"><img src="/client/assets/images/banner/banner-1.jpg"
                                 alt="Banner Image"></a>
 
                         <div class="content">
-                            <h1>New Arrival <br>Baby’s Shoe <br>GET 30% OFF</h1>
-                            <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
+                            <h1 style="color: white; background: rgba(0, 0, 0, 0.297);">Hàng mới <br>Áo ĐTQG <br>Giảm giá
+                                30%</h1>
+                            <a style="color: black" href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
                         </div>
 
                     </div>
                 </div>
 
                 <div class="col-lg-4 col-md-6 col-12 mb-20">
-                    <a href="#" class="banner banner-2">
+                    <a href="" class="banner banner-2">
 
                         <img src="/client/assets/images/banner/banner-2.jpg" alt="Banner Image">
 
-                        <div class="content bg-theme-one">
+                        {{-- <div class="content bg-theme-one">
                             <h1>New Toy’s for your Baby</h1>
+                        </div> --}}
+
+                        <div class="content ">
+                            <h1
+                                style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(0, 0, 0, 0.5);
+                            color: white;
+                            padding: 10px 20px;
+                            font-size: 18px;
+                            border-radius: 5px;
+                            font-weight: bold;
+                          ">
+                                Áo Đấu Tự Thiết Kế</h1>
+
+                            
                         </div>
 
-                        <span class="banner-offer">25% off</span>
+                        <span class="banner-offer">Giảm 25%</span>
 
                     </a>
                 </div>
@@ -77,11 +96,11 @@
                 <div class="col-lg-4 col-md-6 col-12 mb-20">
                     <div class="banner banner-1 content-left content-top">
 
-                        <a href="#" class="image"><img src="/client/assets/images/banner/banner-3.jpg"
+                        <a href="" class="image"><img src="/client/assets/images/banner/banner-3.jpg"
                                 alt="Banner Image"></a>
 
                         <div class="content">
-                            <h1>Trendy <br>Collections</h1>
+                            <h1 style="color: white; background: rgba(0, 0, 0, 0.297)">Áo đấu <br>câu lạc bộ</h1>
                             <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
                         </div>
 
@@ -99,8 +118,8 @@
 
             <div class="row">
                 <div class="section-title text-center col mb-30">
-                    <h1>Popular Products</h1>
-                    <p>All popular product find here</p>
+                    <h1>Sản phẩm phổ biến</h1>
+                    {{-- <p>All popular product find here</p> --}}
                 </div>
             </div>
 
@@ -119,8 +138,11 @@
 
                                     <div class="image-overlay">
                                         <div class="action-buttons">
-                                            <button><a href="{{route('product.show',$product->id)}}">Add to cart</a></button>
-                                            <button class="add_to_wishlist" data-url="{{route('add_wishlist',['id'=>$product->id])}}">Add to wishlist</button>
+                                            <button><a href="{{ route('product.show', $product->id) }}">Add to
+                                                    cart</a></button>
+                                            <button class="add_to_wishlist"
+                                                data-url="{{ route('add_wishlist', ['id' => $product->id]) }}">Add to
+                                                wishlist</button>
                                         </div>
                                     </div>
 

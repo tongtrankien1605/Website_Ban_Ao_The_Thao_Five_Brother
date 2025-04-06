@@ -9,7 +9,7 @@
                     </div>
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-2.png" alt="">
+                        <img width="350px" height="135px" src="/client/assets/images/brands/brand-2.png" alt="">
                     </div>
 
                     <div class="brand-item col">
