@@ -47,6 +47,11 @@
                                                 @php
                                                     $subtotal = floatval($cart->price) * intval($cart->quantity);
                                                     $total += $subtotal;
+                                                    foreach ($inventory as $item){
+                                                        if ($item->id == $cart->id) {
+                                                            $cart->quantity = $item->quantity;
+                                                        }
+                                                    }
                                                 @endphp
                                                 <td class="pro-select">
                                                     <input type="checkbox" class="cart-checkbox" name="selected_items[]"
@@ -63,10 +68,12 @@
                                                     <span class="amount">{{ number_format($cart->price) }} đồng</span>
                                                 </td>
                                                 <td class="pro-quantity">
-                                                    <div class="pro-qty"><input data-id="{{ $cart->id }}"
+                                                    <div class="pro-qty"><input   data-max="{{ $item->quantity }}"  data-id="{{ $cart->id }}"
                                                             class="dataInput" type="text" value="{{ $cart->quantity }}">
                                                     </div>
                                                 </td>
+                                                    
+
                                                 <td class="pro-subtotal" id="subtotal-{{ $cart->id }}">
                                                     {{ number_format($subtotal) }} đồng
                                                 </td>

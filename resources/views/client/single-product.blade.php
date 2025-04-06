@@ -36,26 +36,21 @@
             <div class="row row-30 mbn-40">
 
                 <div class="col-xl-9 col-lg-8 col-12 order-1 order-lg-2 mb-40">
-                    <div class="row row-20">
+                    <div class="row row-20 mb-10">
                         <div class="col-lg-6 col-12 mb-40">
-                            {{-- Ảnh chính --}}
+
                             <div class="pro-large-img mb-10 fix easyzoom easyzoom--overlay easyzoom--with-thumbnails">
-                                <a href="{{ Storage::url($mainImage) }}" id="main-image-link">
-                                    <img id="main-image" src="{{ Storage::url($mainImage) }}" alt="{{ $product->name }}">
+                                <a href="/client/assets/images/product/product-zoom-1.jpg">
+                                    <img src="/client/assets/images/product/product-big-1.jpg" alt=""/>
                                 </a>
                             </div>
-
-                            {{-- Danh sách ảnh nhỏ --}}
-                            <ul id="pro-thumb-img" class="pro-thumb-img d-flex">
-                                @foreach ($productImages as $image)
-                                    <li>
-                                        <a href="{{ Storage::url($image->image_url) }}" class="thumb-link">
-                                            <img src="{{ Storage::url($image->image_url) }}" alt="Product Image"
-                                                class="thumb-img"
-                                                style="height: 70px; width: 70px; margin-right: 5px; cursor: pointer;">
-                                        </a>
-                                    </li>
-                                @endforeach
+                            <!-- Single Product Thumbnail Slider -->
+                            <ul id="pro-thumb-img" class="pro-thumb-img">
+                                <li><a href="/client/assets/images/product/product-zoom-1.jpg" data-standard="/client/assets/images/product/product-big-1.jpg"><img src="/client/assets/images/product/product-1.jpg" alt="" /></a></li>
+                                <li><a href="/client/assets/images/product/product-zoom-2.jpg" data-standard="/client/assets/images/product/product-big-2.jpg"><img src="/client/assets/images/product/product-2.jpg" alt="" /></a></li>
+                                <li><a href="/client/assets/images/product/product-zoom-3.jpg" data-standard="/client/assets/images/product/product-big-3.jpg"><img src="/client/assets/images/product/product-3.jpg" alt="" /></a></li>
+                                <li><a href="/client/assets/images/product/product-zoom-4.jpg" data-standard="/client/assets/images/product/product-big-4.jpg"><img src="/client/assets/images/product/product-4.jpg" alt="" /></a></li>
+                                <li><a href="/client/assets/images/product/product-zoom-5.jpg" data-standard="/client/assets/images/product/product-big-5.jpg"><img src="/client/assets/images/product/product-5.jpg" alt="" /></a></li>
                             </ul>
                         </div>
 
@@ -582,7 +577,6 @@
         </div>
     </div><!-- Page Section End -->
     <script>
-
 $(document).ready(function () {
     $('.add_to_cart').on('click', function () {
         let url = $(this).data('url');
@@ -656,7 +650,6 @@ $(document).ready(function () {
                 option.addEventListener("click", function(event) {
                     event.preventDefault();
 
-                    let scrollY = window.scrollY; // Lưu vị trí cuộn trước khi thay đổi ảnh
                     const attributeGroup = option.name; // Lấy nhóm thuộc tính (size, color,...)
                     const isSelected = selectedVariants[attributeGroup] === option.value;
 
@@ -697,20 +690,6 @@ $(document).ready(function () {
                             option.nextElementSibling.classList.remove("btn-outline-dark");
                         }
 
-                        // Kiểm tra ảnh biến thể
-                        let selectedImage = option.dataset.image;
-                        if (selectedImage && selectedImage !== "null") {
-                            mainImage.src = selectedImage;
-                            mainImageLink.href = selectedImage;
-                            selectedThumbnail =
-                            null; // Nếu chọn biến thể có ảnh, bỏ ảnh nhỏ đã chọn trước đó
-                        } else {
-                            // Nếu không có ảnh biến thể, giữ ảnh nhỏ nếu đã chọn
-                            mainImage.src = selectedThumbnail ? selectedThumbnail :
-                            defaultMainImage;
-                            mainImageLink.href = selectedThumbnail ? selectedThumbnail :
-                                defaultMainImage;
-                        }
                     }
 
                     // Giữ nguyên vị trí cuộn
