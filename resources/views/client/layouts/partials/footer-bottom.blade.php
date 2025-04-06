@@ -3,9 +3,9 @@
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <p class="footer-copyright">© 2022 Jadusona. Made with <i
+                <p class="footer-copyright">© 2025 FPT POLYTECHINC <i
                         class="fa fa-heart heart-icon"></i> By <a target="_blank"
-                        href="https://hasthemes.com/">HasThemes</a></p>
+                        href="#">Five Brother</a></p>
             </div>
         </div>
     </div>
