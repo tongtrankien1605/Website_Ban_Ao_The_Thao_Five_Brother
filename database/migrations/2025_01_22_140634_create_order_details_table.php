@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_order');
             $table->unsignedBigInteger('id_product_variant');
             $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2)->comment('Giá từng sản phẩm');
-            $table->decimal('total_price', 10, 2)->comment('Tổng tiền đơn hàng');
+            $table->decimal('unit_price', 15, 2)->comment('Giá từng sản phẩm');
+            $table->decimal('total_price', 15, 2)->comment('Tổng tiền đơn hàng');
             $table->foreign('id_order')->references('id')->on('orders')->cascadeOnDelete();
             $table->foreign('id_product_variant')->references('id')->on('skuses')->cascadeOnDelete();
             $table->timestamps();

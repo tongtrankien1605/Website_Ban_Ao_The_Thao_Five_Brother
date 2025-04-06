@@ -38,7 +38,7 @@ $(document).ready(function () {
                 alert(response.message);
             },
             error: function (xhr) {
-                alert('Bạn cần đăng nhập để thêm vào giỏ hàng!');
+                alert('Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng.');
                 console.log("❌ Lỗi:", xhr.responseText);
             }
         });
