@@ -91,7 +91,7 @@
                                                     <label class="form-label">Name</label>
                                                     <input type="text" class="form-control"
                                                         name="variants[{{ $index }}][name]"
-                                                        value="{{ $variant['name'] }}">
+                                                        value="{{ $variant['name'] }}" readonly>
                                                     @error("variants.$index.name")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -103,7 +103,24 @@
                                                             name="variants[{{ $index }}][attribute_values][]"
                                                             value="{{ $attrValue }}">
                                                     @endforeach
-                                                    {{-- <label class="form-label">Price</label>
+
+                                                    <label class="form-label">Quantity</label>
+                                                    <input type="number" class="form-control"
+                                                        name="variants[{{ $index }}][quantity]"
+                                                        value="{{ old("variants.$index.quantity") }}">
+                                                    @error("variants.$index.quantity")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
+                                                    <label class="form-label">Cost price</label>
+                                                    <input type="number" class="form-control"
+                                                        name="variants[{{ $index }}][cost_price]"
+                                                        value="{{ old("variants.$index.cost_price") }}">
+                                                    @error("variants.$index.cost_price")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
+                                                    <label class="form-label">Price</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][price]"
                                                         value="{{ old("variants.$index.price") }}">
@@ -119,13 +136,21 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Quantity</label>
-                                                    <input type="number" class="form-control"
-                                                        name="variants[{{ $index }}][quantity]"
-                                                        value="{{ old("variants.$index.quantity") }}">
-                                                    @error("variants.$index.quantity")
+                                                    <label class="form-label">Ngày bắt đầu</label>
+                                                    <input type="date" class="form-control"
+                                                        name="variants[{{ $index }}][start_date]"
+                                                        value="{{ old("variants.$index.start_date") }}">
+                                                    @error("variants.$index.start_date")
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror --}}
+                                                    @enderror
+
+                                                    <label class="form-label">Ngày kết thúc</label>
+                                                    <input type="date" class="form-control"
+                                                        name="variants[{{ $index }}][end_date]"
+                                                        value="{{ old("variants.$index.end_date") }}">
+                                                    @error("variants.$index.end_date")
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
 
                                                     <label class="form-label">Image</label>
                                                     <input type="file" class="form-control variant-image"
@@ -243,6 +268,9 @@
             </div>
         </section>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     @include('admin.products.js')
 @endsection
 <style>
