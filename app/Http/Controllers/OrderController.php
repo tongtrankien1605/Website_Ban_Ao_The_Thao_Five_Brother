@@ -10,6 +10,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Inventory;
 use App\Models\InventoryEntry;
+use App\Models\InventoryLog;
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentAttempt;
 use App\Models\Refund;
@@ -34,12 +35,14 @@ class OrderController extends Controller
         }
 
         $cartItem = CartItem::whereIn('id', $request->cart_item_ids)->with('skuses')->get();
-
+        // dd($cartItem);
         $total = 0;
         foreach ($cartItem as $item) {
             $total += $item->price * $item->quantity;
         }
 
+        $inventoryMap = Inventory::whereIn('id_product_variant', $cartItem->pluck('id_product_variant'))->get()->keyBy('id_product_variant');
+        // dd($cartItems);
         $request->validate([
             'shipping_id' => 'required|exists:shipping_methods,id_shipping_method',
             'payment_method' => 'required|exists:payment_methods,id_payment_method',
@@ -72,6 +75,8 @@ class OrderController extends Controller
                     'unit_price' => $item->price,
                     'total_price' => $item->quantity * $item->price,
                 ]);
+
+
             }
 
             // 🔹 Kiểm tra xem đã có PaymentAttempt chưa (tránh tạo trùng)
@@ -98,11 +103,41 @@ class OrderController extends Controller
                 $user->save();
             }
 
-            DB::commit(); // ✅ Lưu thay đổi nếu mọi thứ đều ổn
+            DB::commit();
 
-            // 🔹 Nếu là COD, xóa cart và chuyển hướng
+
+            
+
+            // 🔹 Cập nhật trạng thái đơn hàng
+
+
             if ($request->payment_method == 1) {
                 CartItem::whereIn('id', $request->cart_item_ids)->delete();
+                
+                $inventory = $inventoryMap[$item->id_product_variant] ?? null;
+                
+                foreach ($cartItem as $item) {
+                    
+                    $inventory = $inventoryMap[$item->id_product_variant] ?? null;
+                
+                    if ($inventory) {
+                        InventoryLog::create([
+                            'id_product_variant' => $item->id_product_variant,
+                            'old_quantity' => $inventory->quantity,
+                            'new_quantity' => $inventory->quantity - $item->quantity,
+                            'change_quantity' => $item->quantity,
+                            'reason' => 'Xuất hàng để bán',
+                            'type' => 'Xuất',
+                            'quantity' => -$item->quantity,
+                            'action' => 'order',
+                            'user_id' => $user->id,
+                        ]);
+                
+                        $inventory->quantity -= $item->quantity;
+                        // dd($inventory);
+                        $inventory->save();
+                    }
+                }
                 return redirect()->route('order_success')->with('success', 'Đơn hàng của bạn sẽ được giao COD!');
             }
 

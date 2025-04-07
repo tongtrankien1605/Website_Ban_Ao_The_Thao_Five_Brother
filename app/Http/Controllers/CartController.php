@@ -31,6 +31,7 @@ class CartController extends Controller
     DB::beginTransaction();
 
     $variantIds = $request->variant_ids;
+    // dd($variantIds);
 
     $cart = Cart::firstOrCreate(['id_user' => Auth::id()]);
 
@@ -40,7 +41,11 @@ class CartController extends Controller
         ->groupBy('id_skus')
         ->havingRaw('COUNT(DISTINCT product_attribute_value_id) = ?', [count($variantIds)])
         ->first();
+    $productVariant = Skus::find($variant->id_skus);
 
+    $inventorylog = InventoryEntry::where('id_skus', $productVariant->id)->first();
+
+    // dd($variant);
     if (!$variant) {
         return response()->json(['message' => 'Không tìm thấy biến thể nào'], 404);
     }
