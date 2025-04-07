@@ -5,27 +5,27 @@
                 <div class="brand-slider">
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-1.png" alt="">
+                        <img width="115px" height="70px" src="/client/assets/images/brands/brand-1.png" alt="">
                     </div>
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-2.png" alt="">
+                        <img width="115px" height="70px" src="/client/assets/images/brands/brand-2.png" alt="">
                     </div>
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-3.png" alt="">
+                        <img width="115px" height="70px" src="/client/assets/images/brands/brand-3.png" alt="">
                     </div>
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-4.png" alt="">
+                        <img width="115px" height="70px" src="/client/assets/images/brands/brand-4.png" alt="">
                     </div>
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-5.png" alt="">
+                        <img width="115px" height="70px" src="/client/assets/images/brands/brand-5.png" alt="">
                     </div>
 
                     <div class="brand-item col">
-                        <img src="/client/assets/images/brands/brand-6.png" alt="">
+                        <img width="115px" height="70px" src="/client/assets/images/brands/brand-6.png" alt="">
                     </div>
 
                 </div>

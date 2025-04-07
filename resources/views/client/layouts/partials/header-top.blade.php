@@ -6,13 +6,13 @@
                         <div class="col mt-10 mb-10 d-none d-md-flex">
                             <!-- Header Top Left Start -->
                             <div class="header-top-left">
-                                <p>Welcome to Jadusona</p>
-                                <p>Hotline: <a href="tel:0123456789">0123 456 789</a></p>
+                                <p>Chào Mừng Đến Với Shop Quần Áo Thể Thao FIVE BROTHER</p>
+                                <p>Hotline: <a href="tel:0983456456">0983 456 456</a></p>
                             </div>
                             <!-- Header Top Left End -->
                         </div>
 
-                        <div class="col mt-10 mb-10">
+                        {{-- <div class="col mt-10 mb-10">
                             <!-- Header Language Currency Start -->
                             <ul class="header-lan-curr">
 
@@ -37,7 +37,7 @@
 
                             </ul>
                             <!-- Header Language Currency End -->
-                        </div>
+                        </div> --}}
 
                         <div class="col mt-10 mb-10">
                             <!-- Header Shop Links Start -->

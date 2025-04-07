@@ -17,9 +17,70 @@ class DashboardController extends Controller
      * Display a listing of the resource.
      */
 
+
+    public function dashboard1()
+    {
+        $today = Carbon::today();
+
+        $orders = Order::with(['order_statuses', 'payment_method_statuses', 'users'])
+            ->select([
+                'id',
+                'status',
+                'total_price',
+                'created_at',
+                'id_user'
+            ])
+            ->get();
+
+        // Lấy danh sách 5 khách hàng mới nhất
+        $latestCustomers = User::orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get(['name', 'created_at']);
+
+        $data = [
+            'orders_today' => $orders->where('created_at', '>=', $today)->count(),
+            'pending_orders' => $orders->where('status', 'pending')->count(),
+            'total_orders' => $orders->count(),
+            'successful_orders' => $orders->where('status', 'success')->count(),
+            'cancelled_orders' => $orders->where('status', 'cancelled')->count(),
+            'total_revenue' => $orders->where('status', 'success')->sum('total_price'),
+            'latest_customers' => $latestCustomers, // Thêm danh sách khách hàng mới nhất
+        ];
+
+        return view('admin.dashboard.index', compact('data'));
+    }
+
     public function index()
     {
-        return view('admin.dashboard.index');
+
+        $today = Carbon::today();
+
+        $orders = Order::with(['order_statuses', 'payment_method_statuses', 'users'])
+            ->select([
+                'id',
+                'status',
+                'total_price',
+                'created_at',
+                'id_user'
+            ])
+            ->get();
+
+            $latestCustomers = User::orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get(['name', 'created_at']);
+
+        $data = [
+            'orders_today' => $orders->where('created_at', '>=', $today)->count(),
+            'pending_orders' => $orders->where('status', 'pending')->count(),
+            'total_orders' => $orders->count(),
+            'successful_orders' => $orders->where('status', 'success')->count(),
+            'cancelled_orders' => $orders->where('status', 'cancelled')->count(),
+            'total_revenue' => $orders->where('status', 'success')->sum('total_price'),
+            'latest_customers' => $latestCustomers,
+        ];
+
+        return view('admin.dashboard.index', compact('data'));
+
     }
 
 

@@ -11,7 +11,7 @@
                 <h2 class="mb-4 text-dark">Dashboard</h2>
 
 
-                <!-- Bộ lọc thời gian -->
+                {{-- <!-- Bộ lọc thời gian -->
                 <form method="GET" class="row mb-4">
                     <div class="col-md-2">
                         <select name="month" class="form-control">
@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary">Lọc</button>
-                    </div>
+                    </div> --}}
                 </form>
 
                 <!-- Tổng quan -->
@@ -144,6 +144,21 @@
                             </li>
                         </ul>
                     </div>
+
+
+                    {{-- <div class="col-md-6">
+                        <h4 class="text-dark">5 khách hàng mới</h4>
+                        <ul class="list-group">
+                            @foreach ($data['latest_customers'] as $customer)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ $customer->name }}
+                                    <span class="badge bg-primary">{{ $customer->created_at->format('d/m/Y') }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div> --}}
+
+
                 </div>
 
 

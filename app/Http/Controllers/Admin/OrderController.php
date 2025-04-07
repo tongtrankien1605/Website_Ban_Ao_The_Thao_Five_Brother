@@ -23,6 +23,10 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
+    
+
     public function index()
     {
         $orders = Order::latest('id')
@@ -201,14 +205,14 @@ class OrderController extends Controller
             ->findOrFail($id);
 
         $pdf = PDF::loadView('admin.orders.pdf', compact('order'));
-        
+
         return $pdf->download('don-hang-' . $id . '.pdf');
     }
 
     public function downloadMultiplePdf(Request $request)
     {
         $orderIds = $request->input('order_ids', []);
-        
+
         if (empty($orderIds)) {
             return back()->with('error', 'Vui lòng chọn ít nhất một đơn hàng');
         }
@@ -223,7 +227,7 @@ class OrderController extends Controller
 
         // Tạo một file PDF duy nhất chứa tất cả các đơn hàng
         $pdf = PDF::loadView('admin.orders.multiple_pdf', compact('orders'));
-        
+
         return $pdf->download('danh-sach-don-hang-' . time() . '.pdf');
     }
 
@@ -276,7 +280,6 @@ class OrderController extends Controller
                 'success' => true,
                 'message' => 'Cập nhật trạng thái đơn hàng thành công'
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
