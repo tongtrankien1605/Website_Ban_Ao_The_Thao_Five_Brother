@@ -175,6 +175,12 @@ class OrderController extends Controller
         }elseif ($newStatus == OrderStatus::CANCEL) {
             $order->update(['id_order_status' => $newStatus]);
             OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Khách hàng đã hủy đơn hàng',]);
+            $validatedData = $request->validate([
+                'bank_account' => 'required|string',
+                'bank_name' => 'required|string',
+                'account_holder_name' => 'required|string',
+            ]);
+            Refund::create(['id_order' => $order->id, 'reason' => 'Khách hàng hủy đơn trước khi xác nhận', 'refund_amount' => $order->total_amount, 'refund_quantity' => $order->order_details->sum('quantity'), 'status' => 'Đang chờ xử lý', 'image_path' => null, 'video_path' => null, 'bank_account' => $validatedData['bank_account'] ?? null, 'bank_name' => $validatedData['bank_name'] ?? null, 'account_holder_name' => $validatedData['account_holder_name'] ?? null, 'user_id' => Auth::id()]);
         }else {
             $order->update(['id_order_status' => $newStatus]);
             OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Yêu cầu hoàn hàng: ' . $request->reason,]);
