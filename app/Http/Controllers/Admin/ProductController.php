@@ -82,21 +82,12 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-
-        $content = $request->description;
-        // dd($content);
-
-        // Xóa toàn bộ inline style (style="...")
-        $cleanContent = preg_replace('/ style=("|\')(.*?)("|\')/', '', $content);
-
-        // Lưu $cleanContent thay vì $request->description
-
         try {
             DB::beginTransaction();
 
             $product = new Product();
             $product->name = $request->name;
-            $product->description = $cleanContent;
+            $product->description = $request->description;
             $product->id_category = $request->id_category;
             $product->id_brand = $request->id_brand;
             $product->image = $request->file('image')->store('products', 'public');
