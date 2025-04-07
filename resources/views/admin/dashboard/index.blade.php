@@ -101,9 +101,9 @@
                         <canvas id="orderStatusChart"></canvas>
                     </div>
 
-                    <!-- Biểu đồ cột ngang (Top 5 sản phẩm doanh thu cao nhất) - done -->
+                    <!-- Biểu đồ cột ngang (Top sản phẩm doanh thu cao nhất) - done -->
                     <div class="col-md-8">
-                        <h4 class="text-dark">5 sản phẩm có doanh thu cao nhất</h4>
+                        <h4 class="text-dark">Top sản phẩm có doanh thu cao nhất</h4>
                         <canvas id="topProductsChart"></canvas>
                     </div>
 
@@ -167,7 +167,7 @@
 
 
 
-                <!-- Biểu đồ doanh thu, Select để chọn kiểu hiển thị -->
+                <!-- DOANH THU tính theo ngày / tháng / năm - done -->
 
                 <div class="row mt-4">
                     <div class="col-md-12">
@@ -177,12 +177,13 @@
                             <option value="month" selected>Theo Tháng</option>
                             <option value="year">Theo Năm</option>
                         </select>
-                        <canvas id="revenueChart" height="60"></canvas>
+                        <canvas id="revenueChart" height="100"></canvas>
                     </div>
                 </div>
 
 
             </div>
+
         </section>
     </div>
 
@@ -401,37 +402,23 @@
 
         });
 
-        // END thống kê đơn hàng
+        // END thống kê đơn hàng --------------------------------------------------------------------------------
 
 
         // START doanh thu theo ngày / tháng / năm
+
         document.addEventListener("DOMContentLoaded", function() {
             const ctx = document.getElementById("revenueChart").getContext("2d");
             const revenueFilter = document.getElementById("revenueFilter");
 
-            // Dữ liệu mẫu
-            const revenueData = {
-                day: {
-                    labels: ["01", "02", "03", "04", "05", "06", "07"],
-                    data: [500, 700, 800, 600, 900, 750, 880]
-                },
-                month: {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-                    data: [15000, 17000, 18000, 16000, 19000, 17500, 18800]
-                },
-                year: {
-                    labels: ["2021", "2022", "2023", "2024"],
-                    data: [200000, 250000, 230000, 270000]
-                }
-            };
+            const revenueData = @json($revenueData);
 
-            // Khởi tạo biểu đồ
             let revenueChart = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: revenueData["month"].labels,
                     datasets: [{
-                        label: "Doanh thu ( VNĐ )",
+                        label: "Doanh thu (VNĐ)",
                         data: revenueData["month"].data,
                         backgroundColor: "rgba(54, 162, 235, 0.5)",
                         borderColor: "rgb(54, 162, 235)",
@@ -448,16 +435,15 @@
                 }
             });
 
-            // Cập nhật biểu đồ khi chọn ngày / tháng / năm
             revenueFilter.addEventListener("change", function() {
-                let selectedType = revenueFilter.value;
-                revenueChart.data.labels = revenueData[selectedType].labels;
-                revenueChart.data.datasets[0].data = revenueData[selectedType].data;
+                const selected = revenueFilter.value;
+                revenueChart.data.labels = revenueData[selected].labels;
+                revenueChart.data.datasets[0].data = revenueData[selected].data;
                 revenueChart.update();
             });
         });
 
+        // END doanh thu theo ngày / tháng / năm ------------------------------------------------------------------
 
-        // START doanh thu theo ngày / tháng / năm
     </script>
 @endsection
