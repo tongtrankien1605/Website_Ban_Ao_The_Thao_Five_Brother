@@ -103,10 +103,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
 
     // chạy template sẵn
-    Route::get('/index', function () {
-        // return view('admin.layouts.index');
-        return view('admin.dashboard.index');
-    })->name('index');
+    // Route::get('/index', function () {
+    //     // return view('admin.layouts.index');
+    //     return view('admin.dashboard.index');
+    // })->name('index');
 
     // end template sẵn
     
@@ -120,7 +120,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // dashboard admin
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
     //voucher
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
