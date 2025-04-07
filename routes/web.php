@@ -121,7 +121,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // dashboard admin
 
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
 
     //voucher
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');

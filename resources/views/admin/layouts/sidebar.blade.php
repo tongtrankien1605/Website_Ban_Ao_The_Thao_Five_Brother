@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ route('admin.dashboard.index') }}" class="brand-link">
+    <a href="{{ route('admin.index') }}" class="brand-link">
         <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
             style="opacity: .8">
         <span class="brand-text font-weight-light">5Brother</span>
@@ -43,7 +43,7 @@
 
                 <li class="nav-item menu-close">
 
-                    <a href="{{ Route('admin.dashboard.index') }}" class="nav-link">
+                    <a href="{{ Route('admin.index') }}" class="nav-link">
                         <i class="fa-solid fa-rocket"></i>
                         <p>
                             Dashboard
