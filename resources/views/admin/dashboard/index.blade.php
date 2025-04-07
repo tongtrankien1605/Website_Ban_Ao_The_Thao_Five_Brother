@@ -16,7 +16,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-primary text-white">
                             <div class="inner">
-                                <h3> {{ $ordersToday  }} </h3>
+                                <h3> {{ $ordersToday }} </h3>
                                 <p>Đơn hàng hôm nay</p>
                             </div>
                         </div>
@@ -73,13 +73,13 @@
                 <!-- Tỷ lệ đơn hàng -->
                 <div class="row">
                     <!-- Biểu đồ tròn -->
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <h4 class="text-dark">Tỷ lệ đơn hàng theo trạng thái</h4>
                         <canvas id="orderStatusChart"></canvas>
                     </div>
 
                     <!-- Biểu đồ cột ngang (Top 5 sản phẩm doanh thu cao nhất) -->
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <h4 class="text-dark">5 sản phẩm có doanh thu cao nhất</h4>
                         <canvas id="topProductsChart"></canvas>
                     </div>
@@ -99,42 +99,16 @@
                     <div class="col-md-6">
                         <h4 class="text-dark">5 khách hàng mới</h4>
                         <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Nguyễn Văn A
-                                <span class="badge bg-primary">03/04/2025</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Trần Thị B
-                                <span class="badge bg-primary">02/04/2025</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Lê Văn C
-                                <span class="badge bg-primary">01/04/2025</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Phạm Thị D
-                                <span class="badge bg-primary">31/03/2025</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Hoàng Văn E
-                                <span class="badge bg-primary">30/03/2025</span>
-                            </li>
-                        </ul>
-                    </div>
-
-
-                    {{-- <div class="col-md-6">
-                        <h4 class="text-dark">5 khách hàng mới</h4>
-                        <ul class="list-group">
-                            @foreach ($data['latest_customers'] as $customer)
+                            @foreach ($latestCustomers as $customer)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     {{ $customer->name }}
-                                    <span class="badge bg-primary">{{ $customer->created_at->format('d/m/Y') }}</span>
+                                    <span class="badge bg-primary">
+                                        {{ \Carbon\Carbon::parse($customer->created_at)->format('d/m/Y H:i:s') }}
+                                    </span>
                                 </li>
                             @endforeach
                         </ul>
-                    </div> --}}
-
+                    </div>
 
                 </div>
 
@@ -270,31 +244,75 @@
 
         // TỈ LỆ ĐƠN HÀNG, PIE CHART biểu đồ tròn 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            var ctx = document.getElementById("orderStatusChart").getContext("2d");
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     var ctx = document.getElementById("orderStatusChart").getContext("2d");
 
-            var orderData = {
-                labels: ["Xác nhận", "Bị hủy", "Thành công"],
+        //     var orderData = {
+        //         labels: ["Xác nhận", "Bị hủy", "Thành công"],
+        //         datasets: [{
+        //             data: [40, 20, 40], // Dữ liệu phần trăm
+        //             backgroundColor: ["#fbc02d", "#d32f2f", "#388e3c"],
+        //             hoverOffset: 5
+        //         }]
+        //     };
+
+        //     new Chart(ctx, {
+        //         type: "pie",
+        //         data: orderData,
+        //         options: {
+        //             responsive: true,
+        //             plugins: {
+        //                 legend: {
+        //                     position: "bottom"
+        //                 }
+        //             }
+        //         }
+        //     });
+        // });
+
+
+
+
+
+
+
+
+        const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+
+        const orderStatusChart = new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    @foreach ($orderStatusChart as $label => $value)
+                        '{{ $label }}',
+                    @endforeach
+                ],
                 datasets: [{
-                    data: [40, 20, 40], // Dữ liệu phần trăm
-                    backgroundColor: ["#fbc02d", "#d32f2f", "#388e3c"],
-                    hoverOffset: 5
+                    label: 'Số lượng',
+                    data: [
+                        @foreach ($orderStatusChart as $label => $value)
+                            {{ $value }},
+                        @endforeach
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 205, 86, 0.7)', // Chờ xác nhận
+                        'rgba(75, 192, 192, 0.7)', // Thành công
+                        'rgba(255, 99, 132, 0.7)' // Đã hủy
+                    ],
+                    borderWidth: 1
                 }]
-            };
-
-            new Chart(ctx, {
-                type: "pie",
-                data: orderData,
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: "bottom"
-                        }
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
                     }
                 }
-            });
+            }
         });
+
+        // END TỈ LỆ ĐƠN HÀNG
 
         // Biểu đồ cột ngang - Top 5 sản phẩm có doanh thu cao nhất
         var ctxBar = document.getElementById("topProductsChart").getContext("2d");
@@ -320,6 +338,9 @@
                 }
             }
         });
+
+
+
 
 
 
@@ -425,6 +446,7 @@
                 }
             };
 
+
             function createChart(canvasId, chartData) {
                 const ctx = document.getElementById(canvasId).getContext("2d");
                 return new Chart(ctx, {
@@ -467,6 +489,13 @@
                 month: createChart("ordersChartMonth", orderChartData.month),
                 year: createChart("ordersChartYear", orderChartData.year)
             };
+
+
+            // end biểu đồ đơn hàng
+
+
+
+
         });
     </script>
 @endsection
