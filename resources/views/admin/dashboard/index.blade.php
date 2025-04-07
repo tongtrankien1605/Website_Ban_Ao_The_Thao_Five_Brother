@@ -11,35 +11,12 @@
                 <h2 class="mb-4 text-dark">Dashboard</h2>
 
 
-                {{-- <!-- Bộ lọc thời gian -->
-                <form method="GET" class="row mb-4">
-                    <div class="col-md-2">
-                        <select name="month" class="form-control">
-                            @for ($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>Tháng
-                                    {{ $m }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select name="year" class="form-control">
-                            @for ($y = 2023; $y <= now()->year; $y++)
-                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
-                                    {{ $y }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary">Lọc</button>
-                    </div> --}}
-                </form>
-
                 <!-- Tổng quan -->
                 <div class="row">
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-primary text-white">
                             <div class="inner">
-                                <h3>14</h3>
+                                <h3> {{ $ordersToday  }} </h3>
                                 <p>Đơn hàng hôm nay</p>
                             </div>
                         </div>
@@ -48,7 +25,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-warning text-dark">
                             <div class="inner">
-                                <h3>12</h3>
+                                <h3> {{ $ordersPending }} </h3>
                                 <p>Đơn chờ xác nhận</p>
                             </div>
                         </div>
@@ -57,7 +34,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-secondary text-white">
                             <div class="inner">
-                                <h3>300</h3>
+                                <h3> {{ $totalOrders }} </h3>
                                 <p>Tổng số đơn hàng</p>
                             </div>
                         </div>
@@ -66,7 +43,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-success text-white">
                             <div class="inner">
-                                <h3>255</h3>
+                                <h3> {{ $ordersSuccess }} </h3>
                                 <p>Đơn hàng thành công</p>
                             </div>
                         </div>
@@ -75,7 +52,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-danger text-dark">
                             <div class="inner">
-                                <h3>12</h3>
+                                <h3> {{ $ordersCanceled }} </h3>
                                 <p>Đơn hàng bị hủy</p>
                             </div>
                         </div>
@@ -85,7 +62,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-info text-dark">
                             <div class="inner">
-                                <h3>12025355</h3>
+                                <h3> {{ $totalRevenue }} </h3>
                                 <p>Tổng doanh thu</p>
                             </div>
                         </div>
