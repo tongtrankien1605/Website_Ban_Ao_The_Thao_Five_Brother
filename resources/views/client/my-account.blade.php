@@ -255,7 +255,9 @@
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
-                                                                        @if ($order->id_order_status == OrderStatus::PENDING && $order->payment_method_status_name == 'Chưa thanh toán')
+                                                                        @if (
+                                                                            ($order->id_order_status == OrderStatus::PENDING || $order->id_order_status == OrderStatus::CONFIRM) &&
+                                                                                $order->payment_method_status_name == 'Chưa thanh toán')
                                                                             <div class="text-center">
                                                                                 <form
                                                                                     action="{{ route('order.update', $order->id) }}"
@@ -266,10 +268,55 @@
                                                                                         name="id_order_status"
                                                                                         value="{{ OrderStatus::CANCEL }}">
                                                                                     <button type="submit"
-                                                                                        class="btn btn-danger me-2">Hủy đơn hàng</button>
+                                                                                        class="btn btn-danger me-2">Hủy đơn
+                                                                                        hàng</button>
+                                                                                </form>
+                                                                            </div>
+                                                                        @elseif (
+                                                                            ($order->id_order_status == OrderStatus::PENDING || $order->id_order_status == OrderStatus::CONFIRM) &&
+                                                                                $order->payment_method_status_name == 'Đã thanh toán')
+                                                                            <div class="text-center">
+                                                                                <form
+                                                                                    action="{{ route('order.update', $order->id) }}"
+                                                                                    method="post">
+                                                                                    @csrf
+                                                                                    @method('PUT')
+                                                                                    <label class="form-label">Số tài khoản
+                                                                                        ngân hàng:</label>
+                                                                                    <input type="text"
+                                                                                        name="bank_account"
+                                                                                        class="form-control mb-2"
+                                                                                        placeholder="Nhập số tài khoản"
+                                                                                        value="{{ old('bank_account') }}"
+                                                                                        required>
+
+                                                                                    <label class="form-label">Tên ngân
+                                                                                        hàng:</label>
+                                                                                    <input type="text" name="bank_name"
+                                                                                        class="form-control mb-2"
+                                                                                        placeholder="Nhập tên ngân hàng"
+                                                                                        value="{{ old('bank_name') }}"
+                                                                                        required>
+
+                                                                                    <label class="form-label">Tên chủ tài
+                                                                                        khoản:</label>
+                                                                                    <input type="text"
+                                                                                        name="account_holder_name"
+                                                                                        class="form-control mb-2"
+                                                                                        placeholder="Nhập tên chủ tài khoản"
+                                                                                        value="{{ old('account_holder_name') }}"
+                                                                                        required>
+
+                                                                                    <input type="hidden"
+                                                                                        name="id_order_status"
+                                                                                        value="{{ OrderStatus::CANCEL }}">
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-danger me-2">Hủy đơn
+                                                                                        hàng</button>
                                                                                 </form>
                                                                             </div>
                                                                         @endif
+
                                                                         @if ($order->id_order_status == OrderStatus::DELIVERED)
                                                                             <div class="card p-4 mt-4 shadow-sm">
                                                                                 <div id="confirm-section"
