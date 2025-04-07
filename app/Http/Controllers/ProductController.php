@@ -59,51 +59,63 @@ class ProductController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-{
-    $product = Product::with([
-        'attributeValues.attribute',
-        'variants.latestStock'
-    ])->findOrFail($id);
+    {
+        $product = Product::with([
+            'attributeValues.attribute',
+            'variants.latestStock'
+        ])->findOrFail($id);
+        $product->increment('views');
+        $relatedProducts = Product::where('id_brand', $product->id_brand)
+            ->where('id', '!=', $product->id)
+            ->take(5)
+            ->get();
+        $popularProducts = Product::orderByDesc('views')
+            ->where('id', '!=', $product->id)
+            ->limit(5)
+            ->get();
+        $brand = Brand::find($product->id_brand);
+        $category = Category::find($product->id_category);
+        $brands = Brand::withCount('products')->get();
+        $productImages = ProductImage::where('id_product', $product->id)->get();
+        $wishlist = Wishlist::where('id_product', $product->id)->where('id_user', auth()->id())->first();
 
-    $brand = Brand::find($product->id_brand);
-    $category = Category::find($product->id_category);
-    $productImages = ProductImage::where('id_product', $product->id)->get();
-    $wishlist = Wishlist::where('id_product', $product->id)->where('id_user', auth()->id())->first();
+        $skus = Skus::where('product_id', $product->id)->get();
+        $variants = Variant::where('product_id', $product->id)
+            ->with(['latestStock'])
+            ->get();
 
-    $skus = Skus::where('product_id', $product->id)->get();
-    $variants = Variant::where('product_id', $product->id)
-    ->with(['latestStock'])
-    ->get();
+        // Tạo variant map: "1,3" => SKU_ID
+        $variantMap = [];
 
-// Tạo variant map: "1,3" => SKU_ID
-$variantMap = [];
+        $variants->groupBy('id_skus')->each(function ($group, $skuId) use (&$variantMap) {
+            $valueIds = $group->pluck('product_attribute_value_id')->sort()->implode(',');
+            $variantMap[$valueIds] = $skuId;
+        });
 
-$variants->groupBy('id_skus')->each(function ($group, $skuId) use (&$variantMap) {
-    $valueIds = $group->pluck('product_attribute_value_id')->sort()->implode(',');
-    $variantMap[$valueIds] = $skuId;
-});
+        // Dữ liệu tồn kho theo SKU_ID
+        $inventoryData = Inventory::whereIn('id_product_variant', array_values($variantMap))
+            ->get();
 
-// Dữ liệu tồn kho theo SKU_ID
-$inventoryData = Inventory::whereIn('id_product_variant', array_values($variantMap))
-    ->get();
+        // dd($inventoryData);
 
-// dd($inventoryData);
+        // Build inventory map: [sku_id] => quantity
 
-    // Build inventory map: [sku_id] => quantity
-   
 
-    return view('client.single-product', compact(
-        'brand',
-        'category',
-        'product',
-        'productImages',
-        'skus',
-        'wishlist',
-        'variants',
-        'inventoryData',
-        'variantMap'
-    ));
-}
+        return view('client.single-product', compact(
+            'brand',
+            'category',
+            'brands',
+            'product',
+            'productImages',
+            'skus',
+            'wishlist',
+            'variants',
+            'inventoryData',
+            'variantMap',
+            'relatedProducts', 
+            'popularProducts'
+        ));
+    }
 
 
     /**
