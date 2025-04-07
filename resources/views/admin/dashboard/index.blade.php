@@ -11,9 +11,9 @@
                 <h2 class="mb-4 text-dark">Dashboard</h2>
 
 
-                <!-- Tổng quan -->
+                <!-- Tổng quan - done -->
                 <div class="row">
-                    <div class="col-lg-4 col-6">
+                    <div class="col-lg-3 col-6 mb-3">
                         <div class="small-box bg-primary text-white">
                             <div class="inner">
                                 <h3> {{ $ordersToday }} </h3>
@@ -22,35 +22,51 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-6">
+                    <div class="col-lg-3 col-6 mb-3">
                         <div class="small-box bg-warning text-dark">
                             <div class="inner">
                                 <h3> {{ $ordersPending }} </h3>
-                                <p>Đơn chờ xác nhận</p>
+                                <p>Chờ xác nhận</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-6">
-                        <div class="small-box bg-secondary text-white">
+                    <div class="col-lg-3 col-6 mb-3">
+                        <div class="small-box bg-info text-white">
                             <div class="inner">
-                                <h3> {{ $totalOrders }} </h3>
-                                <p>Tổng số đơn hàng</p>
+                                <h3> {{ $ordersConfirmed }} </h3>
+                                <p>Đã xác nhận</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-6">
+                    <div class="col-lg-3 col-6 mb-3">
+                        <div class="small-box bg-secondary text-dark">
+                            <div class="inner">
+                                <h3> {{ $ordersWaitingPickup }} </h3>
+                                <p>Chờ lấy hàng</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <div class="col-lg-3 col-6 mb-3">
                         <div class="small-box bg-success text-white">
                             <div class="inner">
                                 <h3> {{ $ordersSuccess }} </h3>
-                                <p>Đơn hàng thành công</p>
+                                <p>Giao hàng thành công</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-6">
-                        <div class="small-box bg-danger text-dark">
+                    <div class="col-lg-3 col-6 mb-3">
+                        <div class="small-box bg-danger text-white">
                             <div class="inner">
                                 <h3> {{ $ordersCanceled }} </h3>
                                 <p>Đơn hàng bị hủy</p>
@@ -58,9 +74,17 @@
                         </div>
                     </div>
 
+                    <div class="col-lg-3 col-6 mb-3">
+                        <div class="small-box bg-dark text-white">
+                            <div class="inner">
+                                <h3> {{ $totalOrders }} </h3>
+                                <p>Tổng số đơn hàng</p>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="col-lg-4 col-6">
-                        <div class="small-box bg-info text-dark">
+                    <div class="col-lg-3 col-6 mb-3">
+                        <div class="small-box bg-purple text-white">
                             <div class="inner">
                                 <h3> {{ $totalRevenue }} </h3>
                                 <p>Tổng doanh thu</p>
@@ -70,15 +94,14 @@
 
                 </div>
 
-                <!-- Tỷ lệ đơn hàng -->
                 <div class="row">
-                    <!-- Biểu đồ tròn -->
+                    <!-- lệ đơn hàng Biểu đồ tròn - done -->
                     <div class="col-md-4">
                         <h4 class="text-dark">Tỷ lệ đơn hàng theo trạng thái</h4>
                         <canvas id="orderStatusChart"></canvas>
                     </div>
 
-                    <!-- Biểu đồ cột ngang (Top 5 sản phẩm doanh thu cao nhất) -->
+                    <!-- Biểu đồ cột ngang (Top 5 sản phẩm doanh thu cao nhất) - done -->
                     <div class="col-md-8">
                         <h4 class="text-dark">5 sản phẩm có doanh thu cao nhất</h4>
                         <canvas id="topProductsChart"></canvas>
@@ -89,13 +112,14 @@
 
 
                 <div class="row mt-4">
-                    <!-- Biểu đồ khách hàng mới -->
+
+                    <!-- Biểu đồ khách hàng mới - done -->
                     <div class="col-md-6">
                         <h4 class="text-dark">Số lượng khách hàng mới 30 ngày qua</h4>
                         <canvas id="newCustomersChart" height="100"></canvas>
                     </div>
 
-                    <!-- Danh sách 5 khách hàng gần đây -->
+                    <!-- Danh sách 5 khách hàng gần đây - done -->
                     <div class="col-md-6">
                         <h4 class="text-dark">5 khách hàng mới</h4>
                         <ul class="list-group">
@@ -114,7 +138,7 @@
 
 
                 <!-- THỐNG KÊ ĐƠN HÀNG DÙNG TABS -->
-                <h5 class="text-center text-dark mb-4">Thống kê đơn hàng</h5>
+                <h5 class="text-center text-dark mb-4 mt-4">Thống kê đơn hàng</h5>
 
                 <!-- Tabs nav -->
                 <ul class="nav nav-tabs" id="orderStatsTabs" role="tablist">
@@ -126,17 +150,11 @@
                         <button class="nav-link" id="week-tab" data-bs-toggle="tab" data-bs-target="#week" type="button"
                             role="tab" aria-controls="week" aria-selected="false">Theo tuần</button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="month-tab" data-bs-toggle="tab" data-bs-target="#month" type="button"
-                            role="tab" aria-controls="month" aria-selected="false">Theo tháng</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="year-tab" data-bs-toggle="tab" data-bs-target="#year" type="button"
-                            role="tab" aria-controls="year" aria-selected="false">Theo năm</button>
-                    </li>
+
                 </ul>
 
                 <!-- Tabs content -->
+
                 <div class="tab-content pt-3" id="orderStatsTabContent">
                     <div class="tab-pane fade show active" id="day" role="tabpanel" aria-labelledby="day-tab">
                         <canvas id="ordersChartDay" style="height: 280px;"></canvas>
@@ -144,12 +162,7 @@
                     <div class="tab-pane fade" id="week" role="tabpanel" aria-labelledby="week-tab">
                         <canvas id="ordersChartWeek" style="height: 280px;"></canvas>
                     </div>
-                    <div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="month-tab">
-                        <canvas id="ordersChartMonth" style="height: 280px;"></canvas>
-                    </div>
-                    <div class="tab-pane fade" id="year" role="tabpanel" aria-labelledby="year-tab">
-                        <canvas id="ordersChartYear" style="height: 280px;"></canvas>
-                    </div>
+
                 </div>
 
 
@@ -174,110 +187,14 @@
     </div>
 
 
-
-
-
-
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const ctx = document.getElementById("newCustomersChart").getContext("2d");
-
-            const today = new Date();
-            const labels = [];
-            const data = [];
-
-            for (let i = 29; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(today.getDate() - i);
-                const label =
-                    `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth()+1).toString().padStart(2, '0')}`;
-                labels.push(label);
-                data.push(Math.floor(Math.random() * 100)); // dữ liệu mẫu
-            }
-
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Khách hàng mới",
-                        data: data,
-                        borderColor: "rgb(54, 162, 235)",
-                        backgroundColor: "rgba(54, 162, 235, 0.2)",
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 5,
-                        pointBackgroundColor: "rgb(54, 162, 235)"
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-        });
-
-
-        // TỈ LỆ ĐƠN HÀNG, PIE CHART biểu đồ tròn 
-
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     var ctx = document.getElementById("orderStatusChart").getContext("2d");
-
-        //     var orderData = {
-        //         labels: ["Xác nhận", "Bị hủy", "Thành công"],
-        //         datasets: [{
-        //             data: [40, 20, 40], // Dữ liệu phần trăm
-        //             backgroundColor: ["#fbc02d", "#d32f2f", "#388e3c"],
-        //             hoverOffset: 5
-        //         }]
-        //     };
-
-        //     new Chart(ctx, {
-        //         type: "pie",
-        //         data: orderData,
-        //         options: {
-        //             responsive: true,
-        //             plugins: {
-        //                 legend: {
-        //                     position: "bottom"
-        //                 }
-        //             }
-        //         }
-        //     });
-        // });
-
-
-
-
-
-
-
-
+        // START Tỷ lệ đơn hàng theo trạng thái 
         const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+
+        const hasData = false; // Đổi thành true nếu có dữ liệu thực
 
         const orderStatusChart = new Chart(ctxStatus, {
             type: 'doughnut',
@@ -295,9 +212,11 @@
                         @endforeach
                     ],
                     backgroundColor: [
-                        'rgba(255, 205, 86, 0.7)', // Chờ xác nhận
-                        'rgba(75, 192, 192, 0.7)', // Thành công
-                        'rgba(255, 99, 132, 0.7)' // Đã hủy
+                        'rgba(255, 205, 86, 0.7)', // Chờ xác nhận - vàng
+                        'rgba(54, 162, 235, 0.7)', // Đã xác nhận - xanh dương nhạt
+                        'rgba(153, 102, 255, 0.7)', // Chờ lấy hàng - tím nhạt
+                        'rgba(75, 192, 192, 0.7)', // Đã giao hàng thành công - xanh ngọc
+                        'rgba(255, 99, 132, 0.7)' // Đơn hàng bị hủy - đỏ hồng
                     ],
                     borderWidth: 1
                 }]
@@ -312,117 +231,107 @@
             }
         });
 
-        // END TỈ LỆ ĐƠN HÀNG
+        // END Tỷ lệ đơn hàng theo trạng thái  -------------------------------------------------------------
 
-        // Biểu đồ cột ngang - Top 5 sản phẩm có doanh thu cao nhất
-        var ctxBar = document.getElementById("topProductsChart").getContext("2d");
-        new Chart(ctxBar, {
-            type: "bar",
-            data: {
-                labels: ["Sản phẩm A", "Sản phẩm B", "Sản phẩm C", "Sản phẩm D", "Sản phẩm E"],
+
+        // START 5 sản phẩm có doanh thu cao nhất
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('topProductsChart').getContext('2d');
+
+            const data = {
+                labels: @json($topProducts->pluck('name')),
                 datasets: [{
-                    label: "Doanh thu (VNĐ)",
-                    data: [50000000, 45000000, 40000000, 35000000,
-                        30000000
-                    ], // Doanh thu sản phẩm
-                    backgroundColor: "#3498db"
-                }]
-            },
-            options: {
-                indexAxis: 'y', // Hiển thị cột ngang
-                responsive: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-
-
-
-
-
-
-
-        //------------------ END THỐNG KÊ ĐƠN HÀNG THEO NGÀY VÀ TUẦN
-
-
-        // KHÁCH HÀNG MỚI 30 NGÀY QUA
-
-        const customersByMonthChart = new Chart(document.getElementById('customersByMonthChart'), {
-            type: 'bar',
-            data: {
-                labels: ['01', '02', '03', '04', '05', '06', '07'],
-                datasets: [{
-                    label: 'Khách hàng mới',
-                    data: [20, 30, 25, 40, 35, 50, 45],
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
+                    label: 'Doanh thu (VNĐ)',
+                    data: @json($topProducts->pluck('revenue')),
+                    backgroundColor: [
+                        '#4e73df',
+                        '#1cc88a',
+                        '#36b9cc',
+                        '#f6c23e',
+                        '#e74a3b'
+                    ],
                     borderWidth: 1
                 }]
-            }
-        });
-
-
-
-
-        // DOANH THU THEO NGÀY THÁNG NĂM 
-        document.addEventListener("DOMContentLoaded", function() {
-            const ctx = document.getElementById("revenueChart").getContext("2d");
-            const revenueFilter = document.getElementById("revenueFilter");
-
-            // Dữ liệu mẫu
-            const revenueData = {
-                day: {
-                    labels: ["01", "02", "03", "04", "05", "06", "07"],
-                    data: [500, 700, 800, 600, 900, 750, 880]
-                },
-                month: {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-                    data: [15000, 17000, 18000, 16000, 19000, 17500, 18800]
-                },
-                year: {
-                    labels: ["2021", "2022", "2023", "2024"],
-                    data: [200000, 250000, 230000, 270000]
-                }
             };
 
-            // Khởi tạo biểu đồ
-            let revenueChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: revenueData["month"].labels,
-                    datasets: [{
-                        label: "Doanh thu ( VNĐ )",
-                        data: revenueData["month"].data,
-                        backgroundColor: "rgba(54, 162, 235, 0.5)",
-                        borderColor: "rgb(54, 162, 235)",
-                        borderWidth: 1
-                    }]
-                },
+            const config = {
+                type: 'bar',
+                data: data,
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let value = context.raw;
+                                    return new Intl.NumberFormat('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    }).format(value);
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        y: {
-                            beginAtZero: true
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                }
+                            }
                         }
                     }
                 }
-            });
+            };
 
-            // Cập nhật biểu đồ khi chọn ngày / tháng / năm
-            revenueFilter.addEventListener("change", function() {
-                let selectedType = revenueFilter.value;
-                revenueChart.data.labels = revenueData[selectedType].labels;
-                revenueChart.data.datasets[0].data = revenueData[selectedType].data;
-                revenueChart.update();
-            });
+            new Chart(ctx, config);
         });
 
+        // END 5 sản phẩm có doanh thu cao nhất -------------------------------------------------------------
 
-        // biểu đồ đơn hàng
+
+        // START số lượng khách hàng mới 30 ngày qua
+
+        const ctxNewCustomers = document.getElementById('newCustomersChart').getContext('2d');
+        const newCustomersChart = new Chart(ctxNewCustomers, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($newCustomers->pluck('date')) !!},
+                datasets: [{
+                    label: 'Khách hàng mới',
+                    data: {!! json_encode($newCustomers->pluck('count')) !!},
+                    borderColor: 'green',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // END số lượng khách hàng mới 30 ngày qua -------------------------------------------------------------
+
+
+
+        // START thống kê đơn hàng
 
         document.addEventListener('DOMContentLoaded', function() {
             const orderChartData = {
@@ -490,12 +399,65 @@
                 year: createChart("ordersChartYear", orderChartData.year)
             };
 
-
-            // end biểu đồ đơn hàng
-
-
-
-
         });
+
+        // END thống kê đơn hàng
+
+
+        // START doanh thu theo ngày / tháng / năm
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById("revenueChart").getContext("2d");
+            const revenueFilter = document.getElementById("revenueFilter");
+
+            // Dữ liệu mẫu
+            const revenueData = {
+                day: {
+                    labels: ["01", "02", "03", "04", "05", "06", "07"],
+                    data: [500, 700, 800, 600, 900, 750, 880]
+                },
+                month: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+                    data: [15000, 17000, 18000, 16000, 19000, 17500, 18800]
+                },
+                year: {
+                    labels: ["2021", "2022", "2023", "2024"],
+                    data: [200000, 250000, 230000, 270000]
+                }
+            };
+
+            // Khởi tạo biểu đồ
+            let revenueChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: revenueData["month"].labels,
+                    datasets: [{
+                        label: "Doanh thu ( VNĐ )",
+                        data: revenueData["month"].data,
+                        backgroundColor: "rgba(54, 162, 235, 0.5)",
+                        borderColor: "rgb(54, 162, 235)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Cập nhật biểu đồ khi chọn ngày / tháng / năm
+            revenueFilter.addEventListener("change", function() {
+                let selectedType = revenueFilter.value;
+                revenueChart.data.labels = revenueData[selectedType].labels;
+                revenueChart.data.datasets[0].data = revenueData[selectedType].data;
+                revenueChart.update();
+            });
+        });
+
+
+        // START doanh thu theo ngày / tháng / năm
     </script>
 @endsection
