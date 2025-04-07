@@ -154,13 +154,15 @@
                                 @endif
 
                                 <div class="actions">
-                                    <button id="addToCartBtn" class="add_to_cart" data-url="{{ route('add.cart', ['id' => $product->id]) }}">
+                                    <button id="addToCartBtn" class="add_to_cart"
+                                        data-url="{{ route('add.cart', ['id' => $product->id]) }}">
                                         <i class="ti-shopping-cart"></i><span>ADD TO CART</span>
-                                    </button>                                    
+                                    </button>
                                     <button class="box" data-tooltip="Compare"><i
                                             class="ti-control-shuffle"></i></button>
                                     @isset($wishlist)
-                                        <button class="box pro-remove"><a href="{{ route('delete_wishlist', $product->id) }}"><i
+                                        <button class="box pro-remove"><a
+                                                href="{{ route('delete_wishlist', $product->id) }}"><i
                                                     class="ti-heart"></i></button>
                                     @else
                                         <button class="box add_to_wishlist"
@@ -216,59 +218,69 @@
 
                     <div class="related-product-slider related-product-slider-2 slick-space p-0">
 
-                        <div class="slick-slide">
 
-                            <div class="product-item">
-                                <div class="product-inner">
+                        @foreach ($relatedProducts as $related)
+                            <div class="slick-slide">
 
-                                    <div class="image">
-                                        <img src="/client/assets/images/product/product-1.jpg" alt="">
+                                <div class="product-item">
+                                    <div class="product-inner">
 
-                                        <div class="image-overlay">
-                                            <div class="action-buttons">
-                                                <button>add to cart</button>
-                                                <button>add to wishlist</button>
+                                        <div class="image">
+                                            <div
+                                                class="bg-light border rounded d-flex justify-content-center align-items-center">
+                                                <img src="{{ Storage::url($related->image) }}" alt=""
+                                                    style="height: 300px;width: 300px; overflow: hidden;">
                                             </div>
+
+                                            <div class="image-overlay">
+                                                <div class="action-buttons">
+                                                    <button><a href="{{ route('product.show', $related->id) }}">Add to
+                                                            cart</a></button>
+                                                    <button class="add_to_wishlist"
+                                                        data-url="{{ route('add_wishlist', ['id' => $related->id]) }}">Add
+                                                        to
+                                                        wishlist</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="content">
+
+                                            <div class="content-left">
+
+                                                <h4 class="title"><a
+                                                        href="{{ route('product.show', $product) }}">{{ $related->name }}</a>
+                                                </h4>
+
+                                                <div class="ratting">
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star-half-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                </div>
+
+                                                {{-- <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
+                                                </h5>
+                                                <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
+                                                        style="background-color: #0271bc"></span><span
+                                                        style="background-color: #efc87c"></span><span
+                                                        style="background-color: #00c183"></span></h5> --}}
+
+                                            </div>
+
+                                            <div class="content-right">
+                                                <span class="price">{{ $product->price }}</span>
+                                            </div>
+
                                         </div>
 
                                     </div>
-
-                                    <div class="content">
-
-                                        <div class="content-left">
-
-                                            <h4 class="title"><a href="single-product.html">Tmart Baby Dress</a></h4>
-
-                                            <div class="ratting">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-half-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                            </div>
-
-                                            <h5 class="size">Size:
-                                                <span>S</span><span>M</span><span>L</span><span>XL</span>
-                                            </h5>
-                                            <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
-                                                    style="background-color: #0271bc"></span><span
-                                                    style="background-color: #efc87c"></span><span
-                                                    style="background-color: #00c183"></span></h5>
-
-                                        </div>
-
-                                        <div class="content-right">
-                                            <span class="price">$25</span>
-                                        </div>
-
-                                    </div>
-
                                 </div>
                             </div>
-
-                        </div>
-
-                        <div class="slick-slide">
+                        @endforeach
+                        {{-- <div class="slick-slide">
 
                             <div class="product-item">
                                 <div class="product-inner">
@@ -474,7 +486,7 @@
                                 </div>
                             </div>
 
-                        </div>
+                        </div> --}}
 
                     </div>
 
@@ -483,16 +495,14 @@
                 <div class="col-xl-3 col-lg-4 col-12 order-2 order-lg-1 mb-40">
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Category</h4>
+                        <h4 class="sidebar-title">Brand</h4>
                         <ul class="sidebar-list">
-                            <li><a href="#">Shart <span class="num">18</span></a></li>
-                            <li><a href="#">Pants <span class="num">09</span></a></li>
-                            <li><a href="#">T-Shart <span class="num">05</span></a></li>
-                            <li><a href="#">Tops <span class="num">03</span></a></li>
-                            <li><a href="#">Kid's Clothes <span class="num">15</span></a></li>
-                            <li><a href="#">Watch <span class="num">07</span></a></li>
-                            <li><a href="#">Accessories <span class="num">02</span></a></li>
+                            @foreach ($brands as $brand)
+                                <li><a href="{{ route('brands.show', $brand->id) }}">{{ $brand->name }} <span
+                                            class="num">{{ $brand->products_count }}</span></a></li>
+                            @endforeach
                         </ul>
+
                     </div>
 
                     {{-- <div class="sidebar">
@@ -514,22 +524,25 @@
                     <div class="sidebar">
                         <h4 class="sidebar-title">Popular Product</h4>
                         <div class="sidebar-product-wrap">
-                            <div class="sidebar-product">
-                                <a href="single-product.html" class="image"><img
-                                        src="/client/assets/images/product/product-1.jpg" alt=""></a>
-                                <div class="content">
-                                    <a href="single-product.html" class="title">Tmart Baby Dress</a>
-                                    <span class="price">$25 <span class="old">$38</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
+                            @foreach ($popularProducts as $item)
+                                <div class="sidebar-product">
+                                    <a href="{{ route('product.show', $item->id) }}" class="image"><img
+                                            src="{{ Storage::url($item->image) }}" alt=""></a>
+                                    <div class="content">
+                                        <a href="{{ route('product.show', $item->id) }}"
+                                            class="title">{{ $item->name }}</a>
+                                        <div class="ratting">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star-half-o"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="sidebar-product">
+                            @endforeach
+
+                            {{-- <div class="sidebar-product">
                                 <a href="single-product.html" class="image"><img
                                         src="/client/assets/images/product/product-2.jpg" alt=""></a>
                                 <div class="content">
@@ -558,7 +571,7 @@
                                         <i class="fa fa-star-half-o"></i>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -630,31 +643,27 @@
 
                 const addToCartBtn = document.getElementById('addToCartBtn');
 
-if (addToCartBtn) {
-    if (qty > 0) {
-        addToCartBtn.disabled = false;
-        addToCartBtn.querySelector('span').textContent = 'ADD TO CART';
-        addToCartBtn.classList.remove('disabled');
-    } else {
-        addToCartBtn.disabled = true;
-        addToCartBtn.querySelector('span').textContent = 'Hết hàng';
-        addToCartBtn.classList.add('disabled');
-    }
-}
+                if (addToCartBtn) {
+                    if (qty > 0) {
+                        addToCartBtn.disabled = false;
+                        addToCartBtn.querySelector('span').textContent = 'ADD TO CART';
+                        addToCartBtn.classList.remove('disabled');
+                    } else {
+                        addToCartBtn.disabled = true;
+                        addToCartBtn.querySelector('span').textContent = 'Hết hàng';
+                        addToCartBtn.classList.add('disabled');
+                    }
+                }
             });
         });
-
-
-
     </script>
 
     <style>
-    .add_to_cart.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
+        .add_to_cart.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 
 @endsection
