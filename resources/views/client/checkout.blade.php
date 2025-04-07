@@ -18,12 +18,12 @@
     </div><!-- Page Banner Section End -->
 
     <!-- Countdown Timer -->
-    <div class="countdown-timer" id="countdown"
+    {{-- <div class="countdown-timer" id="countdown"
         style="background-color: #f8f9fa; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <span style="font-weight: bold;">Time remaining: </span>
         <span id="timer" style="color: #e83e8c; font-size: 1.2em; font-weight: bold;"></span>
         <span id="attempts" style="margin-left: 20px; color: #dc3545;"></span>
-    </div>
+    </div> --}}
 
     <!-- Page Section Start -->
     <div class="page-section section section-padding" style="margin-top: 60px;">
@@ -191,7 +191,7 @@
     </div><!-- Page Section End -->
 
     @push('scripts')
-        <script>
+        {{-- <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const timerElement = document.getElementById('timer');
                 const attemptsElement = document.getElementById('attempts');
@@ -288,7 +288,7 @@
                     }, 2000);
                 }
             });
-        </script>
+        </script> --}}
     @endpush
 
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AddressUser;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Inventory;
 use App\Models\Order;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use App\Models\PaymentMethod;
@@ -99,7 +100,20 @@ class PaymentController extends Controller
     public function processVNPay($order)
     {
         // dd($order);
-        $cartItem = CartItem::where('id_user', Auth::id())->get();
+        // Lấy tất cả sản phẩm trong giỏ hàng của user hiện tại
+        $cartItems = CartItem::where('id_user', Auth::id())->get();
+        
+        // Kiểm tra nếu giỏ hàng trống
+        if ($cartItems->isEmpty()) {
+            return redirect()->back()->with('error', 'Giỏ hàng của bạn đang trống');
+        }
+    
+        // Lấy danh sách id các biến thể sản phẩm từ giỏ hàng
+        $productVariantIds = $cartItems->pluck('id_product_variant')->toArray();
+        
+        // Lấy thông tin tồn kho của các sản phẩm trong giỏ
+        // dd($inventory->toArray());
+        // dd($cartItem->toArray());
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl = env('VNP_RETURN_URL');
         $vnp_TmnCode = env('VNP_TMN_CODE');
@@ -161,8 +175,16 @@ class PaymentController extends Controller
         } else {
             $order->id_payment_method_status = 2;
             $order->save();
-            $cartItem->each(function ($item) {
-                $item->delete();
+            // dd($order);
+           foreach ($cartItems as $items) {
+                $inventories = Inventory::where('id', $items->id_product_variant)->first();
+                if ($inventories) {
+                    $inventories->quantity -= $items->quantity;
+                    $inventories->save();
+                }
+            }
+            $cartItems->each(function ($item) {
+             $item->delete();
             });
             // dd($order);
             return redirect()->away($vnp_Url);
