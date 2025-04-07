@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
@@ -34,9 +35,13 @@ class BrandController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Brand $brand)
+    public function show($id)
     {
-        //
+        $brand = Brand::findOrFail($id);
+        
+        $products = Product::where('id_brand', $brand->id)->paginate(12);
+        
+        return view('client.brand-products', compact('brand', 'products'));
     }
 
     /**

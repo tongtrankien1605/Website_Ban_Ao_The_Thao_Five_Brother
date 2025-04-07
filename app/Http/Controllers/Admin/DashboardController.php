@@ -50,7 +50,7 @@ class DashboardController extends Controller
         return view('admin.dashboard.index', compact('data'));
     }
 
-    public function index()
+    public function index1()
     {
 
         $today = Carbon::today();
@@ -65,7 +65,7 @@ class DashboardController extends Controller
             ])
             ->get();
 
-            $latestCustomers = User::orderBy('created_at', 'desc')
+        $latestCustomers = User::orderBy('created_at', 'desc')
             ->limit(5)
             ->get(['name', 'created_at']);
 
@@ -80,11 +80,113 @@ class DashboardController extends Controller
         ];
 
         return view('admin.dashboard.index', compact('data'));
-
     }
 
 
+    public function index2()
+    {
+        // Thống kê đơn hàng
+        $ordersToday = Order::whereDate('created_at', today())->count();
+        $ordersPending = Order::where('status', 'pending')->count();
+        $ordersTotal = Order::count();
+        $ordersSuccess = Order::where('status', 'success')->count();
+        $ordersCanceled = Order::where('status', 'canceled')->count();
 
+        // Tổng doanh thu
+        $totalRevenue = Order::where('status', 'success')->sum('total_price');
+
+        // Doanh thu theo sản phẩm
+
+        $topProducts = Product::withSum(['orderDetails as revenue' => function ($q) {
+            $q->whereHas('order', fn($q) => $q->where('status', 'success'));
+        }], 'price')
+            ->orderByDesc('revenue')
+            ->take(5)
+            ->get();
+
+        // Tỷ lệ đơn hàng theo trạng thái
+        $orderStats = [
+            'success' => $ordersSuccess,
+            'pending' => $ordersPending,
+            'canceled' => $ordersCanceled
+        ];
+
+        // Khách hàng mới 30 ngày
+        $newCustomersLast30Days = User::where('role', 'customer')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+
+        // 5 khách hàng mới nhất
+        $latestCustomers = User::where('role', 'customer')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard.index', compact(
+            'ordersToday',
+            'ordersPending',
+            'ordersTotal',
+            'ordersSuccess',
+            'ordersCanceled',
+            'totalRevenue',
+            'topProducts',
+            'orderStats',
+            'newCustomersLast30Days',
+            'latestCustomers'
+        ));
+    }
+
+
+    public function index()
+    {
+
+        // dd(1);
+
+        $today = Carbon::today();
+
+        $ordersToday = Order::whereDate('created_at', $today)->count();
+        $ordersPending = Order::where('id_order_status', '1')->count();
+        $ordersSuccess = Order::where('id_order_status', '5')->count();
+        $ordersCanceled = Order::where('id_order_status', '8')->count();
+        $totalOrders = Order::count();
+        $totalRevenue = Order::where('id_order_status', '5')->sum('total_amount');
+
+        // dd($ordersToday);
+        
+        $orderStatusChart = [
+            'xác nhận' => $ordersPending,
+            'bị hủy' => $ordersCanceled,
+            'thành công' => $ordersSuccess
+        ];
+
+        $topProducts = DB::table('order_details')
+            ->join('products', 'order_details.id_product_variant', '=', 'products.id')
+            ->select('products.name', DB::raw('SUM(order_details.total_price) as revenue'))
+            ->groupBy('products.name')
+            ->orderByDesc('revenue')
+            ->limit(5)
+            ->get();
+
+        $latestCustomers = User::orderByDesc('created_at')->limit(5)->get();
+
+        $newCustomersChart = User::select(DB::raw("DATE(created_at) as date"), DB::raw("COUNT(*) as count"))
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->get();
+
+        return view('admin.dashboard.index', compact([            'ordersToday',
+        'ordersPending',
+        'ordersSuccess',
+        'ordersCanceled',
+        'totalOrders',
+        'totalRevenue',
+        'orderStatusChart',
+        'topProducts',
+        'latestCustomers',
+        'newCustomersChart']
+
+        ));
+    }
 
 
 

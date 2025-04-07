@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\RefundController as AdminRefundController;
 use App\Http\Controllers\Admin\SkusController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
+use App\Http\Controllers\BrandController as ControllersBrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -103,10 +104,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
     Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
 
     // chạy template sẵn
-    Route::get('/index', function () {
-        // return view('admin.layouts.index');
-        return view('admin.dashboard.index');
-    })->name('index');
+    // Route::get('/index', function () {
+    //     // return view('admin.layouts.index');
+    //     return view('admin.dashboard.index');
+    // })->name('index');
 
     // end template sẵn
     
@@ -120,7 +121,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // dashboard admin
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
     //voucher
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
@@ -206,6 +207,8 @@ Route::middleware('auth')->group(function (){
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
     Route::resource('order',OrderController::class)->only(['update']);
     
+    Route::resource('brands', ControllersBrandController::class);
+    Route::resource('products', ProductController::class);
     // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('index_wishlist');
     Route::post('/wishlist/add_to_wishlist/{id}', [WishlistController::class, 'store'])->name('add_wishlist');
