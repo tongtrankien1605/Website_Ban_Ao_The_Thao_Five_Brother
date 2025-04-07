@@ -34,9 +34,11 @@ class ProductRequest extends FormRequest
             "id_brand" => "required|integer|exists:brands,id",
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             "variants.*.name" => "required|max:255",
-            // "variants.*.price" => "required|numeric|min:0|max:99999999",
-            // "variants.*.sale_price" => "nullable|numeric|min:0|lte:variants.*.price",
-            // "variants.*.quantity" => "required|numeric|min:0|max:10000",
+            "variants.*.price" => "required|numeric|min:0|max:99999999",
+            "variants.*.sale_price" => "nullable|numeric|min:0|lte:variants.*.price",
+            "variants.*.quantity" => "required|numeric|min:0|max:10000",
+            'variants.*.start_date' => 'nullable|date|after_or_equal:today',
+            'variants.*.end_date' => 'nullable|date|after_or_equal:variants.*.start_date',
             "variants.*.image" => "required|image|mimes:jpeg,png,jpg,gif|max:2048",
             "images" => "nullable|min:1|max:10",
             "images.*" => "image|mimes:jpeg,png,jpg,gif|max:2048",
@@ -94,6 +96,12 @@ class ProductRequest extends FormRequest
             'images.*.image' => 'Ảnh sản phẩm phải là hình ảnh hợp lệ.',
             'images.*.mimes' => 'Ảnh sản phẩm chỉ chấp nhận jpeg, png, jpg, gif.',
             'images.*.max' => 'Ảnh sản phẩm không được vượt quá 2MB.',
+
+            'variants.*.start_date.date' => 'Ngày bắt đầu khuyến mãi không hợp lệ',
+            'variants.*.start_date.after_or_equal' => 'Ngày bắt đầu khuyến mãi phải từ hôm nay trở đi',
+
+            'variants.*.end_date.date' => 'Ngày kết thúc khuyến mãi không hợp lệ',
+            'variants.*.end_date.after_or_equal' => 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu',
         ];
     }
 }
