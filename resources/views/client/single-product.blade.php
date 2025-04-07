@@ -36,21 +36,29 @@
             <div class="row row-30 mbn-40">
 
                 <div class="col-xl-9 col-lg-8 col-12 order-1 order-lg-2 mb-40">
-                    <div class="row row-20 mb-10">
+                    <div class="row row-20">
                         <div class="col-lg-6 col-12 mb-40">
 
                             <div class="pro-large-img mb-10 fix easyzoom easyzoom--overlay easyzoom--with-thumbnails">
-                                <a href="/client/assets/images/product/product-zoom-1.jpg">
-                                    <img src="/client/assets/images/product/product-big-1.jpg" alt=""/>
+                                <a href="{{ Storage::url($product->image) }}">
+                                    <img src="{{ Storage::url($product->image) }}" alt="" />
                                 </a>
                             </div>
                             <!-- Single Product Thumbnail Slider -->
                             <ul id="pro-thumb-img" class="pro-thumb-img">
-                                <li><a href="/client/assets/images/product/product-zoom-1.jpg" data-standard="/client/assets/images/product/product-big-1.jpg"><img src="/client/assets/images/product/product-1.jpg" alt="" /></a></li>
+                                @foreach ($productImages as $productImage)
+                                    <li>
+                                        <a href="{{ Storage::url($productImage->image_url) }}"
+                                            data-standard="{{ Storage::url($productImage->image_url) }}">
+                                            <img src="{{ Storage::url($productImage->image_url) }}" alt="" />
+                                        </a>
+                                    </li>
+                                @endforeach
+                                {{-- <li><a href="/client/assets/images/product/product-zoom-1.jpg" data-standard="/client/assets/images/product/product-big-1.jpg"><img src="/client/assets/images/product/product-1.jpg" alt="" /></a></li>
                                 <li><a href="/client/assets/images/product/product-zoom-2.jpg" data-standard="/client/assets/images/product/product-big-2.jpg"><img src="/client/assets/images/product/product-2.jpg" alt="" /></a></li>
                                 <li><a href="/client/assets/images/product/product-zoom-3.jpg" data-standard="/client/assets/images/product/product-big-3.jpg"><img src="/client/assets/images/product/product-3.jpg" alt="" /></a></li>
                                 <li><a href="/client/assets/images/product/product-zoom-4.jpg" data-standard="/client/assets/images/product/product-big-4.jpg"><img src="/client/assets/images/product/product-4.jpg" alt="" /></a></li>
-                                <li><a href="/client/assets/images/product/product-zoom-5.jpg" data-standard="/client/assets/images/product/product-big-5.jpg"><img src="/client/assets/images/product/product-5.jpg" alt="" /></a></li>
+                                <li><a href="/client/assets/images/product/product-zoom-5.jpg" data-standard="/client/assets/images/product/product-big-5.jpg"><img src="/client/assets/images/product/product-5.jpg" alt="" /></a></li> --}}
                             </ul>
                         </div>
 
@@ -76,11 +84,12 @@
                                     <p>{!! $product->description !!}</p>
                                 </div>
 
-                                <span class="availability">Availability: <span>In Stock</span></span>
+                                <span class="availability">Availability: <span id="availabilityQty">--</span></span>
+
 
                                 @if ($product->attributeValues->isNotEmpty())
                                     @php
-                                    
+
                                         $colorMap = [
                                             'Đỏ' => '#ff0000',
                                             'Xanh' => '#0000ff',
@@ -102,55 +111,63 @@
                                                 min="1">
                                         </div>
                                         @foreach ($product->attributeValues->groupBy('attribute.name') as $attributeName => $values)
-                                        @php
-                                            $uniqueValues = $values->unique('value');
-                                        @endphp
-                                        <div class="mb-3">
-                                            <h5>{{ $attributeName }}:</h5>
-                                            <div class="btn-group variant-selection" role="group" data-attribute="{{ $attributeName }}">
-                                                @foreach ($uniqueValues as $value)
-                                                    @php
-                                                        $sku = $skus->where('product_attribute_value_id', $value->id)->first();
-                                                        $variantImage = $sku ? Storage::url($sku->image) : null;
-                                                    @endphp
-                                    
-                                                    <input type="radio" class="btn-check variant-option"
-                                                        id="variant-{{ $value->id }}"
-                                                        name="variant[{{ Str::slug($attributeName) }}]"
-                                                        value="{{ $value->id }}" data-image="{{ $variantImage }}">
-                                    
-                                                    @if ($attributeName == 'Màu sắc')
-                                                        @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
-                                                        <label class="btn color-btn border border-secondary"
-                                                            for="variant-{{ $value->id }}"
-                                                            style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%; display: inline-block;">
-                                                        </label>
-                                                    @else
-                                                        <label class="btn btn-outline-dark" for="variant-{{ $value->id }}">
-                                                            {{ $value->value }}
-                                                        </label>
-                                                    @endif
-                                                @endforeach
+                                            @php
+                                                $uniqueValues = $values->unique('value');
+                                            @endphp
+                                            <div class="mb-3">
+                                                <h5>{{ $attributeName }}:</h5>
+                                                <div class="btn-group variant-selection" role="group"
+                                                    data-attribute="{{ $attributeName }}">
+                                                    @foreach ($uniqueValues as $value)
+                                                        @php
+                                                            // dd($value->toArray());
+                                                            $sku = $skus
+                                                                ->where('product_attribute_value_id', $value->id)
+                                                                ->first();
+                                                            $variantImage = $sku ? Storage::url($sku->image) : null;
+                                                        @endphp
+
+                                                        <input type="radio" class="btn-check variant-option"
+                                                            id="variant-{{ $value->id }}"
+                                                            name="variant[{{ Str::slug($attributeName) }}]"
+                                                            value="{{ $value->id }}" data-image="{{ $variantImage }}">
+
+                                                        @if ($attributeName == 'Màu sắc')
+                                                            @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
+                                                            <label class="btn color-btn border border-secondary"
+                                                                for="variant-{{ $value->id }}"
+                                                                style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%; display: inline-block;">
+                                                            </label>
+                                                        @else
+                                                            <label class="btn btn-outline-dark"
+                                                                for="variant-{{ $value->id }}">
+                                                                {{ $value->value }}
+                                                            </label>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endforeach
-                                    
+                                        @endforeach
+
 
                                     </div>
                                 @endif
 
                                 <div class="actions">
-                                    <button class="add_to_cart" data-url="{{route('add.cart',['id'=>$product->id])}}"><i class="ti-shopping-cart"></i><span>ADD TO CART</span></button>
+                                    <button id="addToCartBtn" class="add_to_cart" data-url="{{ route('add.cart', ['id' => $product->id]) }}">
+                                        <i class="ti-shopping-cart"></i><span>ADD TO CART</span>
+                                    </button>                                    
                                     <button class="box" data-tooltip="Compare"><i
-                                    class="ti-control-shuffle"></i></button>
+                                            class="ti-control-shuffle"></i></button>
                                     @isset($wishlist)
-                                            <button class="box pro-remove"><a href="{{route('delete_wishlist',$product->id)}}"><i
+                                        <button class="box pro-remove"><a href="{{ route('delete_wishlist', $product->id) }}"><i
                                                     class="ti-heart"></i></button>
-                                        @else
-                                        <button class="box add_to_wishlist" data-url="{{route('add_wishlist',['id'=>$product->id])}} "  data-tooltip="Add to Wishlist"><i
-                                            class="ti-heart"></i></button>
+                                    @else
+                                        <button class="box add_to_wishlist"
+                                            data-url="{{ route('add_wishlist', ['id' => $product->id]) }} "
+                                            data-tooltip="Add to Wishlist"><i class="ti-heart"></i></button>
                                     @endisset
-                                        
+
                                 </div>
                             </div>
                         </div>
@@ -160,7 +177,7 @@
                         <div class="col-12">
                             <ul class="pro-info-tab-list section nav">
                                 <li><a class="active" href="#more-info" data-bs-toggle="tab">More info</a></li>
-                                <li><a href="#data-sheet" data-bs-toggle="tab">Data sheet</a></li>
+                                {{-- <li><a href="#data-sheet" data-bs-toggle="tab">Data sheet</a></li> --}}
                                 <li><a href="#reviews" data-bs-toggle="tab">Reviews</a></li>
                             </ul>
                         </div>
@@ -478,7 +495,7 @@
                         </ul>
                     </div>
 
-                    <div class="sidebar">
+                    {{-- <div class="sidebar">
                         <h4 class="sidebar-title">colors</h4>
                         <ul class="sidebar-list">
                             <li><a href="#"><span class="color" style="background-color: #000000"></span>
@@ -492,7 +509,7 @@
                             <li><a href="#"><span class="color" style="background-color: #FF6801"></span>
                                     Orange</a></li>
                         </ul>
-                    </div>
+                    </div> --}}
 
                     <div class="sidebar">
                         <h4 class="sidebar-title">Popular Product</h4>
@@ -545,16 +562,16 @@
                         </div>
                     </div>
 
-                    <div class="sidebar">
+                    {{-- <div class="sidebar">
                         <h3 class="sidebar-title">Price</h3>
 
                         <div class="sidebar-price">
                             <div id="price-range"></div>
                             <input type="text" id="price-amount" readonly>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="sidebar">
+                    {{-- <div class="sidebar">
                         <h3 class="sidebar-title">Tags</h3>
                         <ul class="sidebar-tag">
                             <li><a href="#">New</a></li>
@@ -569,7 +586,7 @@
                             <li><a href="#">sit</a></li>
                             <li><a href="#">amet</a></li>
                         </ul>
-                    </div>
+                    </div> --}}
 
                 </div>
 
@@ -577,126 +594,67 @@
         </div>
     </div><!-- Page Section End -->
     <script>
-$(document).ready(function () {
-    $('.add_to_cart').on('click', function () {
-        let url = $(this).data('url');
-        let quantity = $('#quantity').val(); // Lấy số lượng
+        window.inventoryData = @json($inventoryData);
+        window.variantMap = @json($variantMap);
 
-        let selectedVariants = [];
-        $('input[type="radio"]:checked').each(function () {
-            selectedVariants.push($(this).val()); // ✅ Lưu tất cả ID vào mảng
-        });
+        console.log(window.inventoryData);
+        console.log(window.variantMap);
 
-        console.log("🟢 Dữ liệu gửi lên:", {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            quantity: quantity,
-            variant_ids: selectedVariants
-        });
+        document.querySelectorAll('.variant-option').forEach(input => {
+            input.addEventListener('change', function() {
+                const selectedVariants = [];
 
-        // Kiểm tra lỗi
-        if (selectedVariants.length === 0) {
-            alert('❌ Vui lòng chọn ít nhất một biến thể!');
-            return;
-        }
-        if (!quantity || quantity < 1) {
-            alert('❌ Vui lòng nhập số lượng hợp lệ!');
-            return;
-        }
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                quantity: quantity,
-                variant_ids: selectedVariants // ✅ Chuyển về mảng thay vì object
-            },
-            success: function (response) {
-                console.log("✅ Thành công:", response);
-                alert(response.message);
-            },
-            error: function (xhr) {
-                console.log("❌ Lỗi:", xhr.responseText);
-            }
-        });
-    });
-});
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const mainImage = document.getElementById("main-image");
-            const mainImageLink = document.getElementById("main-image-link");
-            const variantOptions = document.querySelectorAll(".variant-option");
-            const thumbnails = document.querySelectorAll(".thumb-link");
-
-            let defaultMainImage = mainImage.src; // Lưu ảnh mặc định
-            let selectedThumbnail = null; // Ảnh nhỏ được chọn gần nhất
-            let selectedVariants = {}; // Lưu trạng thái chọn của từng attribute
-
-            // ✅ Xử lý khi bấm vào ảnh nhỏ (thumbnail)
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    const newImageSrc = this.href;
-                    if (newImageSrc) {
-                        mainImage.src = newImageSrc;
-                        mainImageLink.href = newImageSrc;
-                        selectedThumbnail = newImageSrc; // Lưu ảnh nhỏ đã chọn
-                    }
+                // Lấy ID của các variant đang được chọn
+                document.querySelectorAll('.variant-option:checked').forEach(checked => {
+                    // console.log(checked.value);
+                    selectedVariants.push(checked.value);
                 });
-            });
 
-            // ✅ Xử lý chọn/bỏ chọn biến thể
-            variantOptions.forEach(option => {
-                option.addEventListener("click", function(event) {
-                    event.preventDefault();
+                const sortedKey = selectedVariants.map(Number).sort((a, b) => a - b).join(',');
 
-                    const attributeGroup = option.name; // Lấy nhóm thuộc tính (size, color,...)
-                    const isSelected = selectedVariants[attributeGroup] === option.value;
-
-                    // Nếu đã chọn trước đó, thì bỏ chọn
-                    if (isSelected) {
-                        option.checked = false;
-                        selectedVariants[attributeGroup] = null;
-
-                        // Xóa viền chọn
-                        option.nextElementSibling.classList.remove("border-dark", "btn-dark",
-                            "text-white");
-                        option.nextElementSibling.classList.add("btn-outline-dark");
-
-                        // Nếu bỏ chọn màu nhưng có ảnh nhỏ đã chọn trước đó → Giữ ảnh nhỏ
-                        if (attributeGroup === "color" && selectedThumbnail) {
-                            mainImage.src = selectedThumbnail;
-                            mainImageLink.href = selectedThumbnail;
-                        } else {
-                            mainImage.src = defaultMainImage;
-                            mainImageLink.href = defaultMainImage;
-                        }
-                    } else {
-                        // Nếu chưa chọn trước đó, thì chọn mới
-                        selectedVariants[attributeGroup] = option.value;
-
-                        // Xóa class active cho tất cả các lựa chọn trong cùng nhóm attribute
-                        document.querySelectorAll(`[name="${attributeGroup}"]`).forEach(other => {
-                            other.nextElementSibling.classList.remove("border-dark",
-                                "btn-dark", "text-white");
-                            other.nextElementSibling.classList.add("btn-outline-dark");
-                        });
-
-                        // Đánh dấu nút được chọn
-                        if (option.nextElementSibling.classList.contains("color-btn")) {
-                            option.nextElementSibling.classList.add("border-dark");
-                        } else {
-                            option.nextElementSibling.classList.add("btn-dark", "text-white");
-                            option.nextElementSibling.classList.remove("btn-outline-dark");
-                        }
-
-                    }
-
-                    // Giữ nguyên vị trí cuộn
-                    window.scrollTo(0, scrollY);
+                const skuId = window.variantMap[sortedKey];
+                const inventoryObject = {};
+                window.inventoryData.forEach(item => {
+                    inventoryObject[item.id] = item.quantity;
                 });
+
+                const qty = skuId ? (inventoryObject[skuId] || 0) : 0;
+
+                const availabilitySpan = document.getElementById('availabilityQty');
+                if (availabilitySpan) {
+                    availabilitySpan.textContent = skuId ?
+                        (qty > 0 ? `${qty} sản phẩm còn hàng` : 'Hết hàng') :
+                        'Chưa chọn đủ biến thể';
+                    availabilitySpan.style.color = qty > 0 ? 'green' : 'red';
+                }
+
+                const addToCartBtn = document.getElementById('addToCartBtn');
+
+if (addToCartBtn) {
+    if (qty > 0) {
+        addToCartBtn.disabled = false;
+        addToCartBtn.querySelector('span').textContent = 'ADD TO CART';
+        addToCartBtn.classList.remove('disabled');
+    } else {
+        addToCartBtn.disabled = true;
+        addToCartBtn.querySelector('span').textContent = 'Hết hàng';
+        addToCartBtn.classList.add('disabled');
+    }
+}
             });
         });
+
+
+
     </script>
+
+    <style>
+    .add_to_cart.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+    </style>
 
 @endsection

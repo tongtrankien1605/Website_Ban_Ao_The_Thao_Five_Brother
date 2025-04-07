@@ -17,11 +17,23 @@ $(document).ready(function () {
 
         // Kiểm tra lỗi
         if (selectedVariants.length === 0) {
-            alert('❌ Vui lòng chọn ít nhất một biến thể!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa chọn biến thể',
+                text: 'Vui lòng chọn ít nhất một biến thể!',
+                timer: 1500,
+                showConfirmButton: false
+            });
             return;
         }
         if (!quantity || quantity < 1) {
-            alert('❌ Vui lòng nhập số lượng hợp lệ!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Số lượng không hợp lệ',
+                text: 'Vui lòng nhập số lượng hợp lệ!',
+                timer: 1500,
+                showConfirmButton: false
+            });
             return;
         }
 
@@ -47,7 +59,13 @@ $(document).ready(function () {
                 let res = xhr.responseJSON;
                 // Nếu có message từ server, hiển thị
                 if (res && res.message) {
-                    alert(res.message);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Vượt quá tồn kho',
+                        text: res.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
                 } else {
                     alert('❌ Đã xảy ra lỗi không xác định!');
                 }
