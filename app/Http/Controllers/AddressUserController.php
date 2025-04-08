@@ -4,62 +4,112 @@ namespace App\Http\Controllers;
 
 use App\Models\AddressUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AddressUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function getAddressById($id)
     {
-        //
+        $address = AddressUser::find($id);
+
+        if (!$address) {
+            return response()->json(['message' => 'Không tìm thấy'], 404);
+        }
+
+        return response()->json($address);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Trong AddressUserController
+public function renderAddressList()
+{
+    $address_user = AddressUser::where('id_user', Auth::id())->get();
+    // dd($address_user);
+    return view('client.layouts.partials.address_item', compact('address_user'));
+}
+
+    public function updateAddress(Request $request, $id)
     {
-        //
+        $address = AddressUser::find($id);
+        // dd($address);
+
+        if (!$address) {
+            return response()->json(['message' => 'Không tìm thấy'], 404);
+        }
+
+        $address->name = $request->input('fullname');
+        $address->phone = $request->input('phone');
+        $address->address = $request->input('address');
+        $address->is_default = $request->input('is_default', false);
+
+        if ($address->is_default) {
+            AddressUser::where('id_user', $address->id_user)
+            ->where('id', '!=', $id)
+            ->update(['is_default' => false]);
+        }
+        // $address->update();
+        $address->save();
+
+        return response()->json(['message' => 'Cập nhật địa chỉ thành công']);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
-    {
-        //
-    }
+{
+    // Validate + save
+    $address = AddressUser::create($request->all());
+    // dd($address);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AddressUser $addressUser)
-    {
-        //
-    }
+    $addressList = AddressUser  ::where('user_id', auth()->id())->get();
+    $html = view('client.layouts.partials.address_list', ['address_user' => $addressList])->render();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AddressUser $addressUser)
-    {
-        //
-    }
+    return response()->json(['html' => $html]);
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, AddressUser $addressUser)
+    public function deleteAddress($id)
     {
-        //
-    }
+        $address = AddressUser::find($id);
+        // dd($address);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AddressUser $addressUser)
+        if (!$address) {
+            return response()->json(['message' => 'Không tìm thấy'], 404);
+        }
+
+        $address->delete();
+
+        return response()->json(['message' => 'Xóa địa chỉ thành công']);
+    }
+    public function defaultAddress($id)
     {
-        //
+        AddressUser::where('id_user', auth()->id())->update(['is_default' => 0]);
+    
+        $address = AddressUser::where('id', $id)->where('id_user', auth()->id())->firstOrFail();
+        $address->is_default = 1;
+        $address->save();
+    
+        return response()->json([
+            'success' => true,
+            'fullname' => $address->name,
+            'phone' => $address->phone,
+            'address' => $address->address,
+        ]);
+    }
+    
+    public function addAddress(Request $request)
+    {
+        $address = new AddressUser();
+        $address->id_user = Auth::id();
+        $address->name = $request->input('fullname');
+        $address->phone = $request->input('phone');
+        $address->address = $request->input('address');
+        $address->is_default = $request->input('is_default', false);
+
+        if ($address->is_default) {
+            AddressUser::where('id_user', $address->id_user)
+                ->update(['is_default' => false]);
+        }
+
+        $address->save();
+
+        return response()->json(['message' => 'Address added successfully']);
     }
 }

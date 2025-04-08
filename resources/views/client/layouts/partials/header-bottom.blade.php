@@ -7,7 +7,7 @@
                 <!-- Logo Start -->
                 <div class="header-logo">
                     <a href="{{ route('index') }}">
-                        <img src="/client/assets/images/logo.png" alt="Jadusona">
+                        <img src="/client/assets/images/logo.png" alt="Jadusona" style="height: 80px !important;">
                     </a>
                 </div>
                 <!-- Logo End -->

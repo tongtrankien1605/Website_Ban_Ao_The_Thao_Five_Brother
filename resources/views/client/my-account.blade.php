@@ -113,7 +113,7 @@
                                                                     </li>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>Địa chỉ:
-                                                                        {{ $order->address_user_address }}
+                                                                        {{ $order->address }}
                                                                     </li>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>Ngày đặt:
@@ -219,7 +219,7 @@
                                                                             <p><strong>Điện thoại:</strong>
                                                                                 {{ $order->user_phone_number }}</p>
                                                                             <p><strong>Địa chỉ:</strong>
-                                                                                {{ $order->address_user_address }}</p>
+                                                                                {{ $order->address }}</p>
                                                                         </div>
 
                                                                         <div class="card p-3 mb-3">
@@ -432,7 +432,7 @@
                                                                                             </div>
                                                                                         </form>
                                                                                     @elseif($order->payment_method_status_name === 'Chưa thanh toán')
-                                                                                        <form
+                                                                                        <form id="refund-form-2"
                                                                                             action="{{ route('order.update', $order->id) }}"
                                                                                             method="POST"
                                                                                             enctype="multipart/form-data">
@@ -458,7 +458,7 @@
                                                                                                     yêu
                                                                                                     cầu</button><button
                                                                                                     type="button"class="btn btn-secondary"
-                                                                                                    onclick="cancelForm('refund-form-2', 'confirm-section')">Hủy</button>
+                                                                                                    onclick="cancelForm('refund-form-2')">Hủy</button>
                                                                                             </div>
                                                                                         </form>
                                                                                     @endif
@@ -707,6 +707,22 @@
                 }
             });
         });
+
+        function cancelForm() {
+        const formElement = document.getElementById('refund-form-1') || document.getElementById('refund-form-2');
+
+        console.log(formElement);
+        const confirmSection = document.getElementById('confirm-section');
+        console.log(confirmSection);
+        
+        if (formElement) {
+            formElement.style.display = 'none'; // Ẩn form
+        }
+        if (confirmSection) {
+            confirmSection.style.display = 'block'; // Hiện lại confirm section
+        }
+
+    }
     </script>
 @endsection
 

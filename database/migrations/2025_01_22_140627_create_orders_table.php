@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_user');
             $table->string('phone_number');
-            $table->unsignedBigInteger('id_address');
+            $table->string('address');
+            $table->string('receiver_name');
             $table->unsignedBigInteger('id_order_status');
             $table->unsignedBigInteger('id_shipping_method');
             $table->unsignedBigInteger('id_payment_method');

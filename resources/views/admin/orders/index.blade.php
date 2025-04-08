@@ -103,7 +103,7 @@
                                                                 <td class="text-nowrap">{{ $order->users->phone_number }}
                                                                 </td>
                                                                 <td class="text-nowrap">
-                                                                    {{ $order->address_users->address }}
+                                                                    {{ $order->address }}
                                                                 </td>
                                                                 <td class="text-nowrap text-center" style="width:1px">
                                                                     {{ $order->order_details_sum_quantity }}

@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\PaymentAttempt;
+use App\Models\User;
+use App\Models\VoucherUser;
 
 class PaymentController extends Controller
 {
@@ -33,8 +35,9 @@ class PaymentController extends Controller
         $code = $request->input('code');
 
         // dd($code);
-        $voucher = Voucher::where('code',$code)->first();
-        // dd($voucher);
+        $userVouchers = VoucherUser::where('id_user', Auth::id())->with('vouchers')
+            ->get();
+        // dd($userVouchers->toArray());
 
         // if ($voucher) {
         //     $voucherUser = DB::table('voucher_user')->where([['id_voucher', $voucher->id], ['id_user', Auth::id()]])->first();
@@ -59,7 +62,9 @@ class PaymentController extends Controller
         //     return response()->json(['message' => 'Mã giảm giá không hợp lệ'], 500);
         // }
         $address_user = AddressUser::where('id_user', Auth::id())->get();
-        $shipping = ShippingMethod::all();
+        // dd($address_user->toArray());
+        $shipping_methods = ShippingMethod::all();
+        // dd($shipping_methods->toArray());
         $paymentMethods = PaymentMethod::whereNot('id_payment_method', 2)->get();
 
         $cartItem = collect(); // Tạo danh sách rỗng
@@ -77,20 +82,80 @@ class PaymentController extends Controller
                 'address_user',
                 'cartItem',
                 'new_total',
-                'shipping',
+                'shipping_methods',
                 'paymentMethods',
                 'total',
                 'saleTotal',
-                'voucher'
+                'userVouchers'
             ]
         ));
     }
 
+    // CheckoutController.php
+    public function apply(Request $request)
+    {
+        $request->validate([
+            'voucher_id' => 'required|exists:vouchers,id',
+            'subtotal' => 'required|numeric|min:0'
+        ]);
+
+        $user = auth()->user();
+
+        // Lấy bản ghi từ bảng trung gian voucher_user
+        $userVoucher = VoucherUser::where('id_user', $user->id)
+            ->where('id_voucher', $request->voucher_id)
+            ->with('vouchers') // Eager load chi tiết voucher
+            ->first();
+
+        if (!$userVoucher) {
+            return response()->json(['message' => 'Voucher không hợp lệ hoặc không thuộc về bạn.'], 400);
+        }
+
+        if ($userVoucher->used_at !== null) {
+            return response()->json(['message' => 'Voucher đã được sử dụng.'], 400);
+        }
+
+        $voucher = $userVoucher->vouchers;
+        $now = now();
+
+        if ($now->lt($voucher->start_date) || $now->gt($voucher->end_date)) {
+            return response()->json(['message' => 'Voucher đã hết hạn hoặc chưa kích hoạt.'], 400);
+        }
+
+        if ($voucher->status != 0) {
+            return response()->json(['message' => 'Voucher hiện không hoạt động.'], 400);
+        }
+
+        $subtotal = $request->subtotal;
+        $discount = 0;
+
+        if ($voucher->discount_type === 'percentage') {
+            $discount = $subtotal * ($voucher->discount_value / 100);
+        } else {
+            $discount = $voucher->discount_value;
+        }
+
+        if ($voucher->max_discount_amount && $discount > $voucher->max_discount_amount) {
+            $discount = $voucher->max_discount_amount;
+        }
+
+        $final_total = $subtotal - $discount;
+
+        return response()->json([
+            'voucher_discount' => round($discount),
+            'final_total' => round($final_total),
+            'message' => 'Áp dụng voucher thành công.',
+        ]);
+    }
+    
+
+
     public function processPayment(Request $request, $order)
     {
-        if ($request->payment_method == 2) {
+        // dd($order);
+        if ($request->payment_method_id == 2) {
             return $this->processPayPal($order);
-        } elseif ($request->payment_method == 3) {
+        } elseif ($request->payment_method_id == 3) {
             return $this->processVNPay($order);
         }
 
@@ -171,7 +236,9 @@ class PaymentController extends Controller
             $order->save();
             // dd(1);
             // dd($order);
-            return redirect()->away($vnp_Url);
+            return response()->json([
+                'redirect_url' => $vnp_Url
+            ]);
         } else {
             $order->id_payment_method_status = 2;
             $order->save();
@@ -187,7 +254,9 @@ class PaymentController extends Controller
              $item->delete();
             });
             // dd($order);
-            return redirect()->away($vnp_Url);
+            return response()->json([
+                'redirect_url' => $vnp_Url
+            ]);
         }
     }
 

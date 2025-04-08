@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('address_users', function (Blueprint $table) {
             $table->id('id')->comment('ID địa chỉ');
             $table->unsignedBigInteger('id_user')->comment('ID người dùng');
+            $table->string('name')->nullable(false)->comment('Tên người nhận');
+            $table->string('phone')->nullable(false)->comment('Số điện thoại');
             $table->string('address')->nullable(false)->comment('Địa chỉ');
             $table->boolean('is_default')->default(false)->comment('Địa chỉ mặc định');
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');

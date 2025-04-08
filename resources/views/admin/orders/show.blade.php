@@ -54,7 +54,7 @@
                                         <address> Người đặt: {{ $order->users->name }}</address>
                                         <address>
 
-                                            Địa chỉ: {{ $order->address_users->address }}
+                                            Địa chỉ: {{ $order->address }}
                                         </address>
 
                                         <address>
@@ -361,7 +361,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <label for="user_name" class="form-label">Địa chỉ giao hàng:</label>
-                                                <p class="form-control">{{ $order->address_users->address }}</p>
+                                                <p class="form-control">{{ $order->address }}</p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -620,7 +620,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <label for="user_name" class="form-label">Địa chỉ giao hàng:</label>
-                                                <p class="form-control">{{ $order->address_users->address }}</p>
+                                                <p class="form-control">{{ $order->address }}</p>
                                             </div>
                                         </div>
                                         <div class="row">
