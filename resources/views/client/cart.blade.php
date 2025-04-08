@@ -99,7 +99,7 @@
                         <div class="cart-buttons mb-30">
                             <a href="{{ route('index') }}">Continue Shopping</a>
                         </div>
-                        <div class="cart-coupon">
+                        {{-- <div class="cart-coupon">
                             <h4>Coupon</h4>
                             <p>Choose your coupon code if you have one.</p>
                             <div class="cuppon-form border-0 d-flex gap-3">
@@ -128,7 +128,7 @@
                                     <input id="apply-voucher" type="submit" value="Apply Coupon" disabled />
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="col-lg-4 col-md-5 col-12 mb-40">
                         @if (!$cartItem->isEmpty())
