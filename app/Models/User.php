@@ -165,5 +165,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(InventoryEntry::class, 'id_shopper', 'id');
     }
-
+    
 }

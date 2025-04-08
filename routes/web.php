@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressUserController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -221,10 +222,25 @@ Route::middleware('auth')->group(function (){
 
 });
 
+Route::post('/voucher/apply', [PaymentController::class, 'apply'])->name('voucher.apply');
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payment.vnpay.callback');
 Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
 Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
+
+
+Route::prefix('address-user')->group(function () {
+    Route::post('/add', [AddressUserController::class, 'addAddress'])->name('address-user.add');
+    Route::post('/edit/{id}', [AddressUserController::class, 'getAddressById'])->name('address-user.edit');
+    Route::put('/update/{id}', [AddressUserController::class, 'updateAddress'])->name('address-user.update');
+    Route::get('/list', [AddressUserController::class, 'renderAddressList']);
+    Route::delete('/delete/{id}', [AddressUserController::class, 'deleteAddress'])->name('address-user.delete');
+    Route::post('/default/{id}', [AddressUserController::class, 'defaultAddress'])->name('address-user.default');
+});
+// routes/web.php
+Route::post('/apply-voucher', [PaymentController::class, 'applyVoucher']);
+
+
 
 Route::get('/success', function () {
     return view('client.success');

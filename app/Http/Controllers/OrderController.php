@@ -25,129 +25,86 @@ class OrderController extends Controller
 {
     public function placeOrder(Request $request)
     {
-        $user = User::find(Auth::id());
-        if (!$user) {
-            return redirect()->route('login')->withErrors('Bạn cần đăng nhập để đặt hàng.');
-        }
-
-        if ($user->is_locked && $user->locked_until > now()) {
-            return redirect()->route('show.cart')->withErrors('Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau ' . $user->locked_until->format('H:i:s'));
-        }
-
-        $cartItem = CartItem::whereIn('id', $request->cart_item_ids)->with('skuses')->get();
-        // dd($cartItem);
-        $total = 0;
-        foreach ($cartItem as $item) {
-            $total += $item->price * $item->quantity;
-        }
-
-        $inventoryMap = Inventory::whereIn('id_product_variant', $cartItem->pluck('id_product_variant'))->get()->keyBy('id_product_variant');
-        // dd($cartItems);
-        $request->validate([
-            'shipping_id' => 'required|exists:shipping_methods,id_shipping_method',
-            'payment_method' => 'required|exists:payment_methods,id_payment_method',
-            'shipping_cost' => 'required|numeric',
-            'grand_total' => 'required|numeric',
-            'id_voucher' => 'nullable|exists:vouchers,id',
-        ]);
-
-        DB::beginTransaction(); // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
+        DB::beginTransaction();
 
         try {
+            $user = auth()->user();
+            $paymentMethodId = (int) $request->input('payment_method_id');
+    
             $order = Order::create([
                 'id_user' => $user->id,
-                'id_address' => $request->address_id,
-                'phone_number' => $request->phone_number,
-                'id_shipping_method' => $request->shipping_id,
-                'id_payment_method' => $request->payment_method,
-                'id_voucher' => $request->id_voucher,
-                'total_amount' => $request->grand_total,
-                'id_order_status' => 1, // Đơn hàng mới
-                'id_payment_method_status' => 1, // "Chưa thanh toán"
+                'receiver_name' => $request->name,
+                'phone_number' => $request->phone,
+                'address' => $request->address,
+                'id_shipping_method' => $request->shipping_method_id,
+                'id_payment_method' => $paymentMethodId,
+                'id_voucher' => $request->voucher_id,
+                'total_amount' => $request->total,
+                'id_order_status' => 1,
+                'id_payment_method_status' => 1,
             ]);
-
-            VoucherUser::where('id_voucher', $request->id_voucher)->delete();
-            foreach ($cartItem as $item) {
+    
+            $variantIds = collect($request->items)->pluck('id');
+            $cartItems = CartItem::whereIn('id', $variantIds)->get()->keyBy('id');
+            $inventories = Inventory::whereIn('id_product_variant', $cartItems->pluck('id_product_variant'))
+                ->get()->keyBy('id_product_variant');
+    
+            foreach ($request->items as $item) {
+                $cartItem = $cartItems->get($item['id']);
+                $variantId = $cartItem->id_product_variant;
+                $inventory = $inventories->get($variantId);
+                $quantity = (int) $item['quantity'];
+    
                 OrderDetail::create([
                     'id_order' => $order->id,
-                    'id_product_variant' => $item->id_product_variant,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->price,
-                    'total_price' => $item->quantity * $item->price,
-                ]);
-
-
-            }
-
-            // 🔹 Kiểm tra xem đã có PaymentAttempt chưa (tránh tạo trùng)
-            $existingAttempt = PaymentAttempt::where('user_id', $user->id)
-                ->where('order_id', $order->id)
-                ->where('is_completed', false)
-                ->first();
-
-            if (!$existingAttempt) {
-                // Nếu chưa có, tạo mới
-                $paymentAttempt = PaymentAttempt::create([
-                    'user_id' => $user->id,
-                    'order_id' => $order->id,
-                    'started_at' => now(),
-                    'expires_at' => now()->addMinutes(1),
-                    'is_completed' => false
+                    'id_product_variant' => $variantId,
+                    'quantity' => $quantity,
+                    'unit_price' => $item['price'],
+                    'total_price' => $quantity * $item['price'],
                 ]);
             }
-
-            // 🔹 Kiểm tra nếu tài khoản cần bị khóa
-            if ($user->failed_attempts >= 3) {
-                $user->is_locked = true;
-                $user->locked_until = now()->addMinutes(15);
-                $user->save();
-            }
-
-            DB::commit();
-
-
-            
-
-            // 🔹 Cập nhật trạng thái đơn hàng
-
-
-            if ($request->payment_method == 1) {
-                CartItem::whereIn('id', $request->cart_item_ids)->delete();
-                
-                $inventory = $inventoryMap[$item->id_product_variant] ?? null;
-                
-                foreach ($cartItem as $item) {
-                    
-                    $inventory = $inventoryMap[$item->id_product_variant] ?? null;
-                
-                    if ($inventory) {
-                        InventoryLog::create([
-                            'id_product_variant' => $item->id_product_variant,
-                            'old_quantity' => $inventory->quantity,
-                            'new_quantity' => $inventory->quantity - $item->quantity,
-                            'change_quantity' => $item->quantity,
-                            'reason' => 'Xuất hàng để bán',
-                            'type' => 'Xuất',
-                            'quantity' => -$item->quantity,
-                            'action' => 'order',
-                            'user_id' => $user->id,
-                        ]);
-                
-                        $inventory->quantity -= $item->quantity;
-                        // dd($inventory);
-                        $inventory->save();
-                    }
+    
+            if ($paymentMethodId === 1) {
+                foreach ($request->items as $item) {
+                    $cartItem = $cartItems->get($item['id']);
+                    $variantId = $cartItem->id_product_variant;
+                    $inventory = $inventories->get($variantId);
+                    $quantity = (int) $item['quantity'];
+    
+                    InventoryLog::create([
+                        'id_product_variant' => $variantId,
+                        'old_quantity' => $inventory->quantity,
+                        'new_quantity' => $inventory->quantity - $quantity,
+                        'change_quantity' => -$quantity,
+                        'reason' => 'Xuất hàng để bán',
+                        'type' => 'Xuất',
+                        'quantity' => -$quantity,
+                        'action' => 'order',
+                        'user_id' => $user->id,
+                    ]);
+    
+                    $inventory->decrement('quantity', $quantity);
                 }
-                return redirect()->route('order_success')->with('success', 'Đơn hàng của bạn sẽ được giao COD!');
+    
+                CartItem::where('id_user', $user->id)->delete();
+                DB::commit();
+                return response()->json(['success' => true, 'message' => 'Đặt hàng thành công!']);
+            }else{
+                DB::commit();
+                $paymentController = new PaymentController();
+                // dd($request);
+                // dd($order);
+                // return response()->json(['message' => 'Đã gọi processPayment', 'order_id' => $order->id]);
+                return $paymentController->processPayment($request, $order);
+
             }
 
-            // 🔹 Nếu là thanh toán online, chuyển sang PaymentController xử lý
-            $paymentController = new PaymentController();
-            return $paymentController->processPayment($request, $order);
+    
+            return redirect()->route('order_success')->with('success', 'Đơn hàng của bạn đã được ghi nhận.');
         } catch (\Exception $e) {
-            DB::rollBack(); // ❌ Hoàn tác nếu có lỗi
-            dd($e);
-            return redirect()->route('show.cart')->withErrors('Lỗi khi đặt hàng: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Order Store Error: ' . $e->getMessage());
+            return response()->json(['error' => true, 'message' => 'Đã xảy ra lỗi, vui lòng thử lại.']);
         }
     }
 

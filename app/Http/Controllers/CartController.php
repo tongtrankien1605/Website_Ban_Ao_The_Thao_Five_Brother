@@ -51,6 +51,7 @@ class CartController extends Controller
     }
 
     $productVariant = Skus::find($variant->id_skus);
+    // dd($productVariant);
 
     if (!$productVariant) {
         return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
@@ -67,6 +68,8 @@ class CartController extends Controller
     $cartItem = CartItem::where('id_cart', $cart->id)
         ->where('id_product_variant', $productVariant->id)
         ->first();
+
+    // dd($cartItem);
 
     $requestedQty = $request->quantity;
     $existingQty = $cartItem ? $cartItem->quantity : 0;

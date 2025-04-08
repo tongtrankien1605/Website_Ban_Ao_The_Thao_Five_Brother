@@ -50,6 +50,9 @@ class UserController extends Controller
             return abort(403);
         }
         $addresses = AddressUser::where('id_user', $user->id)->orderByDesc('is_default')->get();
+        $orders = Order::all();
+        // dd($orders->toArray());
+        // dd($orders->toArray());
         $orders = Order::where('total_amount', '>', 0)->where('orders.id_user', $user->id)
             ->latest('id')
             ->join('order_statuses', function ($q) {
@@ -64,9 +67,6 @@ class UserController extends Controller
             ->join('payment_method_statuses', function ($q) {
                 $q->on('payment_method_statuses.id', '=', 'orders.id_payment_method_status');
             })
-            ->join('address_users', function ($q) {
-                $q->on('address_users.id', '=', 'orders.id_address');
-            })
             ->join('users', function ($q) {
                 $q->on('users.id', '=', 'orders.id_user');
             })
@@ -77,11 +77,11 @@ class UserController extends Controller
                 'payment_methods.name as payment_method_name',
                 'payment_method_statuses.name as payment_method_status_name',
                 'order_statuses.name as order_status_name',
-                'address_users.address as address_user_address',
                 'users.name as user_name',
                 'users.phone_number as user_phone_number',
             ])
             ->paginate(10);
+            // dd();
             // dd($orders->toArray());
         $orderIds = $orders->pluck('id');
         $orderDetails = OrderDetail::whereIn('id_order', $orderIds)
