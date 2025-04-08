@@ -23,7 +23,6 @@ return new class extends Migration
             $table->decimal('total_amount', 28, 2)->comment('Tổng số lượng sản phẩm');
             $table->unsignedBigInteger('id_voucher')->nullable();
             $table->foreign('id_user')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('id_address')->references('id')->on('address_users')->cascadeOnDelete();
             $table->foreign('id_order_status')->references('id')->on('order_statuses')->cascadeOnDelete();
             $table->foreign('id_shipping_method')->references('id_shipping_method')->on('shipping_methods')->cascadeOnDelete();
             $table->foreign('id_payment_method')->references('id_payment_method')->on('payment_methods')->cascadeOnDelete();

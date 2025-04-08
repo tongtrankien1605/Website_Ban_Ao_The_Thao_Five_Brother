@@ -427,8 +427,8 @@
                                                                                                     class="btn btn-danger me-2">Gửi
                                                                                                     yêu cầu</button>
                                                                                                 <button type="button"
-                                                                                                    class="btn btn-secondary"
-                                                                                                    onclick="cancelForm('refund-form-1', 'confirm-section')">Hủy</button>
+                                                                                                    class="btn btn-secondary btnbtn"
+                                                                                                    >Hủy</button>
                                                                                             </div>
                                                                                         </form>
                                                                                     @elseif($order->payment_method_status_name === 'Chưa thanh toán')
@@ -457,8 +457,8 @@
                                                                                                     type="submit"class="btn btn-danger me-2">Gửi
                                                                                                     yêu
                                                                                                     cầu</button><button
-                                                                                                    type="button"class="btn btn-secondary"
-                                                                                                    onclick="cancelForm('refund-form-2')">Hủy</button>
+                                                                                                    type="button"class="btn btn-secondary btnbtn"
+                                                                                                    >Hủy</button>
                                                                                             </div>
                                                                                         </form>
                                                                                     @endif
