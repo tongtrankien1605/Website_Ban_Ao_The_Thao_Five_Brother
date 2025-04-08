@@ -334,9 +334,15 @@
                                                                                             class="btn btn-success me-2">Đã
                                                                                             nhận được hàng</button>
                                                                                     </form>
+                                                                                    @if ($order->payment_method_status_name === 'Đã thanh toán')
+                                                                                    <button
+                                                                                    class="btn btn-warning btnbtn">Hoàn hàng</button>
+                                                                                    @else
                                                                                     <button
                                                                                         class="btn btn-warning btnbtn">Chưa
                                                                                         nhận được hàng</button>
+                                                                                    @endif
+                                                                                    
                                                                                 </div>
 
                                                                                 <div id="not-received-form"

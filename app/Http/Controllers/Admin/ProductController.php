@@ -56,6 +56,7 @@ class ProductController extends Controller
                 'products.description',
                 'products.image',
                 'products.status',
+                'products.views',
                 'products.created_at',
                 'products.updated_at',
                 'products.deleted_at',
