@@ -38,8 +38,8 @@
                         <div style="width: 110px; text-align: center;">Đơn giá</div>
                         <div style="width: 110px; text-align: center;">Số lượng</div>
                         <div style="width: 110px; text-align: center;">Thành tiền</div>
-                    </div>
-                </div>
+        </div>
+                                </div>
 
                 <!-- Product Items -->
                 @foreach ($cartItem as $item)
@@ -59,9 +59,9 @@
                                 <div style="width: 110px; text-align: center; color: #ee4d2d;">
                                     ₫{{ number_format($item->price * $item->quantity) }}</div>
                             </div>
-                        </div>
-                    </div>
-                @endforeach
+                                </div>
+                                </div>
+                                        @endforeach
 
                 <!-- Message to Seller -->
                 <div class="p-3" style="border-bottom: 1px solid #efefef;">
@@ -70,7 +70,7 @@
                         <input type="text" class="form-control" placeholder="Lưu ý cho Người bán..."
                             style="border: 1px solid #efefef; font-size: 14px; padding: 5px 10px;">
                     </div>
-                </div>
+                                </div>
 
                 <!-- Shipping Method -->
                 <div class="p-3" style="border-bottom: 1px solid #efefef;">
@@ -93,7 +93,7 @@
                     </div>
                 </div>
 
-            </div>
+                    </div>
 
             <!-- Vouchers Section -->
             <div class="checkout-section mb-3" style="background: #fff; border-radius: 3px; padding: 20px;">
@@ -122,7 +122,7 @@
                             {{ $pm->name }}
                         </label>
                     </div>
-                @endforeach
+                                        @endforeach
             
                 <input type="hidden" id="payment_method_id" name="payment_method_id">
             </div>
@@ -165,7 +165,7 @@
                 <!-- Hidden inputs -->
                 <input type="hidden" id="voucher_id" value="">
                 <input type="hidden" id="shipping_method_id" value="{{ $shipping_methods[1]->id_shipping_method }}">
-            </div>
+                                </div>
 
 
 
@@ -224,8 +224,8 @@
                                 <strong>{{ $method->name }}</strong> - ₫{{ number_format($method->cost, 0, ',', '.') }}
                                 <br><small>{{ $method->estimated_time }}</small>
                             </label>
-                        </div>
-                    @endforeach
+                                        </div>
+                                    @endforeach
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
@@ -250,7 +250,7 @@
                     <!-- Address List -->
                     <div class="address-list" style="max-height: 400px; overflow-y: auto;">
                         @include('client.layouts.partials.address_item')
-                    </div>
+                                </div>
 
                     <!-- Add New Address Button -->
                     <div class="p-3">
@@ -291,7 +291,7 @@
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="is_default" name="is_default">
                             <label class="form-check-label" for="is_default">Đặt làm địa chỉ mặc định</label>
-                        </div>
+                            </div>
 
                         <div class="text-end">
                             <button type="button" class="btn btn-light" data-bs-dismiss="modal" data-bs-toggle="modal"
@@ -304,8 +304,8 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
+                        </div>
+                    </div>
 
     <div class="modal fade" id="addressFormModalEdit" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -344,8 +344,8 @@
                                 style="background-color: #ee4d2d; border: none;">
                                 Hoàn thành
                             </button>
-                        </div>
-                    </form>
+                </div>
+            </form>
                 </div>
             </div>
         </div>
@@ -357,7 +357,7 @@
             const voucherId = $('#voucher_id').val();
             const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
 
-            $.ajax({
+                $.ajax({
                 url: url,
                 method: 'POST',
                 data: {
@@ -365,7 +365,7 @@
                     voucher_id: voucherId,
                     subtotal: subtotal
                 },
-                success: function(response) {
+                    success: function(response) {
                     $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
                     $('#final-total').text('₫' + response.final_total.toLocaleString());
                     $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
@@ -374,8 +374,8 @@
                     $('#finalTotal').text(response.final_total + 'đ');
 
                     $('#voucherModal').modal('hide');
-                },
-                error: function(xhr) {
+                    },
+                    error: function(xhr) {
                     console.error(xhr.responseText);
                 }
             });

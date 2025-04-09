@@ -1,47 +1,35 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-light elevation-1">
     <!-- Brand Logo -->
-    <a href="{{ route('admin.index') }}" class="brand-link">
-        <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-            style="opacity: .8">
-        <span class="brand-text font-weight-light">5Brother</span>
+    <a href="{{ route('admin.index') }}" class="brand-link text-dark">
+        <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-2">
+        <span class="brand-text font-weight-medium">5Brother</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : url('dist/img/user2-160x160.jpg') }}"
-                    class="img-circle elevation-2" alt="User Image">
-            </div>
-            <div class="info">
-                <a href="{{ route('admin.user.show', Auth::user()->id) }}" class="d-block">{{ Auth::user()->name }}</a>
-            </div>
-        </div>
 
         <!-- SidebarSearch Form -->
         <div class="form-inline">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search"
-                    aria-label="Search">
+            <div class="input-group">
+                {{-- <input class="form-control form-control-sidebar border-0" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar">
                         <i class="fas fa-search fa-fw"></i>
                     </button>
-                </div>
+                </div> --}}
             </div>
         </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
        with font-awesome or any other icon font library -->
 
                 {{-- <i class="metismenu-icon pe-7s-rocket"></i> --}}
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
 
                     <a href="{{ Route('admin.index') }}" class="nav-link">
                         <i class="fa-solid fa-rocket"></i>
@@ -54,7 +42,7 @@
                 </li>
 
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
 
                     <a href="{{ route('admin.user.index') }}" class="nav-link">
                         <i class="fa-solid fa-users"></i>
@@ -79,7 +67,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.category.index') }}" class="nav-link">
                         <i class="fa-solid fa-table-list"></i>
                         <p>
@@ -104,7 +92,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.brands.index') }}" class="nav-link">
                         <i class="fa-solid fa-copyright"></i>
                         <p>
@@ -128,7 +116,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.brands.index') }}" class="nav-link">
                         <i class="fa-solid fa-sitemap"></i>
                         <p>
@@ -153,7 +141,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.product.index') }}" class="nav-link">
                         <i class="fa-brands fa-product-hunt"></i>
                         <p>
@@ -178,7 +166,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.vouchers.index') }}" class="nav-link">
                         <i class="fa-solid fa-ticket"></i>
                         <p>
@@ -203,7 +191,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.brands.index') }}" class="nav-link">
                         <i class="fa-solid fa-newspaper"></i>
                         <p>
@@ -228,7 +216,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.orders.index') }}" class="nav-link">
                         <p>
                             <i class="fa-solid fa-cart-shopping"></i>
@@ -236,7 +224,7 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item menu-close">
+                <li class="nav-item">
                     <a href="{{ route('admin.skus.index') }}" class="nav-link">
                         <i class="fa-solid fa-warehouse"></i>
                         <p>
@@ -263,18 +251,18 @@
                             </a>
                         </li>
                     </ul> --}}
-                <li class="nav-item menu-close"><a href="{{ route('admin.refunds.index') }}" class="nav-link">
+                <li class="nav-item"><a href="{{ route('admin.refunds.index') }}" class="nav-link">
                         <p><i class="fa-solid fa-undo"></i> Quản lý Yêu cầu hoàn hàng</p>
                     </a></li>
                 </li>
-                <li class="nav-item menu-close">
+                {{-- <li class="nav-item">
                     <a href="{{ route('index') }}" class="nav-link">
                         <p>
                             <i class="fa-solid fa-arrow-left"></i>
                             Quay lại trang client
                         </p>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -283,6 +271,83 @@
 </aside>
 <style>
     .main-sidebar {
+        background-color: #f8f9fa !important;
         min-height: 100% !important;
+    }
+    
+    .sidebar-light {
+        background-color: #f8f9fa !important;
+    }
+    
+    .nav-sidebar .nav-item > .nav-link {
+        color: #000 !important;
+    }
+    
+    .nav-sidebar .nav-item > .nav-link:hover {
+        background-color: rgba(0, 0, 0, 0.1) !important;
+        color: #000 !important;
+    }
+    
+    .nav-sidebar .nav-item > .nav-link.active {
+        background-color: #e9ecef !important;
+        color: #000 !important;
+    }
+    
+    .nav-treeview > .nav-item > .nav-link {
+        color: #000 !important;
+        padding-left: 2rem;
+    }
+    
+    .nav-treeview > .nav-item > .nav-link:hover {
+        background-color: rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .form-control-sidebar {
+        background-color: #fff !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    .btn-sidebar {
+        background-color: #fff !important;
+        border: 1px solid #dee2e6 !important;
+        color: #000 !important;
+    }
+    
+    .brand-link {
+        border-bottom: 1px solid #dee2e6 !important;
+        background-color: #f8f9fa !important;
+    }
+    
+    .user-panel {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    
+    .nav-sidebar .nav-link > .right, 
+    .nav-sidebar .nav-link > p > .right {
+        color: #000 !important;
+    }
+    
+    .sidebar a {
+        color: #000 !important;
+    }
+    
+    .sidebar a:hover {
+        text-decoration: none;
+    }
+    
+    /* Override any dark theme colors */
+    [class*="sidebar-dark-"] {
+        background-color: #f8f9fa !important;
+    }
+    
+    [class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link:active, 
+    [class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link:focus {
+        color: #000 !important;
+    }
+    
+    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, 
+    .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+        background-color: #e9ecef !important;
+        color: #000 !important;
     }
 </style>

@@ -89,7 +89,7 @@
 
                                 @if ($product->attributeValues->isNotEmpty())
                                     @php
-
+                                    
                                         $colorMap = [
                                             'Đỏ' => '#ff0000',
                                             'Xanh' => '#0000ff',
@@ -111,44 +111,44 @@
                                                 min="1">
                                         </div>
                                         @foreach ($product->attributeValues->groupBy('attribute.name') as $attributeName => $values)
-                                            @php
-                                                $uniqueValues = $values->unique('value');
-                                            @endphp
-                                            <div class="mb-3">
-                                                <h5>{{ $attributeName }}:</h5>
+                                        @php
+                                            $uniqueValues = $values->unique('value');
+                                        @endphp
+                                        <div class="mb-3">
+                                            <h5>{{ $attributeName }}:</h5>
                                                 <div class="btn-group variant-selection" role="group"
                                                     data-attribute="{{ $attributeName }}">
-                                                    @foreach ($uniqueValues as $value)
-                                                        @php
+                                                @foreach ($uniqueValues as $value)
+                                                    @php
                                                             // dd($value->toArray());
                                                             $sku = $skus
                                                                 ->where('product_attribute_value_id', $value->id)
                                                                 ->first();
-                                                            $variantImage = $sku ? Storage::url($sku->image) : null;
-                                                        @endphp
-
-                                                        <input type="radio" class="btn-check variant-option"
-                                                            id="variant-{{ $value->id }}"
-                                                            name="variant[{{ Str::slug($attributeName) }}]"
-                                                            value="{{ $value->id }}" data-image="{{ $variantImage }}">
-
-                                                        @if ($attributeName == 'Màu sắc')
-                                                            @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
-                                                            <label class="btn color-btn border border-secondary"
-                                                                for="variant-{{ $value->id }}"
-                                                                style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%; display: inline-block;">
-                                                            </label>
-                                                        @else
+                                                        $variantImage = $sku ? Storage::url($sku->image) : null;
+                                                    @endphp
+                                    
+                                                    <input type="radio" class="btn-check variant-option"
+                                                        id="variant-{{ $value->id }}"
+                                                        name="variant[{{ Str::slug($attributeName) }}]"
+                                                        value="{{ $value->id }}" data-image="{{ $variantImage }}">
+                                    
+                                                    @if ($attributeName == 'Màu sắc')
+                                                        @php $colorCode = $colorMap[$value->value] ?? '#cccccc'; @endphp
+                                                        <label class="btn color-btn border border-secondary"
+                                                            for="variant-{{ $value->id }}"
+                                                            style="background-color: {{ $colorCode }}; width: 30px; height: 30px; border-radius: 50%; display: inline-block;">
+                                                        </label>
+                                                    @else
                                                             <label class="btn btn-outline-dark"
                                                                 for="variant-{{ $value->id }}">
-                                                                {{ $value->value }}
-                                                            </label>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
+                                                            {{ $value->value }}
+                                                        </label>
+                                                    @endif
+                                                @endforeach
                                             </div>
-                                        @endforeach
-
+                                        </div>
+                                    @endforeach
+                                    
 
                                     </div>
                                 @endif
@@ -159,17 +159,17 @@
                                         <i class="ti-shopping-cart"></i><span>ADD TO CART</span>
                                     </button>
                                     <button class="box" data-tooltip="Compare"><i
-                                            class="ti-control-shuffle"></i></button>
+                                    class="ti-control-shuffle"></i></button>
                                     @isset($wishlist)
                                         <button class="box pro-remove"><a
                                                 href="{{ route('delete_wishlist', $product->id) }}"><i
                                                     class="ti-heart"></i></button>
-                                    @else
+                                        @else
                                         <button class="box add_to_wishlist"
                                             data-url="{{ route('add_wishlist', ['id' => $product->id]) }} "
                                             data-tooltip="Add to Wishlist"><i class="ti-heart"></i></button>
                                     @endisset
-
+                                        
                                 </div>
                             </div>
                         </div>
@@ -220,20 +220,20 @@
 
 
                         @foreach ($relatedProducts as $related)
-                            <div class="slick-slide">
+                        <div class="slick-slide">
 
-                                <div class="product-item">
-                                    <div class="product-inner">
+                            <div class="product-item">
+                                <div class="product-inner">
 
-                                        <div class="image">
+                                    <div class="image">
                                             <div
                                                 class="bg-light border rounded d-flex justify-content-center align-items-center">
                                                 <img src="{{ Storage::url($related->image) }}" alt=""
                                                     style="height: 300px;width: 300px; overflow: hidden;">
                                             </div>
 
-                                            <div class="image-overlay">
-                                                <div class="action-buttons">
+                                        <div class="image-overlay">
+                                            <div class="action-buttons">
                                                     <button><a href="{{ route('product.show', $related->id) }}">Add to
                                                             cart</a></button>
                                                     <button class="add_to_wishlist"
@@ -243,34 +243,34 @@
                                                 </div>
                                             </div>
 
-                                        </div>
+                                    </div>
 
-                                        <div class="content">
+                                    <div class="content">
 
-                                            <div class="content-left">
+                                        <div class="content-left">
 
                                                 <h4 class="title"><a
                                                         href="{{ route('product.show', $product) }}">{{ $related->name }}</a>
                                                 </h4>
 
-                                                <div class="ratting">
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star-half-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-
-                                                {{-- <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
-                                                </h5>
-                                                <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
-                                                        style="background-color: #0271bc"></span><span
-                                                        style="background-color: #efc87c"></span><span
-                                                        style="background-color: #00c183"></span></h5> --}}
-
+                                            <div class="ratting">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-half-o"></i>
+                                                <i class="fa fa-star-o"></i>
                                             </div>
 
-                                            <div class="content-right">
+                                                {{-- <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
+                                            </h5>
+                                            <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
+                                                    style="background-color: #0271bc"></span><span
+                                                    style="background-color: #efc87c"></span><span
+                                                        style="background-color: #00c183"></span></h5> --}}
+
+                                        </div>
+
+                                        <div class="content-right">
                                                 <span class="price">{{ $product->price }}</span>
                                             </div>
 
@@ -525,21 +525,21 @@
                         <h4 class="sidebar-title">Popular Product</h4>
                         <div class="sidebar-product-wrap">
                             @foreach ($popularProducts as $item)
-                                <div class="sidebar-product">
+                            <div class="sidebar-product">
                                     <a href="{{ route('product.show', $item->id) }}" class="image"><img
                                             src="{{ Storage::url($item->image) }}" alt=""></a>
-                                    <div class="content">
+                                <div class="content">
                                         <a href="{{ route('product.show', $item->id) }}"
                                             class="title">{{ $item->name }}</a>
-                                        <div class="ratting">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star-half-o"></i>
-                                        </div>
+                                    <div class="ratting">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-o"></i>
                                     </div>
                                 </div>
+                            </div>
                             @endforeach
 
                             {{-- <div class="sidebar-product">

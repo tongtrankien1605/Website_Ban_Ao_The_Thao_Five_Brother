@@ -35,9 +35,18 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+            {{-- <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
-            </a>
+            </a> --}}
+            <div class="user-panel mt-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : url('dist/img/user2-160x160.jpg') }}"
+                        class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="{{ route('admin.user.show', Auth::user()->id) }}" class="d-block text-dark">{{ Auth::user()->name }}</a>
+                </div>
+            </div>
         </li>
     </ul>
 </nav>

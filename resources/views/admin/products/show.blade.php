@@ -1,211 +1,175 @@
 @extends('admin.layouts.index')
 
 @section('title')
-    Chi tiết sản phẩm
+    {{ $product->name }}
 @endsection
 
 @section('content')
     <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Chi tiết sản phẩm</h1>
+        <div class="container-fluid p-4">
+            <!-- Product Header -->
+            <div class="mb-4">
+                <div class="text-muted">Status: 
+                    @if ($product->status)
+                        <span class="text-success">This product Showing</span>
+                    @else
+                        <span class="text-danger">This product Hidden</span>
+                    @endif
+                </div>
+                <div class="d-flex justify-content-between align-items-start mt-2">
+                    <div>
+                        <h1 class="h3 mb-2">{{ $product->name }}</h1>
+                        <div class="text-muted">SKU: {{ $product->sku ?? '' }}</div>
                     </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.product.show', $product) }}">Chi
-                                    tiết sản phẩm</a></li>
-                        </ol>
-                    </div>
+                    <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-success">Edit Product</a>
                 </div>
             </div>
-        </section>
-        <section class="content">
-            <div class="container-fluid">
-                @if (session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
 
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card card-primary">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>Tên sản phẩm</label>
-                                    <p>{{ $product->name }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>brand</label>
-                                    <p>{{ $brand->name }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>danh mục</label>
-                                    <p>{{ $category->name }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Mô tả</label>
-                                    <p>
-                                        {!! $product->description !!}
-                                    </p>
-                                </div>
-                                <div>
-                                    <label for="">Ảnh đại diện</label>
-                                    <div>
-                                        <img src="{{ Storage::url($product->image) }}" width="200px" alt="">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Ảnh sản phẩm:</label>
-                                    <div>
-                                        @if ($productImages)
-                                            @foreach ($productImages as $productImage)
-                                                <img src="{{ Storage::url($productImage->image_url) }}" width="70px"
-                                                    style="margin-right: 10px" alt="">
-                                            @endforeach
-                                        @else
-                                            <p>Chưa có ảnh</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="">Trạng thái</label>
-                                    <div>
-                                        @if ($product->status)
-                                            <p>Active</p>
-                                        @else
-                                            <p>Deactive</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Quay lại</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Biến thể của sản phẩm</h1>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div class="container-fluid">
+            <!-- Product Info -->
             <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <table id="example1"
-                                            class="table table-bordered table-striped dataTable dtr-inline"
-                                            aria-describedby="example1_info">
-                                            <thead>
-                                                <tr>
-                                                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1" aria-sort="ascending"
-                                                        aria-label="Rendering engine: activate to sort column descending">
-                                                        Tên biến thể
-                                                    </th>
-                                                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1" aria-sort="ascending"
-                                                        aria-label="Rendering engine: activate to sort column descending">
-                                                        Ảnh biến thể
-                                                    </th>
-                                                    <th class="sorting" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Engine version: activate to sort column ascending">
-                                                        Trạng thái
-                                                    </th>
-                                                    <th class="sorting" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Engine version: activate to sort column ascending">
-                                                        Ngày tạo
-                                                    </th>
-                                                    <th class="sorting text-nowrap" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Engine version: activate to sort column ascending">
-                                                        Hành động
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($skuses as $skus)
-                                                    <tr>
-                                                        <td class="dtr-control sorting_1" tabindex="0"
-                                                            style="width:300px">
-                                                            {{ $skus->name }}
-                                                        </td>
-                                                        <td style="width:100px" class=" text-center">
-                                                            <img src="{{ Storage::url($skus->image) }}" width="150px"
-                                                                style="margin-right: 10px" alt="">
-                                                        </td>
-                                                        <td class=" text-center" style="width:100px">
-                                                            @if ($skus->status)
-                                                                <span class="badge bg-success">active</span>
-                                                            @else
-                                                                <span class="badge bg-danger">deactive</span>
-                                                            @endif
-                                                        </td>
-                                                        <td style="width:150px">{{ $skus->created_at }}</td>
-                                                        <td class="text-center text-nowrap" style="width: 1px">
-                                                            <a href="{{ route('admin.product.skus.edit', ['product' => $product->id, 'sku' => $skus->id]) }}"
-                                                                class="btn btn-warning">
-                                                                <svg stroke="currentColor" fill="none"
-                                                                    stroke-width="2" viewBox="0 0 24 24"
-                                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                                    height="1em" width="1em"
-                                                                    xmlns="http://www.w3.org/2000/svg">
-                                                                    <path
-                                                                        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
-                                                                    </path>
-                                                                    <path
-                                                                        d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
-                                                                    </path>
-                                                                </svg>
-                                                            </a>
-                                                            <a href="{{ route('admin.product.skus.show', ['product' => $product->id, 'sku' => $skus->id]) }}"
-                                                                class="btn btn-info"><i class="bi bi-eye"></i></a>
-                                                            <form
-                                                                action="{{ route('admin.skus.change_status', ['product' => $product->id, 'sku' => $skus->id]) }}"
-                                                                method="post"
-                                                                onsubmit="return confirm('Bạn có chắc muốn disable sản phẩm này?')"
-                                                                style="display:inline;">
-                                                                @csrf
-                                                                @method('PUT')
-                                                                <button type="submit" class="btn btn-primary"><i
-                                                                        class="fa-solid fa-repeat"></i></button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                <div class="col-lg-6">
+                    <div class="product-image mb-4">
+                        <img src="{{ Storage::url($product->image) }}" class="img-fluid rounded border" alt="{{ $product->name }}" style="max-width: 100%; height: auto;">
+                    </div>
+                    @if ($productImages && count($productImages) > 0)
+                        <div class="product-gallery d-flex gap-2 mb-4">
+                            @foreach ($productImages as $productImage)
+                                <div class="gallery-item">
+                                    <img src="{{ Storage::url($productImage->image_url) }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" alt="">
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-12">
-                                        {{ $skuses->links() }}
-                                    </div>
-                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+                <div class="col-lg-6">
+                    <div class="product-info">
+                        {{-- <div class="mb-4">
+                            <div class="h2 mb-2">${{ number_format($product->price ?? 0, 2) }}</div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-success-light me-2">In Stock</span>
+                                <span class="text-muted">QUANTITY: {{ $product->quantity ?? 0 }}</span>
+                            </div>
+                        </div> --}}
+
+                        <div class="mb-4">
+                            <h5 class="mb-2">Category: <a href="#" class="text-decoration-none">{{ $category->name }}</a></h5>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-light text-dark">{{ $product->tag ?? 'abc' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="mb-2">Description</h5>
+                            <div class="text-muted">
+                                {!! $product->description !!}
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Product Variants -->
+            <div class="card mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Product Variant List</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>IMAGE</th>
+                                <th>COMBINATION</th>
+                                <th>SKU</th>
+                                <th>BARCODE</th>
+                                <th>ORIGINAL PRICE</th>
+                                <th>SALE PRICE</th>
+                                <th>QUANTITY</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($skuses as $index => $skus)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        <img src="{{ Storage::url($skus->image) }}" width="40" height="40" class="rounded" alt="">
+                                    </td>
+                                    <td>
+                                        <div>{{ $skus->name }}</div>
+                                        <div class="text-muted small">{{ $skus->sku }}</div>
+                                    </td>
+                                    <td>{{ $skus->sku }}</td>
+                                    <td>{{ $skus->barcode }}</td>
+                                    <td>${{ number_format($skus->original_price ?? 0, 2) }}</td>
+                                    <td>${{ number_format($skus->sale_price ?? 0, 2) }}</td>
+                                    <td>{{ $skus->quantity }}</td>
+                                    <td class="text-end">
+                                        <div class="d-flex gap-1 justify-content-end">
+                                            <a href="{{ route('admin.product.skus.edit', ['product' => $product->id, 'sku' => $skus->id]) }}" 
+                                               class="btn btn-sm btn-light">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ route('admin.product.skus.show', ['product' => $product->id, 'sku' => $skus->id]) }}" 
+                                               class="btn btn-sm btn-light">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <form action="{{ route('admin.skus.change_status', ['product' => $product->id, 'sku' => $skus->id]) }}"
+                                                  method="post"
+                                                  class="d-inline-block"
+                                                  onsubmit="return confirm('Are you sure you want to change the status of this variant?')">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-sm btn-light">
+                                                    <i class="fas fa-sync-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @if($skuses->hasPages())
+                    <div class="card-footer border-top bg-white">
+                        {{ $skuses->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 @endsection
+
+@push('styles')
+<style>
+    .bg-success-light {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10B981;
+    }
+    .table > :not(caption) > * > * {
+        padding: 1rem;
+    }
+    .btn-light {
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+    .btn-light:hover {
+        background-color: #e9ecef;
+        border-color: #dde0e3;
+    }
+    .gallery-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        overflow: hidden;
+    }
+    .product-image img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+    }
+    .content-wrapper {
+        background-color: #f8fafc;
+    }
+</style>
+@endpush

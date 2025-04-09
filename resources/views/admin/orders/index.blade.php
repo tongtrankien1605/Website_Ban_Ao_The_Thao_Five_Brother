@@ -5,199 +5,130 @@
             use App\Enums\OrderStatus;
         @endphp
         <div class="content-wrapper">
-            <section class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1>Quản lý đơn hàng</h1><br>
+            <div class="container-fluid p-4">
+                <!-- Header -->
+                <div class="mb-4">
+                    <h1 class="h3 mb-4">Orders</h1>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <!-- Left side buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="button" id="select-visible" class="btn btn-light">
+                                <i class="fas fa-check-double me-2"></i> Select All
+                            </button>
+                            <button type="button" id="deselect-visible" class="btn btn-light">
+                                <i class="fas fa-times me-2"></i> Deselect All
+                            </button>
                         </div>
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                                <li class="breadcrumb-item active">Đơn hàng</li>
-                            </ol>
+
+                        <!-- Right side buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="button" id="downloadSelected" class="btn btn-light" disabled>
+                                <i class="fas fa-download me-2"></i> Download Selected
+                            </button>
+                            <button type="button" id="updateStatusBtn" class="btn btn-success" disabled>
+                                <i class="fas fa-sync me-2"></i> Update Status
+                            </button>
                         </div>
                     </div>
 
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
+                    <!-- Search and Filter -->
+                    <div class="d-flex gap-2 mb-4">
+                        <div class="flex-grow-1">
+                            <input type="text" id="search-input" class="form-control" placeholder="Search by invoice no, customer name..." value="{{ request('search') }}">
                         </div>
-                    @endif
-
-                    @if (session('message'))
-                        <div class="alert alert-success">
-                            {{ session('message') }}
-                        </div>
-                    @endif
+                        <select id="status-filter" class="form-control" style="width: 200px;">
+                            <option value="">All Status</option>
+                            @foreach ($orderStatuses as $status)
+                                <option value="{{ $status->name }}">{{ $status->name }}</option>
+                            @endforeach
+                        </select>
+                        <button class="btn btn-success px-4">Filter</button>
+                        <button class="btn btn-light px-4">Reset</button>
+                    </div>
                 </div>
-            </section>
 
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header bg-white d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <button type="button" id="select-visible" class="btn btn-outline-dark ms-2">
-                                            <i class="fas fa-check-double"></i> Chọn tất cả
-                                        </button>
-                                        <button type="button" id="deselect-visible" class="btn btn-outline-dark ms-2">
-                                            <i class="fas fa-times"></i> Bỏ chọn tất cả
-                                        </button>
-                                    </div>
-                                    <div class="d-flex">
-                                        <form id="search-form" class="d-flex">
-                                            <input type="text" id="search-input"
-                                                class="form-control border-light border border-1 border-dark"
-                                                placeholder="🔍 Tìm kiếm sản phẩm..." value="{{ request('search') }}">
-                                            <select id="status-filter"
-                                                class="form-control border-light border border-1 border-dark ms-2">
-                                                <option value="">Tất cả trạng thái</option>
-                                                @foreach ($orderStatuses as $status)
-                                                    <option value="{{ $status->name }}">{{ $status->name }}</option>
-                                                @endforeach
+                <!-- Table -->
+                <div class="card">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {{-- <th>INVOICE NO</th> --}}
+                                    <th>ORDER TIME</th>
+                                    <th>CUSTOMER NAME</th>
+                                    <th>METHOD</th>
+                                    <th>AMOUNT</th>
+                                    <th>STATUS</th>
+                                    {{-- <th>ACTION</th> --}}
+                                    <th class="text-end">INVOICE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($orders as $order)
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="order-checkbox" value="{{ $order->id }}">
+                                        </td>
+                                        {{-- <td>{{ $order->id }}</td> --}}
+                                        <td>{{ $order->created_at->format('j M, Y g:i A') }}</td>
+                                        <td>{{ $order->user_name }}</td>
+                                        <td>{{ $order->payment_method_status_name }}</td>
+                                        <td>${{ number_format($order->total_amount, 2) }}</td>
+                                        <td>
+                                            @php
+                                                $statusClass = match($order->order_status_name) {
+                                                    'Đã giao hàng' => 'bg-success-light text-success',
+                                                    'Đã hủy' => 'bg-danger-light text-danger',
+                                                    'Chờ lấy hàng' => 'bg-warning-light text-warning',
+                                                    'Đang giao hàng' => 'bg-info-light text-info',
+                                                    default => 'bg-secondary-light text-secondary'
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $statusClass }}">{{ $order->order_status_name }}</span>
+                                        </td>
+                                        {{-- <td>
+                                            <select class="form-select form-select-sm status-select" style="width: 130px;">
+                                                <option value="delivered" @if($order->order_status_name == 'Delivered') selected @endif>Delivered</option>
+                                                <option value="cancel" @if($order->order_status_name == 'Cancel') selected @endif>Cancel</option>
+                                                <option value="pending" @if($order->order_status_name == 'Pending') selected @endif>Pending</option>
+                                                <option value="processing" @if($order->order_status_name == 'Processing') selected @endif>Processing</option>
                                             </select>
-                                        </form>
-                                        <div class="card-tools ms-2">
-                                            <button type="button" id="downloadSelected" class="btn btn-info" disabled>
-                                                <i class="fas fa-download"></i> Tải PDF đã chọn
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="example1"
-                                                    class="table table-bordered table-striped dataTable dtr-inline">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 1px">Chọn</th>
-                                                            <th class="text-nowrap text-center"
-                                                                style="width:1px; padding-right:8px">Id</th>
-                                                            <th class="text-nowrap">Người đặt</th>
-                                                            <th class="text-nowrap">Điện thoại</th>
-                                                            <th class="text-nowrap">Địa chỉ</th>
-                                                            <th class="text-nowrap" style="width:1px; padding-right:8px">
-                                                                Tổng sản phẩm</th>
-                                                            <th class="text-nowrap">Tổng tiền</th>
-                                                            <th class="text-nowrap">Trạng thái</th>
-                                                            <th class="text-nowrap">Thanh toán</th>
-                                                            <th class="text-nowrap">Ngày đặt</th>
-                                                            <th class="text-nowrap">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($orders as $order)
-                                                            <tr>
-                                                                <td>
-                                                                    <input type="checkbox" class="order-checkbox"
-                                                                        value="{{ $order->id }}">
-                                                                </td>
-                                                                <td class="text-nowrap text-center">{{ $order->id }}</td>
-                                                                <td class="text-nowrap">{{ $order->user_name }}</td>
-                                                                <td class="text-nowrap">{{ $order->users->phone_number }}
-                                                                </td>
-                                                                <td class="text-nowrap">
-                                                                    {{ $order->address }}
-                                                                </td>
-                                                                <td class="text-nowrap text-center" style="width:1px">
-                                                                    {{ $order->order_details_sum_quantity }}
-                                                                </td>
-                                                                <td class="text-nowrap">
-                                                                    {{ number_format($order->total_amount, 0, '', ',') }}
-                                                                    VND
-                                                                </td>
-                                                                <td>{{ $order->order_status_name }}
-                                                                </td>
-                                                                <td class="text-nowrap">
-                                                                    {{ $order->payment_method_status_name }}
-                                                                </td>
-                                                                <td class="text-nowrap">
-                                                                    {{ $order->created_at->format('d/m/Y') }}</td>
-                                                                <td class="text-center">
-                                                                    <a href="{{ route('admin.orders.show', $order->id) }}"
-                                                                        class="btn btn-info">
-                                                                        <i class="bi bi-eye"></i>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                                {{ $orders->links() }}
+                                        </td> --}}
+                                        <td>
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <a href="#" class="btn btn-sm btn-light" title="Print Invoice">
+                                                    <i class="fas fa-print"></i>
+                                                </a>
+                                                <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-light" title="View Details">
+                                                    <i class="fas fa-search"></i>
+                                                </a>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-white">
-                                    <button type="button" id="updateStatusBtn" class="btn btn-primary" disabled>
-                                        <i class="fas fa-sync"></i> Cập nhật trạng thái đơn hàng
-                                    </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    @if($orders->hasPages())
+                        <div class="card-footer border-top bg-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                {{-- <div>SHOWING {{ $orders->firstItem() }}-{{ $orders->lastItem() }} OF {{ $orders->total() }}</div> --}}
+                                <div class="pagination">
+                                    {{ $orders->links() }}
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
-
-                <!-- Modal Cập nhật trạng thái nhiều đơn hàng -->
-                <div class="modal fade" id="updateMultipleStatusModal" tabindex="-1"
-                    aria-labelledby="updateMultipleStatusModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="updateMultipleStatusModalLabel">Cập nhật trạng thái đơn hàng
-                                </h5>
-                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="updateMultipleStatusForm" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Người đặt</th>
-                                                    <th>Trạng thái hiện tại</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="selectedOrdersTableBody">
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div id="response-message"></div>
-                                    <div class="mt-3">
-                                        <div class="mb-3">
-                                            <label for="new_status" class="form-label">Trạng thái mới:</label>
-                                            <select name="new_status" id="new_status" class="form-control">
-                                                @foreach ($orderStatuses as $orderStatus)
-                                                    <option value="{{ $orderStatus->id }}">{{ $orderStatus->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="note" class="form-label">Ghi chú (nếu có):</label>
-                                            <textarea name="note" id="note" class="form-control" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                <button type="button" class="btn btn-primary" id="saveMultipleStatus">Lưu thay đổi</button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
+            </div>
         </div>
+
+        <!-- Status Update Modal -->
+        {{-- @include('admin.orders._status_update_modal') --}}
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>
             let userId = {{ auth()->id() }};
@@ -433,11 +364,51 @@
                 });
             });
         </script>
-        {{-- @vite('resources/js/updateOrder.js') --}}
     </section>
+
+    @push('styles')
     <style>
-        .card-header::after {
-            content: none !important;
+        .content-wrapper {
+            background-color: #f8fafc;
+        }
+        .table > :not(caption) > * > * {
+            padding: 1rem;
+        }
+        .btn-light {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+        }
+        .btn-light:hover {
+            background-color: #e9ecef;
+            border-color: #dde0e3;
+        }
+        .bg-success-light {
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        .bg-danger-light {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        .bg-warning-light {
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+        .bg-info-light {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        .status-select {
+            border-color: #e5e7eb;
+            background-color: #f8f9fa;
+        }
+        .status-select:focus {
+            border-color: #10B981;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+        }
+        .form-check-input:checked {
+            background-color: #10B981;
+            border-color: #10B981;
+        }
+        .pagination {
+            margin-bottom: 0;
         }
     </style>
+    @endpush
 @endsection
