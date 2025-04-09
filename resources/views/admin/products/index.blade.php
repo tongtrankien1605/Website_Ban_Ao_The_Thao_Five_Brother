@@ -1,154 +1,197 @@
 @extends('admin.layouts.index')
 
 @section('title')
-    Danh sách sản phẩm
+    Products
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Danh sách sản phẩm</h1>
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <button class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fas fa-file-import"></i> Import
+                </button>
+            </div>
+            <div class="d-flex">
+                <button class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-tasks"></i> Bulk Action
+                </button>
+                <button class="btn btn-danger me-2">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <a href="{{ route('admin.product.create') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add Product
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" placeholder="Search Product">
                     </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.product.index') }}">Danh sách sản
-                                    phẩm</a></li>
-                        </ol>
+                    <div class="col-md-3 mb-3">
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">Category</option>
+                            <option value="men">Men</option>
+                            <option value="women">Women</option>
+                            <option value="kids">Kids</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select class="form-select" id="priceFilter">
+                            <option value="">Price</option>
+                            <option value="low">Low to High</option>
+                            <option value="high">High to Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100">Filter</button>
                     </div>
                 </div>
             </div>
-        </section>
-        <div class="col-12">
-            @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
+        </div>
 
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            <div class="card" style="height: 700px; width:1250px">
-                <div class="card-header">
-                    <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Thêm mới sản phẩm</a>
-                    <div class="card-tools">
-                        <form action="{{ route('admin.posts.index') }}" method="GET" class="input-group input-group-sm"
-                            style="width: 150px;">
-                            <input type="text" name="search" class="form-control float-right" placeholder="Search"
-                                value="{{ request('search') }}">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-head-fixed text-nowrap">
+        <!-- Products Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th class="sorting sorting_asc text-center" tabindex="0" aria-controls="example1"
-                                    rowspan="1" colspan="1" aria-sort="ascending"
-                                    aria-label="Rendering engine: activate to sort column descending">
-                                    Thông tin sản phẩm
-                                </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
-                                    Ảnh đại diện
-                                </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
-                                    Số biến thể
-                                </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
-                                    Lượng biến thể
-                                </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
-                                    Ngày tạo
-                                </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-label="Engine version: activate to sort column ascending">
-                                    Status
-                                </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
-                                    colspan="1" aria-label="CSS grade: activate to sort column ascending" width="100px">
-                                    Hành
-                                    động</th>
+                                <th>PRODUCT NAME</th>
+                                <th>CATEGORY</th>
+                                <th>PRICE</th>
+                                <th>SALE PRICE</th>
+                                <th>STOCK</th>
+                                <th>STATUS</th>
+                                <th>VIEW</th>
+                                <th>PUBLISHED</th>
+                                <th>ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($products as $product)
-                                <tr>
-                                    <td class="dtr-control sorting_1" tabindex="0">
-                                        <ul>
-                                            <li><strong>Tên sản phẩm: </strong>{{ $product->name }}
-                                            </li>
-                                            <li><strong>Brand:
-                                                </strong>{{ $product->product_brand }}</li>
-                                            <li><strong>Category:
-                                                </strong>{{ $product->product_category }}</li>
-                                        </ul>
-                                    </td>
-                                    <td class="text-center">
-                                        <img src="{{ Storage::url($product->image) }}" width="100px" alt="">
-                                    </td>
-                                    <td class=" text-center">
-                                        {{ $product->count_variant }}
-                                    </td>
-                                    <td class=" text-center">
-                                        @if ($product->sum_quantity_variant)
-                                            {{ $product->sum_quantity_variant }}
-                                        @else
-                                            0
-                                        @endif
-
-                                    </td>
-                                    <td class=" text-center">
-                                        {{ $product->created_at }}
-                                    </td>
-                                    <td class=" text-center">
-                                        @if ($product->status)
-                                            <span class="badge bg-success">active</span>
-                                        @else
-                                            <span class="badge bg-danger">deactive</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-warning">
-                                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
-                                                stroke-linecap="round" stroke-linejoin="round" height="1em"
-                                                width="1em" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                            </svg>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" 
+                                             class="me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <span>{{ $product->name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ $product->product_category }}</td>
+                                <td>₫{{ number_format($product->price) }}</td>
+                                <td>₫{{ number_format($product->sale_price ?? $product->price) }}</td>
+                                <td>{{ $product->sum_quantity_variant ?? 0 }}</td>
+                                <td>
+                                    <span class="badge {{ $product->status ? 'bg-success' : 'bg-danger' }}">
+                                        {{ $product->status ? 'Selling' : 'Draft' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" 
+                                               {{ $product->status ? 'checked' : '' }}
+                                               onchange="updateStatus({{ $product->id }})">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex">
+                                        <a href="{{ route('admin.product.edit', $product->id) }}" 
+                                           class="btn btn-sm btn-warning me-2">
+                                            <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-info"><i
-                                                class="bi bi-eye"></i></a>
-                                        <form action="{{ route('admin.product.change_status', $product->id) }}"
-                                            method="post"
-                                            onsubmit="return confirm('Bạn có chắc muốn disable sản phẩm này?')"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-primary"><i
-                                                    class="fa-solid fa-repeat"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                        <button class="btn btn-sm btn-danger" 
+                                                onclick="deleteProduct({{ $product->id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                {{ $products->links('vendor.pagination.bootstrap-4') }}
-            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+            {{ $products->links('vendor.pagination.bootstrap-4') }}
         </div>
     </div>
+</div>
+
+@push('styles')
+<style>
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .table th {
+        font-weight: 600;
+        color: #4B5563;
+    }
+    .btn-success {
+        background-color: #10B981;
+        border-color: #10B981;
+    }
+    .btn-success:hover {
+        background-color: #059669;
+        border-color: #059669;
+    }
+    .form-check-input:checked {
+        background-color: #10B981;
+        border-color: #10B981;
+    }
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+    .bg-success {
+        background-color: #D1FAE5 !important;
+        color: #059669;
+    }
+    .bg-danger {
+        background-color: #FEE2E2 !important;
+        color: #DC2626;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    // Select all functionality
+    document.getElementById('selectAll').addEventListener('change', function() {
+        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Update status function
+    function updateStatus(productId) {
+        // Implement status update logic
+    }
+
+    // Delete product function
+    function deleteProduct(productId) {
+        if(confirm('Are you sure you want to delete this product?')) {
+            // Implement delete logic
+        }
+    }
+</script>
+@endpush
 @endsection
