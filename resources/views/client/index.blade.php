@@ -185,7 +185,7 @@
     <!-- Product Section End -->
 
     <!-- Banner Section Start -->
-    <div class="banner-section section section-padding pt-0 fix">
+    <div id="featuredProducts" class="banner-section section section-padding pt-0 fix">
         <div class="row row-5 mbn-10">
 
             <div class="col-lg-4 col-md-6 col-12 mb-10">
@@ -200,7 +200,7 @@
                         <h4>Phù hợp từ tập luyện đến thi đấu</h4>
                     </div>
 
-                    <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a>
+                    {{-- <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a> --}}
 
                 </div>
             </div>
@@ -215,7 +215,7 @@
                         <div class="content-inner">
                             <h1>Mua Online Siêu Tiện Lợi</h1>
                             <h2>Ưu đãi đến 25%<br>Xu hướng thể thao mới nhất 2025</h2>
-                            <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
+                            {{-- <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a> --}}
                         </div>
                     </div>
 
@@ -234,7 +234,7 @@
                         <h2>Ưu đãi đến 25%</h2>
                     </div>
 
-                    <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a>
+                    {{-- <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a> --}}
 
                 </div>
             </div>
@@ -247,7 +247,7 @@
     <div class="product-section section section-padding pt-0">
         <div class="container">
 
-            <div class="row">
+            <div class="row" >
                 <div class="section-title text-center col mb-30">
                     <h1>Sản Phẩm Nổi Bật</h1>
                     {{-- <p>All popular product find here</p> --}}
@@ -378,8 +378,8 @@
 
                     <div class="row">
                         <div class="section-title text-start col mb-30">
-                            <h1>CLIENTS REVIEW</h1>
-                            <p>Clients says abot us</p>
+                            <h1>Khách Hàng</h1>
+                            <p>& một số nhận xét, đánh giá</p>
                         </div>
                     </div>
 
@@ -387,14 +387,14 @@
 
                         <div class="col-12 mb-40">
                             <div class="testimonial-item">
-                                <p>Jadusona is one of the most exclusive Baby shop in the wold, where you can find all
-                                    product for your baby that your want to buy for your baby. I recomanded this shop all of
-                                    you</p>
+                                <p>"Áo thể thao không chỉ để tập gym, chơi bóng đá hay chạy bộ mà còn phải 'chất' để mặc
+                                    thường ngày.
+                                    Trang web này của <b>Five Brother</b> làm tôi phải ghé lại nhiều lần!"</p>
                                 <div class="testimonial-author">
                                     <img src="/client/assets/images/testimonial/testimonial-1.png" alt="Image">
                                     <div class="content">
-                                        <h4>Zacquline Smith</h4>
-                                        <p>CEO, Momens Group</p>
+                                        <h4>Sơn Tùng - MTP </h4>
+                                        <p>CEO, M-TP Entertainment</p>
                                     </div>
                                 </div>
                             </div>
@@ -402,14 +402,17 @@
 
                         <div class="col-12 mb-40">
                             <div class="testimonial-item">
-                                <p>Jadusona is one of the most exclusive Baby shop in the wold, where you can find all
-                                    product for your baby that your want to buy for your baby. I recomanded this shop all of
-                                    you</p>
+                                <p>"Tôi luôn ưu tiên sự thoải mái và chất lượng trong từng chuyển động. Những chiếc áo thể
+                                    thao ở
+                                    <b>Five Brother</b> khiến tôi cảm thấy nhẹ nhàng và linh hoạt, giống như khi tôi đang
+                                    thi đấu trên sân cỏ.
+                                    Một trải nghiệm mua sắm tuyệt vời!"
+                                </p>
                                 <div class="testimonial-author">
                                     <img src="/client/assets/images/testimonial/testimonial-2.png" alt="Image">
                                     <div class="content">
-                                        <h4>Nusaha Williams</h4>
-                                        <p>CEO, Momens Group</p>
+                                        <h4>Lionel Messi</h4>
+                                        <p>Argentina professional football player</p>
                                     </div>
                                 </div>
                             </div>
@@ -424,7 +427,7 @@
                     <div class="row">
                         <div class="section-title text-start col mb-30">
                             <h1>FROM THE BLOG</h1>
-                            <p>Find all latest update here</p>
+                            <p>tin tức mới nhất được cập nhật tại đây</p>
                         </div>
                     </div>
 
@@ -457,7 +460,7 @@
                                 </div>
                             </div>
                         @endforeach
-                        
+
 
                     </div>
 
@@ -469,9 +472,8 @@
     <!-- Blog Section End -->
 
     <style>
+        /* START hero 1 + 2 */
 
-        /* START Banner 1 + 2 */
-    
         .hero-item {
             position: relative;
             background-size: cover;
@@ -521,9 +523,109 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        /* END banner 1 + 2 *
+        /* END hero 1 + 2 *
 
-        /* START Banner 3 */
+                    /* START Banner 4+5+6  */
 
+        /* Banner Styles Enhancement */
+
+        .banner {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45));
+            z-index: 1;
+        }
+
+        .banner .image {
+            position: relative;
+            display: block;
+        }
+
+        .banner .image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .banner .content,
+        .banner .content-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .banner .content h1,
+        .banner .content h2,
+        .banner .content h4,
+        .banner .content-inner h1,
+        .banner .content-inner h2,
+        .banner .content-inner h4 {
+            color: #ffffff;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6);
+            margin: 5px 0;
+            font-weight: 700;
+        }
+
+        /* Responsive font sizes */
+        .banner .content h1,
+        .banner .content-inner h1 {
+            font-size: 26px;
+        }
+
+        .banner .content h2,
+        .banner .content-inner h2 {
+            font-size: 20px;
+        }
+
+        .banner .content h4,
+        .banner .content-inner h4 {
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) {
+
+            .banner .content h1,
+            .banner .content-inner h1 {
+                font-size: 32px;
+            }
+
+            .banner .content h2,
+            .banner .content-inner h2 {
+                font-size: 24px;
+            }
+
+            .banner .content h4,
+            .banner .content-inner h4 {
+                font-size: 18px;
+            }
+        }
+
+        /* END banner 4+5+6 */
+
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 @endsection
