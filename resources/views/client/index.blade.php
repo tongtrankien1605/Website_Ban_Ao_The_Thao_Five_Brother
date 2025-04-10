@@ -6,33 +6,25 @@
         <!-- Hero Slider Start -->
         <div class="hero-slider hero-slider-one fix">
 
-            <!-- Hero Item Start -->
+            <!-- Hero Section Start -->
             <div class="hero-item" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
-
-                <!-- Hero Content -->
-                <div class="hero-content">
-
-                    <h1 style="color: rgb(2, 15, 186)">Khám phá bộ sưu tập áo thể thao 2025 <br>– Sale cực mạnh - </h1>
-                    <a href="{{ route('product.index') }}">MUA NGAY</a>
-
+                <div class="hero-overlay">
+                    <div class="hero-content">
+                        <h1>Khám phá bộ sưu tập áo thể thao 2025 <br>– Sale cực mạnh –</h1>
+                        <a class="cta-button" href="{{ route('product.index') }}">MUA NGAY</a>
+                    </div>
                 </div>
-
             </div>
-            <!-- Hero Item End -->
 
-            <!-- Hero Item Start -->
             <div class="hero-item" style="background-image: url(/client/assets/images/hero/hero-2.jpg)">
-
-                <!-- Hero Content -->
-                <div class="hero-content">
-
-                    <h1>Giảm giá 35% <br>Áo đấu mùa giải mới</h1>
-                    <a href="{{ route('product.index') }}">MUA NGAY</a>
-
+                <div class="hero-overlay">
+                    <div class="hero-content">
+                        <h1>Giảm giá 35% <br>Áo đấu mùa giải mới</h1>
+                        <a class="cta-button" href="{{ route('product.index') }}">MUA NGAY</a>
+                    </div>
                 </div>
-
             </div>
-            <!-- Hero Item End -->
+            <!-- Hero Section End -->
 
         </div>
         <!-- Hero Slider End -->
@@ -85,7 +77,7 @@
                           ">
                                 Áo Đấu Tự Thiết Kế</h1>
 
-                            
+
                         </div>
 
                         <span class="banner-offer">Giảm 25%</span>
@@ -110,6 +102,7 @@
             </div>
         </div>
     </div>
+
     <!-- Banner Section End -->
 
     <!-- Product Section Start -->
@@ -118,7 +111,7 @@
 
             <div class="row">
                 <div class="section-title text-center col mb-30">
-                    <h1>Sản phẩm phổ biến</h1>
+                    <h1>Danh Sách Sản Phẩm</h1>
                     {{-- <p>All popular product find here</p> --}}
                 </div>
             </div>
@@ -192,7 +185,7 @@
     <!-- Product Section End -->
 
     <!-- Banner Section Start -->
-    <div class="banner-section section section-padding pt-0 fix">
+    <div id="featuredProducts" class="banner-section section section-padding pt-0 fix">
         <div class="row row-5 mbn-10">
 
             <div class="col-lg-4 col-md-6 col-12 mb-10">
@@ -201,13 +194,13 @@
                     <a href="#" class="image"><img src="/client/assets/images/banner/banner-4.jpg"
                             alt="Banner Image"></a>
 
-                    <div class="content" style="background-image: url(/client/assets/images/banner/banner-3-shape.png)">
-                        <h1>New Arrivals</h1>
-                        <h2>Up to 35% off</h2>
-                        <h4>2 - 5 Years</h4>
+                    <div class="content" style="background-image: url(/client/assets/images/banner/banner-3a-shape.png)">
+                        <h1>Áo Mới Về</h1>
+                        <h2>Giảm đến 35%</h2>
+                        <h4>Phù hợp từ tập luyện đến thi đấu</h4>
                     </div>
 
-                    <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a>
+                    {{-- <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a> --}}
 
                 </div>
             </div>
@@ -220,9 +213,9 @@
 
                     <div class="content">
                         <div class="content-inner">
-                            <h1>Online Shopping</h1>
-                            <h2>Flat 25% off <br>New Trend for 2022</h2>
-                            <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
+                            <h1>Mua Online Siêu Tiện Lợi</h1>
+                            <h2>Ưu đãi đến 25%<br>Xu hướng thể thao mới nhất 2025</h2>
+                            {{-- <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a> --}}
                         </div>
                     </div>
 
@@ -236,12 +229,12 @@
                     <a href="#" class="image"><img src="/client/assets/images/banner/banner-6.jpg"
                             alt="Banner Image"></a>
 
-                    <div class="content" style="background-image: url(/client/assets/images/banner/banner-5-shape.png)">
-                        <h1>Collection for <br>Baby Girl’s</h1>
-                        <h2>Flat 25% off</h2>
+                    <div class="content" style="background-image: url(/client/assets/images/banner/banner-5a-shape.png)">
+                        <h1>Bộ Sưu Tập Nam/Nữ<br>Đa dạng mẫu mã, thấm hút tốt</h1>
+                        <h2>Ưu đãi đến 25%</h2>
                     </div>
 
-                    <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a>
+                    {{-- <a href="{{ route('product.index') }}" class="shop-link" data-hover="SHOP NOW">SHOP NOW</a> --}}
 
                 </div>
             </div>
@@ -253,266 +246,78 @@
     <!-- Product Section Start -->
     <div class="product-section section section-padding pt-0">
         <div class="container">
+
+            <div class="row" >
+                <div class="section-title text-center col mb-30">
+                    <h1>Sản Phẩm Nổi Bật</h1>
+                    {{-- <p>All popular product find here</p> --}}
+                </div>
+            </div>
+
             <div class="row mbn-40">
+                @foreach ($productFeatured as $product)
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-40">
 
-                <div class="col-lg-4 col-md-6 col-12 mb-40">
+                        <div class="product-item">
+                            <div class="product-inner">
 
-                    <div class="row">
-                        <div class="section-title text-start col mb-30">
-                            <h1>Best Deal</h1>
-                            <p>Exclusive deals for you</p>
-                        </div>
-                    </div>
+                                <div class="image">
+                                    <div class="bg-light border rounded d-flex justify-content-center align-items-center">
+                                        <img src="{{ Storage::url($product->image) }}" alt=""
+                                            style="height: 300px;width: 300px; overflow: hidden;">
+                                    </div>
 
-                    <div class="best-deal-slider w-100">
+                                    <div class="image-overlay">
+                                        <div class="action-buttons">
+                                            <button><a href="{{ route('product.show', $product->id) }}">Add to
+                                                    cart</a></button>
+                                            <button class="add_to_wishlist"
+                                                data-url="{{ route('add_wishlist', ['id' => $product->id]) }}">Add to
+                                                wishlist</button>
+                                        </div>
+                                    </div>
 
-                        <div class="slide-item">
-                            <div class="best-deal-product">
+                                </div>
 
-                                <div class="image"><img src="/client/assets/images/product/best-deal-1.jpg"
-                                        alt="Image"></div>
+                                <div class="content">
 
-                                <div class="content-top">
+                                    <div class="content-left">
 
-                                    <div class="content-top-left">
-                                        <h4 class="title"><a href="#">{{ $product->name }}</a></h4>
+                                        <h4 class="title"><a
+                                                href="{{ route('product.show', $product) }}">{{ $product->name }}</a>
+                                        </h4>
+
                                         <div class="ratting">
-                                            <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                             <i class="fa fa-star-half-o"></i>
-                                        </div>
-                                    </div>
-
-                                    <div class="content-top-right">
-                                        <span class="price">$13 <span class="old">$28</span></span>
-                                    </div>
-
-                                </div>
-
-                                <div class="content-bottom">
-                                    <div class="countdown" data-countdown="2023/06/20"></div>
-                                    <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="slide-item">
-                            <div class="best-deal-product">
-
-                                <div class="image"><img src="/client/assets/images/product/best-deal-2.jpg"
-                                        alt="Image"></div>
-
-                                <div class="content-top">
-
-                                    <div class="content-top-left">
-                                        <h4 class="title"><a href="#">{{ $product->name }}</a></h4>
-                                        <div class="ratting">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
                                             <i class="fa fa-star-o"></i>
                                         </div>
+
+                                        {{-- <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
+                                        </h5>
+                                        <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
+                                                style="background-color: #0271bc"></span><span
+                                                style="background-color: #efc87c"></span><span
+                                                style="background-color: #00c183"></span></h5> --}}
+
                                     </div>
 
-                                    <div class="content-top-right">
-                                        <span class="price">$09 <span class="old">$25</span></span>
+                                    <div class="content-right">
+                                        <span class="price">{{ $product->price }}</span>
                                     </div>
 
-                                </div>
-
-                                <div class="content-bottom">
-                                    <div class="countdown" data-countdown="2023/06/20"></div>
-                                    <a href="{{ route('product.index') }}" data-hover="SHOP NOW">SHOP NOW</a>
                                 </div>
 
                             </div>
                         </div>
 
                     </div>
-
-                </div>
-
-                <div class="col-lg-8 col-md-6 col-12 ps-3 ps-lg-4 ps-xl-5 mb-40">
-
-                    <div class="row">
-                        <div class="section-title text-start col mb-30">
-                            <h1>On Sale Products</h1>
-                            <p>All featured product find here</p>
-                        </div>
-                    </div>
-
-                    <div class="small-product-slider row row-7 mbn-40">
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('product.show', $product) }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-1.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a
-                                            href="{{ route('product.show', $product) }}">{{ $product->name }}</a></h4>
-                                    <span class="price">$19 <span class="old">$35</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                        <i class="fa fa-star-o"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        {{-- <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-2.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Kelly Shirt Set</a></h4>
-                                    <span class="price">$08 <span class="old">$25</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-o"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-3.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Sleeveless Tops</a></h4>
-                                    <span class="price">$05 <span class="old">$12</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-4.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Babysuit Bundle</a></h4>
-                                    <span class="price">$25 <span class="old">$45</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-5.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Xshuai Baby Frock</a></h4>
-                                    <span class="price">$13 <span class="old">$28</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-6.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Stylish Hat</a></h4>
-                                    <span class="price">$03 <span class="old">$10</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                        <i class="fa fa-star-o"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-7.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Aolvo Kids Munch</a></h4>
-                                    <span class="price">$25 <span class="old">$35</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                        <i class="fa fa-star-o"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col mb-40">
-
-                            <div class="on-sale-product">
-                                <a href="{{ route('single-product') }}" class="image"><img
-                                        src="/client/assets/images/product/on-sale-8.jpg" alt="Image"></a>
-                                <div class="content text-center">
-                                    <h4 class="title"><a href="{{ route('single-product') }}">Tmart Baby Dress</a></h4>
-                                    <span class="price">$48 <span class="old">$65</span></span>
-                                    <div class="ratting">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div> --}}
-
-                    </div>
-
-                </div>
+                @endforeach
 
             </div>
+
         </div>
     </div>
     <!-- Product Section End -->
@@ -528,8 +333,8 @@
 
                         <div class="icon"><img src="/client/assets/images/feature/feature-1.png" alt="Image"></div>
                         <div class="content">
-                            <h3>Free Shipping</h3>
-                            <p>Start from $100</p>
+                            <h3>Đa dạng mẫu mã</h3>
+                            <p>Mặc không vừa? Đổi ngay mẫu khác!</p>
                         </div>
 
                     </div>
@@ -540,8 +345,8 @@
 
                         <div class="icon"><img src="/client/assets/images/feature/feature-2.png" alt="Image"></div>
                         <div class="content">
-                            <h3>Money Back Guarantee</h3>
-                            <p>Back within 25 days</p>
+                            <h3>Giao hàng toàn quốc </h3>
+                            <p>Chi phí ưu đãi nhất</p>
                         </div>
 
                     </div>
@@ -552,8 +357,8 @@
 
                         <div class="icon"><img src="/client/assets/images/feature/feature-3.png" alt="Image"></div>
                         <div class="content">
-                            <h3>Secure Payment</h3>
-                            <p>Payment Security</p>
+                            <h3>Cam kết chính hãng</h3>
+                            <p>Hàng chất lượng, chuẩn thương hiệu</p>
                         </div>
 
                     </div>
@@ -573,8 +378,8 @@
 
                     <div class="row">
                         <div class="section-title text-start col mb-30">
-                            <h1>CLIENTS REVIEW</h1>
-                            <p>Clients says abot us</p>
+                            <h1>Khách Hàng</h1>
+                            <p>& một số nhận xét, đánh giá</p>
                         </div>
                     </div>
 
@@ -582,14 +387,14 @@
 
                         <div class="col-12 mb-40">
                             <div class="testimonial-item">
-                                <p>Jadusona is one of the most exclusive Baby shop in the wold, where you can find all
-                                    product for your baby that your want to buy for your baby. I recomanded this shop all of
-                                    you</p>
+                                <p>"Áo thể thao không chỉ để tập gym, chơi bóng đá hay chạy bộ mà còn phải 'chất' để mặc
+                                    thường ngày.
+                                    Trang web này của <b>Five Brother</b> làm tôi phải ghé lại nhiều lần!"</p>
                                 <div class="testimonial-author">
                                     <img src="/client/assets/images/testimonial/testimonial-1.png" alt="Image">
                                     <div class="content">
-                                        <h4>Zacquline Smith</h4>
-                                        <p>CEO, Momens Group</p>
+                                        <h4>Sơn Tùng - MTP </h4>
+                                        <p>CEO, M-TP Entertainment</p>
                                     </div>
                                 </div>
                             </div>
@@ -597,14 +402,17 @@
 
                         <div class="col-12 mb-40">
                             <div class="testimonial-item">
-                                <p>Jadusona is one of the most exclusive Baby shop in the wold, where you can find all
-                                    product for your baby that your want to buy for your baby. I recomanded this shop all of
-                                    you</p>
+                                <p>"Tôi luôn ưu tiên sự thoải mái và chất lượng trong từng chuyển động. Những chiếc áo thể
+                                    thao ở
+                                    <b>Five Brother</b> khiến tôi cảm thấy nhẹ nhàng và linh hoạt, giống như khi tôi đang
+                                    thi đấu trên sân cỏ.
+                                    Một trải nghiệm mua sắm tuyệt vời!"
+                                </p>
                                 <div class="testimonial-author">
                                     <img src="/client/assets/images/testimonial/testimonial-2.png" alt="Image">
                                     <div class="content">
-                                        <h4>Nusaha Williams</h4>
-                                        <p>CEO, Momens Group</p>
+                                        <h4>Lionel Messi</h4>
+                                        <p>Argentina professional football player</p>
                                     </div>
                                 </div>
                             </div>
@@ -619,7 +427,7 @@
                     <div class="row">
                         <div class="section-title text-start col mb-30">
                             <h1>FROM THE BLOG</h1>
-                            <p>Find all latest update here</p>
+                            <p>tin tức mới nhất được cập nhật tại đây</p>
                         </div>
                     </div>
 
@@ -652,30 +460,7 @@
                                 </div>
                             </div>
                         @endforeach
-                        {{-- <div class="col-12 mb-40">
-                            <div class="blog-item">
-                                <div class="image-wrap">
-                                    <h4 class="date">May <span>20</span></h4>
-                                    <a class="image" href="{{route('post.show',$product)}}"><img
-                                            src="/client/assets/images/blog/blog-2.jpg" alt="Image"></a>
-                                </div>
-                                <div class="content">
-                                    <h4 class="title"><a href="{{route('post.show',$product)}}">New Collection New Trend all New
-                                            Style</a></h4>
-                                    <div class="desc">
-                                        <p>Jadusona is one of the most of a exclusive Baby shop in the</p>
-                                    </div>
-                                    <ul class="meta">
-                                        <li>
-                                            <a href="#"><img src="/client/assets/images/blog/blog-author-2.jpg"
-                                                    alt="Blog Author">Takiya</a>
-                                        </li>
-                                        <li><a href="#">25 Likes</a></li>
-                                        <li><a href="#">05 Views</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div> --}}
+
 
                     </div>
 
@@ -685,4 +470,162 @@
         </div>
     </div>
     <!-- Blog Section End -->
+
+    <style>
+        /* START hero 1 + 2 */
+
+        .hero-item {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-overlay {
+            background: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: #fff;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-content h1 {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .cta-button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 14px 32px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* END hero 1 + 2 *
+
+                    /* START Banner 4+5+6  */
+
+        /* Banner Styles Enhancement */
+
+        .banner {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45));
+            z-index: 1;
+        }
+
+        .banner .image {
+            position: relative;
+            display: block;
+        }
+
+        .banner .image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .banner .content,
+        .banner .content-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .banner .content h1,
+        .banner .content h2,
+        .banner .content h4,
+        .banner .content-inner h1,
+        .banner .content-inner h2,
+        .banner .content-inner h4 {
+            color: #ffffff;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6);
+            margin: 5px 0;
+            font-weight: 700;
+        }
+
+        /* Responsive font sizes */
+        .banner .content h1,
+        .banner .content-inner h1 {
+            font-size: 26px;
+        }
+
+        .banner .content h2,
+        .banner .content-inner h2 {
+            font-size: 20px;
+        }
+
+        .banner .content h4,
+        .banner .content-inner h4 {
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) {
+
+            .banner .content h1,
+            .banner .content-inner h1 {
+                font-size: 32px;
+            }
+
+            .banner .content h2,
+            .banner .content-inner h2 {
+                font-size: 24px;
+            }
+
+            .banner .content h4,
+            .banner .content-inner h4 {
+                font-size: 18px;
+            }
+        }
+
+        /* END banner 4+5+6 */
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 @endsection

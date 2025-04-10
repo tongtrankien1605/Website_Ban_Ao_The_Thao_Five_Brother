@@ -104,7 +104,8 @@ class DashboardController extends Controller
 
         // START doanh thu theo ngày / tháng / năm
 
-            // Doanh thu theo ngày (7 ngày gần nhất)
+            // Doanh thu theo ngày (7 ngày gần nhất) 
+        
         $daily = DB::table('orders')
             ->selectRaw('DATE(created_at) as label, SUM(total_amount) as revenue')
             ->where('id_order_status', '5')

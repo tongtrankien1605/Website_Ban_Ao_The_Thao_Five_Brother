@@ -36,7 +36,9 @@ class ProductController extends Controller
         $products = Product::where('status', 1)->latest('updated_at')->limit(8)->get();
         $posts = Post::latest('published_at')->limit(2)->get();
 
-        return view('client.index', compact('products', 'posts'));
+        $productFeatured = Product::where('status', 1)->latest('views')->limit(8)->get();
+
+        return view('client.index', compact('products', 'posts', 'productFeatured'));
     }
 
     /**
