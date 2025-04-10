@@ -98,7 +98,7 @@
                     <!-- lệ đơn hàng Biểu đồ tròn - done -->
                     <div class="col-md-4">
                         <h4 class="text-dark">Tỷ lệ đơn hàng theo trạng thái</h4>
-                        <canvas id="orderStatusChart"></canvas>
+                        <canvas id="orderStatusChart" width="400" height="400"></canvas>
                     </div>
 
                     <!-- Biểu đồ cột ngang (Top sản phẩm doanh thu cao nhất) - done -->
@@ -193,46 +193,145 @@
 
     <script>
         // START Tỷ lệ đơn hàng theo trạng thái 
+
+        // const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+        // const orderStatusData = @json($orderStatusChart);
+
+        // const dataValues = Object.values(orderStatusData);
+        // const total = dataValues.reduce((sum, val) => sum + val, 0);
+        // const hasData = total > 0;
+
+        // const chartData = {
+        //     labels: hasData ? Object.keys(orderStatusData) : ['Không có dữ liệu'],
+        //     datasets: [{
+        //         label: hasData ? 'Số lượng' : 'Không có dữ liệu',
+        //         data: hasData ? dataValues : [1],
+        //         backgroundColor: hasData ? [
+        //             'rgba(255, 205, 86, 0.7)', // Chờ xác nhận
+        //             'rgba(54, 162, 235, 0.7)', // Đã xác nhận
+        //             'rgba(153, 102, 255, 0.7)', // Chờ lấy hàng
+        //             'rgba(75, 192, 192, 0.7)', // Giao thành công
+        //             'rgba(255, 99, 132, 0.7)' // Bị hủy
+        //         ] : ['rgba(220, 220, 220, 0.5)'],
+        //         borderWidth: 1
+        //     }]
+        // };
+
+        // const chartOptions = {
+        //     responsive: true,
+        //     plugins: {
+        //         legend: {
+        //             position: 'bottom',
+        //         },
+        //         tooltip: {
+        //             callbacks: {
+        //                 label: function(context) {
+        //                     return hasData ?
+        //                         `${context.label}: ${context.formattedValue}` :
+        //                         'Không có dữ liệu';
+        //                 }
+        //             }
+        //         }
+        //     }
+        // };
+
+        // const orderStatusChart = new Chart(ctxStatus, {
+        //     type: 'doughnut',
+        //     data: chartData,
+        //     options: chartOptions,
+        //     plugins: [ // Plugin để thêm chữ vào giữa nếu không có dữ liệu
+        //         {
+        //             id: 'centerText',
+        //             beforeDraw: function(chart) {
+        //                 if (!hasData) {
+        //                     const width = chart.width,
+        //                         height = chart.height,
+        //                         ctx = chart.ctx;
+        //                     ctx.restore();
+        //                     ctx.font = '16px Arial';
+        //                     ctx.textBaseline = 'middle';
+        //                     ctx.fillStyle = '#999';
+        //                     const text = 'Không có dữ liệu',
+        //                         textX = Math.round((width - ctx.measureText(text).width) / 2),
+        //                         textY = height / 2;
+        //                     ctx.fillText(text, textX, textY);
+        //                     ctx.save();
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // });
+
+
         const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+        const orderStatusData = @json($orderStatusChart);
 
-        const hasData = false; // Đổi thành true nếu có dữ liệu thực
+        const dataValues = Object.values(orderStatusData);
+        const total = dataValues.reduce((sum, val) => sum + val, 0);
+        const hasData = total > 0;
 
-        const orderStatusChart = new Chart(ctxStatus, {
-            type: 'doughnut',
-            data: {
-                labels: [
-                    @foreach ($orderStatusChart as $label => $value)
-                        '{{ $label }}',
-                    @endforeach
-                ],
-                datasets: [{
-                    label: 'Số lượng',
-                    data: [
-                        @foreach ($orderStatusChart as $label => $value)
-                            {{ $value }},
-                        @endforeach
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 205, 86, 0.7)', // Chờ xác nhận - vàng
-                        'rgba(54, 162, 235, 0.7)', // Đã xác nhận - xanh dương nhạt
-                        'rgba(153, 102, 255, 0.7)', // Chờ lấy hàng - tím nhạt
-                        'rgba(75, 192, 192, 0.7)', // Đã giao hàng thành công - xanh ngọc
-                        'rgba(255, 99, 132, 0.7)' // Đơn hàng bị hủy - đỏ hồng
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
+        const chartData = {
+            labels: hasData ? Object.keys(orderStatusData) : ['Không có dữ liệu'],
+            datasets: [{
+                label: hasData ? 'Số lượng' : 'Không có dữ liệu',
+                data: hasData ? dataValues : [1],
+                backgroundColor: hasData ? [
+                    'rgba(255, 205, 86, 0.7)', // Chờ xác nhận
+                    'rgba(54, 162, 235, 0.7)', // Đã xác nhận
+                    'rgba(153, 102, 255, 0.7)', // Chờ lấy hàng
+                    'rgba(75, 192, 192, 0.7)', // Giao thành công
+                    'rgba(255, 99, 132, 0.7)' // Bị hủy
+                ] : ['rgba(220, 220, 220, 0.5)'],
+                borderWidth: 1
+            }]
+        };
+
+        const chartOptions = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            if (!hasData) return 'Không có dữ liệu';
+                            const value = context.raw;
+                            const percent = ((value / total) * 100).toFixed(1);
+                            return `${context.label}: ${value} (${percent}%)`;
+                        }
                     }
                 }
             }
+        };
+
+        const orderStatusChart = new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: chartData,
+            options: chartOptions,
+            plugins: [{
+                id: 'centerText',
+                beforeDraw: function(chart) {
+                    if (!hasData) {
+                        const width = chart.width,
+                            height = chart.height,
+                            ctx = chart.ctx;
+                        ctx.restore();
+                        ctx.font = '16px Arial';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#999';
+                        const text = 'Không có dữ liệu',
+                            textX = Math.round((width - ctx.measureText(text).width) / 2),
+                            textY = height / 2;
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }
+            }]
         });
 
-        // END Tỷ lệ đơn hàng theo trạng thái  -------------------------------------------------------------
+
+        // END Tỷ lệ đơn hàng theo trạng thái -------------------------------------------------------------
 
 
         // START 5 sản phẩm có doanh thu cao nhất
@@ -444,6 +543,5 @@
         });
 
         // END doanh thu theo ngày / tháng / năm ------------------------------------------------------------------
-
     </script>
 @endsection
