@@ -25,6 +25,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -219,7 +221,14 @@ Route::middleware('auth')->group(function (){
     ->name('create.payment.attempt');
     Route::get('/check-stock', [OrderController::class, 'checkStock'])
     ->name('check_stock');
+    Route::get('/order/cleanup-expired', [OrderController::class, 'cleanupExpiredPaymentAttempts'])
+    ->name('order.cleanup_expired')
+    ->middleware('admin');
 
+    // Review routes
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 Route::post('/voucher/apply', [PaymentController::class, 'apply'])->name('voucher.apply');
@@ -245,4 +254,6 @@ Route::post('/apply-voucher', [PaymentController::class, 'applyVoucher']);
 Route::get('/success', function () {
     return view('client.success');
 })->name('order_success');
+
+
 

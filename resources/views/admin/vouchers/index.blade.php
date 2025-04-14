@@ -53,7 +53,7 @@
                         <thead>
                             <tr>
                                 <th width="40px">
-                                    <input type="checkbox" class="form-check-input">
+                                    <input type="checkbox" class="">
                                 </th>
                                 <th>CAMPAIGN NAME</th>
                                 <th>CODE</th>
@@ -69,7 +69,7 @@
                             @foreach ($vouchers as $voucher)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="form-check-input">
+                                        <input type="checkbox" class="">
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">

@@ -21,3 +21,4 @@ Broadcast::channel('orders.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
     // return true;
 });
+

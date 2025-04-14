@@ -40,7 +40,7 @@
                         <select id="status-filter" class="form-control" style="width: 200px;">
                             <option value="">All Status</option>
                             @foreach ($orderStatuses as $status)
-                                <option value="{{ $status->name }}">{{ $status->name }}</option>
+                                <option value="{{ $status->id }}">{{ $status->name }}</option>
                             @endforeach
                         </select>
                         <button class="btn btn-success px-4">Filter</button>
