@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Inventory;
+use App\Models\InventoryEntry;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductAtribute;
@@ -82,6 +83,12 @@ class ProductController extends Controller
         $wishlist = Wishlist::where('id_product', $product->id)->where('id_user', auth()->id())->first();
 
         $skus = Skus::where('product_id', $product->id)->get();
+        foreach ($skus as $sku) {
+            $inventoryEntry = InventoryEntry::where('id_skus', $sku->id)->get();
+        }
+        // dd($inventoryEntry);
+
+
         $variants = Variant::where('product_id', $product->id)
             ->with(['latestStock'])
             ->get();
@@ -115,7 +122,8 @@ class ProductController extends Controller
             'inventoryData',
             'variantMap',
             'relatedProducts', 
-            'popularProducts'
+            'popularProducts',
+            'inventoryEntry'
         ));
     }
 

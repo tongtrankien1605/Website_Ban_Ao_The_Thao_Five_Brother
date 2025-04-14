@@ -408,11 +408,26 @@ $(document).ready(function () {
         e.preventDefault();
 
         let selectedItems = [];
+        let isValid = true; // Thêm biến flag để kiểm soát việc chuyển hướng
 
         $(".cart-checkbox:checked").each(function () {
             let row = $(this).closest("tr");
             let productId = $(this).val();
-            let quantity = row.find(".dataInput").val();
+            let quantity = parseInt(row.find(".dataInput").val());
+            let maxQuantity = parseInt(row.find(".dataInput").data("max")); // Lấy số lượng tồn kho tối đa
+
+            // Kiểm tra số lượng tồn kho
+            if (quantity > maxQuantity) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Số lượng không đủ',
+                    text: `Sản phẩm chỉ còn ${maxQuantity} sản phẩm trong kho!`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                isValid = false;
+                return false; // Dừng vòng lặp
+            }
 
             selectedItems.push({
                 id: productId,
@@ -420,17 +435,27 @@ $(document).ready(function () {
             });
         });
 
+        if (!isValid) {
+            return; // Không chuyển hướng nếu có lỗi
+        }
+
         if (selectedItems.length === 0) {
-            alert("❌ Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Lỗi',
+                text: 'Vui lòng chọn ít nhất một sản phẩm để thanh toán!',
+                timer: 2000,
+                showConfirmButton: false
+            });
             return;
         }
 
-        let code = $("#voucher option:selected").data("code") || ""; // ✅ Lấy mã giảm giá
+        let code = $("#voucher option:selected").data("code") || ""; 
         let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, code: code });
 
-        console.log("🟢 Chuyển hướng với URL:", "/payment?" + queryString); // ✅ Debug URL
+        console.log("🟢 Chuyển hướng với URL:", "/payment?" + queryString);
 
-        window.location.href = "/payment?" + queryString; // ✅ Chuyển hướng
+        window.location.href = "/payment?" + queryString;
     });
 
 

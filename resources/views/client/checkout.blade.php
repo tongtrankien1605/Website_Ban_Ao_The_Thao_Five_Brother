@@ -370,56 +370,44 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Khởi tạo Echo instance
-            window.Echo = new Echo({
-                broadcaster: 'pusher',
-                key: '{{ env("PUSHER_APP_KEY") }}',
-                cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
-                encrypted: true,
-                enabledTransports: ['ws', 'wss']
+        // Khởi tạo Laravel Echo
+        // window.Echo = new Echo({
+        //     broadcaster: 'pusher',
+        //     key: '{{ env("PUSHER_APP_KEY") }}',
+        //     cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
+        //     encrypted: true
+        // });
+
+        function applyVoucher(voucherCode) {
+            const url = "{{ route('voucher.apply') }}";
+            const voucherId = $('#voucher_id').val();
+            const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    voucher_id: voucherId,
+                    subtotal: subtotal
+                },
+                success: function(response) {
+                    $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
+                    $('#final-total').text('₫' + response.final_total.toLocaleString());
+                    $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
+
+                    $('#discountAmount').text('-' + response.voucher_discount + 'đ');
+                    $('#finalTotal').text(response.final_total + 'đ');
+
+                    $('#voucherModal').modal('hide');
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
             });
+        }
 
-            // Lắng nghe sự kiện
-            window.Echo.channel('inventory')
-                .listen('InventoryUpdated', (e) => {
-                    console.log('Received inventory update event:', e);
-                    const inventory = e.inventory;
-                    if (inventory) {
-                        const itemElement = document.querySelector(`[data-variant-id="${inventory.variant_id}"]`);
-                        if (itemElement) {
-                            const quantityElement = itemElement.querySelector('.quantity');
-                            if (quantityElement) {
-                                quantityElement.textContent = inventory.new_quantity;
-                                Swal.fire({
-                                    title: 'Cập nhật số lượng!',
-                                    text: `Sản phẩm ${inventory.product_name} - ${inventory.variant_name} còn lại ${inventory.new_quantity} sản phẩm`,
-                                    icon: 'info',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        }
-                    }
-                })
-                .listen('ProductOutOfStock', (e) => {
-                    console.log('Received out-of-stock event:', e);
-                    const outOfStockItems = e.outOfStockItems;
-                    if (outOfStockItems && outOfStockItems.length > 0) {
-                        const itemNames = outOfStockItems.map(item => 
-                            `${item.name} - ${item.variant_name} (Còn lại: ${item.available_quantity})`
-                        ).join('\n');
-                        
-                        Swal.fire({
-                            title: 'Sản phẩm hết hàng!',
-                            text: 'Một số sản phẩm trong giỏ hàng của bạn đã hết hàng:\n' + itemNames,
-                            icon: 'warning',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = '{{ route("show.cart") }}';
-                        });
-                    }
-                });
-
+        document.addEventListener('DOMContentLoaded', function() {
             const timerElement = document.getElementById('timer');
             const attemptsElement = document.getElementById('attempts');
             const countdown = document.getElementById('countdown');
@@ -513,6 +501,12 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                 });
             }
         });
+<<<<<<< HEAD
+
+        // Khởi tạo Echo instance
+       
+=======
+>>>>>>> 7e4a9e15afdb669463b561f09a6807268efd4efe
     </script>
       @vite('resources/js/updateCheckout.js')
 
