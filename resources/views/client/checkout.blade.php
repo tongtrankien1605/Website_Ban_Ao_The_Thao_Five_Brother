@@ -501,9 +501,12 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                 });
             }
         });
+<<<<<<< HEAD
 
         // Khởi tạo Echo instance
        
+=======
+>>>>>>> 7e4a9e15afdb669463b561f09a6807268efd4efe
     </script>
       @vite('resources/js/updateCheckout.js')
 
