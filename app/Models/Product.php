@@ -71,13 +71,14 @@ class Product extends Model
         );
     }
 
-    public function images()
-    {
-        return $this->hasMany(ProductImage::class);
-    }
 
     public function defaultImage()
     {
         return $this->hasOne(ProductImage::class)->where('is_default', true);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'id_product', 'id');
     }
 }

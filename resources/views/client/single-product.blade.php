@@ -30,6 +30,73 @@
             border-color: #333;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
+
+        /* Review Section Styles */
+        .review-section {
+            padding: 20px;
+        }
+        
+        .single-review {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        
+        .review-rating .fa-star {
+            color: #ffc107;
+        }
+        
+        .review-rating .fa-star-o {
+            color: #ddd;
+        }
+        
+        /* Star Rating Input Styles */
+        .rate {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        
+        .rate input[type="radio"] {
+            display: none;
+        }
+        
+        .rate label {
+            cursor: pointer;
+            width: 30px;
+            font-size: 24px;
+            color: #ddd;
+            transition: all 0.2s ease;
+        }
+        
+        .rate label:hover,
+        .rate label:hover ~ label,
+        .rate input[type="radio"]:checked ~ label {
+            color: #ffc107;
+        }
+        
+        .review-form-wrapper {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .review-login-notice {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .review-login-notice a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .review-login-notice a:hover {
+            text-decoration: underline;
+        }
     </style>
     <div class="page-section section section-padding">
         <div class="container">
@@ -75,9 +142,9 @@
                                             <i class="fa fa-star-o"></i>
                                         </div>
                                     </div>
-                                    {{-- <div class="head-right">
-                                        <span class="price">${{ number_format($product->price, 2) }}</span>
-                                    </div> --}}
+                                    <div class="head-right">
+                                        <span class="price" id="productPrice">--</span>
+                                    </div>
                                 </div>
 
                                 <div class="description">
@@ -206,8 +273,88 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="pro-info-tab tab-pane" id="reviews">
-                                <a href="#">Be the first to write your review!</a>
+                            <div class="pro-info-tab tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="review-section">
+                                    <h3 class="mb-4">Product Reviews</h3>
+                                    
+                                    @forelse($product->reviews as $review)
+                                        <div class="single-review mb-4">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="mb-0">{{ $review->user->name }}</h5>
+                                                <small class="text-muted">{{ $review->created_at->format('M d, Y') }}</small>
+                                            </div>
+                                            <div class="review-rating mb-2">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= $review->rating)
+                                                        <i class="fa fa-star"></i>
+                                                    @else
+                                                        <i class="fa fa-star-o"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                            <p class="mb-2">{{ $review->content }}</p>
+                                            @if($review->images->isNotEmpty())
+                                                <div class="review-images d-flex gap-2 mt-2">
+                                                    @foreach($review->images as $image)
+                                                        <img src="{{ Storage::url($image->image_url) }}" alt="Review image" class="img-thumbnail" style="max-width: 100px; height: auto;">
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @empty
+                                        <div class="alert alert-info">
+                                            No reviews yet. Be the first to review this product!
+                                        </div>
+                                    @endforelse
+
+                                    @auth
+                                        <div class="review-form-wrapper">
+                                            <h4 class="mb-4">Write a Review</h4>
+                                            <form action="{{ route('reviews.store') }}" method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                <input type="hidden" name="id_product" value="{{ $product->id }}">
+                                                <div class="form-group mb-4">
+                                                    <label class="mb-2">Your Rating</label>
+                                                    <div class="rate">
+                                                        <input type="radio" id="star5" name="rating" value="5" required />
+                                                        <label for="star5" title="5 stars"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star4" name="rating" value="4" />
+                                                        <label for="star4" title="4 stars"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star3" name="rating" value="3" />
+                                                        <label for="star3" title="3 stars"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star2" name="rating" value="2" />
+                                                        <label for="star2" title="2 stars"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star1" name="rating" value="1" />
+                                                        <label for="star1" title="1 star"><i class="fa fa-star"></i></label>
+                                                    </div>
+                                                    @error('rating')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group mb-4">
+                                                    <label for="content" class="mb-2">Your Review</label>
+                                                    <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+                                                    @error('content')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group mb-4">
+                                                    <label for="images" class="mb-2">Review Images (Optional)</label>
+                                                    <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp">
+                                                    <small class="text-muted">You can upload up to 5 images. Maximum size: 2MB each.</small>
+                                                    @error('images')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <div class="review-login-notice">
+                                            <p class="mb-2">Please <a href="{{ route('login') }}">login</a> to write a review.</p>
+                                        </div>
+                                    @endauth
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -609,9 +756,24 @@
     <script>
         window.inventoryData = @json($inventoryData);
         window.variantMap = @json($variantMap);
+        window.priceData = {};
 
-        console.log(window.inventoryData);
-        console.log(window.variantMap);
+        // Lưu thông tin giá vào priceData
+        @foreach($skus as $sku)
+            @if($sku->inventory_entries && $sku->inventory_entries->count() > 0)
+                @php
+                    $latestEntry = $sku->inventory_entries->where('status', 'Đã duyệt')->first();
+                @endphp
+                @if($latestEntry)
+                    window.priceData[{{ $sku->id }}] = {
+                        regularPrice: {{ $latestEntry->price }},
+                        salePrice: {{ $latestEntry->sale_price ? $latestEntry->sale_price : 'null' }},
+                        discountStart: "{{ $latestEntry->discount_start }}",
+                        discountEnd: "{{ $latestEntry->discount_end }}"
+                    };
+                @endif
+            @endif
+        @endforeach
 
         document.querySelectorAll('.variant-option').forEach(input => {
             input.addEventListener('change', function() {
@@ -619,12 +781,10 @@
 
                 // Lấy ID của các variant đang được chọn
                 document.querySelectorAll('.variant-option:checked').forEach(checked => {
-                    // console.log(checked.value);
                     selectedVariants.push(checked.value);
                 });
 
                 const sortedKey = selectedVariants.map(Number).sort((a, b) => a - b).join(',');
-
                 const skuId = window.variantMap[sortedKey];
                 const inventoryObject = {};
                 window.inventoryData.forEach(item => {
@@ -633,6 +793,7 @@
 
                 const qty = skuId ? (inventoryObject[skuId] || 0) : 0;
 
+                // Cập nhật số lượng tồn kho
                 const availabilitySpan = document.getElementById('availabilityQty');
                 if (availabilitySpan) {
                     availabilitySpan.textContent = skuId ?
@@ -641,8 +802,24 @@
                     availabilitySpan.style.color = qty > 0 ? 'green' : 'red';
                 }
 
-                const addToCartBtn = document.getElementById('addToCartBtn');
+                // Cập nhật giá
+                const priceElement = document.getElementById('productPrice');
+                if (skuId && window.priceData[skuId]) {
+                    const priceInfo = window.priceData[skuId];
+                    const now = new Date();
+                    const discountStart = new Date(priceInfo.discountStart);
+                    const discountEnd = new Date(priceInfo.discountEnd);
+                    
+                    if (priceInfo.salePrice && now >= discountStart && now <= discountEnd) {
+                        priceElement.textContent = priceInfo.salePrice.toLocaleString('vi-VN') + ' VND';
+                    } else {
+                        priceElement.textContent = priceInfo.regularPrice.toLocaleString('vi-VN') + ' VND';
+                    }
+                } else {
+                    priceElement.textContent = '--';
+                }
 
+                const addToCartBtn = document.getElementById('addToCartBtn');
                 if (addToCartBtn) {
                     if (qty > 0) {
                         addToCartBtn.disabled = false;

@@ -1,5 +1,12 @@
 @extends('client.layouts.master')
+
 @section('content')
+<div class="countdown-timer" id="countdown"
+style="background-color: #f8f9fa; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
+<span style="font-weight: bold;">Time remaining: </span>
+<span id="timer" style="color: #e83e8c; font-size: 1.2em; font-weight: bold;"></span>
+<span id="attempts" style="margin-left: 20px; color: #dc3545;"></span>
+</div>
     <div class="page-section section" style="background-color: #f5f5f5; min-height: 100vh; padding-top: 20px;">
         <div class="container">
             <!-- Delivery Address Section -->
@@ -38,12 +45,14 @@
                         <div style="width: 110px; text-align: center;">Đơn giá</div>
                         <div style="width: 110px; text-align: center;">Số lượng</div>
                         <div style="width: 110px; text-align: center;">Thành tiền</div>
-        </div>
-                                </div>
+                    </div>
+                </div>
 
                 <!-- Product Items -->
                 @foreach ($cartItem as $item)
-                    <div class="product-item p-3" style="border-bottom: 1px solid #efefef;">
+                    <div class="product-item p-3" style="border-bottom: 1px solid #efefef;" 
+                        data-item-id="{{ $item->id }}" 
+                        data-variant-id="{{ $item->id_product_variant }}">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center" style="flex: 1;">
                                 <img src="{{ Storage::url($item->skuses->image) }}" alt="Product"
@@ -59,9 +68,9 @@
                                 <div style="width: 110px; text-align: center; color: #ee4d2d;">
                                     ₫{{ number_format($item->price * $item->quantity) }}</div>
                             </div>
-                                </div>
-                                </div>
-                                        @endforeach
+                        </div>
+                    </div>
+                @endforeach
 
                 <!-- Message to Seller -->
                 <div class="p-3" style="border-bottom: 1px solid #efefef;">
@@ -70,7 +79,7 @@
                         <input type="text" class="form-control" placeholder="Lưu ý cho Người bán..."
                             style="border: 1px solid #efefef; font-size: 14px; padding: 5px 10px;">
                     </div>
-                                </div>
+                </div>
 
                 <!-- Shipping Method -->
                 <div class="p-3" style="border-bottom: 1px solid #efefef;">
@@ -78,22 +87,31 @@
                         <div class="d-flex align-items-center">
                             <span style="margin-right: 50px;">Đơn vị vận chuyển:</span>
                             <div>
-                                <div style="font-weight: 500;" id="shipping-name">Nhanh</div>
+                                @if(isset($shipping_methods) && count($shipping_methods) > 0)
+                                <div style="font-weight: 500;" id="shipping-name">{{ $shipping_methods[0]->name }}</div>
                                 <div style="color: #888; font-size: 12px;">
-                                    Nhận hàng vào <span id="shipping-time">{{ $shipping_methods[1]->estimated_time }}</span>
+                                    Nhận hàng vào <span id="shipping-time">{{ $shipping_methods[0]->estimated_time }}</span>
                                 </div>
+                                @else
+                                <div style="font-weight: 500;" id="shipping-name">Chưa có phương thức vận chuyển</div>
+                                <div style="color: #888; font-size: 12px;">
+                                    Nhận hàng vào <span id="shipping-time">--</span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                         <div class="d-flex align-items-center">
-                            <span style="color: #ee4d2d; margin-right: 10px;"
-                                id="shipping-cost">₫{{ number_format($shipping_methods[1]->cost, 0, ',', '.') }}</span>
+                            @if(isset($shipping_methods) && count($shipping_methods) > 0)
+                            <span style="color: #ee4d2d; margin-right: 10px;" id="shipping-cost">₫{{ number_format($shipping_methods[0]->cost, 0, ',', '.') }}</span>
+                            @else
+                            <span style="color: #ee4d2d; margin-right: 10px;" id="shipping-cost">₫0</span>
+                            @endif
                             <a href="#" data-bs-toggle="modal" data-bs-target="#shippingModal"
                                 style="color: #ee4d2d; text-decoration: none;">Thay Đổi</a>
                         </div>
                     </div>
                 </div>
-
-                    </div>
+            </div>
 
             <!-- Vouchers Section -->
             <div class="checkout-section mb-3" style="background: #fff; border-radius: 3px; padding: 20px;">
@@ -110,7 +128,6 @@
                 </div>
             </div>
 
-
             <!-- Payment Method -->
             <div class="checkout-section mb-3" style="background: #fff; border-radius: 3px; padding: 20px;">
                 <h4 style="margin: 0 0 10px; font-size: 16px;">Phương thức thanh toán</h4>
@@ -122,13 +139,11 @@
                             {{ $pm->name }}
                         </label>
                     </div>
-                                        @endforeach
+                @endforeach
             
                 <input type="hidden" id="payment_method_id" name="payment_method_id">
             </div>
             
-
-
             <!-- Order Summary -->
             <div class="checkout-section" style="background: #fff; border-radius: 3px; padding: 20px;">
                 <div class="d-flex justify-content-between mb-2">
@@ -138,8 +153,11 @@
 
                 <div class="d-flex justify-content-between mb-2">
                     <span>Phí vận chuyển</span>
-                    <span
-                        class="shipping-cost-summary">₫{{ number_format($shipping_methods[1]->cost, 0, ',', '.') }}</span>
+                    @if(isset($shipping_methods) && count($shipping_methods) > 0)
+                    <span class="shipping-cost-summary">₫{{ number_format($shipping_methods[0]->cost, 0, ',', '.') }}</span>
+                    @else
+                    <span class="shipping-cost-summary">₫0</span>
+                    @endif
                 </div>
 
                 <div class="d-flex justify-content-between mb-2">
@@ -150,7 +168,11 @@
                 <div class="d-flex justify-content-between mb-3" style="padding: 15px 0; border-top: 1px solid #efefef;">
                     <span>Tổng thanh toán</span>
                     <span id="final-total" class="final-total" style="color: #ee4d2d; font-size: 20px; font-weight: 500;">
-                        ₫{{ number_format($total + $shipping_methods[1]->cost) }}
+                        @if(isset($shipping_methods) && count($shipping_methods) > 0)
+                        ₫{{ number_format($total + $shipping_methods[0]->cost) }}
+                        @else
+                        ₫{{ number_format($total) }}
+                        @endif
                     </span>
                 </div>
 
@@ -159,16 +181,16 @@
                         style="background-color: #ee4d2d; color: #fff; padding: 10px 50px; border-radius: 3px;">
                         Đặt hàng
                     </button>
-
                 </div>
 
                 <!-- Hidden inputs -->
                 <input type="hidden" id="voucher_id" value="">
-                <input type="hidden" id="shipping_method_id" value="{{ $shipping_methods[1]->id_shipping_method }}">
-                                </div>
-
-
-
+                @if(isset($shipping_methods) && count($shipping_methods) > 0)
+                <input type="hidden" id="shipping_method_id" value="{{ $shipping_methods[0]->id_shipping_method }}">
+                @else
+                <input type="hidden" id="shipping_method_id" value="">
+                @endif
+            </div>
         </div>
     </div>
 
@@ -201,9 +223,6 @@
         </div>
     </div>
 
-
-
-
     <!-- Modal Chọn Phương Thức Vận Chuyển -->
     <div class="modal fade" id="shippingModal" tabindex="-1" aria-labelledby="shippingModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -224,8 +243,8 @@
                                 <strong>{{ $method->name }}</strong> - ₫{{ number_format($method->cost, 0, ',', '.') }}
                                 <br><small>{{ $method->estimated_time }}</small>
                             </label>
-                                        </div>
-                                    @endforeach
+                        </div>
+                    @endforeach
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
@@ -235,7 +254,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Address Modal -->
     <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
@@ -250,7 +268,7 @@
                     <!-- Address List -->
                     <div class="address-list" style="max-height: 400px; overflow-y: auto;">
                         @include('client.layouts.partials.address_item')
-                                </div>
+                    </div>
 
                     <!-- Add New Address Button -->
                     <div class="p-3">
@@ -291,7 +309,7 @@
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="is_default" name="is_default">
                             <label class="form-check-label" for="is_default">Đặt làm địa chỉ mặc định</label>
-                            </div>
+                        </div>
 
                         <div class="text-end">
                             <button type="button" class="btn btn-light" data-bs-dismiss="modal" data-bs-toggle="modal"
@@ -304,8 +322,8 @@
                     </form>
                 </div>
             </div>
-                        </div>
-                    </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="addressFormModalEdit" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -344,20 +362,28 @@
                                 style="background-color: #ee4d2d; border: none;">
                                 Hoàn thành
                             </button>
-                </div>
-            </form>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Khởi tạo Laravel Echo
+        // window.Echo = new Echo({
+        //     broadcaster: 'pusher',
+        //     key: '{{ env("PUSHER_APP_KEY") }}',
+        //     cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
+        //     encrypted: true
+        // });
+
         function applyVoucher(voucherCode) {
             const url = "{{ route('voucher.apply') }}";
             const voucherId = $('#voucher_id').val();
             const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
 
-                $.ajax({
+            $.ajax({
                 url: url,
                 method: 'POST',
                 data: {
@@ -365,7 +391,7 @@
                     voucher_id: voucherId,
                     subtotal: subtotal
                 },
-                    success: function(response) {
+                success: function(response) {
                     $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
                     $('#final-total').text('₫' + response.final_total.toLocaleString());
                     $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
@@ -374,13 +400,112 @@
                     $('#finalTotal').text(response.final_total + 'đ');
 
                     $('#voucherModal').modal('hide');
-                    },
-                    error: function(xhr) {
+                },
+                error: function(xhr) {
                     console.error(xhr.responseText);
                 }
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const timerElement = document.getElementById('timer');
+            const attemptsElement = document.getElementById('attempts');
+            const countdown = document.getElementById('countdown');
+            let attemptsRemaining = {{ Auth::user()->failed_attempts ?? 0 }};
+            let timeLeft = 1000; // 15 minutes (900 seconds) timeout
+
+            // Kiểm tra hàng tồn kho
+            $.ajax({
+                url: '/check-stock',
+                type: 'GET',
+                success: function(response) {
+                    console.log('Stock check response:', response);
+                    if (response.out_of_stock) {
+                        console.log(response.out_of_stock)
+                        console.log('Sản phẩm đã hết hàng. Kích hoạt đồng hồ đếm ngược.');
+                        countdown.style.display = 'block'; // Hiện đồng hồ
+                        timerElement.style.display = 'inline'; // Hiện đồng hồ
+                        attemptsElement.style.display = 'inline'; // Hiện số lần thử
+                        startCountdown();
+                    } else {
+                        console.log('Sản phẩm còn hàng, không kích hoạt đồng hồ.');
+                        countdown.style.display = 'none'; // Ẩn đồng hồ
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Lỗi khi kiểm tra tồn kho:', xhr.responseText);
+                }
+            });
+
+            function startCountdown() {
+                console.log('Starting countdown with timeLeft:', timeLeft);
+                // Hiển thị số lần thử còn lại
+                attemptsElement.textContent = `Số lần thử còn lại: ${3 - attemptsRemaining}`;
+
+                function updateTimerDisplay() {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    console.log('Timer updated:', timerElement.textContent);
+
+                    if (timeLeft <= 300) { // 5 minutes remaining
+                        timerElement.style.color = '#dc3545';
+                        timerElement.style.fontWeight = 'bold';
+                    }
+
+                    if (timeLeft <= 60) { // 1 minute remaining
+                        timerElement.style.animation = "blink 1s infinite";
+                    }
+                }
+
+                updateTimerDisplay();
+
+                const timer = setInterval(function() {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timer);
+                        handleTimeout();
+                    }
+                }, 1000);
+            }
+
+            function handleTimeout() {
+                // Disable all form elements
+                document.querySelectorAll('input, button').forEach(element => {
+                    element.disabled = true;
+                });
+
+                alert('Phiên thanh toán đã hết hạn. Vui lòng thử lại.');
+
+                // Create a payment attempt record
+                $.ajax({
+                    url: '/create-payment-attempt',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(data) {
+                        if (data.attempts_remaining <= 0) {
+                            alert('Tài khoản của bạn đã bị khóa!');
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = "/cart";
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Lỗi:', xhr.responseText);
+                        alert('Lỗi xảy ra! Kiểm tra console.');
+                    }
+                });
+            }
+        });
+
+        // Khởi tạo Echo instance
+       
     </script>
+      @vite('resources/js/updateCheckout.js')
 
     <style>
         .form-control:focus {
@@ -405,6 +530,12 @@
         .form-check-input:checked {
             background-color: #ee4d2d;
             border-color: #ee4d2d;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
     </style>
 @endsection
