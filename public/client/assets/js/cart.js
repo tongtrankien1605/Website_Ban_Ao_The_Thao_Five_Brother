@@ -455,3 +455,55 @@ $(document).ready(function () {
         $(this).prop("disabled", true);
     });
 });
+
+// Function to validate cart items before submission
+function validateCartItems() {
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Check if any items are selected
+    let selectedItems = $('.cart-checkbox:checked');
+    if (selectedItems.length === 0) {
+        errorMessage = 'Vui lòng chọn ít nhất một sản phẩm để đặt hàng';
+        isValid = false;
+    } else {
+        // Check quantity for each selected item
+        selectedItems.each(function() {
+            let itemId = $(this).val();
+            let quantityInput = $(`input[data-id="${itemId}"]`);
+            let quantity = parseInt(quantityInput.val());
+            
+            if (!quantity || quantity < 1) {
+                errorMessage = 'Số lượng sản phẩm không hợp lệ. Vui lòng kiểm tra lại';
+                isValid = false;
+                return false; // Break the each loop
+            }
+        });
+    }
+    
+    if (!isValid) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Lỗi',
+            text: errorMessage,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+    
+    return isValid;
+}
+
+// Add click handler for checkout button
+$(document).ready(function() {
+    $('.checkout-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        if (!validateCartItems()) {
+            return;
+        }
+        
+        // Proceed with checkout if validation passes
+        window.location.href = $(this).attr('href');
+    });
+});

@@ -75,7 +75,7 @@
             <h3>Thông tin đơn hàng</h3>
             <p><strong>Người đặt:</strong> {{ $order->users->name }}</p>
             <p><strong>Số điện thoại:</strong> {{ $order->users->phone_number }}</p>
-            <p><strong>Địa chỉ:</strong> {{ $order->address_users->address }}</p>
+            <p><strong>Địa chỉ:</strong> {{ $order->address }}</p>
             <p><strong>Phương thức thanh toán:</strong> {{ $order->payment_methods->name }}</p>
             <p><strong>Phương thức vận chuyển:</strong> {{ $order->shipping_methods->name }}</p>
             <p><strong>Trạng thái:</strong> {{ $order->order_statuses->name }}</p>

@@ -105,11 +105,11 @@
                                                                 <ul>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>Người đặt:
-                                                                        {{ $order->user_name }}
+                                                                        {{ $order->receiver_name }}
                                                                     </li>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>Điện thoại:
-                                                                        {{ $order->user_phone_number }}
+                                                                        {{ $order->phone_number }}
                                                                     </li>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>Địa chỉ:
@@ -215,9 +215,9 @@
 
                                                                         <div class="card p-3 mb-3">
                                                                             <p><strong>Khách hàng:</strong>
-                                                                                {{ $order->user_name }}</p>
+                                                                                {{ $order->receiver_name }}</p>
                                                                             <p><strong>Điện thoại:</strong>
-                                                                                {{ $order->user_phone_number }}</p>
+                                                                                {{ $order->phone_number  }}</p>
                                                                             <p><strong>Địa chỉ:</strong>
                                                                                 {{ $order->address }}</p>
                                                                         </div>
