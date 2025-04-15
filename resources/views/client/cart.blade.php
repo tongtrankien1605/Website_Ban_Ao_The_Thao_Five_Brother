@@ -134,26 +134,25 @@
                         @if (!$cartItem->isEmpty())
                             <div class="cart-total fix">
                                 <h3>Cart Totals</h3>
-                                <div class="table-responsive">
-                                    <table>
-                                        <tbody>
-                                            <tr class="cart-subtotal">
-                                                <th>Subtotal</th>
-                                                <td>
-                                                    <span id="cart-subtotal">{{ number_format($total) }} đồng</span>
-                                                </td>
-                                            </tr>
-                                            <tr class="order-total">
-                                                <th>Order Total</th>
-                                                <td>
-                                                    <strong><span id="cart-total-amount">{{ number_format($total) }} đồng</span></strong>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <table>
+                                    <tbody>
+                                        <tr class="cart-subtotal">
+                                            <th>Subtotal</th>
+                                            <td>
+                                                <span class="amount">{{ number_format($total) }} Đồng</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="order-total">
+                                            <th>Total</th>
+                                            <td>
+                                                <strong><span class="amount">{{ number_format($total) }}
+                                                        Đồng</span></strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                                 <div class="proceed-to-checkout section mt-30">
-                                    <a href="{{ route('checkout') }}" class="checkout-btn">Proceed to Checkout</a>
+                                    <a href="{{ route('indexPayment') }}" class="checkout-btn">Proceed to Checkout</a>
                                 </div>
                             </div>
                         @endif
