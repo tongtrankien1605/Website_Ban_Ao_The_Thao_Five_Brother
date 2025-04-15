@@ -109,10 +109,15 @@ class PaymentController extends Controller
     {
         $request->validate([
             'voucher_id' => 'required|exists:vouchers,id',
-            'subtotal' => 'required|numeric|min:0'
+            'subtotal' => 'required|numeric|min:0',
+            'shipping_method_id' => 'required|exists:shipping_methods,id_shipping_method',
         ]);
+        // dd($request->shipping_method_id);
 
         $user = auth()->user();
+        // $shipping_methods = ShippingMethod::where('id_shipping_method', $request->shiping_method_id)->get();
+        $shipping_methods = ShippingMethod::where('id_shipping_method', $request->shipping_method_id)->first();
+        // dd($shipping_methods);
 
         // Lấy bản ghi từ bảng trung gian voucher_user
         $userVoucher = VoucherUser::where('id_user', $user->id)
@@ -152,7 +157,7 @@ class PaymentController extends Controller
             $discount = $voucher->max_discount_amount;
         }
 
-        $final_total = $subtotal - $discount;
+        $final_total = $subtotal - $discount + $shipping_methods->cost;
 
         return response()->json([
             'voucher_discount' => round($discount),

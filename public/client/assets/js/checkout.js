@@ -190,7 +190,8 @@ $(document).ready(function () {
 
     function updateOrderSummary() {
         const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, '')) || 0;
-        const shippingCost = parseInt($('#shipping-cost').text().replace(/[₫,.]/g, '')) || 0;
+        const shippingCost = parseInt($('#shipping-cost').text().replace(/[₫,.]/g, '')) || 40000;
+        console.log(shippingCost);
         const voucherDiscount = parseInt($('#voucher-discount').text().replace(/[₫,.]/g, '')) || 0;
     
         const finalTotal = subtotal + shippingCost - voucherDiscount;
@@ -224,6 +225,7 @@ $(document).ready(function () {
         const [nameRaw, phoneRaw] = namePhone.split('Số điện thoại:');
         const name = nameRaw.trim();
         const phone = phoneRaw.trim();
+        const message = $('#message').val().trim();
     
         const paymentMethodId = $('#payment_method_id').val();
         const shippingMethodId = $('#shipping_method_id').val();
@@ -256,6 +258,7 @@ $(document).ready(function () {
             shipping_method_id: shippingMethodId,
             payment_method_id: paymentMethodId,
             voucher_id: voucherId,
+            message: message,
             total,
             items
         };
@@ -290,3 +293,42 @@ $(document).ready(function () {
 
      });
 
+     function applyVoucher(voucherCode) {
+        const url = "/voucher/apply"; // URL của API áp dụng voucher
+        // console.log(url);
+        
+        const voucherId = $('#voucher_id').val();
+        const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
+        const shippingMethodId = $('#shipping_method_id').val(); // Lấy ID phương thức vận chuyển đã chọn
+        // console.log(shippingMethodId);
+        
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+            data: {
+                voucher_id: voucherId,
+                subtotal: subtotal,
+                shipping_method_id: shippingMethodId // Gửi ID phương thức vận chuyển
+            },
+            success: function(response) {
+                $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
+                $('#final-total').text('₫' + response.final_total.toLocaleString());
+                // console.log(response.final_total.data);
+                
+                $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
+
+                $('#discountAmount').text('-' + response.voucher_discount + 'đ');
+                $('#finalTotal').text(response.final_total + 'đ');
+
+                $('#voucherModal').modal('hide');
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    }

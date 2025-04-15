@@ -25,6 +25,7 @@ class OrderController extends Controller
 {
     public function placeOrder(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -74,12 +75,12 @@ class OrderController extends Controller
             }
 
 
-            if (empty($outOfStockItems)) {
+            if (!empty($outOfStockItems)) {
                 DB::rollBack();
                 broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
                 return response()->json([
                     'success' => false,
-                    'message' => 'Một số sản phẩm đã hết hàng',
+                    'message' => 'Một số sản phẩm đã hết hàng', 
                     'out_of_stock_items' => $outOfStockItems
                 ], 400);
             }
@@ -108,14 +109,15 @@ class OrderController extends Controller
                 $variantId = $cartItem->id_product_variant;
                 $inventory = $inventories->get($variantId);
                 $quantity = (int) $item['quantity'];
-                
                 OrderDetail::create([
                     'id_order' => $order->id,
                     'id_product_variant' => $variantId,
                     'quantity' => $quantity,
+                    'message' => $request->message ?? null,
                     'unit_price' => $item['price'],
                     'total_price' => $quantity * $item['price'],
                 ]);
+                
                 
                 // Create inventory log for temporary reservation
                 InventoryLog::create([

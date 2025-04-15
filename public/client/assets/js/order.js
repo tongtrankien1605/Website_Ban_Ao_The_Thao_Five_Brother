@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    // console.log(1);
+    
     let shippingSelect = $("#shipping-method");
     let shippingCostElement = $("#shipping-cost");
     let grandTotalElement = $("#grand-total");
@@ -8,11 +10,14 @@ $(document).ready(function () {
     function updateShippingCost() {
         let subTotal = Number($("#sub-total").text().replace(/[^0-9]/g, "")) || 0; // Lấy lại subTotal từ HTML
         let selectedOption = shippingSelect.find(":selected");
-        let shippingCost = Number(selectedOption.attr("data-cost") || 0);
+        let shippingCost = Number(selectedOption.attr("data-cost")||40000); // Giá trị mặc định là 0 nếu không có thuộc tính data-cost
+        console.log();
+        
         let grandTotal = subTotal + shippingCost;
 
         // Cập nhật giao diện
         shippingCostElement.text(shippingCost.toLocaleString() + " Đồng");
+        
         grandTotalElement.text(grandTotal.toLocaleString() + " Đồng");
 
         // Cập nhật input ẩn để gửi lên server
@@ -26,3 +31,4 @@ $(document).ready(function () {
     // Chạy lần đầu để cập nhật đúng số tiền ship
     updateShippingCost();
 });
+

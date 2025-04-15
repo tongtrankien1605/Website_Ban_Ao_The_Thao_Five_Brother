@@ -47,9 +47,10 @@
                                                 @php
                                                     $subtotal = floatval($cart->price) * intval($cart->quantity);
                                                     $total += $subtotal;
+                                                    // $quantity = 0;
                                                     foreach ($inventory as $item){
-                                                        if ($item->id == $cart->id) {
-                                                            $cart->quantity = $item->quantity;
+                                                        if ($item->id_product_variant == $cart->id_product_variant) {
+                                                            $quantity = $item->quantity;
                                                         }
                                                     }
                                                 @endphp
@@ -68,7 +69,7 @@
                                                     <span class="amount">{{ number_format($cart->price) }} đồng</span>
                                                 </td>
                                                 <td class="pro-quantity">
-                                                    <div class="pro-qty"><input   data-max="{{ $item->quantity }}"  data-id="{{ $cart->id }}"
+                                                    <div class="pro-qty"><input   data-max="{{ $quantity}}"  data-id="{{ $cart->id }}"
                                                             class="dataInput" type="text" value="{{ $cart->quantity }}">
                                                     </div>
                                                 </td>
