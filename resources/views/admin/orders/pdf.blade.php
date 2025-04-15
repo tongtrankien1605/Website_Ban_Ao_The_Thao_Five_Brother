@@ -65,13 +65,28 @@
         <p>Đơn hàng #{{ $order->id }}</p>
         <p>Ngày tạo: {{ $order->created_at->format('d/m/Y H:i:s') }}</p>
     </div>
-
+    @php
+        $address = collect($order->users->address_users)->where('is_default', 1)->first();
+    @endphp
     <div class="order-info">
         <h3>Thông tin đơn hàng</h3>
-        <p><strong>Người đặt:</strong> {{ $order->users->name }}</p>
-        <p><strong>Số điện thoại:</strong> {{ $order->users->phone_number }}</p>
-        <p><strong>Địa chỉ:</strong> {{ $order->address_users->address }}</p>
+        <table style="width: 100%; margin-bottom: 20px; border:none;">
+            <tr>
+                <td style="width: 50%; vertical-align: top; border:none;">
+                    <p><strong>Người đặt:</strong> {{ $order->users->name }}</p>
+                    <p><strong>Số điện thoại:</strong> {{ $order->users->phone_number }}</p>
+                    <p><strong>Địa chỉ:</strong> {{ $address->address }}</p>
+                </td>
+                <td style="width: 50%; vertical-align: top;border:none;">
+                    <p><strong>Người nhận:</strong> {{ $order->receiver_name }}</p>
+                    <p><strong>Số điện thoại:</strong> {{ $order->phone_number }}</p>
+                    <p><strong>Địa chỉ:</strong> {{ $order->address }}</p>
+                </td>
+            </tr>
+        </table>
+
         <p><strong>Phương thức thanh toán:</strong> {{ $order->payment_methods->name }}</p>
+        <p><strong>Trạng thái thanh toán:</strong> {{ $order->payment_method_statuses->name }}</p>
         <p><strong>Phương thức vận chuyển:</strong> {{ $order->shipping_methods->name }}</p>
         <p><strong>Trạng thái:</strong> {{ $order->order_statuses->name }}</p>
     </div>
@@ -89,7 +104,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($order->order_details as $index => $detail)
+            @foreach ($order->order_details as $index => $detail)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $detail->product_variants->name }}</td>
@@ -104,7 +119,10 @@
 
     <div class="total-section">
         <p><strong>Tổng tiền hàng:</strong>
-            {{ number_format($order->total_amount - $order->shipping_methods->cost, 0, '', ',') }} VND</p>
+            {{ number_format($order->total_amount + ($order->vouchers->max_discount_amount ?? 0) - $order->shipping_methods->cost, 0, '', ',') }}
+            VND</p>
+        <p><strong>Giảm giá:</strong> {{ number_format($order->vouchers->max_discount_amount ?? 0, 0, '', ',') }} VND
+        </p>
         <p><strong>Phí vận chuyển:</strong> {{ number_format($order->shipping_methods->cost, 0, '', ',') }} VND</p>
         <p><strong>Tổng cộng:</strong> {{ number_format($order->total_amount, 0, '', ',') }} VND</p>
     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SkusQuantityRequest;
+use App\Http\Requests\Admin\UpdateQuantityConfirmRequest;
 use App\Models\Inventory;
 use App\Models\InventoryEntry;
 use App\Models\InventoryLog;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class SkusQuantityController extends Controller
 {
@@ -55,9 +57,9 @@ class SkusQuantityController extends Controller
     public function store(SkusQuantityRequest $request)
     {
         DB::beginTransaction();
-        $count = InventoryEntry::orderBy('created_at','desc')->first();
+        $count = InventoryEntry::orderBy('import', 'desc')->first();
         $import = 0;
-        if($count){
+        if ($count->import != "") {
             $import = $count->import;
         }
         if (Auth::user()->role == 3) {
@@ -85,7 +87,7 @@ class SkusQuantityController extends Controller
                 $oldQuantity = $invenTory->quantity;
                 $invenTory->quantity += $value['quantity'];
                 $invenTory->save();
-                $InventoryLog = InventoryLog::create([
+                InventoryLog::create([
                     'id_product_variant' => $value['id'],
                     'user_id' => Auth::user()->id,
                     'old_quantity' => $oldQuantity,
@@ -103,9 +105,21 @@ class SkusQuantityController extends Controller
 
     public function indexConfirm(Request $request)
     {
-        $skuses = InventoryEntry::with(['skuses.inventories'])
-            ->where('inventory_entries.status', 'Đang chờ xử lý')
-            ->get();
+        if (Auth::user()->role === 3) {
+            $skuses = InventoryEntry::with(['skuses.inventories', 'users', 'approver'])
+                ->where('inventory_entries.status', 'Đang chờ xử lý')
+                ->get()
+                ->groupBy('import');
+        } else {
+            $skuses = InventoryEntry::with(['skuses', 'users', 'approver'])
+                ->where('user_id', Auth::id())
+                ->where('inventory_entries.status', 'Đang chờ xử lý')
+                ->get()
+                ->groupBy('import');
+        }
+        // $skuses = InventoryEntry::with(['skuses.inventories'])
+        //     ->where('inventory_entries.status', 'Đang chờ xử lý')
+        //     ->get();
         // dd($skuses->toArray());
         return view('admin.skus.indexConfirm', compact('skuses'));
     }
@@ -117,7 +131,7 @@ class SkusQuantityController extends Controller
         ]);
         DB::beginTransaction();
         $ids = explode(',', $request->ids);
-        $inventoryEntries = InventoryEntry::whereIn('id', $ids)->get();
+        $inventoryEntries = InventoryEntry::whereIn('import', $ids)->get();
         foreach ($inventoryEntries as $value) {
             $invenTory = Inventory::where('id_product_variant', $value->id_skus)->first();
             $oldQuantity = $invenTory->quantity;
@@ -130,21 +144,60 @@ class SkusQuantityController extends Controller
                 'new_quantity' => $invenTory->quantity,
                 'change_quantity' => $value->quantity,
                 'reason' => 'Nhập hàng',
-                'type' => 'Nhập'
+                'type' => 'Nhập',
+                'inventory_entry_id' => $value->id,
             ]);
         }
-        InventoryEntry::whereIn('id', $ids)->update(['status' => 'Đã duyệt', 'id_shopper' => auth()->user()->id]);
+        InventoryEntry::whereIn('import', $ids)->update(['status' => 'Đã duyệt', 'id_shopper' => auth()->user()->id]);
         DB::commit();
-        return redirect()->route('admin.skus_confirm');
+        return redirect()->route('admin.skus_confirm')->with('success', 'Duyệt thành công');
     }
 
     public function indexHistory()
     {
-        $skuses = InventoryEntry::with(['skuses.inventory_logs', 'users', 'approver'])
-            ->where('inventory_entries.status', 'Đã duyệt')
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        if (Auth::user()->role === 3) {
+            $skuses = InventoryEntry::with(['skuses', 'users', 'approver', 'inventory_logs'])
+                ->where('inventory_entries.status', 'Đã duyệt')
+                ->orderBy('updated_at', 'desc')
+                ->get();
+        } else {
+            $skuses = InventoryEntry::with(['skuses', 'users', 'approver', 'inventory_logs'])
+                ->where('user_id', Auth::id())
+                ->where('inventory_entries.status', 'Đã duyệt')
+                ->orderBy('updated_at', 'desc')
+                ->get();
+        }
         return view('admin.skus.indexHistory', compact('skuses'));
+    }
+
+    /**
+     * Cập nhật thông tin cho các mục nhập kho
+     */
+    public function updateInventoryEntry(UpdateQuantityConfirmRequest $request)
+    {
+        // Bắt đầu transaction để đảm bảo tính nhất quán dữ liệu
+        DB::beginTransaction();
+        try {
+            foreach ($request->variants as $id => $data) {
+                $entry = InventoryEntry::findOrFail($data['id']);
+
+                // Cập nhật thông tin entry
+                $entry->quantity = $data['quantity'];
+                $entry->cost_price = $data['cost_price'];
+                $entry->price = $data['price'];
+                $entry->sale_price = $data['sale_price'] ?? null;
+                $entry->discount_start = !empty($data['discount_start']) ? Carbon::parse($data['discount_start']) : null;
+                $entry->discount_end = !empty($data['discount_end']) ? Carbon::parse($data['discount_end']) : null;
+
+                $entry->save();
+            }
+
+            DB::commit();
+            return redirect()->route('admin.skus_confirm')->with('success', 'Cập nhật thông tin thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -176,6 +229,7 @@ class SkusQuantityController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        InventoryEntry::where('import', $id)->delete();
+        return redirect()->route('admin.skus_confirm')->with('success', 'Xoá thành công');
     }
 }

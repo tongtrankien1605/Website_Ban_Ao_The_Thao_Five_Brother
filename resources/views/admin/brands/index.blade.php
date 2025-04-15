@@ -15,7 +15,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.posts.index') }}">Danh sách Thương
+                            <li class="breadcrumb-item active"><a href="{{ route('admin.brands.create') }}">Thêm mới thương
                                     hiệu</a></li>
                         </ol>
                     </div>
@@ -26,8 +26,7 @@
         <div class="col-12">
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
-                    <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">Thêm mới thương hiệu</a>
+                    {{-- <h3 class="card-title"></h3> --}}
                     <div class="card-tools">
                         <form action="{{ route('admin.brands.index') }}" method="GET" class="input-group input-group-sm"
                             style="width: 150px;">
@@ -79,7 +78,8 @@
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="bi bi-trash"></i></button>
                                         </form>
                                         <a href="{{ route('admin.brands.show', $brand->id) }}" class="btn btn-info"><i
                                                 class="bi bi-eye"></i></a>
@@ -95,5 +95,22 @@
             </div>
         </div>
     </div>
-    @extends('admin.table.js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @endif
+    </script>
 @endsection

@@ -26,7 +26,7 @@
                                 <img src="{{ Storage::url($skus->image) }}" alt="Avatar" class="img-fluid"
                                     width="200">
                             </div>
-                            <label for="name">Name</label>
+                            <label for="name">Tên</label>
                             <input type="text" name="name" class="form-control" id="name"
                                 value="{{ old('name', $skus->name) }}" readonly>
                             @error('name')
@@ -36,14 +36,14 @@
                         <div class="row justify-content-center align-items-center g-5">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="barcode">Barcode</label>
+                                    <label for="barcode">Mã vạch</label>
                                     <input type="text" name="barcode" class="form-control" id="barcode"
                                         value="{{ old('barcode', $skus->barcode) }}" readonly>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="quantity">Quantity</label>
+                                    <label for="quantity">Số lượng</label>
                                     <input type="numbernumber" name="quantity" class="form-control" id="quantity"
                                         value="{{ old('quantity') }}">
                                     @error('quantity')
@@ -53,7 +53,7 @@
                             </div>
                             <div class="col-sm-6 mt-0">
                                 <div class="form-group">
-                                    <label for="cost_price">Cost price</label>
+                                    <label for="cost_price">Giá gốc</label>
                                     <input type="number" name="cost_price" class="form-control" id="cost_price"
                                         value="{{ old('cost_price') }}">
                                     @error('cost_price')
@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-sm-6 mt-0">
                                 <div class="form-group">
-                                    <label for="price">Price</label>
+                                    <label for="price">Giá nhập</label>
                                     <input type="number" name="price" class="form-control" id="price"
                                         value="{{ old('price') }}">
                                     @error('price')
@@ -81,7 +81,7 @@
                         <div class="form-group sale_price" id="sale_price_group" style="display: none;">
                             <div class="row justify-content-center align-items-center g-3">
                                 <div class="col-sm-4">
-                                    <label for="sale_price">Sale price</label>
+                                    <label for="sale_price">Giá giảm</label>
                                     <input type="number" name="sale_price" class="form-control" id="sale_price"
                                         value="{{ old('sale_price') }}">
                                     @error('sale_price')

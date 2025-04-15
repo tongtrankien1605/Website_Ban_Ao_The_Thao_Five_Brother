@@ -138,49 +138,49 @@
                 <div class="card mb-3 variant-block">
                     <div class="card-header toggle-variant d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">${variantName}</h5>
-                        <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
+                        <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa biến thể</button>
                     </div>
                     <div class="card-body d-none">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">Tên:</label>
                         <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}" readonly>
                         ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
-                        <label class="form-label">Quantity</label>
+                        <label class="form-label">Số lượng:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
-                        <label class="form-label">Cost price</label>
+                        <label class="form-label">Giá gốc:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][cost_price]">
                             @error('variants[${variantCounter}][cost_price]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
-                        <label class="form-label">Price</label>
+                        <label class="form-label">Giá bán:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][price]">
                             @error('variants[${variantCounter}][price]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
-                        <label class="form-label">Sale price</label>
+                        <label class="form-label">Giá giảm:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
                             @error('variants[${variantCounter}][sale_price]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
-                        <label class="form-label">Ngày bắt đầu</label>
+                        <label class="form-label">Ngày bắt đầu:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][start_date]"
                             min="{{ date('Y-m-d') }}">
 
-                        <label class="form-label">Ngày kết thúc</label>
+                        <label class="form-label">Ngày kết thúc:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][end_date]"
                             min="{{ date('Y-m-d') }}">
 
-                        <label class="form-label">Image</label>
+                        <label class="form-label">Ảnh:</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
                             @error('variants[${variantCounter}][image]')
                                 <div class="text-danger">{{ $message }}</div>

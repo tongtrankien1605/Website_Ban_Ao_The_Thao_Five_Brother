@@ -44,7 +44,7 @@ class UserRequest extends FormRequest
             ],
             'role' => 'required|exists:roles,id',
             'gender' => 'required',
-            'birthday' => 'required'
+            'birthday' => ['required', 'date', 'before_or_equal:today'],
         ];
         if ($id) {
             $validate['password'] = 'nullable|min:10|max:16';

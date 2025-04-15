@@ -34,7 +34,7 @@
                     <a href="{{ Route('admin.index') }}" class="nav-link">
                         <i class="fa-solid fa-rocket"></i>
                         <p>
-                            Dashboard
+                            Trang chủ
 
                         </p>
                     </a>
@@ -48,10 +48,10 @@
                         <i class="fa-solid fa-users"></i>
                         <p>
                             Quản lý người dùng
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.user.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
@@ -64,7 +64,7 @@
                                 <p>Thêm mới người dùng</p>
                             </a>
                         </li>
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
@@ -72,10 +72,10 @@
                         <i class="fa-solid fa-table-list"></i>
                         <p>
                             Quản lý danh mục
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.category.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
@@ -89,7 +89,7 @@
                             </a>
                         </li>
 
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
@@ -97,10 +97,10 @@
                         <i class="fa-solid fa-copyright"></i>
                         <p>
                             Quản lý thương hiệu
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.brands.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
@@ -113,18 +113,18 @@
                                 <p>Thêm mới thương hiệu</p>
                             </a>
                         </li>
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.brands.index') }}" class="nav-link">
+                    <a href="{{ route('admin.product_attribute.index') }}" class="nav-link">
                         <i class="fa-solid fa-sitemap"></i>
                         <p>
                             Quản lý thuộc tính
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.product_attribute.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
@@ -138,7 +138,7 @@
                             </a>
                         </li>
 
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
@@ -146,10 +146,10 @@
                         <i class="fa-brands fa-product-hunt"></i>
                         <p>
                             Quản lý sản phẩm
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.product.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
@@ -163,7 +163,7 @@
                             </a>
                         </li>
 
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
@@ -171,10 +171,10 @@
                         <i class="fa-solid fa-ticket"></i>
                         <p>
                             Quản lý Voucher
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.vouchers.index') }}" class="nav-link">
                                 <i class="fa-solid fa-list"></i>
@@ -188,18 +188,18 @@
                             </a>
                         </li>
 
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.brands.index') }}" class="nav-link">
+                    <a href="{{ route('admin.posts.index') }}" class="nav-link">
                         <i class="fa-solid fa-newspaper"></i>
                         <p>
                             Quản lý bài viết
-                            <i class="right fas fa-angle-left"></i>
+                            {{-- <i class="right fas fa-angle-left"></i> --}}
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    {{-- <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.posts.index') }}" class="nav-link">
                                 <i class="bi bi-list-columns"></i>
@@ -213,7 +213,7 @@
                             </a>
                         </li>
 
-                    </ul>
+                    </ul> --}}
                 </li>
 
                 <li class="nav-item">
@@ -272,7 +272,14 @@
 <style>
     .main-sidebar {
         background-color: #f8f9fa !important;
-        min-height: 100% !important;
+        min-height: 100vh !important;
+        height: auto;
+        overflow-y: auto;
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        padding-bottom: 60px; /* để chừa khoảng cho footer */
+        z-index: 999;
     }
     
     .sidebar-light {

@@ -46,7 +46,9 @@ class ProductController extends Controller
                     'categories.name as product_category',
                     'brands.name as product_brand',
                     DB::raw('(SELECT COUNT(*) FROM skuses WHERE skuses.product_id = products.id AND skuses.deleted_at IS NULL) as count_variant'),
-                    DB::raw('(SELECT SUM(quantity) FROM inventories WHERE inventories.id_product_variant IN (SELECT id FROM skuses WHERE skuses.product_id = products.id AND skuses.deleted_at IS NULL)) as sum_quantity_variant')
+                    DB::raw('(SELECT SUM(quantity) FROM inventories WHERE inventories.id_product_variant IN (SELECT id FROM skuses WHERE skuses.product_id = products.id AND skuses.deleted_at IS NULL)) as sum_quantity_variant'),
+                    DB::raw('(SELECT AVG(price) FROM inventory_entries WHERE inventory_entries.id_skus IN (SELECT id FROM skuses WHERE skuses.product_id = products.id AND skuses.deleted_at IS NULL)) as avg_inventory_price'),
+                    // DB::raw('(SELECT AVG(sale_price) FROM inventory_entries WHERE inventory_entries.id_skus IN (SELECT id FROM skuses WHERE skuses.product_id = products.id AND skuses.deleted_at IS NULL)) as avg_sale_price')
                 ]
             )->groupBy([
                 'products.id',
@@ -62,8 +64,12 @@ class ProductController extends Controller
                 'products.deleted_at',
                 'categories.name',
                 'brands.name'
-            ])->orderByDesc('products.updated_at')->paginate(20);
-        return view('admin.products.index', compact(['products']));
+            ])
+            ->orderByDesc('products.updated_at')->get();
+            // dd($products->toArray());
+        $productCategories = $products->pluck('categories.name', 'id_category');
+        $productBrands = $products->pluck('brands.name', 'id_brand');
+        return view('admin.products.index', compact(['products', 'productCategories', 'productBrands']));
     }
 
     /**
@@ -210,7 +216,8 @@ class ProductController extends Controller
         $brand = Brand::whereNull('deleted_at')->where('id', $product->id_brand)->first();
         $category = Category::whereNull('deleted_at')->where('id', $product->id_category)->first();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
-        $skuses = Skus::whereNull('deleted_at')->where('product_id', $product->id)->paginate(10);
+        $skuses = Skus::whereNull('deleted_at')->where('product_id', $product->id)->with('inventories','inventory_entries')->get();
+
         return view('admin.products.show', compact(['brand', 'category', 'product', 'productImages', 'skuses']));
     }
 
@@ -236,7 +243,7 @@ class ProductController extends Controller
         $brands = Brand::whereNull('deleted_at')->get();
         $categories = Category::whereNull('deleted_at')->get();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
-        $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->with(['inventories','inventory_entries'])->get();
+        $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->with(['inventories', 'inventory_entries'])->get();
         // dd($skues->toArray());
         $skuesArray = Skus::whereNull('deleted_at')->where('product_id', $product->id)->pluck('name', 'id');
         $skusAttributeValues =  Variant::leftJoin('product_atribute_values', function ($q) {

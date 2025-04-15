@@ -14,7 +14,7 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        $vouchers = Voucher::latest('updated_at')->paginate(10);
+        $vouchers = Voucher::latest('updated_at')->get();
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
@@ -49,7 +49,7 @@ class VoucherController extends Controller
 
         Voucher::create($request->all());
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher created successfully');
+        return redirect()->route('admin.vouchers.index')->with('success', 'Tạo mới thành công.');
     }
 
     /**
@@ -76,9 +76,9 @@ class VoucherController extends Controller
         $data = $request->validate([
             'code' => [
                 'required',
-                Rule::unique('vouchers','id')->ignore($voucher->id)
+                Rule::unique('vouchers', 'id')->ignore($voucher->id)
             ],
-        'discount_type' => ['required', Rule::in(['percentage', 'fixed'])],
+            'discount_type' => ['required', Rule::in(['percentage', 'fixed'])],
             'discount_value' => [
                 'required',
                 'numeric',
@@ -92,17 +92,43 @@ class VoucherController extends Controller
             'status' => ['nullable', Rule::in([0, 1])],
         ]);
 
-        $data['is_active'] ??= 0;
+        $data['status'] ??= 1;
 
         // dd($data);
         $voucher->update($data);
 
-        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher updated successfully');
+        return redirect()->route('admin.vouchers.index')->with('success', 'Cập nhật thành công');
     }
 
     public function destroy(Voucher $voucher)
     {
         $voucher->delete();
-        return redirect()->route('admin.vouchers.index')->with('success', 'Voucher deleted successfully');
+        return redirect()->route('admin.vouchers.index')->with('success', 'Xóa thành công');
+    }
+    public function bulkDelete(Request $request)
+    {
+        $ids = json_decode($request->input('selected_ids'), true);
+
+        if (!is_array($ids) || empty($ids)) {
+            return redirect()->back()->with('error', 'Không có voucher nào được chọn.');
+        }
+
+        $query = Voucher::whereIn('id', $ids);
+
+        if ($request->action_type === 'delete') {
+            $query->delete();
+            return back()->with('success', 'Xóa thành công');
+        }
+
+        if ($request->action_type === 'publish') {
+            $vouchers = $query->get();
+            foreach ($vouchers as $voucher) {
+                $voucher->status = $voucher->status == 1 ? 0 : 1;
+                $voucher->save();
+            }
+            return back()->with('success', 'Cập nhật trạng thái thành công.');
+        }
+
+        return back()->with('error', 'Hành động không hợp lệ.');
     }
 }

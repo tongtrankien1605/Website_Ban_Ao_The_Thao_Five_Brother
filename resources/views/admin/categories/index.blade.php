@@ -14,7 +14,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.category.index') }}">Danh sách Danh
+                            <li class="breadcrumb-item active"> <a href="{{ route('admin.category.create') }}">Thêm mới danh
                                     mục</a></li>
                         </ol>
                     </div>
@@ -25,8 +25,6 @@
         <div class="col-12">
             <div class="card" style="height: 700px; width:1250px">
                 <div class="card-header">
-                    <h3 class="card-title"></h3>
-                    <a href="{{ route('admin.category.create') }}" class="btn btn-primary">Thêm mới danh mục</a>
                     <div class="card-tools">
                         {{-- <form action="{{ route('admin.category.search') }}" method="GET" class="pb-3">
                             <div id="example1_filter" class="dataTables_filter"><label>Search:<input type="search"
@@ -35,8 +33,8 @@
                                 <button class="btn btn-success" type="submit"><i class="fa fa-search"></i></button>
                             </div>
                         </form> --}}
-                        <form action="{{ route('admin.category.search') }}" method="GET" class="input-group input-group-sm"
-                            style="width: 150px;">
+                        <form action="{{ route('admin.category.search') }}" method="GET"
+                            class="input-group input-group-sm" style="width: 150px;">
                             <input type="text" name="search" class="form-control float-right" placeholder="Search"
                                 value="{{ request('search') }}">
                             <div class="input-group-append">
@@ -62,17 +60,17 @@
                                     Id
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    Name
+                                    Tên danh mục
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    Description</th>
+                                    Mô tả</th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    Image
+                                    Ảnh
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    Is_active</th>
+                                    Trạng thái</th>
                                 <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    Action</th>
+                                    Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,7 +98,8 @@
                                         @endif
                                     </td>
                                     <td class="d-flex">
-                                        <a href="{{ Route('admin.category.edit', $cate->id) }}" class="btn btn-success mx-2">
+                                        <a href="{{ Route('admin.category.edit', $cate->id) }}"
+                                            class="btn btn-success mx-2">
                                             <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                                 stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -126,4 +125,22 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @endif
+    </script>
 @endsection

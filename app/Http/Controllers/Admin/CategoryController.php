@@ -57,7 +57,7 @@ class CategoryController extends Controller
             // dd($data);
             Category::create($data);
 
-            return redirect()->route('admin.category.index')->with('message', 'Thêm danh mục thành công!');
+            return redirect()->route('admin.category.index')->with('success', 'Thêm danh mục thành công!');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
@@ -132,7 +132,7 @@ class CategoryController extends Controller
         $category->update($validatedData);
 
 
-        return redirect()->route('admin.category.index')->with('message', 'Category updated successfully!');
+        return redirect()->route('admin.category.index')->with('success', 'Category updated successfully!');
     }
 
 
@@ -142,6 +142,6 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('admin.category.index')->with('message', 'Xóa thành công');
+        return redirect()->route('admin.category.index')->with('success', 'Xóa thành công');
     }
 }

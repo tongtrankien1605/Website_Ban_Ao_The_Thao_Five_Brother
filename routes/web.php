@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\RefundController as AdminRefundController;
 use App\Http\Controllers\Admin\SkusController;
-use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\BrandController as ControllersBrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
@@ -99,88 +98,95 @@ Route::get('/404', function () {
 
 
 // thêm middleware auth vào các route admin
-
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function () {
-
-    //user
-    Route::resource('/user', AdminUserController::class);
-    Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
-
-    // chạy template sẵn
-    // Route::get('/index', function () {
-    //     // return view('admin.layouts.index');
-    //     return view('admin.dashboard.index');
-    // })->name('index');
-
-    // end template sẵn
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    // Public admin routes (không cần đăng nhập)
+    Route::get('/', function () {
+        return redirect()->route('admin.login');
+    });
+    Route::get('login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'login'])->name('login.submit');
     
-    Route::get('/form', function () {
-        return view('admin.form.index');
-    })->name('form');
-    Route::get('/table', function () {
-        return view('admin.table.index');
-    })->name('table');
+    // Protected admin routes (cần đăng nhập và phải là admin/staff)
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::post('logout', [App\Http\Controllers\Admin\Auth\LoginController::class, 'logout'])->name('logout');
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
+        
+        // User management
+        Route::resource('/user', AdminUserController::class);
+        Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
+        
+        // Voucher management
+        Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+        Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
+        Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
+        Route::get('/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
+        Route::put('/vouchers/{voucher}', [VoucherController::class, 'update'])->name('vouchers.update');
+        Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+        Route::post('/vouchers/bulk-delete', [VoucherController::class, 'bulkDelete'])->name('vouchers.bulk_delete');
+        
+        // Product management
+        Route::resource('product', AdminProductController::class);
+        Route::put('product/{product}/change_status', [AdminProductController::class, 'changeStatus'])->name('product.change_status');
+        
+        // Category management
+        Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
+        Route::resource('category', CategoryController::class);
+        
+        // Product attribute
+        Route::resource('product_attribute', ProductAttributeController::class);
+        
+        // Post management
+        Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+        Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
+        Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+        Route::get('posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+        Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+        
+        // Brand management
+        Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
+        Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
+        Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
+        Route::get('brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
+        Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+        Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
+        Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
+        
+        // SKUs management
+        Route::resource('product.skus', SkusController::class);
+        Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
+        
+        // Order management
+        Route::put('orders/update-multiple-status', [AdminOrderController::class, 'updateMultipleStatus'])->name('orders.update_multiple_status');
+        Route::resource('orders', AdminOrderController::class);
+        Route::put('orders/{order}/refund', [AdminOrderController::class, 'updateRefund']);
+        // Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
+        // Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
 
-
-    // dashboard admin
-
-    Route::get('/', [DashboardController::class, 'index'])->name('index');
-
-    //voucher
-    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
-    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
-    Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
-    Route::get('/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
-    Route::put('/vouchers/{voucher}', [VoucherController::class, 'update'])->name('vouchers.update');
-    Route::delete('/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
-    Route::resource('product', AdminProductController::class);
-    Route::put('product/{product}/change_status', [AdminProductController::class, 'changeStatus'])->name('product.change_status');
-
-    //route Category
-
-    Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
-    Route::resource('category', CategoryController::class);
-    //End route Category
-
-    Route::resource('product_attribute', ProductAttributeController::class);
-    //post
-    Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
-    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
-    Route::get('posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-    Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
-    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
-
-    //brand
-    Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
-    Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
-    Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
-    Route::get('brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-    Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
-    Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
-    Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
-
-
-    Route::resource('product.skus', SkusController::class);
-    Route::put('products/{product}/skus/{sku}/change_status', [SkusController::class, 'changeStatus'])->name('skus.change_status');
-
-    Route::put('orders/update-multiple-status', [AdminOrderController::class, 'updateMultipleStatus'])->name('orders.update_multiple_status');
-    Route::resource('orders',AdminOrderController::class);
-    Route::put('orders/{order}/refund',[AdminOrderController::class,'updateRefund']);
-    // Route::post('/orders/{id}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
-    // Route::post('/orders/{id}/handle-not-received', [OrderController::class, 'handleNotReceived'])->name('orders.handleNotReceived');
-
-    Route::resource('skus', SkusQuantityController::class);
-    Route::get('skus_comfirm', [SkusQuantityController::class, 'indexConfirm'])->name('skus_confirm');
-    Route::post('comfirm', [SkusQuantityController::class, 'confirm'])->name('confirm');
-    Route::get('skus_history', [SkusQuantityController::class, 'indexHistory'])->name('skus_history');
-    Route::post('history', [SkusQuantityController::class, 'confirm'])->name('history');
-
-    Route::resource('refunds', AdminRefundController::class);
-
-    Route::get('orders/{id}/download_pdf', [AdminOrderController::class, 'downloadPdf'])->name('orders.download_pdf');
-    Route::post('orders/download-multiple_pdf', [AdminOrderController::class, 'downloadMultiplePdf'])->name('orders.download_multiple_pdf');
+        Route::resource('skus', SkusQuantityController::class);
+        Route::get('skus_comfirm', [SkusQuantityController::class, 'indexConfirm'])->name('skus_confirm');
+        Route::post('comfirm', [SkusQuantityController::class, 'confirm'])->name('confirm');
+        Route::get('skus_history', [SkusQuantityController::class, 'indexHistory'])->name('skus_history');
+        Route::post('history', [SkusQuantityController::class, 'confirm'])->name('history');
+        Route::put('update-inventory-entry', [SkusQuantityController::class, 'updateInventoryEntry'])->name('update_inventory_entry');
+        
+        // Refund management
+        Route::resource('refunds', AdminRefundController::class);
+        
+        // Order PDF
+        Route::get('orders/{id}/download_pdf', [AdminOrderController::class, 'downloadPdf'])->name('orders.download_pdf');
+        Route::post('orders/download-multiple_pdf', [AdminOrderController::class, 'downloadMultiplePdf'])->name('orders.download_multiple_pdf');
+    
+        // Form & table views
+        Route::get('/form', function () {
+            return view('admin.form.index');
+        })->name('form');
+        
+        Route::get('/table', function () {
+            return view('admin.table.index');
+        })->name('table');
+    });
 });
 
 Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
@@ -195,7 +201,7 @@ Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
     })->name('table');
 });
 
-Route::middleware('auth')->group(function (){
+Route::middleware('auth')->group(function () {
     Route::post('/cart/add_to_cart/{id}', [CartController::class, 'addToCart'])->name('add.cart');
     Route::get('/cart', [CartController::class, 'index'])->name('show.cart');
     Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity']);
@@ -208,8 +214,8 @@ Route::middleware('auth')->group(function (){
 
 
     Route::post('order/create', [OrderController::class, 'placeOrder'])->name('payOrder');
-    Route::resource('order',OrderController::class)->only(['update']);
-    
+    Route::resource('order', OrderController::class)->only(['update']);
+
     Route::resource('brands', ControllersBrandController::class);
     Route::resource('products', ProductController::class);
     // Route::get('/locations/{type}/{id?}', [PaymentController::class, 'getLocations']);
@@ -218,7 +224,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('delete_wishlist');
     Route::post('/lock-account', [OrderController::class, 'lockAccount'])->name('lock.account');
     Route::post('/create-payment-attempt', [OrderController::class, 'createPaymentAttempt'])
-    ->name('create.payment.attempt');
+        ->name('create.payment.attempt');
     Route::get('/check-stock', [OrderController::class, 'checkStock'])
     ->name('check_stock');
     Route::get('/order/cleanup-expired', [OrderController::class, 'cleanupExpiredPaymentAttempts'])

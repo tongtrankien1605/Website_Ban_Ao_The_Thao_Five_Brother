@@ -53,17 +53,17 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <h4 class="mb-3">Upload Images</h4>
+                                    <h4 class="mb-3">Tải ảnh lên</h4>
                                     <div class="dropzone dropzone-multiple p-3 mb-3 border border-dashed rounded"
                                         id="myDropzone">
                                         <input type="file" name="images[]" multiple class="form-control d-none"
                                             accept="image/*" id="imageInput" value="{{ old('images[]') }}">
                                         <div class="text-center">
                                             <p class="text-body-tertiary text-opacity-85">
-                                                Drag your photos here <span class="text-body-secondary px-1">or</span>
+                                                Thả ảnh của bạn vào đây <span class="text-body-secondary px-1">hoặc</span>
                                                 <button class="btn btn-link p-0" type="button"
                                                     onclick="document.getElementById('imageInput').click();">
-                                                    Browse from device
+                                                    Chọn từ thiết bị
                                                 </button>
                                             </p>
                                         </div>
@@ -85,10 +85,10 @@
                                                     <h5 class="mb-0">{{ $variant['name'] }}</h5>
                                                     <button type="button"
                                                         class="btn btn-sm btn-danger float-end remove-variant">Xóa
-                                                        Variant</button>
+                                                        biến thể</button>
                                                 </div>
                                                 <div class="card-body">
-                                                    <label class="form-label">Name</label>
+                                                    <label class="form-label">Tên:</label>
                                                     <input type="text" class="form-control"
                                                         name="variants[{{ $index }}][name]"
                                                         value="{{ $variant['name'] }}" readonly>
@@ -104,7 +104,7 @@
                                                             value="{{ $attrValue }}">
                                                     @endforeach
 
-                                                    <label class="form-label">Quantity</label>
+                                                    <label class="form-label">Số lượng:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][quantity]"
                                                         value="{{ old("variants.$index.quantity") }}">
@@ -112,7 +112,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Cost price</label>
+                                                    <label class="form-label">Giá nhập:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][cost_price]"
                                                         value="{{ old("variants.$index.cost_price") }}">
@@ -120,7 +120,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Price</label>
+                                                    <label class="form-label">Giá bán:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][price]"
                                                         value="{{ old("variants.$index.price") }}">
@@ -128,7 +128,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Sale price</label>
+                                                    <label class="form-label">Giá giảm:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][sale_price]"
                                                         value="{{ old("variants.$index.sale_price") }}">
@@ -136,7 +136,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Ngày bắt đầu</label>
+                                                    <label class="form-label">Ngày bắt đầu:</label>
                                                     <input type="date" class="form-control"
                                                         name="variants[{{ $index }}][start_date]"
                                                         value="{{ old("variants.$index.start_date") }}">
@@ -144,7 +144,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Ngày kết thúc</label>
+                                                    <label class="form-label">Ngày kết thúc:</label>
                                                     <input type="date" class="form-control"
                                                         name="variants[{{ $index }}][end_date]"
                                                         value="{{ old("variants.$index.end_date") }}">
@@ -152,7 +152,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Image</label>
+                                                    <label class="form-label">Ảnh:</label>
                                                     <input type="file" class="form-control variant-image"
                                                         name="variants[{{ $index }}][image]" accept="image/*"
                                                         value="{{ old("variants.$index.image") }}">
@@ -181,7 +181,7 @@
                                                                 </div>
                                                                 <select class="form-control" id="category"
                                                                     name="id_category">
-                                                                    <option value="">-- select --</option>
+                                                                    <option value="">-- chọn --</option>
                                                                     @foreach ($categories as $category)
                                                                         <option value="{{ $category->id }}"
                                                                             {{ old('id_category') == $category->id ? 'selected' : '' }}>
@@ -203,7 +203,7 @@
                                                                 </div>
                                                                 <select class="form-control" id="brand"
                                                                     name="id_brand">
-                                                                    <option value="">-- select --</option>
+                                                                    <option value="">-- chọn --</option>
                                                                     @foreach ($brands as $brand)
                                                                         <option value="{{ $brand->id }}"
                                                                             {{ old('id_brand') == $brand->id ? 'selected' : '' }}>
@@ -223,10 +223,10 @@
                                         <div class="col-12 col-xl-12">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h4 class="card-title mb-0">Variants</h4>
+                                                    <h4 class="card-title mb-0">Biến thể</h4>
                                                     <button type="button" class="btn btn-primary btn-sm float-end"
                                                         id="toggleVariantsBtn">
-                                                        Add Variant
+                                                        Thêm biến thể
                                                     </button>
                                                 </div>
                                                 <div class="card-body d-none" id="variantsCard">
@@ -247,7 +247,7 @@
                                                     <div class="mt-3 text-center">
                                                         <button type="button" class="btn btn-success"
                                                             id="createVariantBtn" disabled>
-                                                            Tạo Variant
+                                                            Tạo biến thể
                                                         </button>
                                                     </div>
                                                 </div>

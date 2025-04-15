@@ -30,12 +30,12 @@
                             @endif
 
                             <h1>Thêm mới danh mục sản phẩm</h1>
-                            <a href="{{ Route('admin.category.create') }}" class="btn btn-primary mb-3">Add</a>
+                            {{-- <a href="{{ Route('admin.category.create') }}" class="btn btn-primary mb-3">Add</a> --}}
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">DataTables</li>
+                                <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                                <li class="breadcrumb-item active"><a href="{{ Route('admin.category.index') }}">Trang danh sách</a></li>
                             </ol>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
                         <div class="col-12">
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Create category</h3>
+                                    <h3 class="card-title">Thêm mới danh mục</h3>
                                 </div>
                                 <!-- /.card-header -->
                                 <!-- form start -->
@@ -57,24 +57,24 @@
                                     @csrf
                                     <div class="card-body">
                                         <div class="form-group">
-                                            <label for="exampleInputName">Name</label>
+                                            <label for="exampleInputName">Tên</label>
                                             <input type="text" name="name" class="form-control"
-                                                id="exampleInputName" placeholder="Enter name"
+                                                id="exampleInputName" placeholder="Nhập tên"
                                                 value="{{ old('name') }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputDescription">Description</label>
+                                            <label for="exampleInputDescription">Mô tả</label>
                                             <input type="text" name="description" class="form-control"
-                                                id="exampleInputDescription" placeholder="Description"
+                                                id="exampleInputDescription" placeholder="Mô tả"
                                                 value="{{ old('description') }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputFile">Image</label>
+                                            <label for="exampleInputFile">Ảnh</label>
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="file" name="image" class="custom-file-input"
+                                                    <input type="file" name="image" class="form-control"
                                                         id="exampleInputFile">
-                                                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                                    {{-- <label class="custom-file-label" for="exampleInputFile">Choose file</label> --}}
                                                 </div>
                                             </div>
                                         </div>

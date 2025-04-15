@@ -35,8 +35,7 @@ class UserController extends Controller
                 $q->on('roles.id', '=', 'users.role');
                 $q->whereNull('roles.deleted_at');
             })
-            ->orderBy('users.updated_at', 'desc')
-            ->paginate(20);
+            ->orderBy('users.updated_at', 'desc')->get();
 
         return view('admin.users.index', compact('users'));
     }
@@ -47,7 +46,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::whereNull('deleted_at')->get();
-        return view('admin.users.create', compact('roles'));
+        return view('admin.users.edit', compact('roles'));
     }
 
     /**
@@ -134,7 +133,7 @@ class UserController extends Controller
     {
         try {
             $user->delete();
-            return back()->with('success', true);
+            return back()->with('success', 'Xóa thành công');
         } catch (\Throwable $th) {
             dd($th);
             return back()
@@ -149,7 +148,7 @@ class UserController extends Controller
             if (!empty($user->avatar) && Storage::exists($user->avatar)) {
                 Storage::delete($user->avatar);
             }
-            return back()->with('success', true);
+            return back()->with('success', 'Xóa thành công');
         } catch (\Throwable $th) {
             return back()
                 ->with('success', false)

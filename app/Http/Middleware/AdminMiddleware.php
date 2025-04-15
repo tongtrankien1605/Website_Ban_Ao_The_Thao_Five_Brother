@@ -16,11 +16,12 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        // check Auth, nếu user role không phải admin thì không thể truy cập
-
+        // Nếu chưa đăng nhập hoặc là user thường (role = 1)
         if (!Auth::check() || Auth::user()->role == 1) {
-            return redirect('/')->with('error', 'Bạn không có quyền truy cập trang này!');
+            if ($request->ajax()) {
+                return response('Unauthorized.', 401);
+            }
+            return redirect()->route('admin.login')->with('error', 'Bạn không có quyền truy cập trang này!');
         }
 
         return $next($request);
