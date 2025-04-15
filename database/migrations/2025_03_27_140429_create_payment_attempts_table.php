@@ -21,7 +21,11 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+    // m đéo ca composer à chạy 1 terminal cay vc ra
 
+    // là sao ca composer â
+    //cài á
+    // cài rồi mà cc
     /**
      * Reverse the migrations.
      */
