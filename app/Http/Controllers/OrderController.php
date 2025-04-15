@@ -59,12 +59,13 @@ class OrderController extends Controller
                 $variantId = $cartItem->id_product_variant;
                 $inventory = $inventories->get($variantId);
                 $quantity = (int) $item['quantity'];
+                // dd($quantity);
 
-                if ($inventory->quantity < $quantity) {
+                if ($inventory->quantity <= $quantity) {
                     $outOfStockItems[] = [
                         'id' => $cartItem->id,
                         'name' => $cartItem->skuses->name,
-                        'variant_name' => $cartItem->skuses->variant_name,
+                        'variant_name' => $cartItem->skuses->name,
                         'requested_quantity' => $quantity,
                         'available_quantity' => $inventory->quantity
                     ];
@@ -72,7 +73,8 @@ class OrderController extends Controller
                 // dd($outOfStockItems);
             }
 
-            if (!empty($outOfStockItems)) {
+
+            if (empty($outOfStockItems)) {
                 DB::rollBack();
                 broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
                 return response()->json([
@@ -81,6 +83,8 @@ class OrderController extends Controller
                     'out_of_stock_items' => $outOfStockItems
                 ], 400);
             }
+
+
 
             $order = Order::create([
                 'id_user' => $user->id,
@@ -94,6 +98,9 @@ class OrderController extends Controller
                 'id_order_status' => 1,
                 'id_payment_method_status' => 1,
             ]);
+            // dd($order->toArray());
+
+
 
             // Create order details and temporarily reserve inventory
             foreach ($request->items as $item) {
@@ -125,13 +132,15 @@ class OrderController extends Controller
                 
                 // Temporarily decrease inventory
                 $inventory->decrement('quantity', $quantity);
-                
+
+                // dd($inventory->toArray());
                 // Broadcast inventory update
+                // dd($cartItem->skuses->name);
+
                 broadcast(new \App\Events\InventoryUpdated([
                     'variant_id' => $variantId,
                     'new_quantity' => $inventory->quantity,
                     'product_name' => $cartItem->skuses->name,
-                    'variant_name' => $cartItem->skuses->variant_name
                 ]))->toOthers();
             }
 
@@ -186,6 +195,7 @@ class OrderController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e->getMessage());
             Log::error('Order Store Error: ' . $e->getMessage());
             return response()->json(['error' => true, 'message' => 'Đã xảy ra lỗi, vui lòng thử lại.']);
         }

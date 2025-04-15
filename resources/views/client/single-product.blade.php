@@ -142,9 +142,9 @@
                                             <i class="fa fa-star-o"></i>
                                         </div>
                                     </div>
-                                    {{-- <div class="head-right">
-                                        <span class="price">${{ number_format($product->price, 2) }}</span>
-                                    </div> --}}
+                                    <div class="head-right">
+                                        <span class="price" id="productPrice">--</span>
+                                    </div>
                                 </div>
 
                                 <div class="description">
@@ -756,9 +756,24 @@
     <script>
         window.inventoryData = @json($inventoryData);
         window.variantMap = @json($variantMap);
+        window.priceData = {};
 
-        console.log(window.inventoryData);
-        console.log(window.variantMap);
+        // Lưu thông tin giá vào priceData
+        @foreach($skus as $sku)
+            @if($sku->inventory_entries && $sku->inventory_entries->count() > 0)
+                @php
+                    $latestEntry = $sku->inventory_entries->where('status', 'Đã duyệt')->first();
+                @endphp
+                @if($latestEntry)
+                    window.priceData[{{ $sku->id }}] = {
+                        regularPrice: {{ $latestEntry->price }},
+                        salePrice: {{ $latestEntry->sale_price ? $latestEntry->sale_price : 'null' }},
+                        discountStart: "{{ $latestEntry->discount_start }}",
+                        discountEnd: "{{ $latestEntry->discount_end }}"
+                    };
+                @endif
+            @endif
+        @endforeach
 
         document.querySelectorAll('.variant-option').forEach(input => {
             input.addEventListener('change', function() {
@@ -766,12 +781,10 @@
 
                 // Lấy ID của các variant đang được chọn
                 document.querySelectorAll('.variant-option:checked').forEach(checked => {
-                    // console.log(checked.value);
                     selectedVariants.push(checked.value);
                 });
 
                 const sortedKey = selectedVariants.map(Number).sort((a, b) => a - b).join(',');
-
                 const skuId = window.variantMap[sortedKey];
                 const inventoryObject = {};
                 window.inventoryData.forEach(item => {
@@ -780,6 +793,7 @@
 
                 const qty = skuId ? (inventoryObject[skuId] || 0) : 0;
 
+                // Cập nhật số lượng tồn kho
                 const availabilitySpan = document.getElementById('availabilityQty');
                 if (availabilitySpan) {
                     availabilitySpan.textContent = skuId ?
@@ -788,8 +802,24 @@
                     availabilitySpan.style.color = qty > 0 ? 'green' : 'red';
                 }
 
-                const addToCartBtn = document.getElementById('addToCartBtn');
+                // Cập nhật giá
+                const priceElement = document.getElementById('productPrice');
+                if (skuId && window.priceData[skuId]) {
+                    const priceInfo = window.priceData[skuId];
+                    const now = new Date();
+                    const discountStart = new Date(priceInfo.discountStart);
+                    const discountEnd = new Date(priceInfo.discountEnd);
+                    
+                    if (priceInfo.salePrice && now >= discountStart && now <= discountEnd) {
+                        priceElement.textContent = priceInfo.salePrice.toLocaleString('vi-VN') + ' VND';
+                    } else {
+                        priceElement.textContent = priceInfo.regularPrice.toLocaleString('vi-VN') + ' VND';
+                    }
+                } else {
+                    priceElement.textContent = '--';
+                }
 
+                const addToCartBtn = document.getElementById('addToCartBtn');
                 if (addToCartBtn) {
                     if (qty > 0) {
                         addToCartBtn.disabled = false;

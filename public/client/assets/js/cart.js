@@ -446,15 +446,22 @@ $(document).ready(function () {
                 timer: 2000,
                 showConfirmButton: false
             });
+            Swal.fire({
+                icon: 'warning',
+                title: 'Lỗi',
+                text: 'Vui lòng chọn ít nhất một sản phẩm để thanh toán!',
+                timer: 2000,
+                showConfirmButton: false
+            });
             return;
         }
 
-        let code = $("#voucher option:selected").data("code") || ""; // ✅ Lấy mã giảm giá
+        let code = $("#voucher option:selected").data("code") || ""; 
         let queryString = $.param({ items: selectedItems, new_total: newTotal, total: total, code: code });
 
-        console.log("🟢 Chuyển hướng với URL:", "/payment?" + queryString); // ✅ Debug URL
+        console.log("🟢 Chuyển hướng với URL:", "/payment?" + queryString);
 
-        window.location.href = "/payment?" + queryString; // ✅ Chuyển hướng
+        window.location.href = "/payment?" + queryString;
     });
 
 
