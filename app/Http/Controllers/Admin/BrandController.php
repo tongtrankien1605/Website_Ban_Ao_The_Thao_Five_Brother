@@ -89,7 +89,7 @@ class BrandController extends Controller
     {
         try {
             $brand->delete();
-            return back()->with('success', true);
+            return back()->with('success', 'Xóa thành công');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -99,7 +99,7 @@ class BrandController extends Controller
     {
         try {
             $brand->forceDelete();
-            return back()->with('success', true);
+            return back()->with('success', 'Xóa thành công');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }

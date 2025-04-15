@@ -13,8 +13,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.product_attribute.index') }}">Danh
-                                    sách thuộc tính</a></li>
+                            <li class="breadcrumb-item active"><a href="{{ route('admin.product_attribute.create') }}">Thêm mới thuộc tính</a></li>
                         </ol>
                     </div>
                 </div>

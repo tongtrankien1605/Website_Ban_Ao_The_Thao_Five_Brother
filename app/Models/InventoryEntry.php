@@ -12,6 +12,7 @@ class InventoryEntry extends Model
     protected $table = 'inventory_entries';
     protected $fillable = [
         'id_skus',
+        'id_shopper',
         'user_id',
         'quantity',
         'cost_price',
@@ -22,6 +23,12 @@ class InventoryEntry extends Model
         'status',
         'import',
     ];
+    protected $casts =
+    [
+        'discount_start' => 'datetime:Y/m/d H:i:s',
+        'discount_end' => 'datetime:Y/m/d H:i:s',
+    ];
+
     public function serializeDate($date)
     {
         return $date->format('Y/m/d H:i:s');
@@ -40,6 +47,6 @@ class InventoryEntry extends Model
     }
     public function inventory_logs()
     {
-        return $this->hasMany(InventoryLog::class, 'inventory_entry_id', 'id');
+        return $this->hasOne(InventoryLog::class, 'inventory_entry_id', 'id');
     }
 }

@@ -36,4 +36,20 @@ class OrderStatusUpdate implements ShouldBroadcast
             new PrivateChannel('orders.' . $this->order->id_user)
         ];
     }
+
+    /**
+     * Dữ liệu tùy chỉnh để gửi với event
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+            'order' => [
+                'id' => $this->order->id,
+                'id_order_status' => $this->order->id_order_status,
+                'order_status_name' => $this->order->order_statuses->name
+            ]
+        ];
+    }
 }

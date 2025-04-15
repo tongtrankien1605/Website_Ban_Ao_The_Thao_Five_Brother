@@ -61,7 +61,7 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <h4 class="mb-3">Upload Images</h4>
+                                    <h4 class="mb-3">Tải ảnh lên</h4>
                                     <div id="existingImages" class="d-flex flex-wrap gap-2 mt-3">
                                         @if ($productImages)
                                             @foreach ($productImages as $productImage)
@@ -76,10 +76,10 @@
                                             accept="image/*" id="imageInput" value="{{ old('images[]') }}">
                                         <div class="text-center">
                                             <p class="text-body-tertiary text-opacity-85">
-                                                Drag your photos here <span class="text-body-secondary px-1">or</span>
+                                                Thả ảnh tại đây <span class="text-body-secondary px-1">hoặc</span>
                                                 <button class="btn btn-link p-0" type="button"
                                                     onclick="document.getElementById('imageInput').click();">
-                                                    Browse from device
+                                                    Chọn từ thiết bị
                                                 </button>
                                             </p>
                                         </div>
@@ -108,13 +108,13 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="mb-3">
-                                                        <label class="form-label">Name</label>
+                                                        <label class="form-label">Tên:</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[{{ $sku->id }}][name]"
                                                             value="{{ $sku->name }}" readonly>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Barcode</label>
+                                                        <label class="form-label">Mã vạch:</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[{{ $sku->id }}][barcode]"
                                                             value="{{ $sku->barcode }}" readonly>
@@ -137,7 +137,7 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label class="form-label">Quantity</label>
+                                                        <label class="form-label">Số lượng:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][quantity]"
                                                             value="{{ $sku->inventories->quantity ?? 0 }}">
@@ -147,7 +147,7 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label class="form-label">Cost price</label>
+                                                        <label class="form-label">Giá gốc:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][cost_price]"
                                                             value="{{ $value->cost_price }}">
@@ -157,7 +157,7 @@
                                                     </div>
                                                     
                                                     <div class="mb-3">
-                                                        <label class="form-label">Price</label>
+                                                        <label class="form-label">Giá bán:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][price]"
                                                             value="{{ $value->price }}">
@@ -167,7 +167,7 @@
                                                     </div>
                                                     
                                                     <div class="mb-3">
-                                                        <label class="form-label">Sale price</label>
+                                                        <label class="form-label">Giá giảm:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][sale_price]"
                                                             value="{{ $value->sale_price ? $value->sale_price : "Không giảm giá" }}">
@@ -176,18 +176,18 @@
                                                         @enderror
                                                     </div>
 
-                                                    <label class="form-label">Ngày bắt đầu</label>
+                                                    <label class="form-label">Ngày bắt đầu:</label>
                                                     <input type="date" class="form-control"
                                                         name="variants[{{ $sku->id }}][start_date]"
-                                                        value="{{ $value->discount_start ? $value->discount_start : "Không giảm giá" }}">
+                                                        value="{{ $value->discount_start ? $value->discount_start->format('Y-m-d') : '' }}">
                                                     @error("variants.$sku->id.start_date")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Ngày kết thúc</label>
+                                                    <label class="form-label">Ngày kết thúc:</label>
                                                     <input type="date" class="form-control"
                                                         name="variants[{{ $sku->id }}][end_date]"
-                                                        value="{{ $value->discount_end ? $value->discount_end : "Không giảm giá"  }}">
+                                                        value="{{ $value->discount_end ? $value->discount_end->format('Y-m-d') : '' }}">
                                                     @error("variants.$sku->id.end_date")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -205,7 +205,7 @@
                                                         </label>
                                                     </div> --}}
                                                     <div class="mb-3">
-                                                        <label class="form-label">Image</label>
+                                                        <label class="form-label">Ảnh:</label>
                                                         <div class="input-group">
                                                             <div class="input-group">
                                                                 @if ($sku->image)
@@ -244,10 +244,10 @@
                                                     <h5 class="mb-0">{{ $variant['name'] }}</h5>
                                                     <button type="button"
                                                         class="btn btn-sm btn-danger float-end remove-variant">Xóa
-                                                        Variant</button>
+                                                        biến thể</button>
                                                 </div>
                                                 <div class="card-body">
-                                                    <label class="form-label">Name</label>
+                                                    <label class="form-label">Tên:</label>
                                                     <input type="text" class="form-control"
                                                         name="variants[{{ $index }}][name]"
                                                         value="{{ $variant['name'] }}" readonly>
@@ -263,7 +263,7 @@
                                                             value="{{ $attrValue }}">
                                                     @endforeach
 
-                                                    <label class="form-label">Quantity</label>
+                                                    <label class="form-label">Số lượng:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][quantity]"
                                                         value="{{ old("variants.$index.quantity") }}">
@@ -271,7 +271,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Cost price</label>
+                                                    <label class="form-label">Giá gốc:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][cost_price]"
                                                         value="{{ old("variants.$index.cost_price") }}">
@@ -279,7 +279,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Price</label>
+                                                    <label class="form-label">Giá bán:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][price]"
                                                         value="{{ old("variants.$index.price") }}">
@@ -287,7 +287,7 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Sale price</label>
+                                                    <label class="form-label">Giá nhập:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][sale_price]"
                                                         value="{{ old("variants.$index.sale_price") }}">
@@ -295,23 +295,23 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Ngày bắt đầu</label>
-                                                    <input type="number" class="form-control"
+                                                    <label class="form-label">Ngày bắt đầu:</label>
+                                                    <input type="date" class="form-control"
                                                         name="variants[{{ $index }}][start_date]"
                                                         value="{{ old("variants.$index.start_date") }}">
                                                     @error("variants.$index.start_date")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Ngày kết thúc</label>
-                                                    <input type="number" class="form-control"
+                                                    <label class="form-label">Ngày kết thúc:</label>
+                                                    <input type="date" class="form-control"
                                                         name="variants[{{ $index }}][end_date]"
                                                         value="{{ old("variants.$index.end_date") }}">
                                                     @error("variants.$index.end_date")
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
 
-                                                    <label class="form-label">Image</label>
+                                                    <label class="form-label">Ảnh</label>
                                                     <input type="file" class="form-control variant-image"
                                                         name="variants[{{ $index }}][image]" accept="image/*"
                                                         value="{{ old("variants.$index.image") }}" required>
@@ -379,7 +379,7 @@
                                         <div class="col-12 col-xl-12">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h4 class="card-title mb-0">Variants</h4>
+                                                    <h4 class="card-title mb-0">Biến thể</h4>
                                                 </div>
                                                 <div class="card-body" id="variantsCard">
                                                     <div class="row g-3" id="attributeContainer">
@@ -411,7 +411,7 @@
                                                         <button type="button" class="btn btn-success"
                                                             id="addAttributeValue" disabled hidden>Cập nhật giá trị</button>
                                                         <button type="button" class="btn btn-success"
-                                                            id="createVariantBtn" disabled>Tạo Variant</button>
+                                                            id="createVariantBtn" disabled>Tạo biến thể</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -781,40 +781,40 @@
                         <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
                     </div>
                     <div class="card-body d-none">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">Tên:</label>
                         <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}" readonly>
-                        <label class="form-label">Barcode</label>
+                        <label class="form-label">Mã vạch:</label>
                         <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                         ${hiddenAttributeInputs}
 
-                        <label class="form-label">Quantity</label>
+                        <label class="form-label">Số lượng:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
-                         <label class="form-label">Cost price</label>
+                         <label class="form-label">Giá gốc:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][cost_price]">
                             @error('variants[${variantCounter}][cost_price]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         
-                        <label class="form-label">Price</label>
+                        <label class="form-label">Giá bán:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][price]">
-                        <label class="form-label">Sale price</label>
+                        <label class="form-label">Giá giảm:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
 
-                           <label class="form-label">Ngày bắt đầu</label>
+                           <label class="form-label">Ngày bắt đầu:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][start_date]"
                             min="{{ date('Y-m-d') }}">
 
-                        <label class="form-label">Ngày kết thúc</label>
+                        <label class="form-label">Ngày kết thúc:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][end_date]"
                             min="{{ date('Y-m-d') }}">
 
-                        <label class="form-label">Image</label>
+                        <label class="form-label">Ảnh:</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
                             @error('variants[${variantCounter}][image]')
                                 <div class="text-danger">{{ $message }}</div>
@@ -925,40 +925,40 @@
                             <button type="button" class="btn btn-sm btn-danger float-end remove-variant">Xóa Variant</button>
                         </div>
                         <div class="card-body d-none">
-                            <label class="form-label">Tên sản phẩm</label>
+                            <label class="form-label">Tên sản phẩm:</label>
                             <input type="text" class="form-control" name="variants[${variantCounter}][name]" value="${variantName}" readonly>
-                            <label class="form-label">Barcode</label>
+                            <label class="form-label">Mã vạch:</label>
                             <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                             ${hiddenAttributeInputs}
-                            <label class="form-label">Quantity</label>
+                            <label class="form-label">Số lượng:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
 
-                         <label class="form-label">Cost price</label>
+                         <label class="form-label">Giá gốc:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][cost_price]">
                             @error('variants[${variantCounter}][cost_price]')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         
-                        <label class="form-label">Price</label>
+                        <label class="form-label">Giá bán:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][price]">
-                        <label class="form-label">Sale price</label>
+                        <label class="form-label">Giá giảm:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][sale_price]">
 
-                           <label class="form-label">Ngày bắt đầu</label>
+                           <label class="form-label">Ngày bắt đầu:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][start_date]"
                             min="{{ date('Y-m-d') }}">
 
-                        <label class="form-label">Ngày kết thúc</label>
+                        <label class="form-label">Ngày kết thúc:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][end_date]"
                             min="{{ date('Y-m-d') }}">
 
-                            <label class="form-label">Image</label>
+                            <label class="form-label">Ảnh:</label>
                             <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
                             <img class="img-preview mt-2 d-none" width="100" height="100">
                         </div>

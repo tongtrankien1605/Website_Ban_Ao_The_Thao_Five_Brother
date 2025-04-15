@@ -32,11 +32,11 @@
                         <a href="#dashboad" class="active" data-bs-toggle="tab"><i class="fa fa-dashboard"></i>
                             Dashboard</a>
 
-                        @if (Auth::check() && Auth::user()->role !== 1)
+                        {{-- @if (Auth::check() && Auth::user()->role !== 1)
                             <a href="{{ route('admin.index') }}">
                                 <i class="fa fa-user"></i> Quản Lý Admin
                             </a>
-                        @endif
+                        @endif --}}
 
                         <a href="#orders" data-bs-toggle="tab"><i class="fa fa-cart-arrow-down"></i> Orders</a>
 
@@ -137,8 +137,7 @@
                                                                 <ul>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>
-                                                                        {{ $order->order_status_name }}
-                                                                    </li>
+                                                                        <span class="order-status-text" data-order-id="{{ $order->id }}">{{ $order->order_status_name }}</span></li>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>
                                                                         {{ $order->payment_method_status_name }}
@@ -176,7 +175,7 @@
                                                                                 {{ $order->created_at->format('d/m/Y') }}
                                                                             </p>
                                                                             <p><strong>Trạng thái:</strong>
-                                                                                {{ $order->order_status_name }}</p>
+                                                                                <span class="order-status-text" data-order-id="{{ $order->id }}">{{ $order->order_status_name }}</span></p>
                                                                             <p><strong>Phương thức thanh toán:</strong>
                                                                                 {{ $order->payment_method_name }}</p>
                                                                             @php

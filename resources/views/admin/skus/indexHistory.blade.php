@@ -15,8 +15,7 @@
                     <div class="col-sm-4">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="{{ route('admin.skus.index') }}">Danh sách sản
-                                    phẩm</a></li>
+                            <li class="breadcrumb-item active"><a href="{{ route('admin.skus.index') }}">Danh sách</a></li>
                         </ol>
                     </div>
                 </div>
@@ -73,12 +72,12 @@
                                 </th>
                                 <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
                                     colspan="1" aria-label="Engine version: activate to sort column ascending">
-                                    Status
+                                    Trạng thái
                                 </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
+                                {{-- <th class="sorting text-center" tabindex="0" aria-controls="example1" rowspan="1"
                                     colspan="1" aria-label="CSS grade: activate to sort column ascending" width="100px">
                                     Hành
-                                    động</th>
+                                    động</th> --}}
                             </tr>
 
                         </thead>
@@ -89,27 +88,22 @@
                                         <ul>
                                             <li>{{ $skus->skuses->name }}
                                             </li>
-                                            <li><strong>Barcode: </strong>{{ $skus->skuses->barcode }}</li>
+                                            <li><strong>Mã vạch: </strong>{{ $skus->skuses->barcode }}</li>
                                         </ul>
                                     </td>
                                     <td class="text-center">
-                                        <img src="{{ Storage::url($skus->skuses->image) }}" width="100px" alt="">
+                                        <img src="{{ Storage::url($skus->skuses->image) }}" width="70px" alt="">
                                     </td>
-                                    @php
-                                        $old_quantity = collect($skus->skuses->inventory_logs)
-                                            ->sortByDesc('created_at')
-                                            ->first();
-                                    @endphp
                                     <td class="">
                                         <ul>
                                             <li><strong>Số lượng nhập: </strong>
-                                                {{ $old_quantity->change_quantity }}
+                                                {{ $skus->inventory_logs->change_quantity ?? '' }}
                                             </li>
                                             <li><strong>Số lượng trong kho: </strong>
-                                                {{ $old_quantity->new_quantity }}
+                                                {{ $skus->inventory_logs->new_quantity ?? '' }}
                                             </li>
                                             <li><strong>Số lượng cũ: </strong>
-                                                {{ $old_quantity->old_quantity }}
+                                                {{ $skus->inventory_logs->old_quantity ?? '' }}
                                             </li>
                                         </ul>
                                     </td>
@@ -143,16 +137,21 @@
                                             </li>
 
                                             <li><strong>Người tạo: </strong>
-                                                {{$skus->users->name}}
+                                                {{ $skus->users->name }}
                                             </li>
                                             <li><strong>Người duyệt: </strong>
-                                                {{$skus->approver->name}}
+                                                {{ $skus->approver ? $skus->approver->name : '' }}
                                             </li>
                                         </ul>
                                     </td>
-                                    <td class=" text-center">
-                                        <span class="badge bg-success">{{ $skus->status }}</span>
+                                    <td class="text-center">
+                                        @if ($skus->status == 'Đã duyệt')
+                                            <i class="fas fa-check-circle text-success" title="Đã duyệt"></i>
+                                        @else
+                                            <i class="fas fa-hourglass-half text-warning" title="Đang chờ xử lý"></i>
+                                        @endif
                                     </td>
+
                                     <td class="text-center">
                                         {{-- <a href="{{ route('admin.product.skus.show', ['product' => $skus->product_id, 'sku' => $skus->id]) }}"
                                             class="btn btn-info"><i class="bi bi-eye"></i></a> --}}

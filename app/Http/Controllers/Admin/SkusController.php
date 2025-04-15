@@ -73,40 +73,51 @@ class SkusController extends Controller
         //     $skus->image = str_replace('public/', '', $skusImage);
         // }
         // $skus->save();
+        $count = InventoryEntry::orderBy('import', 'desc')->first();
+        $import = 0;
+        if ($count->import != "") {
+            $import = $count->import;
+        }
+        if (Auth::user()->role == 3) {
+            $status = 'Đã duyệt';
+        } else {
+            $status = 'Đang chờ xử lý';
+        }
         $inventoryEntry = new InventoryEntry();
         $inventoryEntry->id_skus = $id;
         $inventoryEntry->user_id = Auth::user()->id;
+        $inventoryEntry->id_shopper = (Auth::user()->role == 3) ? Auth::user()->id : null;
         $inventoryEntry->quantity = $request->quantity;
         $inventoryEntry->cost_price = $request->cost_price;
         $inventoryEntry->price = $request->price;
         $inventoryEntry->sale_price = $request->sale_price;
         $inventoryEntry->discount_start = $request->sale_start_date;
         $inventoryEntry->discount_end = $request->sale_end_date;
-        if (Auth::user()->role == 3) {
-            $inventoryEntry->status = 'Đã duyệt';
-            $inventoryEntry->id_shopper = auth()->user()->id;
-            $invenTory = Inventory::where('id_product_variant',$id)->first();
-            $oldQuantity = $invenTory->quantity;
-            $invenTory->quantity += $request->quantity;
-            $invenTory->save();
-            InventoryLog::create([
-                'id_product_variant'=>$id,
-                'user_id'=>Auth::user()->id,
-                'old_quantity'=>$oldQuantity,
-                'new_quantity'=>$invenTory->quantity,
-                'change_quantity'=>$request->quantity,
-                'reason'=>'Nhập hàng',
-            ]);
-        } else {
-            $inventoryEntry->status = 'Đang chờ xử lý';
-        }
+        $inventoryEntry->import = $import + 1;
+        $inventoryEntry->status = $status;
         if (!$inventoryEntry->save()) {
             DB::rollBack();
             return redirect(back())->with('error', 'Đã xảy ra lỗi');
         }
-        $inventoryEntry->save();
+        if (Auth::user()->role == 3) {
+            $inventoryEntry->id_shopper = auth()->user()->id;
+            $invenTory = Inventory::where('id_product_variant', $id)->first();
+            $oldQuantity = $invenTory->quantity;
+            $invenTory->quantity += $request->quantity;
+            $invenTory->save();
+            InventoryLog::create([
+                'id_product_variant' => $id,
+                'user_id' => Auth::user()->id,
+                'old_quantity' => $oldQuantity,
+                'new_quantity' => $invenTory->quantity,
+                'change_quantity' => $request->quantity,
+                'reason' => 'Nhập hàng',
+                'inventory_entry_id' => $inventoryEntry->id,
+            ]);
+        }
+
         DB::commit();
-        return redirect()->route('admin.product.skus.show', ['product' => $product, 'sku' => $id]);
+        return redirect()->route('admin.product.show', ['product' => $product]);
     }
 
 

@@ -37,7 +37,10 @@
 
 
             <!-- Content Wrapper. Contains page content -->
-            @yield('content')
+            <div style="padding-bottom: 50px !important">
+                @yield('content')
+            </div>
+
 
         </main>
 
