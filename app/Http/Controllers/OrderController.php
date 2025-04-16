@@ -33,11 +33,11 @@ class OrderController extends Controller
 
             $user = auth()->user();
             $paymentMethodId = (int) $request->input('payment_method_id');
-            
+
             // Check if user has too many failed attempts
             if ($user->failed_attempts >= 3) {
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Tài khoản của bạn đã bị khóa do quá nhiều lần thử thất bại. Vui lòng thử lại sau 15 phút.'
                 ], 403);
             }
@@ -49,7 +49,7 @@ class OrderController extends Controller
                 ->with('skuses')
                 ->get()
                 ->keyBy('id');
-            
+
             $inventories = Inventory::whereIn('id_product_variant', $cartItems->pluck('id_product_variant'))
                 ->get()
                 ->keyBy('id_product_variant');
@@ -74,7 +74,7 @@ class OrderController extends Controller
             }
 
 
-            if (empty($outOfStockItems)) {
+            if (!empty($outOfStockItems)) {
                 DB::rollBack();
                 broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
                 return response()->json([
@@ -108,7 +108,7 @@ class OrderController extends Controller
                 $variantId = $cartItem->id_product_variant;
                 $inventory = $inventories->get($variantId);
                 $quantity = (int) $item['quantity'];
-                
+
                 OrderDetail::create([
                     'id_order' => $order->id,
                     'id_product_variant' => $variantId,
@@ -116,7 +116,7 @@ class OrderController extends Controller
                     'unit_price' => $item['price'],
                     'total_price' => $quantity * $item['price'],
                 ]);
-                
+
                 // Create inventory log for temporary reservation
                 InventoryLog::create([
                     'id_product_variant' => $variantId,
@@ -129,7 +129,7 @@ class OrderController extends Controller
                     'action' => 'order_reservation',
                     'user_id' => $user->id,
                 ]);
-                
+
                 // Temporarily decrease inventory
                 $inventory->decrement('quantity', $quantity);
 
@@ -178,12 +178,12 @@ class OrderController extends Controller
 
                 // Mark payment attempt as completed
                 $paymentAttempt->update(['is_completed' => true]);
-                
+
                 // Clear cart
                 $cartItemdelete->each(function ($item) {
                     $item->delete();
                 });
-                
+
                 DB::commit();
 
                 return response()->json(['success' => true, 'message' => 'Đặt hàng thành công!']);
@@ -204,44 +204,74 @@ class OrderController extends Controller
     public function update(Request $request, $orderId)
     {
         $order = Order::with('order_details')->findOrFail($orderId);
-        if ($order->id_user !== Auth::id()) {
-            return back()->withErrors(['error' => 'Bạn không có quyền yêu cầu hoàn hàng cho đơn hàng này.']);
-        }
+
         $oldStatus = $order->id_order_status;
+
         $newStatus = $request->id_order_status;
-        $imagePath = $videoPath = null;
-        if ($request->hasFile('evidence')) {
-            $file = $request->file('evidence');
-            $extension = $file->getClientOriginalExtension();
-            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                $imagePath = $file->store('refunds/images', 'public');
-            } elseif (in_array($extension, ['mp4', 'avi', 'mov', 'wmv']) && $file->getSize() <= 10 * 1024 * 1024) {
-                $videoPath = $file->store('refunds/videos', 'public');
+
+        if ($newStatus == OrderStatus::SUCCESS) {
+
+            $order->update(['id_payment_method_status' => 2, 'id_order_status' => $newStatus]);
+
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'user_id' => Auth::id(),
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'note' => 'Khách hàng đã nhận hàng',
+            ]);
+            return redirect()->back()->with('success', '5 Brother cảm ơn vì bạn đã mua hàng.<3');
+        } elseif ($newStatus == OrderStatus::CANCEL) {
+
+            if ($order->id_payment_method_status == 1) {
+
+                $order->update(['id_order_status' => $newStatus]);
+
+                OrderStatusHistory::create([
+                    'order_id' => $order->id,
+                    'user_id' => Auth::id(),
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus,
+                    'note' => 'Khách hàng đã hủy đơn hàng',
+                ]);
+                foreach ($order->order_details as $item) {
+                    $inventory = Inventory::where('id_product_variant', $item->id_product_variant)->first();
+                    $oldQuantity = $inventory->quantity;
+                    $inventory->quantity += $item->quantity;
+                    $inventory->save();
+                    InventoryLog::create([
+                        'id_product_variant' => $item->id_product_variant,
+                        'user_id' => Auth::id(),
+                        'old_quantity' => $oldQuantity,
+                        'new_quantity' => $inventory->quantity,
+                        'change_quantity' => $item->quantity,
+                        'reason' => "Khách hàng hủy đơn",
+                    ]);
+                }
+                return redirect()->back()->with('success', 'Hủy đơn thành công');
+            } else {
+
+                $validatedData = $request->validate([
+                    'bank_account' => 'required|string|max:25',
+                    'bank_name' => 'required|string',
+                    'account_holder_name' => 'required|string',
+                    'reason' => 'required|max:255'
+                ]);
+
+                Refund::create([
+                    'id_order' => $order->id,
+                    'reason' => $validatedData['reason'],
+                    'refund_amount' => $order->total_amount,
+                    'refund_quantity' => $order->order_details->sum('quantity'),
+                    'status' => 'Đang chờ xử lý',
+                    'bank_account' => $validatedData['bank_account'],
+                    'bank_name' => $validatedData['bank_name'],
+                    'account_holder_name' => $validatedData['account_holder_name'],
+                    'user_id' => Auth::id()
+                ]);
+                return redirect()->back()->with('success', 'Thành công, vui lòng chờ xác nhận từ chúng tôi.');
             }
         }
-        if ($newStatus == OrderStatus::SUCCESS) {
-            $order->update(['id_payment_method_status' => 2, 'id_order_status' => $newStatus]);
-            OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Khách hàng đã nhận hàng',]);
-        }elseif ($newStatus == OrderStatus::CANCEL) {
-            $order->update(['id_order_status' => $newStatus]);
-            OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Khách hàng đã hủy đơn hàng',]);
-            $validatedData = $request->validate([
-                'bank_account' => 'required|string',
-                'bank_name' => 'required|string',
-                'account_holder_name' => 'required|string',
-            ]);
-            Refund::create(['id_order' => $order->id, 'reason' => 'Khách hàng hủy đơn trước khi xác nhận', 'refund_amount' => $order->total_amount, 'refund_quantity' => $order->order_details->sum('quantity'), 'status' => 'Đang chờ xử lý', 'image_path' => null, 'video_path' => null, 'bank_account' => $validatedData['bank_account'] ?? null, 'bank_name' => $validatedData['bank_name'] ?? null, 'account_holder_name' => $validatedData['account_holder_name'] ?? null, 'user_id' => Auth::id()]);
-        }else {
-            $order->update(['id_order_status' => $newStatus]);
-            OrderStatusHistory::create(['order_id' => $order->id, 'user_id' => Auth::id(), 'old_status' => $oldStatus, 'new_status' => $newStatus, 'note' => 'Yêu cầu hoàn hàng: ' . $request->reason,]);
-            $validatedData = $request->validate([
-                'bank_account' => 'required|string',
-                'bank_name' => 'required|string',
-                'account_holder_name' => 'required|string',
-            ]);
-            Refund::create(['id_order' => $order->id, 'reason' => $request->reason, 'refund_amount' => $order->total_amount, 'refund_quantity' => $order->order_details->sum('quantity'), 'status' => 'Đang chờ xử lý', 'image_path' => $imagePath ?? null, 'video_path' => $videoPath ?? null, 'bank_account' => $validatedData['bank_account'] ?? null, 'bank_name' => $validatedData['bank_name'] ?? null, 'account_holder_name' => $validatedData['account_holder_name'] ?? null, 'user_id' => Auth::id()]);
-        }
-        return redirect()->back()->with('success', 'Yêu cầu hoàn hàng đã được gửi thành công.');
     }
     public function lockAccount(Request $request)
     {
@@ -283,7 +313,7 @@ class OrderController extends Controller
                 Log::warning('🔴 User not found', ['user_id' => Auth::id()]);
                 return response()->json(['message' => 'Bạn chưa đăng nhập!'], 401);
             }
-            
+
             // Check if user is already locked
             if ($user->is_locked && $user->locked_until > now()) {
                 Log::warning('🔴 User is locked', ['user_id' => Auth::id()]);
@@ -291,20 +321,18 @@ class OrderController extends Controller
                     'message' => 'Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau ' . $user->locked_until->format('H:i:s')
                 ], 403);
             }
-            
+
             Log::info('🟢 User ID:', ['id' => $user->id]);
 
             // Increment failed attempts
             $user->increment('failed_attempts');
-            
+
             // Check if user has reached the maximum number of failed attempts
             if ($user->failed_attempts >= 3) {
                 $user->is_locked = true;
                 $user->locked_until = now()->addMinutes(15); // Lock for 15 minutes
                 $user->save();
                 Log::warning('🚨 User bị khóa', ['user_id' => $user->id]);
-                
-
             }
 
             $paymentAttempt = PaymentAttempt::create([
@@ -333,7 +361,7 @@ class OrderController extends Controller
         try {
             $user = auth()->user();
             Log::info('Checking stock for user:', ['user_id' => $user->id]);
-    
+
             // Lấy thông tin đơn hàng từ session
             $pendingOrder = session('pending_order');
             if (!$pendingOrder || $pendingOrder['user_id'] != $user->id || now()->isAfter($pendingOrder['expires_at'])) {
@@ -343,7 +371,7 @@ class OrderController extends Controller
                     'message' => 'Phiên đặt hàng đã hết hạn'
                 ], 400);
             }
-    
+
             $selectedItems = $pendingOrder['items'];
             // dd($selectedItems);
             $cartItems = CartItem::whereIn('id', collect($selectedItems)->pluck('id'))
@@ -354,13 +382,13 @@ class OrderController extends Controller
             $inventories = Inventory::whereIn('id_product_variant', $cartItems->pluck('id_product_variant'))
                 ->get()
                 ->keyBy('id_product_variant');
-    
+
             $activePaymentAttempts = PaymentAttempt::where('is_completed', false)
                 ->where('expires_at', '>', now())
                 ->get();
-    
+
             $pendingOrderIds = $activePaymentAttempts->pluck('order_id')->filter();
-    
+
             $pendingOrderDetails = [];
             if ($pendingOrderIds->isNotEmpty()) {
                 $pendingOrderDetails = OrderDetail::whereIn('id_order', $pendingOrderIds)
@@ -373,36 +401,34 @@ class OrderController extends Controller
 
                 $cartItem = $cartItems->where('id', $item['id'])->first();
                 if (!$cartItem) continue;
-    
+
                 $variantId = $cartItem->id_product_variant;
                 $inventory = $inventories->get($variantId);
                 // dd($inventory);
                 $quantity = (int) $item['quantity'];
-    
+
                 if ($inventory) {
                     $stockQuantity = $inventory->quantity;
-    
+
                     // Tính số lượng đã được đặt trước
                     $reservedQuantity = 0;
                     if (isset($pendingOrderDetails[$variantId])) {
                         $reservedQuantity = $pendingOrderDetails[$variantId]->sum('quantity');
                     }
-    
+
                     $availableQuantity = $stockQuantity - $reservedQuantity;
                     // dd($availableQuantity);
-    
+
                     if ($availableQuantity == $quantity) {
                         // dd(1);
                         $outOfStock[] = true;
                     }
-    
                 }
             }
             if (empty($outOfStock)) {
                 $outOfStock[] = false;
             }
             return response()->json(['out_of_stock' => $outOfStock[0]]);
-    
         } catch (\Exception $e) {
             Log::error('Stock check error:', [
                 'error' => $e->getMessage(),
@@ -414,36 +440,36 @@ class OrderController extends Controller
     public function handlePaymentFailure($orderId)
     {
         DB::beginTransaction();
-        
+
         try {
             $order = Order::with('order_details')->findOrFail($orderId);
             $user = User::find($order->id_user);
-            
+
             // Get payment attempt
             $paymentAttempt = PaymentAttempt::where('order_id', $orderId)
                 ->where('is_completed', false)
                 ->first();
-                
+
             if (!$paymentAttempt) {
                 Log::warning('Payment attempt not found for order: ' . $orderId);
                 DB::rollBack();
                 return false;
             }
-            
+
             // Mark payment attempt as completed (failed)
             $paymentAttempt->update(['is_completed' => true]);
-            
+
             // Get inventory records
             $inventories = Inventory::whereIn('id_product_variant', $order->order_details->pluck('id_product_variant'))
                 ->get()
                 ->keyBy('id_product_variant');
-                
+
             // Refund inventory for each order detail
             foreach ($order->order_details as $detail) {
                 $variantId = $detail->id_product_variant;
                 $inventory = $inventories->get($variantId);
                 $quantity = $detail->quantity;
-                
+
                 if ($inventory) {
                     // Create inventory log for refund
                     InventoryLog::create([
@@ -457,18 +483,18 @@ class OrderController extends Controller
                         'action' => 'payment_failure',
                         'user_id' => $user->id,
                     ]);
-                    
+
                     // Increment inventory
                     $inventory->increment('quantity', $quantity);
                 }
             }
-            
+
             // Update order status
             $order->update([
                 'id_order_status' => 3, // Assuming 3 is the status for cancelled/failed orders
                 'id_payment_method_status' => 3 // Assuming 3 is the status for failed payments
             ]);
-            
+
             DB::commit();
             Log::info('Payment failure handled for order: ' . $orderId);
             return true;
@@ -482,36 +508,36 @@ class OrderController extends Controller
     public function handlePaymentSuccess($orderId)
     {
         DB::beginTransaction();
-        
+
         try {
             $order = Order::with('order_details')->findOrFail($orderId);
             $user = User::find($order->id_user);
-            
+
             // Get payment attempt
             $paymentAttempt = PaymentAttempt::where('order_id', $orderId)
                 ->where('is_completed', false)
                 ->first();
-                
+
             if (!$paymentAttempt) {
                 Log::warning('Payment attempt not found for order: ' . $orderId);
                 DB::rollBack();
                 return false;
             }
-            
+
             // Mark payment attempt as completed (success)
             $paymentAttempt->update(['is_completed' => true]);
-            
+
             // Get inventory records
             $inventories = Inventory::whereIn('id_product_variant', $order->order_details->pluck('id_product_variant'))
                 ->get()
                 ->keyBy('id_product_variant');
-                
+
             // Finalize inventory for each order detail
             foreach ($order->order_details as $detail) {
                 $variantId = $detail->id_product_variant;
                 $inventory = $inventories->get($variantId);
                 $quantity = $detail->quantity;
-                
+
                 if ($inventory) {
                     // Create inventory log for final sale
                     InventoryLog::create([
@@ -527,19 +553,19 @@ class OrderController extends Controller
                     ]);
                 }
             }
-            
+
             // Update order status
             $order->update([
                 'id_order_status' => 2, // Assuming 2 is the status for confirmed orders
                 'id_payment_method_status' => 2 // Assuming 2 is the status for successful payments
             ]);
-            
+
             // Clear cart
             CartItem::where('id_user', $user->id)->delete();
-            
+
             // Reset failed attempts on successful payment
             $user->update(['failed_attempts' => 0]);
-            
+
             DB::commit();
             Log::info('Payment success handled for order: ' . $orderId);
             return true;
@@ -558,7 +584,7 @@ class OrderController extends Controller
             $expiredAttempts = PaymentAttempt::where('is_completed', false)
                 ->where('expires_at', '<', now())
                 ->get();
-                
+
             $count = 0;
             foreach ($expiredAttempts as $attempt) {
                 if ($attempt->order_id) {
@@ -570,7 +596,7 @@ class OrderController extends Controller
                 }
                 $count++;
             }
-            
+
             Log::info("Processed {$count} expired payment attempts");
             return $count;
         } catch (\Exception $e) {

@@ -88,6 +88,7 @@
                                 <th>GIÁ GỐC</th>
                                 <th>GIÁ BÁN</th>
                                 <th>GIÁ GIẢM</th>
+                                <th>THỜI GIAN</th>
                                 <th>SỐ LƯỢNG</th>
                                 <th class="text-end">HÀNH ĐỘNG</th>
                             </tr>
@@ -111,7 +112,14 @@
                                     <td>{{ $skus->barcode }}</td>
                                     <td>{{ number_format($getPrice->cost_price ?? 0) }} VND</td>
                                     <td>{{ number_format($getPrice->price ?? 0) }} VND</td>
-                                    <td>{{ number_format($getPrice->sale_price ?? 0) }} VND</td>
+                                    @if ($getPrice->sale_price)
+                                        <td>{{ number_format($getPrice->sale_price) }} VND</td>
+                                        <td>{{$getPrice->discount_start->format('d/m/Y') }} - {{$getPrice->discount_end->format('d/m/Y')}}</td>
+                                    @else
+                                        <td>Không giảm giá</td>
+                                        <td>Không giảm giá</td>
+                                    @endif
+
                                     <td>{{ $skus->inventories->quantity ?? 0 }}</td>
                                     <td class="text-end">
                                         <div class="d-flex gap-1 justify-content-end">
