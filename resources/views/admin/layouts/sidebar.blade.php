@@ -23,7 +23,8 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
        with font-awesome or any other icon font library -->
 
@@ -218,8 +219,8 @@
 
                 <li class="nav-item">
                     <a href="{{ route('admin.orders.index') }}" class="nav-link">
+                        <i class="fa-solid fa-cart-shopping"></i>
                         <p>
-                            <i class="fa-solid fa-cart-shopping"></i>
                             Quản lý đơn hàng
                         </p>
                     </a>
@@ -252,7 +253,8 @@
                         </li>
                     </ul> --}}
                 <li class="nav-item"><a href="{{ route('admin.refunds.index') }}" class="nav-link">
-                        <p><i class="fa-solid fa-undo"></i> Quản lý Yêu cầu hoàn hàng</p>
+                        <i class="fa-solid fa-undo"></i>
+                        <p> Quản lý Yêu cầu hoàn hàng</p>
                     </a></li>
                 </li>
                 {{-- <li class="nav-item">
@@ -278,82 +280,83 @@
         position: fixed !important;
         top: 0;
         left: 0;
-        padding-bottom: 60px; /* để chừa khoảng cho footer */
+        padding-bottom: 60px;
+        /* để chừa khoảng cho footer */
         z-index: 999;
     }
-    
+
     .sidebar-light {
         background-color: #f8f9fa !important;
     }
-    
-    .nav-sidebar .nav-item > .nav-link {
+
+    .nav-sidebar .nav-item>.nav-link {
         color: #000 !important;
     }
-    
-    .nav-sidebar .nav-item > .nav-link:hover {
+
+    .nav-sidebar .nav-item>.nav-link:hover {
         background-color: rgba(0, 0, 0, 0.1) !important;
         color: #000 !important;
     }
-    
-    .nav-sidebar .nav-item > .nav-link.active {
+
+    .nav-sidebar .nav-item>.nav-link.active {
         background-color: #e9ecef !important;
         color: #000 !important;
     }
-    
-    .nav-treeview > .nav-item > .nav-link {
+
+    .nav-treeview>.nav-item>.nav-link {
         color: #000 !important;
         padding-left: 2rem;
     }
-    
-    .nav-treeview > .nav-item > .nav-link:hover {
+
+    .nav-treeview>.nav-item>.nav-link:hover {
         background-color: rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     .form-control-sidebar {
         background-color: #fff !important;
         border: 1px solid #dee2e6 !important;
     }
-    
+
     .btn-sidebar {
         background-color: #fff !important;
         border: 1px solid #dee2e6 !important;
         color: #000 !important;
     }
-    
+
     .brand-link {
         border-bottom: 1px solid #dee2e6 !important;
         background-color: #f8f9fa !important;
     }
-    
+
     .user-panel {
         border-bottom: 1px solid #dee2e6 !important;
     }
-    
-    .nav-sidebar .nav-link > .right, 
-    .nav-sidebar .nav-link > p > .right {
+
+    .nav-sidebar .nav-link>.right,
+    .nav-sidebar .nav-link>p>.right {
         color: #000 !important;
     }
-    
+
     .sidebar a {
         color: #000 !important;
     }
-    
+
     .sidebar a:hover {
         text-decoration: none;
     }
-    
+
     /* Override any dark theme colors */
     [class*="sidebar-dark-"] {
         background-color: #f8f9fa !important;
     }
-    
-    [class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link:active, 
-    [class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link:focus {
+
+    [class*="sidebar-dark-"] .nav-sidebar>.nav-item>.nav-link:active,
+    [class*="sidebar-dark-"] .nav-sidebar>.nav-item>.nav-link:focus {
         color: #000 !important;
     }
-    
-    .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, 
-    .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active,
+    .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active {
         background-color: #e9ecef !important;
         color: #000 !important;
     }

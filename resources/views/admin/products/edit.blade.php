@@ -91,11 +91,11 @@
                                     </div>
                                     <div id="createdVariantContainer" class="mt-4" data-id-product="{{ $product->id }}">
                                         @foreach ($skues as $sku)
-                                        @php
-                                            $value = collect($sku->inventory_entries)
-                                            ->sortByDesc('created_at')
-                                            ->first();
-                                        @endphp
+                                            @php
+                                                $value = collect($sku->inventory_entries)
+                                                    ->sortByDesc('created_at')
+                                                    ->first();
+                                            @endphp
                                             <div class="card mb-3 variant-block" data-variant-id="{{ $sku->id }}">
                                                 <div
                                                     class="card-header toggle-variant d-flex justify-content-between align-items-center">
@@ -140,7 +140,7 @@
                                                         <label class="form-label">Số lượng:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][quantity]"
-                                                            value="{{ $sku->inventories->quantity ?? 0 }}">
+                                                            value="{{ 0 }}">
                                                         @error("variants.$sku->id.quantity")
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
@@ -155,7 +155,7 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    
+
                                                     <div class="mb-3">
                                                         <label class="form-label">Giá bán:</label>
                                                         <input type="number" class="form-control"
@@ -165,12 +165,12 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    
+
                                                     <div class="mb-3">
                                                         <label class="form-label">Giá giảm:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][sale_price]"
-                                                            value="{{ $value->sale_price ? $value->sale_price : "Không giảm giá" }}">
+                                                            value="{{ $value->sale_price ? $value->sale_price : 'Không giảm giá' }}">
                                                         @error("variants.$sku->id.sale_price")
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
@@ -409,7 +409,9 @@
                                                     </div>
                                                     <div class="mt-3 text-center">
                                                         <button type="button" class="btn btn-success"
-                                                            id="addAttributeValue" disabled hidden>Cập nhật giá trị</button>
+                                                            id="addAttributeValue" disabled
+                                                            @if (!empty($variants)) hidden @endif>Cập nhật giá
+                                                            trị</button>
                                                         <button type="button" class="btn btn-success"
                                                             id="createVariantBtn" disabled>Tạo biến thể</button>
                                                     </div>

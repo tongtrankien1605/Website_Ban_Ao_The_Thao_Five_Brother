@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
@@ -22,6 +23,7 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $routeName = Route::currentRouteName();
         $id = $this->product;
         $validate = [
             'name' => [
@@ -36,7 +38,12 @@ class ProductRequest extends FormRequest
             "variants.*.name" => "required|max:255",
             "variants.*.price" => "required|numeric|min:0|max:99999999",
             "variants.*.sale_price" => "nullable|numeric|min:0|lte:variants.*.price",
-            "variants.*.quantity" => "required|numeric|min:0|max:10000",
+            "variants.*.quantity" => [
+                "required",
+                "numeric",
+                $routeName == 'admin.product.store' ? "min:1" : "min:0",
+                "max:10000"
+            ],
             'variants.*.start_date' => 'nullable|date|after_or_equal:today',
             'variants.*.end_date' => 'nullable|date|after_or_equal:variants.*.start_date',
             "variants.*.image" => "required|image|mimes:jpeg,png,jpg,gif|max:2048",
@@ -83,7 +90,7 @@ class ProductRequest extends FormRequest
 
             'variants.*.quantity.required' => 'Số lượng biến thể không được để trống.',
             'variants.*.quantity.numeric' => 'Số lượng biến thể phải là số.',
-            'variants.*.quantity.min' => 'Số lượng biến thể phải lớn hơn 0.',
+            'variants.*.quantity.min' => 'Số lượng biến thể Không hợp lệ.',
             'variants.*.quantity.max' => 'Số lượng biến thể không được lớn hơn 10000.',
 
             'variants.*.image.required' => 'Ảnh của biến thể không được để trống.',

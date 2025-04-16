@@ -157,12 +157,14 @@ class SkusQuantityController extends Controller
     {
         if (Auth::user()->role === 3) {
             $skuses = InventoryEntry::with(['skuses', 'users', 'approver', 'inventory_logs'])
+                ->whereNotNull('id_shopper')
                 ->where('inventory_entries.status', 'Đã duyệt')
                 ->orderBy('updated_at', 'desc')
                 ->get();
         } else {
             $skuses = InventoryEntry::with(['skuses', 'users', 'approver', 'inventory_logs'])
                 ->where('user_id', Auth::id())
+                ->whereNotNull('id_shopper')
                 ->where('inventory_entries.status', 'Đã duyệt')
                 ->orderBy('updated_at', 'desc')
                 ->get();

@@ -23,6 +23,9 @@ class PaymentMethodStatusSeeder extends Seeder
             [
                 'name' => 'Đã thanh toán'
             ],
+            [
+                'name' => 'Đã hoàn tiền'
+            ],
         ];
         DB::table('payment_method_statuses')->insert($dataSeeder);
     }
