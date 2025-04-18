@@ -173,6 +173,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         
         // Refund management
         Route::resource('refunds', AdminRefundController::class);
+        // Thêm route để xử lý yêu cầu hoàn tiền
+        Route::post('refunds/{refund_id}/process', [AdminRefundController::class, 'process'])->name('refunds.process');
+
         
         // Order PDF
         Route::get('orders/{id}/download_pdf', [AdminOrderController::class, 'downloadPdf'])->name('orders.download_pdf');
@@ -186,6 +189,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/table', function () {
             return view('admin.table.index');
         })->name('table');
+
+        Route::get('orderdispute', [\App\Http\Controllers\Admin\OrderDisputeController::class, 'index'])->name('orderdispute.index');
+        Route::post('orderdispute/process/{id}', [\App\Http\Controllers\Admin\OrderDisputeController::class, 'process'])->name('orderdispute.process');
     });
 });
 
