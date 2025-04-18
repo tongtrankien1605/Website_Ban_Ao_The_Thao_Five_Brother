@@ -113,29 +113,52 @@
                                                                 {{-- Kiểm tra nếu old_status và new_status đều là 'pending' --}}
                                                                 @if ($orderStatusHistory->old_status == OrderStatus::PENDING && $orderStatusHistory->new_status == OrderStatus::PENDING)
                                                                     {{-- Chỉ hiển thị new_status --}}
-                                                                    <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                    <i class="fas fa-hourglass-half text-danger"
+                                                                        title="Chờ xác nhận"></i>
                                                                 @else
                                                                     {{-- Hiển thị old_status --}}
                                                                     @if ($orderStatusHistory->old_status == OrderStatus::PENDING)
-                                                                        <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                        <i class="fas fa-hourglass-half text-danger"
+                                                                            title="Chờ xác nhận"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::CONFIRM)
-                                                                        <i class="fas fa-clipboard-check text-success" title="Đã xác nhận"></i>
+                                                                        <i class="fas fa-clipboard-check text-success"
+                                                                            title="Đã xác nhận"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::DELIVERING)
-                                                                        <i class="fas fa-shipping-fast text-primary" title="Đang giao"></i>
+                                                                        <i class="fas fa-shipping-fast text-primary"
+                                                                            title="Đang giao"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::WAITING_FOR_DELIVERING)
-                                                                        <i class="fas fa-box-open text-primary" title="Chờ lấy hàng"></i>
+                                                                        <i class="fas fa-box-open text-primary"
+                                                                            title="Chờ lấy hàng"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::DELIVERED)
-                                                                        <i class="fas fa-handshake text-success" title="Giao hàng thành công"></i>
+                                                                        <i class="fas fa-handshake text-success"
+                                                                            title="Giao hàng thành công"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::FAILED)
-                                                                        <i class="fas fa-exclamation-triangle text-danger" title="Giao hàng thất bại"></i>
+                                                                        <i class="fas fa-exclamation-triangle text-danger"
+                                                                            title="Giao hàng thất bại"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::CANCEL)
-                                                                        <i class="fas fa-times-circle text-danger" title="Đã hủy"></i>
+                                                                        <i class="fas fa-times-circle text-danger"
+                                                                            title="Đã hủy"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::REFUND)
-                                                                        <i class="fas fa-undo-alt text-warning" title="Hoàn trả"></i>
+                                                                        <i class="fas fa-undo-alt text-warning"
+                                                                            title="Hoàn trả"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::SUCCESS)
-                                                                        <i class="fas fa-check-circle text-success" title="Hoàn thành"></i>
+                                                                        <i class="fas fa-check-circle text-success"
+                                                                            title="Hoàn thành"></i>
                                                                     @elseif($orderStatusHistory->old_status == OrderStatus::REFUND_FAILED)
-                                                                        <i class="fas fa-exclamation-circle text-warning" title="Không chấp nhận hoàn hàng"></i>
+                                                                        <i class="fas fa-exclamation-circle text-warning"
+                                                                            title="Không chấp nhận hoàn hàng"></i>
+                                                                    @elseif($orderStatusHistory->old_status == OrderStatus::WAIT_CONFIRM)
+                                                                        <i class="fas fa-hourglass-start text-warning"
+                                                                            title="Chờ xác nhận hoàn hàng"></i>
+                                                                    @elseif($orderStatusHistory->old_status == OrderStatus::REFUND_SUCCESS)
+                                                                        <i class="fas fa-undo text-success"
+                                                                            title="Hoàn hàng thành công"></i>
+                                                                    @elseif($orderStatusHistory->old_status == OrderStatus::RETURN)
+                                                                        <i class="fas fa-reply text-info"
+                                                                            title="Giao lại"></i>
+                                                                    @elseif($orderStatusHistory->old_status == OrderStatus::AUTHEN)
+                                                                        <i class="fas fa-user-check text-secondary"
+                                                                            title="Xác minh"></i>
                                                                     @endif
 
                                                                     {{-- Hiển thị mũi tên nếu old_status khác new_status --}}
@@ -143,25 +166,47 @@
 
                                                                     {{-- Hiển thị new_status --}}
                                                                     @if ($orderStatusHistory->new_status == OrderStatus::PENDING)
-                                                                        <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                        <i class="fas fa-hourglass-half text-danger"
+                                                                            title="Chờ xác nhận"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::CONFIRM)
-                                                                        <i class="fas fa-clipboard-check text-success" title="Đã xác nhận"></i>
+                                                                        <i class="fas fa-clipboard-check text-success"
+                                                                            title="Đã xác nhận"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::DELIVERING)
-                                                                        <i class="fas fa-shipping-fast text-primary" title="Đang giao"></i>
+                                                                        <i class="fas fa-shipping-fast text-primary"
+                                                                            title="Đang giao"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::WAITING_FOR_DELIVERING)
-                                                                        <i class="fas fa-box-open text-primary" title="Chờ lấy hàng"></i>
+                                                                        <i class="fas fa-box-open text-primary"
+                                                                            title="Chờ lấy hàng"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::DELIVERED)
-                                                                        <i class="fas fa-handshake text-success" title="Giao hàng thành công"></i>
+                                                                        <i class="fas fa-handshake text-success"
+                                                                            title="Giao hàng thành công"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::FAILED)
-                                                                        <i class="fas fa-exclamation-triangle text-danger" title="Giao hàng thất bại"></i>
+                                                                        <i class="fas fa-exclamation-triangle text-danger"
+                                                                            title="Giao hàng thất bại"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::CANCEL)
-                                                                        <i class="fas fa-times-circle text-danger" title="Đã hủy"></i>
+                                                                        <i class="fas fa-times-circle text-danger"
+                                                                            title="Đã hủy"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::REFUND)
-                                                                        <i class="fas fa-undo-alt text-warning" title="Hoàn hàng"></i>
+                                                                        <i class="fas fa-undo-alt text-warning"
+                                                                            title="Hoàn hàng"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::SUCCESS)
-                                                                        <i class="fas fa-check-circle text-success" title="Hoàn thành"></i>
+                                                                        <i class="fas fa-check-circle text-success"
+                                                                            title="Hoàn thành"></i>
                                                                     @elseif($orderStatusHistory->new_status == OrderStatus::REFUND_FAILED)
-                                                                        <i class="fas fa-exclamation-circle text-warning" title="Không chấp nhận hoàn hàng"></i>
+                                                                        <i class="fas fa-exclamation-circle text-warning"
+                                                                            title="Không chấp nhận hoàn hàng"></i>
+                                                                    @elseif($orderStatusHistory->new_status == OrderStatus::WAIT_CONFIRM)
+                                                                        <i class="fas fa-hourglass-start text-warning"
+                                                                            title="Chờ xác nhận hoàn hàng"></i>
+                                                                    @elseif($orderStatusHistory->new_status == OrderStatus::REFUND_SUCCESS)
+                                                                        <i class="fas fa-undo text-success"
+                                                                            title="Hoàn hàng thành công"></i>
+                                                                    @elseif($orderStatusHistory->new_status == OrderStatus::RETURN)
+                                                                        <i class="fas fa-reply text-info"
+                                                                            title="Giao lại"></i>
+                                                                    @elseif($orderStatusHistory->new_status == OrderStatus::AUTHEN)
+                                                                        <i class="fas fa-user-check text-secondary"
+                                                                            title="Xác minh"></i>
                                                                     @endif
                                                                 @endif
                                                             </td>
@@ -282,12 +327,13 @@
                                             <table class="table">
                                                 <tr>
                                                     <th style="width:50%">Tổng tiền:</th>
-                                                    <td>{{ number_format($order->total_amount + ($order->vouchers->max_discount_amount??0) - $order->shipping_methods->cost, 0, '', ',') }}
+                                                    <td>{{ number_format($order->total_amount + ($order->vouchers->max_discount_amount ?? 0) - $order->shipping_methods->cost, 0, '', ',') }}
                                                         VND</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Giảm giá:</th>
-                                                    <td>{{ number_format($order->vouchers->max_discount_amount ?? 0, 0, '', ',') }} VND
+                                                    <td>{{ number_format($order->vouchers->max_discount_amount ?? 0, 0, '', ',') }}
+                                                        VND
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -306,21 +352,28 @@
                                     <div class="text-center">
                                         <a href="{{ route('admin.orders.index') }}" class="btn btn-danger my-5">Quay
                                             lại</a>
-                                        <a href="{{ route('admin.orders.download_pdf', $order->id) }}" class="btn btn-info my-5">
+                                        <a href="{{ route('admin.orders.download_pdf', $order->id) }}"
+                                            class="btn btn-info my-5">
                                             <i class="fas fa-download"></i> Tải PDF
                                         </a>
-                                        @if ($order->id_order_status == OrderStatus::FAILED)
-                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModal"
+                                        @if ($order->id_order_status == OrderStatus::RETURN)
+                                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#modalRefund"
                                                 @if (in_array($order->id_order_status, [OrderStatus::CANCEL, OrderStatus::DELIVERED, OrderStatus::REFUND])) disabled @endif>
-                                                Hoàn trả đơn hàng
+                                                Cập nhật đơn hàng
                                             </button>
                                         @else
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
-                                                @if (in_array($order->id_order_status, [
+                                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#myModal" @if (in_array($order->id_order_status, [
                                                         OrderStatus::CANCEL,
                                                         OrderStatus::DELIVERED,
+                                                        OrderStatus::FAILED,
                                                         OrderStatus::REFUND,
                                                         OrderStatus::SUCCESS,
+                                                        OrderStatus::WAIT_CONFIRM,
+                                                        OrderStatus::REFUND_SUCCESS,
+                                                        OrderStatus::REFUND_FAILED,
+                                                        OrderStatus::AUTHEN,
                                                     ])) hidden @endif>
                                                 Cập nhật đơn hàng
                                             </button>
@@ -339,7 +392,7 @@
 
                 <div class="modal" id="modalRefund">
                     <div class="modal-dialog modal-xl">
-                      <div class="modal-content">
+                        <div class="modal-content">
 
                             <!-- Modal Header -->
                             <div class="modal-header">
@@ -436,29 +489,52 @@
                                                                     {{-- Kiểm tra nếu old_status và new_status đều là 'pending' --}}
                                                                     @if ($orderStatusHistory->old_status == OrderStatus::PENDING && $orderStatusHistory->new_status == OrderStatus::PENDING)
                                                                         {{-- Chỉ hiển thị new_status --}}
-                                                                        <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                        <i class="fas fa-hourglass-half text-danger"
+                                                                            title="Chờ xác nhận"></i>
                                                                     @else
                                                                         {{-- Hiển thị old_status --}}
                                                                         @if ($orderStatusHistory->old_status == OrderStatus::PENDING)
-                                                                            <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                            <i class="fas fa-hourglass-half text-danger"
+                                                                                title="Chờ xác nhận"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::CONFIRM)
-                                                                            <i class="fas fa-clipboard-check text-success" title="Đã xác nhận"></i>
+                                                                            <i class="fas fa-clipboard-check text-success"
+                                                                                title="Đã xác nhận"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::DELIVERING)
-                                                                            <i class="fas fa-shipping-fast text-primary" title="Đang giao"></i>
+                                                                            <i class="fas fa-shipping-fast text-primary"
+                                                                                title="Đang giao"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::WAITING_FOR_DELIVERING)
-                                                                            <i class="fas fa-box-open text-primary" title="Chờ lấy hàng"></i>
+                                                                            <i class="fas fa-box-open text-primary"
+                                                                                title="Chờ lấy hàng"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::DELIVERED)
-                                                                            <i class="fas fa-handshake text-success" title="Giao hàng thành công"></i>
+                                                                            <i class="fas fa-handshake text-success"
+                                                                                title="Giao hàng thành công"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::FAILED)
-                                                                            <i class="fas fa-exclamation-triangle text-danger" title="Giao hàng thất bại"></i>
+                                                                            <i class="fas fa-exclamation-triangle text-danger"
+                                                                                title="Giao hàng thất bại"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::CANCEL)
-                                                                            <i class="fas fa-times-circle text-danger" title="Đã hủy"></i>
+                                                                            <i class="fas fa-times-circle text-danger"
+                                                                                title="Đã hủy"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::REFUND)
-                                                                            <i class="fas fa-undo-alt text-warning" title="Hoàn trả"></i>
+                                                                            <i class="fas fa-undo-alt text-warning"
+                                                                                title="Hoàn trả"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::SUCCESS)
-                                                                            <i class="fas fa-check-circle text-success" title="Hoàn thành"></i>
+                                                                            <i class="fas fa-check-circle text-success"
+                                                                                title="Hoàn thành"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::REFUND_FAILED)
-                                                                            <i class="fas fa-exclamation-circle text-warning" title="Không chấp nhận hoàn hàng"></i>
+                                                                            <i class="fas fa-exclamation-circle text-warning"
+                                                                                title="Không chấp nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::WAIT_CONFIRM)
+                                                                            <i class="fas fa-hourglass-start text-warning"
+                                                                                title="Chờ xác nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::REFUND_SUCCESS)
+                                                                            <i class="fas fa-undo text-success"
+                                                                                title="Hoàn hàng thành công"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::RETURN)
+                                                                            <i class="fas fa-reply text-info"
+                                                                                title="Giao lại"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::AUTHEN)
+                                                                            <i class="fas fa-user-check text-secondary"
+                                                                                title="Xác minh"></i>
                                                                         @endif
 
                                                                         {{-- Hiển thị mũi tên nếu old_status khác new_status --}}
@@ -466,25 +542,47 @@
 
                                                                         {{-- Hiển thị new_status --}}
                                                                         @if ($orderStatusHistory->new_status == OrderStatus::PENDING)
-                                                                            <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                            <i class="fas fa-hourglass-half text-danger"
+                                                                                title="Chờ xác nhận"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::CONFIRM)
-                                                                            <i class="fas fa-clipboard-check text-success" title="Đã xác nhận"></i>
+                                                                            <i class="fas fa-clipboard-check text-success"
+                                                                                title="Đã xác nhận"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::DELIVERING)
-                                                                            <i class="fas fa-shipping-fast text-primary" title="Đang giao"></i>
+                                                                            <i class="fas fa-shipping-fast text-primary"
+                                                                                title="Đang giao"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::WAITING_FOR_DELIVERING)
-                                                                            <i class="fas fa-box-open text-primary" title="Chờ lấy hàng"></i>
+                                                                            <i class="fas fa-box-open text-primary"
+                                                                                title="Chờ lấy hàng"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::DELIVERED)
-                                                                            <i class="fas fa-handshake text-success" title="Giao hàng thành công"></i>
+                                                                            <i class="fas fa-handshake text-success"
+                                                                                title="Giao hàng thành công"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::FAILED)
-                                                                            <i class="fas fa-exclamation-triangle text-danger" title="Giao hàng thất bại"></i>
+                                                                            <i class="fas fa-exclamation-triangle text-danger"
+                                                                                title="Giao hàng thất bại"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::CANCEL)
-                                                                            <i class="fas fa-times-circle text-danger" title="Đã hủy"></i>
+                                                                            <i class="fas fa-times-circle text-danger"
+                                                                                title="Đã hủy"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::REFUND)
-                                                                            <i class="fas fa-undo-alt text-warning" title="Hoàn hàng"></i>
+                                                                            <i class="fas fa-undo-alt text-warning"
+                                                                                title="Hoàn hàng"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::SUCCESS)
-                                                                            <i class="fas fa-check-circle text-success" title="Hoàn thành"></i>
+                                                                            <i class="fas fa-check-circle text-success"
+                                                                                title="Hoàn thành"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::REFUND_FAILED)
-                                                                            <i class="fas fa-exclamation-circle text-warning" title="Không chấp nhận hoàn hàng"></i>
+                                                                            <i class="fas fa-exclamation-circle text-warning"
+                                                                                title="Không chấp nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::WAIT_CONFIRM)
+                                                                            <i class="fas fa-hourglass-start text-warning"
+                                                                                title="Chờ xác nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::REFUND_SUCCESS)
+                                                                            <i class="fas fa-undo text-success"
+                                                                                title="Hoàn hàng thành công"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::RETURN)
+                                                                            <i class="fas fa-reply text-info"
+                                                                                title="Giao lại"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::AUTHEN)
+                                                                            <i class="fas fa-user-check text-secondary"
+                                                                                title="Xác minh"></i>
                                                                         @endif
                                                                     @endif
                                                                 </td>
@@ -549,18 +647,18 @@
                                         <!-- /.col -->
                                     </div>
                                     <!-- /.row -->
-                                    @if ($order->refunds)
+                                    {{-- @if ($order->refunds)
                                         <div class="mb-3">
                                             <h6 class="fs-15">#4. Yêu cầu hoàn hàng</h6>
                                         </div>
                                         <div class="row g-3 mb-3">
-                                            {{-- <div class="col-lg-12">
+                                            <div class="col-lg-12">
                                             <div class="form-floating">
                                                 <input type="text" value="{{ $order->order_statuses->name }}" readonly
                                                     class=" form-control text-sm">
                                                 <label for="floatingSelect">Trạng thái đơn hàng</label>
                                             </div>
-                                        </div> --}}
+                                        </div>
 
                                             <div class="col-lg-12">
                                                 <div class="form-floating">
@@ -569,12 +667,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class=" text-center">
-                                        <button type="button" class="btn btn-danger"
-                                            data-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-success" data-status="approved">Xác nhận</button>
-                                        <button type="submit" class="btn btn-warning" data-status="rejected">Từ chối</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-success" data-status="approved">Đã
+                                            giao</button>
                                     </div>
                                 </form>
                                 <div id="response-message"></div>
@@ -683,29 +780,52 @@
                                                                     {{-- Kiểm tra nếu old_status và new_status đều là 'pending' --}}
                                                                     @if ($orderStatusHistory->old_status == OrderStatus::PENDING && $orderStatusHistory->new_status == OrderStatus::PENDING)
                                                                         {{-- Chỉ hiển thị new_status --}}
-                                                                        <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                        <i class="fas fa-hourglass-half text-danger"
+                                                                            title="Chờ xác nhận"></i>
                                                                     @else
                                                                         {{-- Hiển thị old_status --}}
                                                                         @if ($orderStatusHistory->old_status == OrderStatus::PENDING)
-                                                                            <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                            <i class="fas fa-hourglass-half text-danger"
+                                                                                title="Chờ xác nhận"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::CONFIRM)
-                                                                            <i class="fas fa-clipboard-check text-success" title="Đã xác nhận"></i>
+                                                                            <i class="fas fa-clipboard-check text-success"
+                                                                                title="Đã xác nhận"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::DELIVERING)
-                                                                            <i class="fas fa-shipping-fast text-primary" title="Đang giao"></i>
+                                                                            <i class="fas fa-shipping-fast text-primary"
+                                                                                title="Đang giao"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::WAITING_FOR_DELIVERING)
-                                                                            <i class="fas fa-box-open text-primary" title="Chờ lấy hàng"></i>
+                                                                            <i class="fas fa-box-open text-primary"
+                                                                                title="Chờ lấy hàng"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::DELIVERED)
-                                                                            <i class="fas fa-handshake text-success" title="Giao hàng thành công"></i>
+                                                                            <i class="fas fa-handshake text-success"
+                                                                                title="Giao hàng thành công"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::FAILED)
-                                                                            <i class="fas fa-exclamation-triangle text-danger" title="Giao hàng thất bại"></i>
+                                                                            <i class="fas fa-exclamation-triangle text-danger"
+                                                                                title="Giao hàng thất bại"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::CANCEL)
-                                                                            <i class="fas fa-times-circle text-danger" title="Đã hủy"></i>
+                                                                            <i class="fas fa-times-circle text-danger"
+                                                                                title="Đã hủy"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::REFUND)
-                                                                            <i class="fas fa-undo-alt text-warning" title="Hoàn trả"></i>
+                                                                            <i class="fas fa-undo-alt text-warning"
+                                                                                title="Hoàn trả"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::SUCCESS)
-                                                                            <i class="fas fa-check-circle text-success" title="Hoàn thành"></i>
+                                                                            <i class="fas fa-check-circle text-success"
+                                                                                title="Hoàn thành"></i>
                                                                         @elseif($orderStatusHistory->old_status == OrderStatus::REFUND_FAILED)
-                                                                            <i class="fas fa-exclamation-circle text-warning" title="Không chấp nhận hoàn hàng"></i>
+                                                                            <i class="fas fa-exclamation-circle text-warning"
+                                                                                title="Không chấp nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::WAIT_CONFIRM)
+                                                                            <i class="fas fa-hourglass-start text-warning"
+                                                                                title="Chờ xác nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::REFUND_SUCCESS)
+                                                                            <i class="fas fa-undo text-success"
+                                                                                title="Hoàn hàng thành công"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::RETURN)
+                                                                            <i class="fas fa-reply text-info"
+                                                                                title="Giao lại"></i>
+                                                                        @elseif($orderStatusHistory->old_status == OrderStatus::AUTHEN)
+                                                                            <i class="fas fa-user-check text-secondary"
+                                                                                title="Xác minh"></i>
                                                                         @endif
 
                                                                         {{-- Hiển thị mũi tên nếu old_status khác new_status --}}
@@ -713,25 +833,47 @@
 
                                                                         {{-- Hiển thị new_status --}}
                                                                         @if ($orderStatusHistory->new_status == OrderStatus::PENDING)
-                                                                            <i class="fas fa-hourglass-half text-danger" title="Chờ xác nhận"></i>
+                                                                            <i class="fas fa-hourglass-half text-danger"
+                                                                                title="Chờ xác nhận"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::CONFIRM)
-                                                                            <i class="fas fa-clipboard-check text-success" title="Đã xác nhận"></i>
+                                                                            <i class="fas fa-clipboard-check text-success"
+                                                                                title="Đã xác nhận"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::DELIVERING)
-                                                                            <i class="fas fa-shipping-fast text-primary" title="Đang giao"></i>
+                                                                            <i class="fas fa-shipping-fast text-primary"
+                                                                                title="Đang giao"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::WAITING_FOR_DELIVERING)
-                                                                            <i class="fas fa-box-open text-primary" title="Chờ lấy hàng"></i>
+                                                                            <i class="fas fa-box-open text-primary"
+                                                                                title="Chờ lấy hàng"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::DELIVERED)
-                                                                            <i class="fas fa-handshake text-success" title="Giao hàng thành công"></i>
+                                                                            <i class="fas fa-handshake text-success"
+                                                                                title="Giao hàng thành công"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::FAILED)
-                                                                            <i class="fas fa-exclamation-triangle text-danger" title="Giao hàng thất bại"></i>
+                                                                            <i class="fas fa-exclamation-triangle text-danger"
+                                                                                title="Giao hàng thất bại"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::CANCEL)
-                                                                            <i class="fas fa-times-circle text-danger" title="Đã hủy"></i>
+                                                                            <i class="fas fa-times-circle text-danger"
+                                                                                title="Đã hủy"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::REFUND)
-                                                                            <i class="fas fa-undo-alt text-warning" title="Hoàn hàng"></i>
+                                                                            <i class="fas fa-undo-alt text-warning"
+                                                                                title="Hoàn hàng"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::SUCCESS)
-                                                                            <i class="fas fa-check-circle text-success" title="Hoàn thành"></i>
+                                                                            <i class="fas fa-check-circle text-success"
+                                                                                title="Hoàn thành"></i>
                                                                         @elseif($orderStatusHistory->new_status == OrderStatus::REFUND_FAILED)
-                                                                            <i class="fas fa-exclamation-circle text-warning" title="Không chấp nhận hoàn hàng"></i>
+                                                                            <i class="fas fa-exclamation-circle text-warning"
+                                                                                title="Không chấp nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::WAIT_CONFIRM)
+                                                                            <i class="fas fa-hourglass-start text-warning"
+                                                                                title="Chờ xác nhận hoàn hàng"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::REFUND_SUCCESS)
+                                                                            <i class="fas fa-undo text-success"
+                                                                                title="Hoàn hàng thành công"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::RETURN)
+                                                                            <i class="fas fa-reply text-info"
+                                                                                title="Giao lại"></i>
+                                                                        @elseif($orderStatusHistory->new_status == OrderStatus::AUTHEN)
+                                                                            <i class="fas fa-user-check text-secondary"
+                                                                                title="Xác minh"></i>
                                                                         @endif
                                                                     @endif
                                                                 </td>
@@ -799,7 +941,7 @@
 
 
                                     <div class="mb-3">
-                                        <h6 class="fs-15">#4. Thay Đổi Trạng Thái Đơn Hàng 
+                                        <h6 class="fs-15">#4. Thay Đổi Trạng Thái Đơn Hàng
                                             {{-- (Lưu ý: Đơn hàng đã
                                             "Hoàn thành / Đã nhận được hàng, Đã hủy" thì không thể thay đổi trạng
                                             thái!) --}}
@@ -874,8 +1016,7 @@
                                         </div>
                                     </div>
                                     <div class=" text-center">
-                                        <button type="button" class="btn btn-danger"
-                                            data-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                                         <button type="submit" class="btn btn-success" disabled>Lưu thay đổi</button>
                                     </div>
                                 </form>

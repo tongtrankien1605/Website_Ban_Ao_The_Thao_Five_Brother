@@ -50,7 +50,7 @@ class UserController extends Controller
             return abort(403);
         }
         $addresses = AddressUser::where('id_user', $user->id)->orderByDesc('is_default')->get();
-        $orders = Order::all();
+        // $orders = Order::all();
         // dd($orders->toArray());
         // dd($orders->toArray());
         $orders = Order::where('total_amount', '>', 0)->where('orders.id_user', $user->id)
@@ -80,6 +80,7 @@ class UserController extends Controller
                 'users.name as user_name',
                 'users.phone_number as user_phone_number',
             ])
+            ->with('refunds')
             ->paginate(10);
             // dd();
             // dd($orders->toArray());

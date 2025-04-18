@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     public function address_users()
     {
-        return $this->hasMany(AddressUser::class,'id_user','id');
+        return $this->hasMany(AddressUser::class, 'id_user', 'id');
     }
 
     public function roles()
@@ -165,5 +165,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(InventoryEntry::class, 'id_shopper', 'id');
     }
-    
+
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class, 'user_id', 'id');
+    }
+    public function refund_histories()
+    {
+        return $this->hasMany(RefundHistory::class, 'user_id', 'id');
+    }
 }

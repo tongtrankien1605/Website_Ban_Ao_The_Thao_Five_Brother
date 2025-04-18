@@ -12,6 +12,7 @@ class Refund extends Model
     protected $fillable = [
         'user_id',
         'id_order',
+        'old_status',
         'reason',
         'refund_amount',
         'refund_quantity',
@@ -30,5 +31,9 @@ class Refund extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function refund_history()
+    {
+        return $this->hasOne(RefundHistory::class, 'refund_id', 'id');
     }
 }

@@ -256,6 +256,10 @@
                         <i class="fa-solid fa-undo"></i>
                         <p> Quản lý Yêu cầu hoàn hàng</p>
                     </a></li>
+                <li class="nav-item"><a href="{{ route('admin.orderdispute.index') }}" class="nav-link">
+                        <i class="fa-solid fa-exclamation-triangle"></i>
+                        <p> Quản lý tranh chấp đơn hàng</p>
+                    </a></li>
                 </li>
                 {{-- <li class="nav-item">
                     <a href="{{ route('index') }}" class="nav-link">
