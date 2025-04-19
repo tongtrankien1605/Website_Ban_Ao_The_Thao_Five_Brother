@@ -138,33 +138,24 @@
 
 
                 <!-- THỐNG KÊ ĐƠN HÀNG DÙNG TABS -->
-                <h5 class="text-center text-dark mb-4 mt-4">Thống kê đơn hàng</h5>
 
-                <!-- Tabs nav -->
-                <ul class="nav nav-tabs" id="orderStatsTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="day-tab" data-bs-toggle="tab" data-bs-target="#day"
-                            type="button" role="tab" aria-controls="day" aria-selected="true">Theo ngày</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="week-tab" data-bs-toggle="tab" data-bs-target="#week" type="button"
-                            role="tab" aria-controls="week" aria-selected="false">Theo tuần</button>
-                    </li>
+                <div class="container-fluid mt-4 px-4">
+                    <h4 class="text-center text-dark mb-4">Thống Kê Đơn Hàng</h4>
 
-                </ul>
-
-                <!-- Tabs content -->
-
-                <div class="tab-content pt-3" id="orderStatsTabContent">
-                    <div class="tab-pane fade show active" id="day" role="tabpanel" aria-labelledby="day-tab">
-                        <canvas id="ordersChartDay" style="height: 280px;"></canvas>
-                    </div>
-                    <div class="tab-pane fade" id="week" role="tabpanel" aria-labelledby="week-tab">
-                        <canvas id="ordersChartWeek" style="height: 280px;"></canvas>
+                    <!-- Select để chọn chế độ hiển thị -->
+                    <div class="mb-3 text-start">
+                        <label for="chartTypeSelect" class="form-label fw-bold">Chọn chế độ:</label>
+                        <select id="chartTypeSelect" class="form-select w-auto d-inline-block">
+                            <option value="day" selected>Theo ngày</option>
+                            <option value="week">Theo tuần</option>
+                        </select>
                     </div>
 
+                    <!-- Biểu đồ -->
+                    <div class="bg-white rounded shadow-sm p-3" style="position: relative; height: 400px; width: 100%;">
+                        <canvas id="ordersChart"></canvas>
+                    </div>
                 </div>
-
 
 
                 <!-- DOANH THU tính theo ngày / tháng / năm - done -->
@@ -173,13 +164,20 @@
                     <div class="col-md-12">
                         <h4 class="text-dark">Doanh thu</h4>
                         <select id="revenueFilter" class="form-select w-25 mb-3">
-                            <option value="day">Theo Ngày</option>
-                            <option value="month" selected>Theo Tháng</option>
-                            <option value="year">Theo Năm</option>
+                            <option value="day">Theo Ngày ( 7 ngày gần nhất )</option>
+                            <option value="month" selected>Theo Tháng ( 7 tháng gần nhất )</option>
+                            <option value="year">Theo Năm ( 4 năm gần nhất )</option>
                         </select>
                         <canvas id="revenueChart" height="100"></canvas>
                     </div>
                 </div>
+
+
+
+
+
+
+
 
 
             </div>
@@ -193,75 +191,6 @@
 
     <script>
         // START Tỷ lệ đơn hàng theo trạng thái 
-
-        // const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
-        // const orderStatusData = @json($orderStatusChart);
-
-        // const dataValues = Object.values(orderStatusData);
-        // const total = dataValues.reduce((sum, val) => sum + val, 0);
-        // const hasData = total > 0;
-
-        // const chartData = {
-        //     labels: hasData ? Object.keys(orderStatusData) : ['Không có dữ liệu'],
-        //     datasets: [{
-        //         label: hasData ? 'Số lượng' : 'Không có dữ liệu',
-        //         data: hasData ? dataValues : [1],
-        //         backgroundColor: hasData ? [
-        //             'rgba(255, 205, 86, 0.7)', // Chờ xác nhận
-        //             'rgba(54, 162, 235, 0.7)', // Đã xác nhận
-        //             'rgba(153, 102, 255, 0.7)', // Chờ lấy hàng
-        //             'rgba(75, 192, 192, 0.7)', // Giao thành công
-        //             'rgba(255, 99, 132, 0.7)' // Bị hủy
-        //         ] : ['rgba(220, 220, 220, 0.5)'],
-        //         borderWidth: 1
-        //     }]
-        // };
-
-        // const chartOptions = {
-        //     responsive: true,
-        //     plugins: {
-        //         legend: {
-        //             position: 'bottom',
-        //         },
-        //         tooltip: {
-        //             callbacks: {
-        //                 label: function(context) {
-        //                     return hasData ?
-        //                         `${context.label}: ${context.formattedValue}` :
-        //                         'Không có dữ liệu';
-        //                 }
-        //             }
-        //         }
-        //     }
-        // };
-
-        // const orderStatusChart = new Chart(ctxStatus, {
-        //     type: 'doughnut',
-        //     data: chartData,
-        //     options: chartOptions,
-        //     plugins: [ // Plugin để thêm chữ vào giữa nếu không có dữ liệu
-        //         {
-        //             id: 'centerText',
-        //             beforeDraw: function(chart) {
-        //                 if (!hasData) {
-        //                     const width = chart.width,
-        //                         height = chart.height,
-        //                         ctx = chart.ctx;
-        //                     ctx.restore();
-        //                     ctx.font = '16px Arial';
-        //                     ctx.textBaseline = 'middle';
-        //                     ctx.fillStyle = '#999';
-        //                     const text = 'Không có dữ liệu',
-        //                         textX = Math.round((width - ctx.measureText(text).width) / 2),
-        //                         textY = height / 2;
-        //                     ctx.fillText(text, textX, textY);
-        //                     ctx.save();
-        //                 }
-        //             }
-        //         }
-        //     ]
-        // });
-
 
         const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
         const orderStatusData = @json($orderStatusChart);
@@ -340,7 +269,7 @@
             const ctx = document.getElementById('topProductsChart').getContext('2d');
 
             const data = {
-                labels: @json($topProducts->pluck('name')),
+                labels: @json($topProducts->pluck('variant_name')),
                 datasets: [{
                     label: 'Doanh thu (VNĐ)',
                     data: @json($topProducts->pluck('revenue')),
@@ -433,72 +362,64 @@
 
         // START thống kê đơn hàng
 
+
         document.addEventListener('DOMContentLoaded', function() {
-            const orderChartData = {
-                day: {
-                    labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
-                    data: [10, 12, 14, 8, 11, 6, 9]
-                },
-                week: {
-                    labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"],
-                    data: [42, 50, 47, 39]
-                },
-                month: {
-                    labels: ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11",
-                        "Th12"
-                    ],
-                    data: [120, 132, 101, 134, 90, 230, 210, 180, 175, 160, 145, 170]
-                },
-                year: {
-                    labels: ["2021", "2022", "2023", "2024"],
-                    data: [1450, 1620, 1710, 1530]
+            const ordersByDay = @json($ordersByDayFormatted);
+            const ordersByWeek = @json($ordersByWeekFormatted);
+
+            const ctx = document.getElementById('ordersChart').getContext('2d');
+            let currentChart;
+
+            function createChart(type) {
+                if (currentChart) {
+                    currentChart.destroy();
                 }
-            };
 
+                let data, labels, label;
 
-            function createChart(canvasId, chartData) {
-                const ctx = document.getElementById(canvasId).getContext("2d");
-                return new Chart(ctx, {
-                    type: "bar",
+                if (type === 'day') {
+                    labels = ordersByDay.map(item => item.date);
+                    data = ordersByDay.map(item => item.total);
+                    label = 'Số đơn hàng theo ngày';
+                } else {
+                    labels = ordersByWeek.map(item => item.week);
+                    data = ordersByWeek.map(item => item.total);
+                    label = 'Số đơn hàng theo tuần';
+                }
+
+                currentChart = new Chart(ctx, {
+                    type: 'line', // luôn là line
                     data: {
-                        labels: chartData.labels,
+                        labels: labels,
                         datasets: [{
-                                label: "Số đơn hàng",
-                                data: chartData.data,
-                                backgroundColor: "rgba(75, 192, 192, 0.6)",
-                                borderColor: "rgba(75, 192, 192, 1)",
-                                borderWidth: 1
-                            },
-                            {
-                                type: 'line',
-                                label: 'Xu hướng',
-                                data: chartData.data,
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                borderWidth: 2,
-                                fill: false,
-                                tension: 0.3
-                            }
-                        ]
+                            label: label,
+                            data: data,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: {
                             y: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                precision: 0
                             }
                         }
                     }
                 });
             }
 
-            const charts = {
-                day: createChart("ordersChartDay", orderChartData.day),
-                week: createChart("ordersChartWeek", orderChartData.week),
-                month: createChart("ordersChartMonth", orderChartData.month),
-                year: createChart("ordersChartYear", orderChartData.year)
-            };
+            // Mặc định hiển thị biểu đồ theo ngày
+            createChart('day');
 
+            // Thay đổi khi chọn từ select
+            document.getElementById('chartTypeSelect').addEventListener('change', function() {
+                createChart(this.value);
+            });
         });
 
         // END thống kê đơn hàng --------------------------------------------------------------------------------
@@ -515,7 +436,7 @@
             let revenueChart = new Chart(ctx, {
                 type: "bar",
                 data: {
-                    labels: revenueData["month"].labels,
+                    labels: revenueData["month"].labels, // Bắt đầu với doanh thu theo tháng
                     datasets: [{
                         label: "Doanh thu (VNĐ)",
                         data: revenueData["month"].data,
@@ -528,7 +449,10 @@
                     responsive: true,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1, // Đảm bảo rằng các giá trị trên trục Y là các số nguyên
+                            }
                         }
                     }
                 }
@@ -541,6 +465,7 @@
                 revenueChart.update();
             });
         });
+
 
         // END doanh thu theo ngày / tháng / năm ------------------------------------------------------------------
     </script>
