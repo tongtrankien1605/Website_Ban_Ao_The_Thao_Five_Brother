@@ -40,7 +40,7 @@
                         </div>
                         <select id="status-filter" class="form-control" style="width: 200px;">
                             <option value="">-- Lọc theo trạng thái --</option>
-                            @foreach ($orderStatuses as $status)
+                            @foreach ($allOrderStatus as $status)
                                 <option value="{{ $status->id }}">{{ $status->name }}</option>
                             @endforeach
                         </select>
