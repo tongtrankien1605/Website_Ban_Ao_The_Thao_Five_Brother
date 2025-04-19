@@ -201,7 +201,7 @@
                                         <!-- Birthday -->
                                         <div class="col-lg-6 col-12 mb-30">
                                             <label><strong>Ngày sinh:</strong></label>
-                                            <p>{{ $user->birthday->format('d/m/Y') ?? 'Chưa cập nhật' }}</p>
+                                            <p>{{ $user->birthday ? $user->birthday->format('d/m/Y') : 'Chưa cập nhật' }}</p>
                                         </div>
                                         <!-- address -->
                                         <div class="col-lg-6 col-12 mb-30">

@@ -56,13 +56,14 @@ class OrderController extends Controller
             ])
             ->withSum('order_details', 'quantity')
             ->withCount('order_details')
-            ->orderBy('updated_at','desc')
+            ->orderBy('updated_at', 'desc')
             ->paginate(10);
         // dd($orders);
-        // $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS];
-        $orderStatuses = OrderStatus::orderBy('id')->get();
+        $allOrderStatus = OrderStatus::orderBy('id')->get();
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN];
+        $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         $paymentMethodStatuses = PaymentMethodStatus::orderBy('id')->get();
-        return view('admin.orders.index', compact(['orders', 'orderStatuses', 'paymentMethodStatuses']));
+        return view('admin.orders.index', compact(['orders', 'orderStatuses', 'paymentMethodStatuses', 'allOrderStatus']));
     }
 
     /**
@@ -159,7 +160,7 @@ class OrderController extends Controller
             $order->id_order_status = EnumsOrderStatus::DELIVERED;
             $order->delivered_at = Carbon::now();
             $note = "Đơn hàng đã được giao đến bạn";
-        } 
+        }
         OrderStatusHistory::create([
             'order_id' => $order->id,
             'user_id' => auth()->user()->id,
