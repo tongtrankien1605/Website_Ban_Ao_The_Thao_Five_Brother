@@ -57,8 +57,8 @@ class CartController extends Controller
         return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
     }
 
-    $inventorylog = InventoryEntry::where('id_skus', $productVariant->id)->first();
-    $inventory = Inventory::where('id', $productVariant->id)->first();
+    $inventorylog = InventoryEntry::where('id_skus', $productVariant->id)->orderByDesc('created_at')->first();
+    $inventory = Inventory::where('id_product_variant', $productVariant->id)->first();
 
 
     if (!$inventory || $inventory->quantity < 1) {
@@ -132,7 +132,7 @@ class CartController extends Controller
         $cartItem = CartItem::where('id_user', Auth::id())->with('skuses')->get();
         // dd($cartItem->toArray());
         $listVoucher = VoucherUser::where('id_user', Auth::id())->with('vouchers')->get();
-        $inventory = Inventory::whereIn('id', collect($cartItem)->pluck('id_product_variant'))->get();
+        $inventory = Inventory::whereIn('id_product_variant', collect($cartItem)->pluck('id_product_variant'))->get();
         // dd($inventory->toArray());
         // dd($inventory->toArray());
         // dd($listVoucher->toArray());

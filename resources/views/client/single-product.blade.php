@@ -788,7 +788,7 @@
                 const skuId = window.variantMap[sortedKey];
                 const inventoryObject = {};
                 window.inventoryData.forEach(item => {
-                    inventoryObject[item.id] = item.quantity;
+                    inventoryObject[item.id_product_variant] = item.quantity;
                 });
 
                 const qty = skuId ? (inventoryObject[skuId] || 0) : 0;

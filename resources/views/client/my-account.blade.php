@@ -137,7 +137,9 @@
                                                                 <ul>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>
-                                                                        <span class="order-status-text" data-order-id="{{ $order->id }}">{{ $order->order_status_name }}</span></li>
+                                                                        <span class="order-status-text"
+                                                                            data-order-id="{{ $order->id }}">{{ $order->order_status_name }}</span>
+                                                                    </li>
                                                                     <li class="text-start">
                                                                         <span class="dot"></span>
                                                                         {{ $order->payment_method_status_name }}
@@ -175,7 +177,9 @@
                                                                                 {{ $order->created_at->format('d/m/Y') }}
                                                                             </p>
                                                                             <p><strong>Trạng thái:</strong>
-                                                                                <span class="order-status-text" data-order-id="{{ $order->id }}">{{ $order->order_status_name }}</span></p>
+                                                                                <span class="order-status-text"
+                                                                                    data-order-id="{{ $order->id }}">{{ $order->order_status_name }}</span>
+                                                                            </p>
                                                                             <p><strong>Phương thức thanh toán:</strong>
                                                                                 {{ $order->payment_method_name }}</p>
                                                                             @php
@@ -216,7 +220,7 @@
                                                                             <p><strong>Khách hàng:</strong>
                                                                                 {{ $order->receiver_name }}</p>
                                                                             <p><strong>Điện thoại:</strong>
-                                                                                {{ $order->phone_number  }}</p>
+                                                                                {{ $order->phone_number }}</p>
                                                                             <p><strong>Địa chỉ:</strong>
                                                                                 {{ $order->address }}</p>
                                                                         </div>
@@ -267,14 +271,16 @@
                                                                                         name="id_order_status"
                                                                                         value="{{ OrderStatus::CANCEL }}">
                                                                                     <button type="submit"
-                                                                                        class="btn btn-danger me-2">Hủy đơn
+                                                                                        class="btn btn-danger me-2"
+                                                                                        onclick="return confirm('Bạn chắc chắn muốn hủy đơn hàng')">Hủy
+                                                                                        đơn
                                                                                         hàng</button>
                                                                                 </form>
                                                                             </div>
                                                                         @elseif (
                                                                             ($order->id_order_status == OrderStatus::PENDING || $order->id_order_status == OrderStatus::CONFIRM) &&
                                                                                 $order->payment_method_status_name == 'Đã thanh toán')
-                                                                            <div class="text-center">
+                                                                            <div>
                                                                                 <form
                                                                                     action="{{ route('order.update', $order->id) }}"
                                                                                     method="post">
@@ -291,11 +297,43 @@
 
                                                                                     <label class="form-label">Tên ngân
                                                                                         hàng:</label>
-                                                                                    <input type="text" name="bank_name"
-                                                                                        class="form-control mb-2"
-                                                                                        placeholder="Nhập tên ngân hàng"
-                                                                                        value="{{ old('bank_name') }}"
-                                                                                        required>
+                                                                                    <select name="bank_name"
+                                                                                        class="form-control mb-2" required>
+                                                                                        <option value="">-- Chọn ngân
+                                                                                            hàng --</option>
+                                                                                        @php
+                                                                                            $banks = [
+                                                                                                'ABBANK',
+                                                                                                'ACB',
+                                                                                                'Agribank',
+                                                                                                'BIDV',
+                                                                                                'Eximbank',
+                                                                                                'HDBank',
+                                                                                                'LienVietPostBank',
+                                                                                                'MB Bank',
+                                                                                                'OCB',
+                                                                                                'PVcomBank',
+                                                                                                'Sacombank',
+                                                                                                'SCB',
+                                                                                                'SeABank',
+                                                                                                'SHB',
+                                                                                                'Techcombank',
+                                                                                                'TPBank',
+                                                                                                'VIB',
+                                                                                                'Vietcombank',
+                                                                                                'VietinBank',
+                                                                                                'VPBank',
+                                                                                            ];
+                                                                                        @endphp
+                                                                                        @foreach ($banks as $bank)
+                                                                                            <option
+                                                                                                value="{{ $bank }}"
+                                                                                                {{ old('bank_name') == $bank ? 'selected' : '' }}>
+                                                                                                {{ $bank }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+
 
                                                                                     <label class="form-label">Tên chủ tài
                                                                                         khoản:</label>
@@ -306,12 +344,24 @@
                                                                                         value="{{ old('account_holder_name') }}"
                                                                                         required>
 
+                                                                                    <label class="form-label">Lí do hủy
+                                                                                        đơn:</label>
+                                                                                    <input type="text" name="reason"
+                                                                                        class="form-control mb-2"
+                                                                                        placeholder="Lý do"
+                                                                                        value="{{ old('reason') }}"
+                                                                                        required>
+
                                                                                     <input type="hidden"
                                                                                         name="id_order_status"
                                                                                         value="{{ OrderStatus::CANCEL }}">
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-danger me-2">Hủy đơn
-                                                                                        hàng</button>
+                                                                                    <div class=" text-center">
+                                                                                        <button type="submit"
+                                                                                            class="btn btn-danger me-2"
+                                                                                            onclick="return confirm('Bạn chắc chắn muốn hủy đơn hàng?')">Hủy
+                                                                                            đơn
+                                                                                            hàng</button>
+                                                                                    </div>
                                                                                 </form>
                                                                             </div>
                                                                         @endif
@@ -334,14 +384,15 @@
                                                                                             nhận được hàng</button>
                                                                                     </form>
                                                                                     @if ($order->payment_method_status_name === 'Đã thanh toán')
-                                                                                    <button
-                                                                                    class="btn btn-warning btnbtn">Hoàn hàng</button>
+                                                                                        <button
+                                                                                            class="btn btn-warning btnbtn">Hoàn
+                                                                                            hàng</button>
                                                                                     @else
-                                                                                    <button
-                                                                                        class="btn btn-warning btnbtn">Chưa
-                                                                                        nhận được hàng</button>
+                                                                                        <button
+                                                                                            class="btn btn-warning btnbtn">Chưa
+                                                                                            nhận được hàng</button>
                                                                                     @endif
-                                                                                    
+
                                                                                 </div>
 
                                                                                 <div id="not-received-form"
@@ -432,8 +483,7 @@
                                                                                                     class="btn btn-danger me-2">Gửi
                                                                                                     yêu cầu</button>
                                                                                                 <button type="button"
-                                                                                                    class="btn btn-secondary btnbtn"
-                                                                                                    >Hủy</button>
+                                                                                                    class="btn btn-secondary btnbtn">Hủy</button>
                                                                                             </div>
                                                                                         </form>
                                                                                     @elseif($order->payment_method_status_name === 'Chưa thanh toán')
@@ -462,8 +512,7 @@
                                                                                                     type="submit"class="btn btn-danger me-2">Gửi
                                                                                                     yêu
                                                                                                     cầu</button><button
-                                                                                                    type="button"class="btn btn-secondary btnbtn"
-                                                                                                    >Hủy</button>
+                                                                                                    type="button"class="btn btn-secondary btnbtn">Hủy</button>
                                                                                             </div>
                                                                                         </form>
                                                                                     @endif
@@ -667,7 +716,23 @@
             </div>
         </div>
     </div><!-- Page Section End -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @endif
         $(document).ready(function() {
             $(".btnbtn").click(function() {
                 $("#confirm-section, #not-received-form").toggle();
@@ -714,20 +779,20 @@
         });
 
         function cancelForm() {
-        const formElement = document.getElementById('refund-form-1') || document.getElementById('refund-form-2');
+            const formElement = document.getElementById('refund-form-1') || document.getElementById('refund-form-2');
 
-        console.log(formElement);
-        const confirmSection = document.getElementById('confirm-section');
-        console.log(confirmSection);
-        
-        if (formElement) {
-            formElement.style.display = 'none'; // Ẩn form
-        }
-        if (confirmSection) {
-            confirmSection.style.display = 'block'; // Hiện lại confirm section
-        }
+            console.log(formElement);
+            const confirmSection = document.getElementById('confirm-section');
+            console.log(confirmSection);
 
-    }
+            if (formElement) {
+                formElement.style.display = 'none'; // Ẩn form
+            }
+            if (confirmSection) {
+                confirmSection.style.display = 'block'; // Hiện lại confirm section
+            }
+
+        }
     </script>
 @endsection
 

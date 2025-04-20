@@ -14,7 +14,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">trang chủ</a></li>
                             <li class="breadcrumb-item active"><a href="{{ route('admin.brands.create') }}">Thêm mới thương
                                     hiệu</a></li>
                         </ol>

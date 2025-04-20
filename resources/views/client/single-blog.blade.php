@@ -22,8 +22,8 @@
                 <div class="col-xl-9 col-lg-8 col-12 order-1 order-lg-2 mb-40">
                     <div class="single-blog">
                         <div class="image-wrap">
-                            {{-- <h4 class="date">{{ $post->published_month }} <span>{{ $post->published_day }}</span></h4> --}}
-                            <h4 class="date">{{ $post->published_at }}</h4>
+                            <h4 class="date">{{ $post->published_month }} <span>{{ $post->published_day }}</span></h4>
+                            {{-- <h4 class="date">{{ $post->published_at }}</h4> --}}
                             {{-- <a class="image" href="single-blog.html"><img
                                     src="/client/assets/images/blog/single-blog.jpg" alt=""></a> --}}
                             <a class="image" href="{{ route('post.show', $post) }}"><img
