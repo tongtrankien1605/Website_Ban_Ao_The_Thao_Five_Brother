@@ -40,7 +40,7 @@
                         </div>
                         <select id="status-filter" class="form-control" style="width: 200px;">
                             <option value="">-- Lọc theo trạng thái --</option>
-                            @foreach ($orderStatuses as $status)
+                            @foreach ($allOrderStatus as $status)
                                 <option value="{{ $status->id }}">{{ $status->name }}</option>
                             @endforeach
                         </select>
@@ -131,6 +131,11 @@
                                                     'Giao thất bại' => 'bg-danger-light text-danger', // đỏ cảnh báo
                                                     'Đã giao' => 'bg-success-light text-success', // màu xanh lá
                                                     'Đã hủy' => 'bg-danger-light text-danger', // màu đỏ
+                                                    'Không chấp nhận hoàn hàng' => 'bg-danger-light text-danger', // màu đỏ
+                                                    'Chờ xác nhận hoàn hàng' => 'bg-warning-light text-warning', // màu đỏ
+                                                    'Hoàn hàng thành công' => 'bg-success-light text-success', // màu đỏ
+                                                    'Giao lại' => 'bg-warning-light text-warning', // màu đỏ
+                                                    'Xác minh' => 'bg-warning-light text-warning', // màu đỏ
                                                     default => 'bg-secondary-light text-secondary',
                                                 };
                                             @endphp
@@ -263,14 +268,27 @@
                     $(document).ready(function() {
                         $('input#search-input, select#status-filter').on("keyup change", function() {
                             let searchValue = $('#search-input').val().toLowerCase();
-                            let statusValue = $('#status-filter').val().toLowerCase();
-
+                            let statusValue = $('#status-filter').val();
+                            
                             $("table tbody tr").filter(function() {
                                 let rowText = $(this).text().toLowerCase();
-                                let rowStatus = $(this).find('td:nth-child(6)').text().trim().toLowerCase();
+                                let statusElement = $(this).find('td:nth-child(6) span.badge');
+                                let statusText = statusElement.text().trim();
+                                
+                                // Tìm giá trị tương ứng từ các option
+                                let matchingStatusId = '';
+                                if (statusValue) {
+                                    $('#status-filter option').each(function() {
+                                        if ($(this).val() === statusValue) {
+                                            matchingStatusId = $(this).text().trim();
+                                            return false; // Break the loop
+                                        }
+                                    });
+                                }
+                                
                                 let matchesSearch = rowText.indexOf(searchValue) > -1;
-                                let matchesStatus = !statusValue || rowStatus === statusValue;
-
+                                let matchesStatus = !statusValue || statusText === matchingStatusId;
+                                
                                 $(this).toggle(matchesSearch && matchesStatus);
                             });
                         });
