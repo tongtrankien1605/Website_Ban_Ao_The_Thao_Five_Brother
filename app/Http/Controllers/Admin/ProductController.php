@@ -487,7 +487,7 @@ class ProductController extends Controller
                             ]);
 
                             InventoryLog::create([
-                                'id_product_variant' => $key,
+                                'id_product_variant' => $newQuantity['id_skus'],
                                 'user_id' => auth()->user()->id,
                                 'old_quantity' => 0,
                                 'new_quantity' => $newQuantity['quantity'],
@@ -523,8 +523,8 @@ class ProductController extends Controller
 
             return redirect()->route('admin.product.index')->with('success', 'Sửa sản phẩm thành công!');
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
-            // dd($e);
         }
     }
 
