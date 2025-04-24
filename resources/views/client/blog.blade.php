@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Blog</h1>
+                    <h1>Bài viết</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('post.index') }}">Blog</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('post.index') }}">Bài viết</a></li>
                     </ul>
 
                 </div>

@@ -46,10 +46,10 @@
 
                                 {{-- <p><a href="{{ route('login-register') }}">Register</a><a href="{{ route('login-register') }}">Login</a></p> --}}
                                 @if (Auth::check())
-                                    <p><a href="{{ route('my-account') }}">My Account</a></p>
+                                    <p><a href="{{ route('my-account') }}">Tài khoản của tôi</a></p>
                                 @else
-                                    <p><a href="{{ route('register') }}">Register</a><a
-                                            href="{{ route('login') }}">Login</a></p>
+                                    <p><a href="{{ route('register') }}">Đăng ký</a><a
+                                            href="{{ route('login') }}">Đăng nhập</a></p>
                                 @endif
 
                             </div>

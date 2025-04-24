@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Register</h1>
+                    <h1>Đăng ký</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Yêu thích</a></li>
                     </ul>
 
                 </div>
@@ -23,7 +23,7 @@
             <div class="row mbn-40">
                 <div class="col-lg-6 col-12 mb-40 m-auto">
                     <div class="login-register-form-wrap">
-                        <h3 class="text-center">Register</h3>
+                        <h3 class="text-center">Đăng ký</h3>
                         <form action="{{ route('register') }}" method="post">
                             @csrf
                             <div class="row">
@@ -58,7 +58,7 @@
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="text-center col-12  mb-15"><input type="submit" value="Register"
+                                <div class="text-center col-12  mb-15"><input type="submit" value="Đăng ký"
                                         class="w-100"></div>
                                 <p class=" text-center ">Bạn đã có tài khoản?, <a href="{{ route('login') }}">Đăng nhập
                                         ngay </a> </p>

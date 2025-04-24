@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Single Product</h1>
+                    <h1>Chi tiết sản phẩm</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('product.index') }}">Shop</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('product.index') }}">Sản phẩm</a></li>
                     </ul>
 
                 </div>
@@ -151,7 +151,7 @@
                                     <p>{!! $product->description !!}</p>
                                 </div>
 
-                                <span class="availability">Availability: <span id="availabilityQty">--</span></span>
+                                <span class="availability">Tồn kho: <span id="availabilityQty">--</span></span>
 
 
                                 @if ($product->attributeValues->isNotEmpty())
@@ -223,7 +223,7 @@
                                 <div class="actions">
                                     <button id="addToCartBtn" class="add_to_cart"
                                         data-url="{{ route('add.cart', ['id' => $product->id]) }}">
-                                        <i class="ti-shopping-cart"></i><span>ADD TO CART</span>
+                                        <i class="ti-shopping-cart"></i><span>Thêm vào giỏ hàng</span>
                                     </button>
                                     <button class="box" data-tooltip="Compare"><i
                                     class="ti-control-shuffle"></i></button>
@@ -245,9 +245,9 @@
                         <!-- Nav tabs -->
                         <div class="col-12">
                             <ul class="pro-info-tab-list section nav">
-                                <li><a class="active" href="#more-info" data-bs-toggle="tab">More info</a></li>
+                                <li><a class="active" href="#more-info" data-bs-toggle="tab">Thông tin thêm</a></li>
                                 {{-- <li><a href="#data-sheet" data-bs-toggle="tab">Data sheet</a></li> --}}
-                                <li><a href="#reviews" data-bs-toggle="tab">Reviews</a></li>
+                                <li><a href="#reviews" data-bs-toggle="tab">Đánh giá & Nhận xét</a></li>
                             </ul>
                         </div>
                         <!-- Tab panes -->
@@ -275,7 +275,7 @@
                             </div>
                             <div class="pro-info-tab tab-pane fade" id="reviews" role="tabpanel">
                                 <div class="review-section">
-                                    <h3 class="mb-4">Product Reviews</h3>
+                                    <h3 class="mb-4">Đánh giá sản phẩm</h3>
                                     
                                     @forelse($product->reviews as $review)
                                         <div class="single-review mb-4">
@@ -303,18 +303,18 @@
                                         </div>
                                     @empty
                                         <div class="alert alert-info">
-                                            No reviews yet. Be the first to review this product!
+                                            Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!
                                         </div>
                                     @endforelse
 
                                     @auth
                                         <div class="review-form-wrapper">
-                                            <h4 class="mb-4">Write a Review</h4>
+                                            <h4 class="mb-4">Viết đánh giá</h4>
                                             <form action="{{ route('reviews.store') }}" method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 <input type="hidden" name="id_product" value="{{ $product->id }}">
                                                 <div class="form-group mb-4">
-                                                    <label class="mb-2">Your Rating</label>
+                                                    <label class="mb-2">Số sao</label>
                                                     <div class="rate">
                                                         <input type="radio" id="star5" name="rating" value="5" required />
                                                         <label for="star5" title="5 stars"><i class="fa fa-star"></i></label>
@@ -332,26 +332,26 @@
                                                     @enderror
                                                 </div>
                                                 <div class="form-group mb-4">
-                                                    <label for="content" class="mb-2">Your Review</label>
+                                                    <label for="content" class="mb-2">Đánh giá của bạn</label>
                                                     <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
                                                     @error('content')
                                                         <small class="text-danger">{{ $message }}</small>
                                                     @enderror
                                                 </div>
                                                 <div class="form-group mb-4">
-                                                    <label for="images" class="mb-2">Review Images (Optional)</label>
+                                                    <label for="images" class="mb-2">Đánh giá hình ảnh (Tùy chọn)</label>
                                                     <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp">
-                                                    <small class="text-muted">You can upload up to 5 images. Maximum size: 2MB each.</small>
+                                                    <small class="text-muted">Bạn có thể tải lên tối đa 5 hình ảnh. Kích thước tối đa: 2MB mỗi hình ảnh.</small>
                                                     @error('images')
                                                         <small class="text-danger">{{ $message }}</small>
                                                     @enderror
                                                 </div>
-                                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                                <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
                                             </form>
                                         </div>
                                     @else
                                         <div class="review-login-notice">
-                                            <p class="mb-2">Please <a href="{{ route('login') }}">login</a> to write a review.</p>
+                                            <p class="mb-2">Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để viết bài đánh giá.</p>
                                         </div>
                                     @endauth
                                 </div>
@@ -360,7 +360,7 @@
                     </div>
 
                     <div class="section-title text-start mb-30">
-                        <h1>Related Product</h1>
+                        <h1>Sản phẩm liên quan</h1>
                     </div>
 
                     <div class="related-product-slider related-product-slider-2 slick-space p-0">
@@ -381,12 +381,9 @@
 
                                         <div class="image-overlay">
                                             <div class="action-buttons">
-                                                    <button><a href="{{ route('product.show', $related->id) }}">Add to
-                                                            cart</a></button>
+                                                    <button><a href="{{ route('product.show', $related->id) }}">Thêm vào giỏ hàng</a></button>
                                                     <button class="add_to_wishlist"
-                                                        data-url="{{ route('add_wishlist', ['id' => $related->id]) }}">Add
-                                                        to
-                                                        wishlist</button>
+                                                        data-url="{{ route('add_wishlist', ['id' => $related->id]) }}">Thêm vào yêu thích</button>
                                                 </div>
                                             </div>
 
@@ -642,7 +639,7 @@
                 <div class="col-xl-3 col-lg-4 col-12 order-2 order-lg-1 mb-40">
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Brand</h4>
+                        <h4 class="sidebar-title">Thương hiệu</h4>
                         <ul class="sidebar-list">
                             @foreach ($brands as $brand)
                                 <li><a href="{{ route('brands.show', $brand->id) }}">{{ $brand->name }} <span
@@ -669,7 +666,7 @@
                     </div> --}}
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Popular Product</h4>
+                        <h4 class="sidebar-title">Sản phẩm phổ biến</h4>
                         <div class="sidebar-product-wrap">
                             @foreach ($popularProducts as $item)
                             <div class="sidebar-product">

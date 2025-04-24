@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Login & Register</h1>
+                    <h1>Đăng nhập & Đăng ký</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Yêu thích</a></li>
                     </ul>
 
                 </div>
@@ -24,7 +24,7 @@
 
                 <div class="col-lg-4 col-12 mb-40">
                     <div class="login-register-form-wrap">
-                        <h3>Login</h3>
+                        <h3>Đăng nhập</h3>
                         <form action="#" class="mb-30">
                             <div class="row">
                                 <div class="col-12 mb-15"><input type="text" placeholder="Username or Email"></div>
@@ -32,14 +32,14 @@
                                 <div class="col-12"><input type="submit" value="Login"></div>
                             </div>
                         </form>
-                        <h4>You can also login with...</h4>
+                        {{-- <h4>You can also login with...</h4>
                         <div class="social-login">
                             <a href="#"><i class="fa fa-facebook"></i></a>
                             <a href="#"><i class="fa fa-twitter"></i></a>
                             <a href="#"><i class="fa fa-google-plus"></i></a>
                             <a href="#"><i class="fa fa-pinterest"></i></a>
                             <a href="#"><i class="fa fa-linkedin"></i></a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -49,7 +49,7 @@
 
                 <div class="col-lg-6 col-12 mb-40 ms-auto">
                     <div class="login-register-form-wrap">
-                        <h3>Register</h3>
+                        <h3>Đăng ký</h3>
                         <form action="#">
                             <div class="row">
                                 <div class="col-md-6 col-12 mb-15"><input type="text" placeholder="Your Name"></div>

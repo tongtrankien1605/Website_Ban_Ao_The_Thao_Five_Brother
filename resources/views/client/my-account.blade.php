@@ -10,10 +10,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>My Account</h1>
+                    <h1>Tài khoản của tôi</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route(name: 'my-account') }}">My Account</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route(name: 'my-account') }}">Tài khoản của tôi</a></li>
                     </ul>
 
                 </div>
@@ -30,7 +30,7 @@
                 <div class="col-lg-2 col-12 mb-30">
                     <div class="myaccount-tab-menu nav" role="tablist">
                         <a href="#dashboad" class="active" data-bs-toggle="tab"><i class="fa fa-dashboard"></i>
-                            Dashboard</a>
+                            Bảng điều khiển</a>
 
                         {{-- @if (Auth::check() && Auth::user()->role !== 1)
                             <a href="{{ route('admin.index') }}">
@@ -38,19 +38,18 @@
                             </a>
                         @endif --}}
 
-                        <a href="#orders" data-bs-toggle="tab"><i class="fa fa-cart-arrow-down"></i> Orders</a>
+                        <a href="#orders" data-bs-toggle="tab"><i class="fa fa-cart-arrow-down"></i>Đơn hàng</a>
 
-                        <a href="#payment-method" data-bs-toggle="tab"><i class="fa fa-credit-card"></i> Payment
-                            Method</a>
+                        <a href="#payment-method" data-bs-toggle="tab"><i class="fa fa-credit-card"></i>Phương thức thanh toán</a>
 
-                        <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i> Address</a>
-
-
-                        <a href="#account-info" data-bs-toggle="tab"><i class="fa fa-user"></i> Account Details</a>
+                        <a href="#address-edit" data-bs-toggle="tab"><i class="fa fa-map-marker"></i>Địa chỉ</a>
 
 
+                        <a href="#account-info" data-bs-toggle="tab"><i class="fa fa-user"></i>Chi tiết tài khoản</a>
 
-                        <a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
+
+
+                        <a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> Đăng xuất</a>
                     </div>
                 </div>
                 <!-- My Account Tab Menu End -->
@@ -61,18 +60,18 @@
                         <!-- Single Tab Content Start - Dashboard -->
                         <div class="tab-pane fade show active" id="dashboad" role="tabpanel">
                             <div class="myaccount-content">
-                                <h3>Dashboard</h3>
+                                <h3>Bảng điều khiển</h3>
 
                                 <div class="welcome">
-                                    <p>Hello, <strong>{{ $user->name }}</strong> (If Not
-                                        <strong>{{ $user->name }}!</strong><a href="{{ route('logout') }}" class="logout">
-                                            Logout</a>)
+                                    <p>Hello, <strong>{{ $user->name }}</strong> (Nếu không phải   
+                                        <strong>{{ $user->name }}!   </strong><a href="{{ route('logout') }}" class="logout">
+                                                Đăng xuất tại đây</a>)
                                     </p>
                                 </div>
 
-                                <p class="mb-0">From your account dashboard. you can easily check &amp; view your
-                                    recent orders, manage your shipping and billing addresses and edit your
-                                    password and account details.</p>
+                                <br>
+                                <p class="mb-0">Từ bảng điều khiển tài khoản của bạn. bạn có thể dễ dàng kiểm tra và xem các đơn 
+                                    hàng gần đây, quản lý địa chỉ giao hàng và thanh toán của bạn</p>
                             </div>
                         </div>
                         <!-- Single Tab Content End -->
@@ -124,9 +123,9 @@
                         <!-- Single Tab Content Start -->
                         <div class="tab-pane fade" id="payment-method" role="tabpanel">
                             <div class="myaccount-content">
-                                <h3>Payment Method</h3>
+                                <h3>Phương thức thanh toán</h3>
 
-                                <p class="saved-message">You Can't Saved Your Payment Method yet.</p>
+                                <p class="saved-message">Bạn chưa thể lưu phương thức thanh toán của mình.</p>
                             </div>
                         </div>
                         <!-- Single Tab Content End -->
@@ -134,7 +133,7 @@
                         <!-- Single Tab Content Start -->
                         <div class="tab-pane fade" id="address-edit" role="tabpanel">
                             <div class="myaccount-content">
-                                <h3>Billing Address</h3>
+                                <h3>Địa chỉ thanh toán</h3>
                                 <p>{{ $user->phone }}</p>
                                 @foreach ($addresses as $address)
                                     <address>
@@ -152,8 +151,7 @@
                                 @endforeach
 
                                 <a href="#" class="btn btn-dark btn-round d-inline-block"><i
-                                        class="fa fa-edit"></i>Edit
-                                    Address</a>
+                                        class="fa fa-edit"></i>Chỉnh sửa địa chỉ</a>
                             </div>
                         </div>
                         <!-- Single Tab Content End -->
@@ -163,7 +161,7 @@
 
                         <div class="tab-pane fade" id="account-info" role="tabpanel">
                             <div class="myaccount-content">
-                                <h3>Account Details</h3>
+                                <h3>Chi tiết tài khoản</h3>
 
                                 <div class="account-details-form">
                                     <div class="row">
