@@ -16,4 +16,8 @@ final class OrderStatus extends Enum
     const CANCEL = 8;
     const SUCCESS = 9;
     const REFUND_FAILED = 10;
+    const WAIT_CONFIRM = 11;
+    const REFUND_SUCCESS = 12;
+    const RETURN = 13;
+    const AUTHEN = 14;
 }

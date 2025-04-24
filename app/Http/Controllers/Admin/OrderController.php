@@ -25,7 +25,7 @@ class OrderController extends Controller
      */
 
 
-    
+
 
     public function index()
     {
@@ -56,12 +56,14 @@ class OrderController extends Controller
             ])
             ->withSum('order_details', 'quantity')
             ->withCount('order_details')
+            ->orderBy('updated_at', 'desc')
             ->paginate(10);
         // dd($orders);
-        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS];
+        $allOrderStatus = OrderStatus::orderBy('id')->get();
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN];
         $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         $paymentMethodStatuses = PaymentMethodStatus::orderBy('id')->get();
-        return view('admin.orders.index', compact(['orders', 'orderStatuses', 'paymentMethodStatuses']));
+        return view('admin.orders.index', compact(['orders', 'orderStatuses', 'paymentMethodStatuses', 'allOrderStatus']));
     }
 
     /**
@@ -99,7 +101,7 @@ class OrderController extends Controller
         if (!$order) {
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
-        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS];
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN];
         $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         return view('admin.orders.show', compact('order', 'orderStatuses'));
     }
@@ -153,44 +155,21 @@ class OrderController extends Controller
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
         $oldStatus = $order->id_order_status;
-        $refund = Refund::where('id_order', $order->id)->first();
 
         if ($request->status == 'approved') {
-            $order->id_order_status = EnumsOrderStatus::REFUND;
-            $newStatus = $order->id_order_status;
-            $note = "Đơn hàng đã được cập nhật thành 'Hoàn hàng'";
-            $refund->status = 'Đã chấp nhận';
-            $orderDetails = OrderDetail::where('id_order', $order->id)->get();
-            foreach ($orderDetails as $orderDetail) {
-                $inventory = Inventory::where('id_product_variant', $orderDetail->id_product_variant)->first();
-                $oldQuantity = $inventory->quantity;
-                $newQuantity = $inventory->quantity + $orderDetail->quantity;
-                $inventory->quantity += $orderDetail->quantity;
-                $inventory->save();
-                InventoryLog::create([
-                    'id_product_variant' => $orderDetail->id_product_variant,
-                    'user_id' => auth()->user()->id,
-                    'old_quantity' => $oldQuantity,
-                    'new_quantity' => $newQuantity,
-                    'change_quantity' => $orderDetail->quantity,
-                    'reason' => "Hoàn hàng",
-                ]);
-            }
-        } else {
-            $order->id_order_status = EnumsOrderStatus::REFUND_FAILED;
-            $newStatus = $order->id_order_status;
-            $note = "Đơn hàng không được chấp nhận hoàn hàng";
-            $refund->status = 'Đã từ chối';
+            $order->id_order_status = EnumsOrderStatus::DELIVERED;
+            $order->delivered_at = Carbon::now();
+            $note = "Đơn hàng đã được giao đến bạn";
         }
         OrderStatusHistory::create([
             'order_id' => $order->id,
             'user_id' => auth()->user()->id,
             'old_status' => $oldStatus,
-            'new_status' => $newStatus,
+            'new_status' => $order->id_order_status,
             'note' => $note,
         ]);
 
-        if (!$refund->save() || !$order->save()) {
+        if (!$order->save()) {
             DB::rollBack();
             return redirect(route('admin.orders.index'))->with('error', 'Đã xảy ra lỗi');
         }

@@ -82,10 +82,10 @@ class ProductController extends Controller
         $productImages = ProductImage::where('id_product', $product->id)->get();
         $wishlist = Wishlist::where('id_product', $product->id)->where('id_user', auth()->id())->first();
 
-        $skus = Skus::where('product_id', $product->id)->get();
-        foreach ($skus as $sku) {
-            $inventoryEntry = InventoryEntry::where('id_skus', $sku->id)->get();
-        }
+        $skus = Skus::where('product_id', $product->id)->with('inventory_entries')->get();
+        // foreach ($skus as $sku) {
+        //     $inventoryEntry = InventoryEntry::where('id_skus', $sku->id)->get();
+        // }
         // dd($inventoryEntry);
 
 
@@ -123,7 +123,7 @@ class ProductController extends Controller
             'variantMap',
             'relatedProducts', 
             'popularProducts',
-            'inventoryEntry'
+            // 'inventoryEntry'
         ));
     }
 
