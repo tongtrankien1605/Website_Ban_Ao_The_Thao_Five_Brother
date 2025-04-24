@@ -73,8 +73,7 @@ class OrderController extends Controller
                 // dd($outOfStockItems);
             }
 
-
-            if (empty($outOfStockItems)) {
+            if (!empty($outOfStockItems)) {
                 DB::rollBack();
                 broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
                 return response()->json([
