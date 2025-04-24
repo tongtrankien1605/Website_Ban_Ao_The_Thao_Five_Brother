@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Shop</h1>
+                    <h1>Sản phẩm</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('product.index') }}">Shop</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('product.index') }}">Sản phẩm</a></li>
                     </ul>
 
                 </div>
@@ -25,7 +25,7 @@
 
                 <div class="col-12">
                     <div class="product-show">
-                        <h4>Show:</h4>
+                        <h4>Hiển thị:</h4>
                         <select class="nice-select">
                             <option>8</option>
                             <option>12</option>
@@ -34,14 +34,14 @@
                         </select>
                     </div>
                     <div class="product-short">
-                        <h4>Short by:</h4>
+                        <h4>Sắp xếp theo:</h4>
                         <select class="nice-select">
-                            <option>Name Ascending</option>
-                            <option>Name Descending</option>
-                            <option>Date Ascending</option>
-                            <option>Date Descending</option>
-                            <option>Price Ascending</option>
-                            <option>Price Descending</option>
+                            <option>Tên tăng dần</option>
+                            <option>Tên giảm dần</option>
+                            <option>Ngày tăng dần</option>
+                            <option>Ngày giảm dần</option>
+                            <option>Giá tăng dần</option>
+                            <option>Giá giảm dần</option>
                         </select>
                     </div>
                 </div>
@@ -58,8 +58,10 @@
                                     <div class="image-overlay">
                                         <div class="action-buttons">
                                             <button
-                                                ><a href="{{route('product.show',$product->id)}}">Add to cart</a></button>
-                                            <button>add to wishlist</button>
+                                                {{-- ><a href="{{route('product.show',$product->id)}}">Add to cart</a></button> --}}
+                                                ><a href="{{route('product.show',$product->id)}}">Thêm vào giỏ hàng</a></button>
+                                            <button>Thêm vào yêu thích</button>
+                                            {{-- <button>add to wishlist</button> --}}
                                         </div>
                                     </div>
 

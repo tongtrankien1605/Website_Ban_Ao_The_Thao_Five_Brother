@@ -48,8 +48,8 @@
                 <div class="main-menu">
                     <nav>
                         <ul>
-                            <li class="active"><a href="{{ route('index') }}">HOME</a></li>
-                            <li><a href="{{ route('product.index') }}">SHOP</a></li>
+                            <li class="active"><a href="{{ route('index') }}">Trang chủ</a></li>
+                            <li><a href="{{ route('product.index') }}">Sản phẩm</a></li>
                             {{-- <li><a href="#">PAGES</a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ route('show.cart') }}">Cart</a></li>
@@ -62,13 +62,13 @@
                                     <li><a href="{{ route('404') }}">404 Error</a></li>
                                 </ul>
                             </li> --}}
-                            <li><a href="{{ route('post.index') }}">BLOG</a>
+                            <li><a href="{{ route('post.index') }}">Bài viết</a>
                                 {{-- <ul class="sub-menu">
                                     <li><a href="{{ route('post.index') }}">Blog</a></li>
                                     <li><a href="{{ route('post.show',$post->id) }}">Single Blog</a></li>
                                 </ul> --}}
                             </li>
-                            <li><a href="{{ route('contact') }}">CONTACT</a></li>
+                            <li><a href="{{ route('contact') }}">Liên hệ</a></li>
                         </ul>
                     </nav>
                 </div>
