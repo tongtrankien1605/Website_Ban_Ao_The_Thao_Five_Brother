@@ -136,7 +136,7 @@
                                                         @endforeach
                                                     </div>
 
-                                                    <div class="mb-3">
+                                                    {{-- <div class="mb-3">
                                                         <label class="form-label">Số lượng:</label>
                                                         <input type="number" class="form-control"
                                                             name="variants[{{ $sku->id }}][quantity]"
@@ -190,7 +190,7 @@
                                                         value="{{ $value->discount_end ? $value->discount_end->format('Y-m-d') : '' }}">
                                                     @error("variants.$sku->id.end_date")
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
                                                     {{-- <div class="form-check">
                                                         <input type="checkbox" class="form-check-input" id="check1"
@@ -263,7 +263,7 @@
                                                             value="{{ $attrValue }}">
                                                     @endforeach
 
-                                                    <label class="form-label">Số lượng:</label>
+                                                    {{-- <label class="form-label">Số lượng:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][quantity]"
                                                         value="{{ old("variants.$index.quantity") }}">
@@ -309,7 +309,7 @@
                                                         value="{{ old("variants.$index.end_date") }}">
                                                     @error("variants.$index.end_date")
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
                                                     <label class="form-label">Ảnh</label>
                                                     <input type="file" class="form-control variant-image"
@@ -789,7 +789,7 @@
                         <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                         ${hiddenAttributeInputs}
 
-                        <label class="form-label">Số lượng:</label>
+                        {{--<label class="form-label">Số lượng:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
@@ -814,7 +814,7 @@
                         <label class="form-label">Ngày kết thúc:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][end_date]"
-                            min="{{ date('Y-m-d') }}">
+                            min="{{ date('Y-m-d') }}">--}}
 
                         <label class="form-label">Ảnh:</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>
@@ -932,7 +932,7 @@
                             <label class="form-label">Mã vạch:</label>
                             <input type="text" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
                             ${hiddenAttributeInputs}
-                            <label class="form-label">Số lượng:</label>
+                            {{--<label class="form-label">Số lượng:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
@@ -958,7 +958,7 @@
                         <label class="form-label">Ngày kết thúc:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][end_date]"
-                            min="{{ date('Y-m-d') }}">
+                            min="{{ date('Y-m-d') }}">--}}
 
                             <label class="form-label">Ảnh:</label>
                             <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*" required>

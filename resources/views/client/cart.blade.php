@@ -9,10 +9,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Cart</h1>
+                    <h1>Giỏ hàng</h1>
                     <ul class="page-breadcrumb">
                         <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('show.cart') }}">Cart</a></li>
+                        <li><a href="{{ route('show.cart') }}">Giỏ hàng</a></li>
                     </ul>
 
                 </div>
@@ -31,13 +31,13 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="pro-select">Select</th>
-                                        <th class="pro-thumbnail">Image</th>
-                                        <th class="pro-title">Product</th>
-                                        <th class="pro-price">Price</th>
-                                        <th class="pro-quantity">Quantity</th>
-                                        <th class="pro-subtotal">Total</th>
-                                        <th class="pro-remove">Remove</th>
+                                        <th class="pro-select">Lựa chọn</th>
+                                        <th class="pro-thumbnail">Hình ảnh</th>
+                                        <th class="pro-title">Sản phẩm</th>
+                                        <th class="pro-price">Giá</th>
+                                        <th class="pro-quantity">Số lượng</th>
+                                        <th class="pro-subtotal">Tổng</th>
+                                        <th class="pro-remove">Xóa</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,7 +98,7 @@
                     </div>
                     <div class="col-lg-8 col-md-7 col-12 mb-40">
                         <div class="cart-buttons mb-30">
-                            <a href="{{ route('index') }}">Continue Shopping</a>
+                            <a href="{{ route('index') }}">Tiếp tục mua sắm</a>
                         </div>
                         {{-- <div class="cart-coupon">
                             <h4>Coupon</h4>
@@ -134,17 +134,17 @@
                     <div class="col-lg-4 col-md-5 col-12 mb-40">
                         @if (!$cartItem->isEmpty())
                             <div class="cart-total fix">
-                                <h3>Cart Totals</h3>
+                                <h3>Tổng số giỏ hàng</h3>
                                 <table>
                                     <tbody>
                                         <tr class="cart-subtotal">
-                                            <th>Subtotal</th>
+                                            <th>Tạm tính</th>
                                             <td>
                                                 <span class="amount">{{ number_format($total) }} Đồng</span>
                                             </td>
                                         </tr>
                                         <tr class="order-total">
-                                            <th>Total</th>
+                                            <th>Thành tiền</th>
                                             <td>
                                                 <strong><span class="amount">{{ number_format($total) }}
                                                         Đồng</span></strong>
@@ -153,7 +153,7 @@
                                     </tbody>
                                 </table>
                                 <div class="proceed-to-checkout section mt-30">
-                                    <a href="{{ route('indexPayment') }}" class="checkout-btn">Proceed to Checkout</a>
+                                    <a href="{{ route('indexPayment') }}" class="checkout-btn">Tiến hành thanh toán</a>
                                 </div>
                             </div>
                         @endif

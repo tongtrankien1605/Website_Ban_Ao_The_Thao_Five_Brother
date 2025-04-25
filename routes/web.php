@@ -215,6 +215,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('remove.cart');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('clear.cart');
 
+    // Thêm route mới để cập nhật hàng loạt địa chỉ
+    Route::post('/address/update', [AddressUserController::class, 'batchUpdate'])->name('address.update');
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('indexPayment');
 

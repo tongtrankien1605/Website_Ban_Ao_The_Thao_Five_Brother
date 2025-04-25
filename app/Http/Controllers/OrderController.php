@@ -63,7 +63,7 @@ class OrderController extends Controller
                 $quantity = (int) $item['quantity'];
                 // dd($quantity);
 
-                if ($inventory->quantity <= $quantity) {
+                if ($inventory->quantity == 1) {
                     $outOfStockItems[] = [
                         'id' => $cartItem->id,
                         'name' => $cartItem->skuses->name,

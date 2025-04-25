@@ -112,7 +112,7 @@
                                     <td>{{ $skus->barcode }}</td>
                                     <td>{{ number_format($getPrice->cost_price ?? 0) }} VND</td>
                                     <td>{{ number_format($getPrice->price ?? 0) }} VND</td>
-                                    @if ($getPrice->sale_price)
+                                    @if ($getPrice->sale_price??'')
                                         <td>{{ number_format($getPrice->sale_price) }} VND</td>
                                         <td>{{$getPrice->discount_start->format('d/m/Y') }} - {{$getPrice->discount_end->format('d/m/Y')}}</td>
                                     @else

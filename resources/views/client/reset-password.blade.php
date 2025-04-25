@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Reset password</h1>
+                    <h1>Đặt lại mật khẩu</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Yêu thích</a></li>
                     </ul>
 
                 </div>
@@ -24,7 +24,7 @@
 
                 <div class="col-lg-4 col-12 mb-40 m-auto">
                     <div class="login-register-form-wrap">
-                        <h3 class="text-center">Reset password</h3>
+                        <h3 class="text-center">Đặt lại mật khẩu</h3>
                         <form action="{{ route('reset-password') }}" class="mb-30" method="post">
                             @csrf
                             <div class="row">
@@ -46,18 +46,18 @@
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-12 text-center 98px"><input type="submit" value="Reset" class="w-100">
+                                <div class="col-12 text-center 98px"><input type="submit" value="Đặt lại" class="w-100">
                                 </div>
                             </div>
                         </form>
-                        <h4 class="text-center ">You can also login with...</h4>
+                        {{-- <h4 class="text-center ">You can also login with...</h4>
                         <div class="social-login d-flex justify-content-center  mb-15">
                             <a href="#"><i class="fa fa-facebook"></i></a>
                             <a href="#"><i class="fa fa-twitter"></i></a>
                             <a href="#"><i class="fa fa-google-plus"></i></a>
                             <a href="#"><i class="fa fa-pinterest"></i></a>
                             <a href="#"><i class="fa fa-linkedin"></i></a>
-                        </div>
+                        </div> --}}
                         <p class=" text-center ">Chưa có tài khoản, <a href="{{ route('register') }}">Đăng kí ngay </a> </p>
                     </div>
                 </div>
