@@ -112,4 +112,55 @@ public function renderAddressList()
 
         return response()->json(['message' => 'Address added successfully']);
     }
+
+    /**
+     * Cập nhật nhiều địa chỉ cùng lúc
+     */
+    public function batchUpdate(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $addresses = $request->input('addresses', []);
+            $defaultAddressId = null;
+            
+            // Tìm ID của địa chỉ mặc định (nếu có)
+            foreach ($addresses as $id => $addressData) {
+                if (isset($addressData['is_default']) && $addressData['is_default'] == '1') {
+                    $defaultAddressId = $id;
+                    break;
+                }
+            }
+            
+            // Cập nhật từng địa chỉ
+            foreach ($addresses as $id => $addressData) {                
+                $address = AddressUser::where('id', $id)
+                                    ->where('id_user', Auth::id())
+                                    ->first();
+                
+                if ($address) {
+                    $address->name = $addressData['name'];
+                    $address->phone = $addressData['phone'];
+                    $address->address = $addressData['address'];
+                    $address->is_default = $addressData['is_default'];
+                    $address->save();
+                }
+            }
+            
+            if ($defaultAddressId) {
+                AddressUser::where('id_user', Auth::id())
+                    ->where('id', '!=', $defaultAddressId)
+                    ->update(['is_default' => 0]);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật địa chỉ thành công',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

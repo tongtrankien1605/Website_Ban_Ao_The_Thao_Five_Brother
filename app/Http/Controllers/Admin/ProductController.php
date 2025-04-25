@@ -93,11 +93,11 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        $count = InventoryEntry::orderBy('created_at', 'desc')->first();
-        $import = 0;
-        if ($count) {
-            $import = $count->import;
-        }
+        // $count = InventoryEntry::orderBy('created_at', 'desc')->first();
+        // $import = 0;
+        // if ($count) {
+        //     $import = $count->import;
+        // }
         try {
             DB::beginTransaction();
 
@@ -141,8 +141,6 @@ class ProductController extends Controller
                     $sku = Skus::create([
                         'product_id' => $product->id,
                         'name' => $variant['name'],
-                        // 'price' => $variant['price'],
-                        // 'sale_price' => isset($variant['sale_price']) ? $variant['sale_price'] : $variant['price'],
                         'barcode' => $product->id . $variant['barcode'],
                         'image' => $variant['image']->store('productsVariants', 'public'),
                     ]);
@@ -150,24 +148,26 @@ class ProductController extends Controller
                         'id' => $sku->id,
                         'attribute_values' => $variant['attribute_values'],
                     ];
-                    $inventoryEntry = InventoryEntry::create([
-                        'id_skus' => $sku->id,
-                        'user_id' => Auth::user()->id,
-                        'id_shopper' => Auth::user()->role == 3 ? Auth::user()->id : null,
-                        'quantity' => $variant['quantity'],
-                        'cost_price' => $variant['cost_price'],
-                        'price' => $variant['price'],
-                        'sale_price' => $variant['sale_price'],
-                        'discount_start' => $variant['start_date'],
-                        'discount_end' => $variant['end_date'],
-                        'import' => $import + 1,
-                        'status' => Auth::user()->role == 3 ? "Đã duyệt" : "Đang chờ xử lý",
-                    ]);
+                    // $inventoryEntry = InventoryEntry::create([
+                    //     'id_skus' => $sku->id,
+                    //     'user_id' => Auth::user()->id,
+                    //     'id_shopper' => Auth::user()->role == 3 ? Auth::user()->id : null,
+                    //     'quantity' => $variant['quantity'],
+                    //     'cost_price' => $variant['cost_price'],
+                    //     'price' => $variant['price'],
+                    //     'sale_price' => $variant['sale_price'],
+                    //     'discount_start' => $variant['start_date'],
+                    //     'discount_end' => $variant['end_date'],
+                    //     'import' => $import + 1,
+                    //     'status' => Auth::user()->role == 3 ? "Đã duyệt" : "Đang chờ xử lý",
+                    // ]);
                     // $inventories[$sku->id] = $variant['quantity'];
                     $inventories[] = [
-                        'id_skus' => $sku->id,
-                        'quantity' => $variant['quantity'],
-                        'id_entry' => $inventoryEntry->id,
+                        'id_product_variant' => $sku->id,
+                        'quantity' => $variant['quantity']?? 0 ,
+                        // 'id_entry' => $inventoryEntry->id,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
                     ];
                 }
                 $variantsData = [];
@@ -182,25 +182,25 @@ class ProductController extends Controller
                         ];
                     }
                 }
-                if (Auth::user()->role == 3) {
-                    foreach ($inventories as $key => $value) {
-                        Inventory::create([
-                            'id_product_variant' => $value['id_skus'],
-                            'quantity' => $value['quantity'],
-                        ]);
-                        InventoryLog::create([
-                            'id_product_variant' => $value['id_skus'],
-                            'user_id' => auth()->user()->id,
-                            'old_quantity' => 0,
-                            'new_quantity' => $value['quantity'],
-                            'change_quantity' => $value['quantity'],
-                            'reason' => 'Tạo mới sản phẩm',
-                            'inventory_entry_id' => $value['id_skus'],
-                        ]);
-                    }
-                }
+                // if (Auth::user()->role == 3) {
+                //     foreach ($inventories as $key => $value) {
+                //         Inventory::create([
+                //             'id_product_variant' => $value['id_skus'],
+                //             'quantity' => $value['quantity'],
+                //         ]);
+                //         InventoryLog::create([
+                //             'id_product_variant' => $value['id_skus'],
+                //             'user_id' => auth()->user()->id,
+                //             'old_quantity' => 0,
+                //             'new_quantity' => $value['quantity'],
+                //             'change_quantity' => $value['quantity'],
+                //             'reason' => 'Tạo mới sản phẩm',
+                //             'inventory_entry_id' => $value['id_skus'],
+                //         ]);
+                //     }
+                // }
                 Variant::insert($variantsData);
-                // Inventory::insert($inventories);
+                Inventory::insert($inventories);
             }
             DB::commit();
             return redirect()->route('admin.product.index')->with([
@@ -268,11 +268,11 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product)
     {
         // dd($request->toArray());
-        $count = InventoryEntry::orderBy('created_at', 'desc')->first();
-        $import = 0;
-        if ($count) {
-            $import = $count->import;
-        }
+        // $count = InventoryEntry::orderBy('created_at', 'desc')->first();
+        // $import = 0;
+        // if ($count) {
+        //     $import = $count->import;
+        // }
         try {
 
             DB::beginTransaction();
@@ -338,8 +338,6 @@ class ProductController extends Controller
                             'id' => $key,
                             'barcode' => $variant['barcode'],
                             'name' => $variant['name'],
-                            // 'price' => $variant['price'],
-                            // 'sale_price' => isset($variant['sale_price']) ? $variant['sale_price'] : $variant['price'],
                             'updated_at' => Carbon::now(),
                         ];
                         foreach ($variant['attribute_values'] as $attributeValueId) {
@@ -351,35 +349,35 @@ class ProductController extends Controller
                                 'updated_at' => Carbon::now(),
                             ];
                         }
-                        if ($variant['quantity'] == 0) {
-                            $data = InventoryEntry::where('id_skus', $key)->orderBy('created_at', 'desc')->first();
-                            $data->cost_price = $variant['cost_price'];
-                            $data->price = $variant['price'];
-                            $data->sale_price = $variant['sale_price'];
-                            $data->discount_start = $variant['start_date'];
-                            $data->discount_end = $variant['end_date'];
-                            $data->save();
-                        } else {
-                            $inventoryEntry = InventoryEntry::create([
-                                'id_skus' => $key,
-                                'user_id' => Auth::user()->id,
-                                'id_shopper' => Auth::user()->role == 3 ? Auth::user()->id : null,
-                                'quantity' => $variant['quantity'],
-                                'cost_price' => $variant['cost_price'],
-                                'price' => $variant['price'],
-                                'sale_price' => $variant['sale_price'],
-                                'discount_start' => $variant['start_date'],
-                                'discount_end' => $variant['end_date'],
-                                'import' => $import + 1,
-                                'status' => Auth::user()->role == 3 ? "Đã duyệt" : "Đang chờ xử lý",
-                            ]);
-                            // $inventories[$key] = $variant['quantity'];
-                            $inventories[] = [
-                                'id_skus' => $key,
-                                'quantity' => $variant['quantity'],
-                                'id_entry' => $inventoryEntry->id,
-                            ];
-                        }
+                        // if ($variant['quantity'] == 0) {
+                        //     $data = InventoryEntry::where('id_skus', $key)->orderBy('created_at', 'desc')->first();
+                        //     $data->cost_price = $variant['cost_price'];
+                        //     $data->price = $variant['price'];
+                        //     $data->sale_price = $variant['sale_price'];
+                        //     $data->discount_start = $variant['start_date'];
+                        //     $data->discount_end = $variant['end_date'];
+                        //     $data->save();
+                        // } else {
+                        //     $inventoryEntry = InventoryEntry::create([
+                        //         'id_skus' => $key,
+                        //         'user_id' => Auth::user()->id,
+                        //         'id_shopper' => Auth::user()->role == 3 ? Auth::user()->id : null,
+                        //         'quantity' => $variant['quantity'],
+                        //         'cost_price' => $variant['cost_price'],
+                        //         'price' => $variant['price'],
+                        //         'sale_price' => $variant['sale_price'],
+                        //         'discount_start' => $variant['start_date'],
+                        //         'discount_end' => $variant['end_date'],
+                        //         'import' => $import + 1,
+                        //         'status' => Auth::user()->role == 3 ? "Đã duyệt" : "Đang chờ xử lý",
+                        //     ]);
+                        //     // $inventories[$key] = $variant['quantity'];
+                        //     $inventories[] = [
+                        //         'id_skus' => $key,
+                        //         'quantity' => $variant['quantity'],
+                        //         'id_entry' => $inventoryEntry->id,
+                        //     ];
+                        // }
                         // if (isset($variant['status'])) {
                         //     Skus::where('id', $key)->update([
                         //         'status' => $variant['status']
@@ -398,8 +396,6 @@ class ProductController extends Controller
                         $sku = Skus::create([
                             'product_id' => $product->id,
                             'name' => $variant['name'],
-                            // 'price' => $variant['price'],
-                            // 'sale_price' => isset($variant['sale_price']) ? $variant['sale_price'] : $variant['price'],
                             'barcode' => $variant['barcode'],
                             'image' => $variant['image']->store('productsVariants', 'public'),
                         ]);
@@ -412,99 +408,101 @@ class ProductController extends Controller
                                 'updated_at' => Carbon::now(),
                             ];
                         }
-                        if ($variant['quantity'] == 0) {
-                            InventoryEntry::create([
-                                'id_skus' => $sku->id,
-                                'user_id' => Auth::user()->id,
-                                'quantity' => $variant['quantity'],
-                                'cost_price' => $variant['cost_price'],
-                                'price' => $variant['price'],
-                                'sale_price' => $variant['sale_price'],
-                                'discount_start' => $variant['start_date'],
-                                'discount_end' => $variant['end_date'],
-                                'status' => "Đã duyệt",
-                            ]);
-                        } else {
-                            $inventoryEntry = InventoryEntry::create([
-                                'id_skus' => $sku->id,
-                                'user_id' => Auth::user()->id,
-                                'id_shopper' => Auth::user()->role == 3 ? Auth::user()->id : null,
-                                'quantity' => $variant['quantity'],
-                                'cost_price' => $variant['cost_price'],
-                                'price' => $variant['price'],
-                                'sale_price' => $variant['sale_price'],
-                                'discount_start' => $variant['start_date'],
-                                'discount_end' => $variant['end_date'],
-                                'import' => $import + 1,
-                                'status' => Auth::user()->role == 3 ? "Đã duyệt" : "Đang chờ xử lý",
-                            ]);
-                            // $inventories[$sku->id] = $variant['quantity'];
-                            $inventories[] = [
-                                'id_skus' => $sku->id,
-                                'quantity' => $variant['quantity'],
-                                'id_entry' => $inventoryEntry->id,
-                            ];
-                        }
-                        // $inventories[] = [
-                        //     'id_product_variant' => $sku->id,
-                        //     'quantity' => 0,
-                        // ];
+                        // if ($variant['quantity'] == 0) {
+                        //     InventoryEntry::create([
+                        //         'id_skus' => $sku->id,
+                        //         'user_id' => Auth::user()->id,
+                        //         'quantity' => $variant['quantity'],
+                        //         'cost_price' => $variant['cost_price'],
+                        //         'price' => $variant['price'],
+                        //         'sale_price' => $variant['sale_price'],
+                        //         'discount_start' => $variant['start_date'],
+                        //         'discount_end' => $variant['end_date'],
+                        //         'status' => "Đã duyệt",
+                        //     ]);
+                        // } else {
+                        //     $inventoryEntry = InventoryEntry::create([
+                        //         'id_skus' => $sku->id,
+                        //         'user_id' => Auth::user()->id,
+                        //         'id_shopper' => Auth::user()->role == 3 ? Auth::user()->id : null,
+                        //         'quantity' => $variant['quantity'],
+                        //         'cost_price' => $variant['cost_price'],
+                        //         'price' => $variant['price'],
+                        //         'sale_price' => $variant['sale_price'],
+                        //         'discount_start' => $variant['start_date'],
+                        //         'discount_end' => $variant['end_date'],
+                        //         'import' => $import + 1,
+                        //         'status' => Auth::user()->role == 3 ? "Đã duyệt" : "Đang chờ xử lý",
+                        //     ]);
+                        //     // // $inventories[$sku->id] = $variant['quantity'];
+                        //     $inventories[] = [
+                        //         'id_skus' => $sku->id,
+                        //         'quantity' => $variant['quantity'],
+                        //         'id_entry' => $inventoryEntry->id,
+                        //     ];
+                        // }
+                        $inventories[] = [
+                            'id_product_variant' => $sku->id,
+                            'quantity' => 0,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ];
                     }
                 }
 
                 // dd($inventories);
-                if (Auth::user()->role == 3) {
-                    foreach ($inventories as $key => $newQuantity) {
-                        $inventory = Inventory::where('id_product_variant', $newQuantity['id_skus'])->first();
-                        // dd($inventory);
-                        if ($inventory) {
-                            $oldQuantity = $inventory->quantity;
-                            $inventory->quantity += $newQuantity['quantity'];
-                            // if ($changeQuantity == 0) {
-                            //     continue;
-                            // }
+                // if (Auth::user()->role == 3) {
+                //     foreach ($inventories as $key => $newQuantity) {
+                //         $inventory = Inventory::where('id_product_variant', $newQuantity['id_skus'])->first();
+                //         // dd($inventory);
+                //         if ($inventory) {
+                //             $oldQuantity = $inventory->quantity;
+                //             $inventory->quantity += $newQuantity['quantity'];
+                //             // if ($changeQuantity == 0) {
+                //             //     continue;
+                //             // }
 
-                            // if (($changeQuantity < 0 && abs($changeQuantity) > $oldQuantity) || $newQuantity == 0) {
-                            //     throw new Exception("Số lượng cập nhật không hợp lệ! Không thể giảm nhiều hơn số lượng hiện có.");
-                            // }
+                //             // if (($changeQuantity < 0 && abs($changeQuantity) > $oldQuantity) || $newQuantity == 0) {
+                //             //     throw new Exception("Số lượng cập nhật không hợp lệ! Không thể giảm nhiều hơn số lượng hiện có.");
+                //             // }
 
-                            $inventory->save();
+                //             $inventory->save();
 
-                            InventoryLog::create([
-                                'id_product_variant' => $newQuantity['id_skus'],
-                                'user_id' => auth()->user()->id,
-                                'old_quantity' => $oldQuantity,
-                                'new_quantity' => $inventory->quantity,
-                                'change_quantity' => $newQuantity['quantity'],
-                                'reason' => $newQuantity['quantity'] > 0 ? 'Nhập thêm hàng' : 'Thay dổi số lượng',
-                                'inventory_entry_id' => $newQuantity['id_entry'],
-                            ]);
-                        } else {
+                //             InventoryLog::create([
+                //                 'id_product_variant' => $newQuantity['id_skus'],
+                //                 'user_id' => auth()->user()->id,
+                //                 'old_quantity' => $oldQuantity,
+                //                 'new_quantity' => $inventory->quantity,
+                //                 'change_quantity' => $newQuantity['quantity'],
+                //                 'reason' => $newQuantity['quantity'] > 0 ? 'Nhập thêm hàng' : 'Thay dổi số lượng',
+                //                 'inventory_entry_id' => $newQuantity['id_entry'],
+                //             ]);
+                //         } else {
 
-                            Inventory::create([
-                                'id_product_variant' => $newQuantity['id_skus'],
-                                'quantity' => $newQuantity['quantity']
-                            ]);
+                //             Inventory::create([
+                //                 'id_product_variant' => $newQuantity['id_skus'],
+                //                 'quantity' => $newQuantity['quantity']
+                //             ]);
 
-                            InventoryLog::create([
-                                'id_product_variant' => $newQuantity['id_skus'],
-                                'user_id' => auth()->user()->id,
-                                'old_quantity' => 0,
-                                'new_quantity' => $newQuantity['quantity'],
-                                'change_quantity' => $newQuantity['quantity'],
-                                'reason' => 'Tạo mới sản phẩm',
-                                'inventory_entry_id' => $newQuantity['id_entry'],
-                            ]);
-                        }
-                    }
-                }
+                //             InventoryLog::create([
+                //                 'id_product_variant' => $newQuantity['id_skus'],
+                //                 'user_id' => auth()->user()->id,
+                //                 'old_quantity' => 0,
+                //                 'new_quantity' => $newQuantity['quantity'],
+                //                 'change_quantity' => $newQuantity['quantity'],
+                //                 'reason' => 'Tạo mới sản phẩm',
+                //                 'inventory_entry_id' => $newQuantity['id_entry'],
+                //             ]);
+                //         }
+                //     }
+                // }
 
                 if (!empty($variantsData)) {
                     Variant::insert($variantsData);
                 }
-                // if (!empty($inventories)) {
-                //     Inventory::insert($inventories);
-                // }
+                if (!empty($inventories)) {
+                    Inventory::insert($inventories);
+                }
                 foreach ($skusToUpdate as $skuData) {
                     Skus::where('id', $skuData['id'])
                         ->update([

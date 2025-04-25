@@ -95,7 +95,14 @@
                                         </td>
                                         <td>{{ $product->product_category }}</td>
                                         <td>{{ $product->product_brand }}</td>
-                                        <td class="text-nowrap">{{ number_format($product->min_inventory_price) }} VND - {{ number_format($product->max_inventory_price) }} VND</td>
+                                        <td class="text-nowrap">
+                                            @if ($product->min_inventory_price == $product->max_inventory_price)
+                                                {{ number_format($product->min_inventory_price) }} VND
+                                            @else
+                                                {{ number_format($product->min_inventory_price) }} VND -
+                                                {{ number_format($product->max_inventory_price) }} VND
+                                            @endif
+                                        </td>
                                         {{-- <td>{{ number_format($product->sale_price ?? $product->price) }}</td> --}}
                                         <td class=" text-center">{{ $product->count_variant ?? 0 }}</td>
                                         <td>
