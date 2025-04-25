@@ -85,7 +85,7 @@
 
 
                         <!-- Single Tab Content Start -->
-                        <div class="tab-pane fade" id="download" role="tabpanel">
+                        {{-- <div class="tab-pane fade" id="download" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Downloads</h3>
 
@@ -119,17 +119,17 @@
                                     </table>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Single Tab Content End -->
 
                         <!-- Single Tab Content Start -->
-                        <div class="tab-pane fade" id="payment-method" role="tabpanel">
+                        {{-- <div class="tab-pane fade" id="payment-method" role="tabpanel">
                             <div class="myaccount-content">
                                 <h3>Phương thức thanh toán</h3>
 
                                 <p class="saved-message">Bạn chưa thể lưu phương thức thanh toán của mình.</p>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Single Tab Content End -->
 
                         <!-- Single Tab Content Start -->

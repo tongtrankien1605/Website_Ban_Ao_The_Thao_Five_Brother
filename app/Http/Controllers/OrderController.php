@@ -26,6 +26,7 @@ class OrderController extends Controller
 {
     public function placeOrder(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -62,7 +63,7 @@ class OrderController extends Controller
                 $quantity = (int) $item['quantity'];
                 // dd($quantity);
 
-                if ($inventory->quantity <= $quantity) {
+                if ($inventory->quantity == 1) {
                     $outOfStockItems[] = [
                         'id' => $cartItem->id,
                         'name' => $cartItem->skuses->name,
@@ -80,7 +81,7 @@ class OrderController extends Controller
                 broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
                 return response()->json([
                     'success' => false,
-                    'message' => 'Một số sản phẩm đã hết hàng',
+                    'message' => 'Một số sản phẩm đã hết hàng', 
                     'out_of_stock_items' => $outOfStockItems
                 ], 400);
             }
@@ -114,6 +115,7 @@ class OrderController extends Controller
                     'id_order' => $order->id,
                     'id_product_variant' => $variantId,
                     'quantity' => $quantity,
+                    'message' => $request->message ?? null,
                     'unit_price' => $item['price'],
                     'total_price' => $quantity * $item['price'],
                 ]);
