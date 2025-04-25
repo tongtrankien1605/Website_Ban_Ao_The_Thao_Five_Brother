@@ -146,7 +146,7 @@
                         ${hiddenAttributeInputs}
                         <input type="hidden" class="form-control" name="variants[${variantCounter}][barcode]" value="${barcode}" readonly>
 
-                        <label class="form-label">Số lượng:</label>
+                        {{-- <label class="form-label">Số lượng:</label>
                         <input type="number" class="form-control" name="variants[${variantCounter}][quantity]">
                             @error('variants[${variantCounter}][quantity]')
                                 <div class="text-danger">{{ $message }}</div>
@@ -178,7 +178,7 @@
                         <label class="form-label">Ngày kết thúc:</label>
                         <input type="date" class="form-control"
                             name="variants[${variantCounter}][end_date]"
-                            min="{{ date('Y-m-d') }}">
+                            min="{{ date('Y-m-d') }}"> --}}
 
                         <label class="form-label">Ảnh:</label>
                         <input type="file" class="form-control variant-image" name="variants[${variantCounter}][image]" accept="image/*">
