@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Models\AddressUser;
 use App\Models\User;
+use Faker\Provider\ar_EG\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -64,6 +66,13 @@ class AuthController extends Controller
         // dd($request->toArray());
 
         $user = User::create($request->toArray());
+        $address_user = AddressUser::create([
+            'id_user' => $user->id,
+            'name' => $request->name,
+            'phone' => $request->phone_number,
+            'address' => $request->address,
+            'is_default' => 1
+        ]);
 
         Auth::login($user);
 
