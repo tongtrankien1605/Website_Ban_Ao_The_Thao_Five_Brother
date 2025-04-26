@@ -424,6 +424,85 @@ $(document).ready(function() {
     $(document).ready(function() {
         attachAddressEventHandlers();
     });
+
+    // Kiểm tra và áp dụng voucher từ localStorage
+    const voucherData = JSON.parse(localStorage.getItem("voucherData"));
+    if (voucherData) {
+        // Cập nhật hiển thị voucher
+        $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherData.code}`);
+        
+        // Cập nhật giá trị giảm giá
+        $('#voucher-discount').text('₫' + voucherData.discountAmount.toLocaleString());
+        
+        // Cập nhật tổng tiền
+        const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, '')) || 0;
+        const shippingCost = parseInt($('#shipping-cost').text().replace(/[₫,.]/g, '')) || 0;
+        const finalTotal = subtotal + shippingCost - voucherData.discountAmount;
+        
+        $('#final-total').text('₫' + finalTotal.toLocaleString());
+        
+        // Lưu voucher ID vào input hidden
+        $('#voucher_id').val(voucherData.code);
+    }
+
+    // Xử lý khi chọn voucher mới
+    $(document).on('click', '.select-voucher', function () {
+        const voucherId = $(this).data('id');
+        const voucherCode = $(this).data('code');
+        const voucherItem = $(this).closest('.voucher-item');
+        
+        // Gán vào input ẩn
+        $('#voucher_id').val(voucherId);
+        
+        // Gọi function apply với code này
+        applyVoucher(voucherCode);
+    });
+
+    function applyVoucher(voucherCode) {
+        const url = "/voucher/apply";
+        const voucherId = $('#voucher_id').val();
+        const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
+        const shippingMethodId = $('#shipping_method_id').val();
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+            data: {
+                voucher_id: voucherId,
+                subtotal: subtotal,
+                shipping_method_id: shippingMethodId
+            },
+            success: function(response) {
+                // Cập nhật hiển thị
+                $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
+                $('#final-total').text('₫' + response.final_total.toLocaleString());
+                $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
+
+                // Lưu thông tin voucher mới vào localStorage
+                localStorage.setItem("voucherData", JSON.stringify({
+                    code: voucherCode,
+                    discountAmount: response.voucher_discount,
+                    newTotal: response.final_total
+                }));
+
+                $('#voucherModal').modal('hide');
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể áp dụng voucher',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
 });
 
 
@@ -551,126 +630,47 @@ $(document).ready(function () {
             },
             data,
             success: function (res) {
+                // Xóa thông tin voucher khỏi localStorage
+                localStorage.removeItem("voucherData");
+                
                 if (res.redirect_url) {
                     // Nếu server trả về link thanh toán (VNPay), chuyển hướng người dùng
                     window.location.href = res.redirect_url;
                 } else if (res.success === true) {
-                    alert(res.message || 'Đặt hàng thành công!');
-                    window.location.href = '/my-account';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: res.message || 'Đặt hàng thành công!',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/my-account';
+                    });
                 } else {
-                    alert(res.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: res.message || 'Có lỗi xảy ra. Vui lòng thử lại.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 }
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
-                alert('Lỗi server. Vui lòng thử lại.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Lỗi server. Vui lòng thử lại.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
             }
         });
-        
     });
     
 
-     });
-
-     function applyVoucher(voucherCode) {
-        const url = "/voucher/apply"; // URL của API áp dụng voucher
-        // console.log(url);
-        
-        const voucherId = $('#voucher_id').val();
-        const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
-        const shippingMethodId = $('#shipping_method_id').val(); // Lấy ID phương thức vận chuyển đã chọn
-        // console.log(shippingMethodId);
-        
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                'Accept': 'application/json'
-            },
-            data: {
-                voucher_id: voucherId,
-                subtotal: subtotal,
-                shipping_method_id: shippingMethodId // Gửi ID phương thức vận chuyển
-            },
-            success: function(response) {
-                $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
-                $('#final-total').text('₫' + response.final_total.toLocaleString());
-                // console.log(response.final_total.data);
-                
-                $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
-
-                $('#discountAmount').text('-' + response.voucher_discount + 'đ');
-                $('#finalTotal').text(response.final_total + 'đ');
-
-                $('#voucherModal').modal('hide');
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-            }
-        });
-    }
-
-// Xử lý khi đặt địa chỉ mặc định
-$(document).on('click', '.btn-outline-danger', function(e) {
-    e.preventDefault();
-    const addressId = $(this).data('id');
-    const currentRow = $(this).closest('.address-item');
+    });
     
-    $.ajax({
-        url: `/address-user/default/${addressId}`,
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            // Cập nhật UI trong modal
-            $('.address-item').each(function() {
-                $(this).find('.badge.bg-danger').remove();
-                $(this).find('.btn-outline-danger').removeClass('d-none').show();
-            });
 
-            currentRow.find('.btn-outline-danger').addClass('d-none');
-            if (!currentRow.find('.badge.bg-danger').length) {
-                currentRow.find('.address-info').append('<span class="badge bg-danger ms-2">Mặc định</span>');
-            }
-
-            // Cập nhật thông tin địa chỉ ở trang chính
-            const fullname = response.fullname || response.name;
-            const phone = response.phone;
-            if (fullname && phone) {
-                $('#selected-name-phone').text(`${fullname} Số điện thoại: ${phone}`);
-                $('#selected-address').text(response.address);
-            }
-
-            // Hiển thị thông báo thành công
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công',
-                text: 'Đã cập nhật địa chỉ mặc định',
-                timer: 1500,
-                showConfirmButton: false
-            });
-        },
-        error: function(xhr) {
-            console.error('AJAX Error:', xhr.responseText);
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: 'Không thể cập nhật địa chỉ mặc định',
-                timer: 1500,
-                showConfirmButton: false
-            });
-        }
-    });
-});
-
-// Đảm bảo các event handlers được gán khi document ready
-$(document).ready(function() {
-    // Gán event handler cho nút đóng modal
-    $('#addressModal').on('hidden.bs.modal', function() {
-        // Cập nhật lại danh sách địa chỉ khi đóng modal
-        loadAddressList();
-    });
-});
+    

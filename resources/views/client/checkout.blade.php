@@ -118,7 +118,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-ticket-alt me-2" style="color: #ee4d2d;"></i>
-                        <span>Shopee Voucher</span>
+                        <span>Voucher</span>
                     </div>
                     <div>
                         <span id="selectedVoucherCode" class="me-2" style="color: green; font-weight: bold;"></span>

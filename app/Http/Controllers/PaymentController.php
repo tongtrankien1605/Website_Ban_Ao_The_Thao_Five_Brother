@@ -25,6 +25,7 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         try {
+            // dd($request->all());
             $user = auth()->user();
             Log::info('User starting payment process:', ['user_id' => $user->id]);
 
@@ -326,9 +327,21 @@ class PaymentController extends Controller
                     ->with('success', 'Đơn hàng đã được thanh toán thành công');
             } elseif ($vnp_ResponseCode == '24') {
                 Log::info('Payment cancelled', ['orderId' => $orderId]);
-                $order->id_payment_method_status = 4; // Bạn có thể định nghĩa trạng thái riêng: 4 = Hủy thanh toán
+                $order->id_payment_method_status = 4; 
                 $order->save();
-            
+
+
+                $cartItems = CartItem::where('id_user', Auth::id())->get();
+                foreach ($cartItems as $items) {
+                    $inventories = Inventory::where('id', $items->id_product_variant)->first();
+                    if ($inventories) {
+                        $inventories->quantity -= $items->quantity;
+                        $inventories->save();
+                    }
+                }
+                $cartItemdelete->each(function ($item) {
+                    $item->delete();
+                });
                 return redirect()->route('show.cart')
                     ->with('error', 'Bạn đã hủy thanh toán đơn hàng.');
             } else {

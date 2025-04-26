@@ -86,7 +86,7 @@
                     <div class="col-lg-3 col-6 mb-3">
                         <div class="small-box bg-purple text-white">
                             <div class="inner">
-                                <h3> {{ $totalRevenue }} </h3>
+                                <h3> {{ number_format($totalRevenue) }} </h3>
                                 <p>Tổng doanh thu</p>
                             </div>
                         </div>
