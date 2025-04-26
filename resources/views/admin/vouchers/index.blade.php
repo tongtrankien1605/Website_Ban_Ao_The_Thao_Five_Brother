@@ -61,7 +61,7 @@
 
                 <div class="d-flex gap-3 mb-4">
                     <div class="flex-grow-1">
-                        <input type="text" class="form-control" placeholder="Search by name/code/discount/..."
+                        <input type="text" class="form-control" placeholder="Search by tên/mã/loại/..."
                             id="searchInput" name="search" value="{{ request('search') }}">
                     </div>
                     <select class="form-control" style="width: 200px;" id="statusFilter">
@@ -82,14 +82,14 @@
                                 <th width="40px">
                                     <input type="checkbox" id="selectAll" hidden>
                                 </th>
-                                <th>CAMPAIGN NAME</th>
-                                <th>CODE</th>
-                                <th>DISCOUNT</th>
-                                <th>START DATE</th>
-                                <th>END DATE</th>
-                                <th>STATUS</th>
-                                <th>PUBLISHED</th>
-                                <th class="text-end">ACTIONS</th>
+                                <th>Tên</th>
+                                <th>Mã</th>
+                                <th>Loại giảm giá</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Trạng thái</th>
+                                <th>Đã xuất</th>
+                                <th class="text-end">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
