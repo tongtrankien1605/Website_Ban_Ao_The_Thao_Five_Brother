@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Wishlist</h1>
+                    <h1>Yêu thích</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Yêu thích</a></li>
                     </ul>
 
                 </div>
@@ -28,12 +28,12 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="pro-thumbnail">Image</th>
-                                        <th class="pro-title">Product</th>
+                                        <th class="pro-thumbnail">Hình ảnh</th>
+                                        <th class="pro-title">Sản phẩm</th>
                                         {{-- <th class="pro-price">Price</th>
                                         <th class="pro-quantity">Quantity</th> --}}
-                                        <th class="pro-subtotal">Total</th>
-                                        <th class="pro-remove">Remove</th>
+                                        <th class="pro-subtotal">Tổng</th>
+                                        <th class="pro-remove">Xóa</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -47,7 +47,7 @@
                                 <td class="pro-quantity">
                                     <div class="pro-qty"><input type="text" value="1"></div>
                                 </td> --}}
-                                <td class="pro-add-cart"><a href="#">Add to cart</a></td>
+                                <td class="pro-add-cart"><a href="#">Thêm vào giỏ hàng</a></td>
                                 <td class="pro-remove"><a href="{{route('delete_wishlist',$wl->product->id)}}">×</a></td>
                                     </tr>
                                     @endforeach

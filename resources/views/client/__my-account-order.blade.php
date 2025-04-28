@@ -4,7 +4,7 @@
 <div class="tab-pane fade m-auto" id="orders" role="tabpanel">
     <div id="orders-list">
         <div class="myaccount-content">
-            <h3>Orders</h3>
+            <h3>Đơn hàng</h3>
             <div class="myaccount-table table-responsive text-center">
                 <table class="table table-bordered">
                     <thead class="thead-light">

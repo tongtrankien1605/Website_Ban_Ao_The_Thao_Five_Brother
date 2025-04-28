@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Register</h1>
+                    <h1>Đăng ký</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Yêu thích</a></li>
                     </ul>
 
                 </div>
@@ -23,42 +23,48 @@
             <div class="row mbn-40">
                 <div class="col-lg-6 col-12 mb-40 m-auto">
                     <div class="login-register-form-wrap">
-                        <h3 class="text-center">Register</h3>
+                        <h3 class="text-center">Đăng ký</h3>
                         <form action="{{ route('register') }}" method="post">
                             @csrf
                             <div class="row">
                                 <div class="col-12 mb-15">
-                                    <input type="text" name="name" placeholder="User Name"
+                                    <input type="text" name="name" placeholder="Họ và tên"
                                         value="{{ old('name') }}">
                                     @error('name')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-12 mb-15">
-                                    <input type="phone_number" name="phone_number" placeholder="Phone Number" value="{{ old('phone_number') }}">
+                                    <input type="phone_number" name="phone_number" placeholder="Số điện thoại" value="{{ old('phone_number') }}">
                                     @error('phone_number')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-12 mb-15">
-                                    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}">
+                                    <input type="email" name="email" placeholder="Địa chỉ email" value="{{ old('email') }}">
                                     @error('email')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-12 mb-15">
-                                    <input type="password" name="password" placeholder="Password">
+                                    <input type="text" name="address" placeholder="Địa chỉ" value="{{ old('address') }}">
+                                    @error('address')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12 mb-15">
+                                    <input type="password" name="password" placeholder="Mật khẩu">
                                     @error('password')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-12 mb-15">
-                                    <input type="password" name="password_confirmation" placeholder="Confirm Password">
+                                    <input type="password" name="password_confirmation" placeholder="Nhập lại mật khẩu">
                                     @error('password_confirmation')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="text-center col-12  mb-15"><input type="submit" value="Register"
+                                <div class="text-center col-12  mb-15"><input type="submit" value="Đăng ký"
                                         class="w-100"></div>
                                 <p class=" text-center ">Bạn đã có tài khoản?, <a href="{{ route('login') }}">Đăng nhập
                                         ngay </a> </p>

@@ -1,7 +1,7 @@
 @extends('admin.layouts.index')
 
 @section('title')
-    Coupon
+    Phiếu giảm giá
 @endsection
 
 @section('content')
@@ -9,7 +9,7 @@
         <div class="container-fluid p-4">
             <!-- Header -->
             <div class="mb-4">
-                <h1 class="h3 mb-4">Coupon</h1>
+                <h1 class="h3 mb-4">Phiếu giảm giá</h1>
 
                 <div class="d-flex justify-content-end align-items-center mb-4">
                     <!-- Left side buttons -->
@@ -25,15 +25,15 @@
                     <!-- Right side buttons -->
                     <div class="d-flex gap-2">
                         <button class="btn btn-light" id="bulkActionBtn">
-                            <i class="fas fa-tasks me-2"></i> Bulk Action
+                            <i class="fas fa-tasks me-2"></i> Chọn/Bỏ chọn tất cả
                         </button>
 
                         <button class="btn btn-danger" id="deleteSelectedBtn">
-                            <i class="fas fa-trash me-2"></i> Delete
+                            <i class="fas fa-trash me-2"></i> Xóa
                         </button>
 
                         <button class="btn btn-warning" id="publishSelectedBtn" disabled>
-                            <i class="fas fa-bullhorn me-2"></i> Publish
+                            <i class="fas fa-bullhorn me-2"></i> Phát hành/Hủy phát hành
                         </button>
 
                         <form id="bulkDeleteForm" action="{{ route('admin.vouchers.bulk_delete') }}" method="POST"
@@ -44,7 +44,7 @@
                         </form>
 
                         <a href="{{ route('admin.vouchers.create') }}" class="btn btn-success">
-                            <i class="fas fa-plus me-2"></i> Add Coupon
+                            <i class="fas fa-plus me-2"></i> Thêm phiếu giảm giá
                         </a>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
 
                 <div class="d-flex gap-3 mb-4">
                     <div class="flex-grow-1">
-                        <input type="text" class="form-control" placeholder="Search by name/code/discount/..."
+                        <input type="text" class="form-control" placeholder="Search by tên/mã/loại/..."
                             id="searchInput" name="search" value="{{ request('search') }}">
                     </div>
                     <select class="form-control" style="width: 200px;" id="statusFilter">
@@ -82,14 +82,14 @@
                                 <th width="40px">
                                     <input type="checkbox" id="selectAll" hidden>
                                 </th>
-                                <th>CAMPAIGN NAME</th>
-                                <th>CODE</th>
-                                <th>DISCOUNT</th>
-                                <th>START DATE</th>
-                                <th>END DATE</th>
-                                <th>STATUS</th>
-                                <th>PUBLISHED</th>
-                                <th class="text-end">ACTIONS</th>
+                                <th>Tên</th>
+                                <th>Mã</th>
+                                <th>Loại giảm giá</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Trạng thái</th>
+                                <th>Đã xuất</th>
+                                <th class="text-end">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>

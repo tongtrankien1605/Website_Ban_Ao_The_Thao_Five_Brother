@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="page-banner-content col text-center">
 
-                    <h1>Lates and new Trens for baby fashion</h1>
+                    <h1>Xu hướng thể thao và thời trang mới nhất</h1>
 
                 </div>
             </div>
@@ -86,8 +86,8 @@
                     </div>
                     <div class="comment-wrap mt-40">
 
-                        <h3>3 Comments</h3>
-                        <ul class="comment-list">
+                        {{-- <h3>3 Comments</h3> --}}
+                        {{-- <ul class="comment-list">
                             <li>
                                 <div class="single-comment">
                                     <div class="image"><img src="/client/assets/images/blog/author-1.jpg" alt="">
@@ -129,18 +129,18 @@
                                     </div>
                                 </div>
                             </li>
-                        </ul>
+                        </ul> --}}
 
-                        <h3>Leave a Comment</h3>
+                        <h3>Để lại nhận xét</h3>
                         <div class="comment-form">
                             <form action="#">
                                 <div class="row row-10">
-                                    <div class="col-md-6 col-12 mb-20"><input placeholder="Name" type="text"></div>
+                                    <div class="col-md-6 col-12 mb-20"><input placeholder="Tên" type="text"></div>
                                     <div class="col-md-6 col-12 mb-20"><input placeholder="Email" type="email"></div>
                                     <div class="col-12 mb-20">
-                                        <textarea placeholder="Message"></textarea>
+                                        <textarea placeholder="Lời nhắn"></textarea>
                                     </div>
-                                    <div class="col-12"><input value="submit" type="submit"></div>
+                                    <div class="col-12"><input value="Gửi" type="submit"></div>
                                 </div>
                             </form>
                         </div>
@@ -151,7 +151,7 @@
                 <div class="col-xl-3 col-lg-4 col-12 order-2 order-lg-1 mb-40">
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Category</h4>
+                        <h4 class="sidebar-title">Loại</h4>
                         <ul class="sidebar-list">
                             <li><a href="#">Shart <span class="num">18</span></a></li>
                             <li><a href="#">Pants <span class="num">09</span></a></li>
@@ -164,7 +164,7 @@
                     </div>
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Archive</h4>
+                        <h4 class="sidebar-title">Lưu trữ</h4>
                         <ul class="sidebar-list">
                             <li><a href="#">July 2022</a></li>
                             <li><a href="#">June 2022</a></li>
@@ -176,7 +176,7 @@
                     </div>
 
                     <div class="sidebar">
-                        <h4 class="sidebar-title">Lastest Blog</h4>
+                        <h4 class="sidebar-title">Bài viết mới nhất</h4>
                         <div class="sidebar-blog-wrap">
                             @foreach ($data as $post)
                                 <div class="sidebar-blog">
@@ -210,7 +210,7 @@
                     </div>
 
                     <div class="sidebar">
-                        <h3 class="sidebar-title">Tags</h3>
+                        <h3 class="sidebar-title">Thẻ</h3>
                         <ul class="sidebar-tag">
                             <li><a href="#">New</a></li>
                             <li><a href="#">brand</a></li>

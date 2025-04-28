@@ -15,6 +15,8 @@ class AddressUser extends Model
 
     protected $fillable = [
         'id_user',
+        'name',
+        'phone',
         'address',
         'is_default',
     ];

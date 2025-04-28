@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_order');
             $table->unsignedBigInteger('id_product_variant');
             $table->integer('quantity');
+            $table->string('message')->nullable()->comment('Ghi chú cho sản phẩm');
             $table->decimal('unit_price', 15, 2)->comment('Giá từng sản phẩm');
             $table->decimal('total_price', 15, 2)->comment('Tổng tiền đơn hàng');
             $table->foreign('id_order')->references('id')->on('orders')->cascadeOnDelete();

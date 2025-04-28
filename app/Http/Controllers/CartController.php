@@ -134,6 +134,7 @@ class CartController extends Controller
         $listVoucher = VoucherUser::where('id_user', Auth::id())->with('vouchers')->get();
         $inventory = Inventory::whereIn('id_product_variant', collect($cartItem)->pluck('id_product_variant'))->get();
         // dd($inventory->toArray());
+        // dd($inventory->toArray());
         // dd($listVoucher->toArray());
         // echo '<pre>';
         // print_r($cartItem)

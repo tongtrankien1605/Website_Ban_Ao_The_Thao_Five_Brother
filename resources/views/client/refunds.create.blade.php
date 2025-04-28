@@ -6,10 +6,10 @@
             <div class="row">
                 <div class="page-banner-content col">
 
-                    <h1>Register</h1>
+                    <h1>Đăng ký</h1>
                     <ul class="page-breadcrumb">
-                        <li><a href="{{ route('index') }}">Home</a></li>
-                        <li><a href="{{ route('index_wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('index') }}">Trang chủ</a></li>
+                        <li><a href="{{ route('index_wishlist') }}">Yêu thích</a></li>
                     </ul>
 
                 </div>

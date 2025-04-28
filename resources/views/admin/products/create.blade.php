@@ -104,7 +104,7 @@
                                                             value="{{ $attrValue }}">
                                                     @endforeach
 
-                                                    <label class="form-label">Số lượng:</label>
+                                                    {{-- <label class="form-label">Số lượng:</label>
                                                     <input type="number" class="form-control"
                                                         name="variants[{{ $index }}][quantity]"
                                                         value="{{ old("variants.$index.quantity") }}">
@@ -150,7 +150,7 @@
                                                         value="{{ old("variants.$index.end_date") }}">
                                                     @error("variants.$index.end_date")
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
                                                     <label class="form-label">Ảnh:</label>
                                                     <input type="file" class="form-control variant-image"

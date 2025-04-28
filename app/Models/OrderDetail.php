@@ -15,6 +15,7 @@ class OrderDetail extends Model
         'id_order',
         'id_product_variant',
         'quantity',
+        'message',
         'unit_price',
         'total_price',
     ];

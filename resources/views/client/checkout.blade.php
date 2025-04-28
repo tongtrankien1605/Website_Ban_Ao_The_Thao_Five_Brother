@@ -3,7 +3,7 @@
 @section('content')
 <div class="countdown-timer" id="countdown"
 style="background-color: #f8f9fa; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
-<span style="font-weight: bold;">Time remaining: </span>
+<span style="font-weight: bold;">Thời gian còn lại: </span>
 <span id="timer" style="color: #e83e8c; font-size: 1.2em; font-weight: bold;"></span>
 <span id="attempts" style="margin-left: 20px; color: #dc3545;"></span>
 </div>
@@ -76,7 +76,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                 <div class="p-3" style="border-bottom: 1px solid #efefef;">
                     <div class="d-flex align-items-center">
                         <span style="color: #888; margin-right: 10px;">Lời nhắn:</span>
-                        <input type="text" class="form-control" placeholder="Lưu ý cho Người bán..."
+                        <input type="text" class="form-control" id="message" placeholder="Lưu ý cho Người bán..."
                             style="border: 1px solid #efefef; font-size: 14px; padding: 5px 10px;">
                     </div>
                 </div>
@@ -88,7 +88,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                             <span style="margin-right: 50px;">Đơn vị vận chuyển:</span>
                             <div>
                                 @if(isset($shipping_methods) && count($shipping_methods) > 0)
-                                <div style="font-weight: 500;" id="shipping-name">{{ $shipping_methods[0]->name }}</div>
+                                <div style="font-weight: 500;" id="shipping-name" data-cost="{{$shipping_methods[0]->cost}}">{{ $shipping_methods[0]->name }}</div>
                                 <div style="color: #888; font-size: 12px;">
                                     Nhận hàng vào <span id="shipping-time">{{ $shipping_methods[0]->estimated_time }}</span>
                                 </div>
@@ -118,7 +118,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-ticket-alt me-2" style="color: #ee4d2d;"></i>
-                        <span>Shopee Voucher</span>
+                        <span>Voucher</span>
                     </div>
                     <div>
                         <span id="selectedVoucherCode" class="me-2" style="color: green; font-weight: bold;"></span>
@@ -378,34 +378,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
         //     encrypted: true
         // });
 
-        function applyVoucher(voucherCode) {
-            const url = "{{ route('voucher.apply') }}";
-            const voucherId = $('#voucher_id').val();
-            const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
 
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    voucher_id: voucherId,
-                    subtotal: subtotal
-                },
-                success: function(response) {
-                    $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
-                    $('#final-total').text('₫' + response.final_total.toLocaleString());
-                    $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
-
-                    $('#discountAmount').text('-' + response.voucher_discount + 'đ');
-                    $('#finalTotal').text(response.final_total + 'đ');
-
-                    $('#voucherModal').modal('hide');
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText);
-                }
-            });
-        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const timerElement = document.getElementById('timer');
