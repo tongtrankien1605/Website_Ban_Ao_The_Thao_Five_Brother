@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -113,32 +114,67 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // $data = $request->validate([
-        //     'name' => 'required|max:255',
-        //     'email' => [
-        //         'required',
-        //         'email',
-        //         Rule::unique('users')->ignore($user->id),
-        //     ],
-        //     'password' => [
-        //         'nullable',
-        //         'confirmed',
-        //     ],
-        // ]);
-        // // dd($request->all($data));
-        // if (!empty($data['password'])) {
-        //     $data['password'] = Hash::make($data['password']);
-        // } else {
-        //     unset($data['password']);
-        // }
+        try {
+            $data = $request->validate([
+                'name' => 'required|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique('users')->ignore($user->id),
+                ],
+                'phone_number' => [
+                    'nullable',
+                    Rule::unique('users')->ignore($user->id),
+                ],
+                'gender' => 'nullable|in:Nam,Nữ,Khác',
+                'birthday' => 'nullable|date_format:Y-m-d|before_or_equal:today',
+                'password' => [
+                    'nullable',
+                    'confirmed',
+                    'min:8',
+                ],
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'birthday.before_or_equal' => 'Ngày sinh không thể là ngày trong tương lai',
+                'avatar.image' => 'File phải là ảnh',
+                'avatar.mimes' => 'Định dạng ảnh phải là jpeg, png, jpg',
+                'avatar.max' => 'Kích thước ảnh không được vượt quá 2MB',
+                'gender.in' => 'Giá trị giới tính không hợp lệ',
+            ]);
 
-        // try {
+            if (!empty($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            } else {
+                unset($data['password']);
+            }
 
-        //     $this->$user->update($data);
-        //     return back()->with('success', true);
-        // } catch (\Throwable $th) {
-        //     return back()->with('success', false)->with('error', $th->getMessage());
-        // }
+            // Xử lý upload ảnh
+            if ($request->hasFile('avatar')) {
+                // Xóa ảnh cũ nếu tồn tại
+                if ($user->avatar && Storage::exists($user->avatar)) {
+                    Storage::delete($user->avatar);
+                }
+                
+                // Lưu ảnh mới
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+                $data['avatar'] = $avatarPath;
+            }
+
+            // Chuyển đổi giá trị gender từ tiếng Việt sang tiếng Anh
+            if (isset($data['gender'])) {
+                $genderMap = [
+                    'Nam' => 'male',
+                    'Nữ' => 'female',
+                    'Khác' => 'other'
+                ];
+                $data['gender'] = $genderMap[$data['gender']] ?? null;
+            }
+
+            $user->update($data);
+            return redirect()->back()->with('success', 'Cập nhật thông tin tài khoản thành công');
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 422);
+        }
     }
 
 

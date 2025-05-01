@@ -252,15 +252,16 @@
                             </a>
                         </li>
                     </ul> --}}
+                </li>
                 <li class="nav-item"><a href="{{ route('admin.refunds.index') }}" class="nav-link">
                         <i class="fa-solid fa-undo"></i>
                         <p> Quản lý Yêu cầu hoàn hàng</p>
                     </a></li>
-                <li class="nav-item"><a href="{{ route('admin.orderdispute.index') }}" class="nav-link">
+                {{-- <li class="nav-item"><a href="{{ route('admin.orderdispute.index') }}" class="nav-link">
                         <i class="fa-solid fa-exclamation-triangle"></i>
                         <p> Quản lý tranh chấp đơn hàng</p>
-                    </a></li>
-                </li>
+                    </a></li> --}}
+                {{-- </li> --}}
                 {{-- <li class="nav-item">
                     <a href="{{ route('index') }}" class="nav-link">
                         <p>
@@ -269,6 +270,15 @@
                         </p>
                     </a>
                 </li> --}}
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.cancelled-orders.index') }}" class="nav-link">
+                        <i class="fa-solid fa-ban"></i>
+                        <p>
+                            Quản lý đơn hàng bị hủy
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

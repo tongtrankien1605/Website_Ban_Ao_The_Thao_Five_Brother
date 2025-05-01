@@ -20,4 +20,5 @@ final class OrderStatus extends Enum
     const REFUND_SUCCESS = 12;
     const RETURN = 13;
     const AUTHEN = 14;
+    const WAIT_REFUND = 15;
 }
