@@ -93,7 +93,6 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        dd(1);
         // $count = InventoryEntry::orderBy('created_at', 'desc')->first();
         // $import = 0;
         // if ($count) {
