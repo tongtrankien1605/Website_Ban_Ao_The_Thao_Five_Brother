@@ -93,6 +93,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        dd(1);
         // $count = InventoryEntry::orderBy('created_at', 'desc')->first();
         // $import = 0;
         // if ($count) {
@@ -207,6 +208,7 @@ class ProductController extends Controller
                 'success' => 'Thêm sản phẩm thành công.'
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error creating product: ' . $e->getMessage());
             dd($e);
             DB::rollBack();
         }

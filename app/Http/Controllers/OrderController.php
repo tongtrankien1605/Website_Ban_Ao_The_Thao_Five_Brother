@@ -12,6 +12,7 @@ use App\Models\Inventory;
 use App\Models\InventoryEntry;
 use App\Models\InventoryLog;
 use App\Models\OrderDispute;
+use App\Models\OrderHistory;
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentAttempt;
 use App\Models\Refund;
@@ -226,9 +227,15 @@ class OrderController extends Controller
             return redirect()->back()->with('success', '5 Brother cảm ơn vì bạn đã mua hàng.');
         } elseif ($newStatus == OrderStatus::CANCEL) {
             if ($order->id_payment_method_status == 1) {
-
+                $validatedData = $request->validate([
+                    'reason' => 'required|max:255'
+                ]);
                 $order->update(['id_order_status' => $newStatus]);
-
+                OrderHistory::create([
+                    'order_id' => $order->id,
+                    'note_user' => $validatedData['reason'],
+                    'status' => 'Đã xử lý',
+                ]);
                 OrderStatusHistory::create([
                     'order_id' => $order->id,
                     'user_id' => Auth::id(),
@@ -259,20 +266,28 @@ class OrderController extends Controller
                     'reason' => 'required|max:255'
                 ]);
 
-                Refund::create([
-                    'id_order' => $order->id,
-                    'old_status' => $oldStatus,
-                    'reason' => $validatedData['reason'],
-                    'refund_amount' => $order->total_amount,
-                    'refund_quantity' => $order->order_details->sum('quantity'),
+                OrderHistory::create([
+                    'order_id' => $order->id,
+                    // 'old_status' => $oldStatus,
+                    'note_user' => $validatedData['reason'],
+                    // 'refund_amount' => $order->total_amount,
+                    // 'refund_quantity' => $order->order_details->sum('quantity'),
                     'status' => 'Đang chờ xử lý',
                     'bank_account' => $validatedData['bank_account'],
                     'bank_name' => $validatedData['bank_name'],
                     'account_holder_name' => $validatedData['account_holder_name'],
-                    'user_id' => Auth::id()
+                    // 'user_id' => Auth::id()
                 ]);
 
-                $order->update(['id_order_status' => OrderStatus::WAIT_CONFIRM]);
+                OrderStatusHistory::create([
+                    'order_id' => $order->id,
+                    'user_id' => Auth::id(),
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus,
+                    'note' => 'Đơn hàng đang chờ xử lý',
+                ]);
+
+                $order->update(['id_order_status' => OrderStatus::WAIT_REFUND]);
 
                 return redirect()->back()->with('success', 'Thành công, vui lòng chờ xác nhận từ chúng tôi.');
             }
@@ -308,6 +323,14 @@ class OrderController extends Controller
                 'user_id' => Auth::id()
             ]);
 
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'user_id' => Auth::id(),
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'note' => 'khách hàng đã yêu cầu hoàn hàng',
+            ]);
+
             $order->update(['id_order_status' => $newStatus]);
 
             return redirect()->back()->with('success', 'Thành công, vui lòng chờ xác nhận từ chúng tôi.');
@@ -331,7 +354,7 @@ class OrderController extends Controller
 
         //     return redirect()->back()->with('success', 'Chúng tôi đã tiếp nhận yêu cầu của bạn. Vui lòng chờ phản hồi');
         // }
-         elseif ($newStatus == OrderStatus::AUTHEN) {
+        elseif ($newStatus == OrderStatus::AUTHEN) {
             $validatedData = $request->validate([
                 'reason' => 'required|max:255',
                 'phone_number' => 'required|max:25',
@@ -340,7 +363,7 @@ class OrderController extends Controller
             OrderDispute::create([
                 'order_id' => $order->id,
                 'note' => $validatedData['reason'],
-                'phone' =>$validatedData['phone_number'],
+                'phone' => $validatedData['phone_number'],
                 'customer_id' => Auth::id()
             ]);
 

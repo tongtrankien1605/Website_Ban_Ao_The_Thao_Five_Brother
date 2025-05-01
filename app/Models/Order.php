@@ -69,5 +69,9 @@ class Order extends Model
     {
         return $this->hasOne(Refund::class,'id_order','id');
     }
+    public function order_histories()
+    {
+        return $this->hasOne(OrderHistory::class,'order_id','id');
+    }
 
 }
