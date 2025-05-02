@@ -26,6 +26,7 @@ use App\Http\Controllers\RefundController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Admin\CancelledOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -192,6 +193,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         Route::get('orderdispute', [\App\Http\Controllers\Admin\OrderDisputeController::class, 'index'])->name('orderdispute.index');
         Route::post('orderdispute/process/{id}', [\App\Http\Controllers\Admin\OrderDisputeController::class, 'process'])->name('orderdispute.process');
+
+        // Quản lý đơn hàng bị hủy
+        Route::get('/cancelled-orders', [CancelledOrderController::class, 'index'])->name('cancelled-orders.index');
+        Route::get('/cancelled-orders/{id}', [CancelledOrderController::class, 'show'])->name('cancelled-orders.show');
+        Route::post('/cancelled-orders/{id}/process', [CancelledOrderController::class, 'process'])->name('cancelled-orders.process');
     });
 });
 
@@ -217,6 +223,8 @@ Route::middleware('auth')->group(function () {
 
     // Thêm route mới để cập nhật hàng loạt địa chỉ
     Route::post('/address/update', [AddressUserController::class, 'batchUpdate'])->name('address.update');
+
+    Route::put('user/{user}', [UserController::class, 'update'])->name('user.update');
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('indexPayment');
 

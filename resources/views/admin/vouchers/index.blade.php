@@ -61,7 +61,7 @@
 
                 <div class="d-flex gap-3 mb-4">
                     <div class="flex-grow-1">
-                        <input type="text" class="form-control" placeholder="Search by tên/mã/loại/..."
+                        <input type="text" class="form-control" placeholder="Tìm kiếm theo tên/mã/loại/..."
                             id="searchInput" name="search" value="{{ request('search') }}">
                     </div>
                     <select class="form-control" style="width: 200px;" id="statusFilter">

@@ -56,6 +56,9 @@ class OrderStatusSeeder extends Seeder
             [
                 'name' => 'Xác minh'
             ],
+            [
+                'name' => 'Chờ hoàn tiền'
+            ],
         ];
         DB::table('order_statuses')->insert($dataSeeder);
     }

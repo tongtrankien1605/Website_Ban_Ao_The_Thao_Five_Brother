@@ -207,6 +207,7 @@ class ProductController extends Controller
                 'success' => 'Thêm sản phẩm thành công.'
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error creating product: ' . $e->getMessage());
             dd($e);
             DB::rollBack();
         }
