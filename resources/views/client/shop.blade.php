@@ -32,10 +32,10 @@
                                     {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Tên A-Z</option>
                                 <option value="{{ route('product.index', ['sort' => 'name_desc'] + request()->except(['page', 'sort'])) }}"
                                     {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Tên Z-A</option>
-                                <option value="{{ route('product.index', ['sort' => 'price_asc'] + request()->except(['page', 'sort'])) }}"
+                                {{-- <option value="{{ route('product.index', ['sort' => 'price_asc'] + request()->except(['page', 'sort'])) }}"
                                     {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá tăng dần</option>
                                 <option value="{{ route('product.index', ['sort' => 'price_desc'] + request()->except(['page', 'sort'])) }}"
-                                    {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option>
+                                    {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option> --}}
                                 <option value="{{ route('product.index', ['sort' => 'date_desc'] + request()->except(['page', 'sort'])) }}"
                                     {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Mới nhất</option>
                                 <option value="{{ route('product.index', ['sort' => 'date_asc'] + request()->except(['page', 'sort'])) }}"
