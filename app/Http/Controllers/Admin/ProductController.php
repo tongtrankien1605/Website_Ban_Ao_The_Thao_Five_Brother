@@ -10,6 +10,8 @@ use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\InventoryEntry;
 use App\Models\InventoryLog;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductAtribute;
 use App\Models\ProductAtributeValue;
@@ -545,10 +547,15 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Sản phẩm không tồn tại!');
         }
         $skus = Skus::where('product_id', $product->id)->pluck('id')->toArray();
-        $checkCartExists = CartItem::whereIn('id_product_variant', $skus)->exists();
-        if ($checkCartExists) {
-            return redirect()->back()->with('error', 'Không thể thay đổi trạng thái vì biến thể của sản phẩm đang tồn tại trong giỏ hàng!');
+        $orderIds = OrderDetail::whereIn('id_product_variant', $skus)->pluck('id_order');
+        $checkExistOrder = Order::whereIn('id', $orderIds)->whereIn('id_order_status', [1, 2, 3, 4])->exists();
+        if ($checkExistOrder) {
+            return redirect()->back()->with('error', 'Không thể thay đổi trạng thái vì biến thể đang tồn tại trong đơn hàng!');
         }
+        // $checkCartExists = CartItem::whereIn('id_product_variant', $skus)->exists();
+        // if ($checkCartExists) {
+        //     return redirect()->back()->with('error', 'Không thể thay đổi trạng thái vì biến thể của sản phẩm đang tồn tại trong giỏ hàng!');
+        // }
 
         $product->status = $product->status ? 0 : 1;
         if (!$product->save()) {
