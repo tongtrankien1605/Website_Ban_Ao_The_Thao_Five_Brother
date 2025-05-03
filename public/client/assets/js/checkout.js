@@ -134,7 +134,7 @@ $(document).ready(function() {
             };
 
             // Log để kiểm tra dữ liệu trước khi gửi
-            console.log('Data to be sent:', data);
+            console.log(data);
     
             $.ajax({
                 url: `/address-user/update/${addressId}`,
@@ -195,8 +195,6 @@ $(document).ready(function() {
                 }
             });
         });
-    
-        // Tải lại danh sách địa chỉ bằng AJAX
 
     });
     
@@ -421,11 +419,10 @@ $(document).ready(function() {
     }
 
     // Gọi hàm gán event handlers khi trang được load
-    $(document).ready(function() {
-        attachAddressEventHandlers();
-    });
+    // $(document).ready(function() {
+    //     attachAddressEventHandlers();
+    // });
 
-    // Kiểm tra và áp dụng voucher từ localStorage
     const voucherData = JSON.parse(localStorage.getItem("voucherData"));
     if (voucherData) {
         // Cập nhật hiển thị voucher
@@ -463,7 +460,7 @@ $(document).ready(function() {
         const voucherId = $('#voucher_id').val();
         const subtotal = parseInt($('#subtotal').text().replace(/[₫,.]/g, ''));
         const shippingMethodId = $('#shipping_method_id').val();
-
+    
         $.ajax({
             url: url,
             method: 'POST',
@@ -481,28 +478,30 @@ $(document).ready(function() {
                 $('#voucher-discount').text('₫' + response.voucher_discount.toLocaleString());
                 $('#final-total').text('₫' + response.final_total.toLocaleString());
                 $('#selectedVoucherCode').text(`Đã áp dụng: ${voucherCode}`);
-
-                // Lưu thông tin voucher mới vào localStorage
-                localStorage.setItem("voucherData", JSON.stringify({
-                    code: voucherCode,
-                    discountAmount: response.voucher_discount,
-                    newTotal: response.final_total
-                }));
-
+    
+                // Ẩn modal
                 $('#voucherModal').modal('hide');
             },
             error: function(xhr) {
                 console.error(xhr.responseText);
+    
+                let message = 'Có lỗi xảy ra khi áp dụng voucher. Vui lòng thử lại.';
+    
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+    
                 Swal.fire({
                     icon: 'error',
                     title: 'Lỗi',
-                    text: 'Không thể áp dụng voucher',
+                    text: message,
                     timer: 2000,
                     showConfirmButton: false
                 });
             }
         });
     }
+    
 });
 
 
@@ -658,10 +657,11 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
+                let message = 'Bạn chưa chọn địa chỉ giao hàng hoặc phương thức thanh toán.';
                 Swal.fire({
                     icon: 'error',
                     title: 'Lỗi',
-                    text: 'Lỗi server. Vui lòng thử lại.',
+                    text: message,
                     timer: 2000,
                     showConfirmButton: false
                 });

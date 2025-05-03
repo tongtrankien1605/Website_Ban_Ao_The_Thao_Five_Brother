@@ -77,15 +77,15 @@ class OrderController extends Controller
             }
 
 
-            if (!empty($outOfStockItems)) {
-                DB::rollBack();
-                broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Một số sản phẩm đã hết hàng', 
-                    'out_of_stock_items' => $outOfStockItems
-                ], 400);
-            }
+            // if (!empty($outOfStockItems)) {
+            //     DB::rollBack();
+            //     broadcast(new \App\Events\ProductOutOfStock($outOfStockItems))->toOthers();
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Một số sản phẩm đã hết hàng', 
+            //         'out_of_stock_items' => $outOfStockItems
+            //     ], 400);
+            // }
 
 
 
@@ -126,10 +126,10 @@ class OrderController extends Controller
                     'id_product_variant' => $variantId,
                     'old_quantity' => $inventory->quantity,
                     'new_quantity' => $inventory->quantity - $quantity,
-                    'change_quantity' => -$quantity,
+                    'change_quantity' => $quantity,
                     'reason' => 'Tạm giữ hàng cho đơn hàng #' . $order->id,
                     'type' => 'Tạm giữ',
-                    'quantity' => -$quantity,
+                    'quantity' => $quantity,
                     'action' => 'order_reservation',
                     'user_id' => $user->id,
                 ]);
@@ -141,11 +141,11 @@ class OrderController extends Controller
                 // Broadcast inventory update
                 // dd($cartItem->skuses->name);
 
-                broadcast(new \App\Events\InventoryUpdated([
-                    'variant_id' => $variantId,
-                    'new_quantity' => $inventory->quantity,
-                    'product_name' => $cartItem->skuses->name,
-                ]))->toOthers();
+                // broadcast(new \App\Events\InventoryUpdated([
+                //     'variant_id' => $variantId,
+                //     'new_quantity' => $inventory->quantity,
+                //     'product_name' => $cartItem->skuses->name,
+                // ]))->toOthers();
             }
 
             // Create payment attempt record
