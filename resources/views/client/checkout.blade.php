@@ -370,16 +370,6 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
     </div>
 
     <script>
-        // Khởi tạo Laravel Echo
-        // window.Echo = new Echo({
-        //     broadcaster: 'pusher',
-        //     key: '{{ env("PUSHER_APP_KEY") }}',
-        //     cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
-        //     encrypted: true
-        // });
-
-
-
         document.addEventListener('DOMContentLoaded', function() {
             const timerElement = document.getElementById('timer');
             const attemptsElement = document.getElementById('attempts');
@@ -469,7 +459,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                     },
                     error: function(xhr) {
                         console.error('Lỗi:', xhr.responseText);
-                        alert('Lỗi xảy ra! Kiểm tra console.');
+                        alert('Lỗi xảy ra khi tạo bản ghi thanh toán.');
                     }
                 });
             }

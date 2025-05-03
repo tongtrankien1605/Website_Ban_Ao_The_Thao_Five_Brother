@@ -155,17 +155,9 @@
                                             <i class="fa fa-star-o"></i>
                                         </div>
 
-                                        {{-- <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
-                                        </h5>
-                                        <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
-                                                style="background-color: #0271bc"></span><span
-                                                style="background-color: #efc87c"></span><span
-                                                style="background-color: #00c183"></span></h5> --}}
+                                        <h5><br></h5>
+                                        <h5><br></h5>
 
-                                    </div>
-
-                                    <div class="content-right">
-                                        <span class="price">{{ $product->price }}</span>
                                     </div>
 
                                 </div>
@@ -291,19 +283,10 @@
                                             <i class="fa fa-star-o"></i>
                                         </div>
 
-                                        {{-- <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
-                                        </h5>
-                                        <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
-                                                style="background-color: #0271bc"></span><span
-                                                style="background-color: #efc87c"></span><span
-                                                style="background-color: #00c183"></span></h5> --}}
+                                        <h5><br></h5>
+                                        <h5><br></h5>
 
                                     </div>
-
-                                    <div class="content-right">
-                                        <span class="price">{{ $product->price }}</span>
-                                    </div>
-
                                 </div>
 
                             </div>

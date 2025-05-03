@@ -20,9 +20,40 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest('id')->paginate(8);
+        $query = Product::query();
+
+        // Sắp xếp
+        switch ($request->sort) {
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'date_asc':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'date_desc':
+                $query->orderBy('created_at', 'desc');
+                break;
+            default:
+                $query->latest('id');
+        }
+
+        $products = $query->paginate(8);
+        
+        // Lấy danh mục và thương hiệu cho bộ lọc
+        $categories = Category::all();
+        $brands = Brand::all();
+
         foreach ($products as $product) {
             $product->default_image = ProductImage::where('id_product', $product->id)
                 ->where('is_default', 1)
@@ -30,7 +61,7 @@ class ProductController extends Controller
                 ProductImage::where('id_product', $product->id)->first()?->image_url;
         }
 
-        return view('client.shop', compact('products'));
+        return view('client.shop', compact('products', 'categories', 'brands'));
     }
     public function indexMain()
     {

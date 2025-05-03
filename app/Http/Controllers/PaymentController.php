@@ -158,6 +158,14 @@ class PaymentController extends Controller
             $discount = $voucher->max_discount_amount;
         }
 
+        if ($discount > $subtotal * 30 / 100) {
+            return response()->json([
+                'message' => 'Giá trị giảm giá không được vượt quá 30% tổng giá trị đơn hàng.'
+            ], 400);
+        }
+        // Kiểm tra xem voucher đã được sử dụng chưa
+      
+
         $final_total = $subtotal - $discount + $shipping_methods->cost;
 
         return response()->json([
