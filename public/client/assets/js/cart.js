@@ -91,7 +91,6 @@ $(document).ready(function () {
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: 'json',
             success: function (response) {
-                alert(response.message);
                 console.log("Sản phẩm đã được xóa:", response);
 
                 // Xóa sản phẩm khỏi giao diện
@@ -100,6 +99,14 @@ $(document).ready(function () {
 
                 // Cập nhật tổng giỏ hàng
                 updateTotalCart();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: response.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
 
                 // Nếu không còn sản phẩm nào, hiển thị thông báo
                 if ($(".cart-table tbody tr").length === 0) {
