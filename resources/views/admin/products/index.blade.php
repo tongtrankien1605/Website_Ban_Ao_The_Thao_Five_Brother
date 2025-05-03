@@ -129,16 +129,18 @@
                                                     class="btn btn-sm btn-warning me-2">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                {{-- <form action="{{ route('admin.product.destroy', $product->id) }}"
+                                                <form action="{{ route('admin.product.change_status', $product->id) }}"
                                                     method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this products?')"
+                                                    onsubmit="return confirm('{{ $product->status ? 'Bạn có chắc chắn muốn tắt sản phẩm này không?' : 'Bạn có chắc chắn muốn bật sản phẩm này không?' }}')"
                                                     class="d-inline">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-light" title="Delete">
-                                                        <i class="fas fa-trash"></i>
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                        class="btn btn-sm {{ $product->status ? 'btn-danger' : 'btn-success' }}"
+                                                        title="Change status">
+                                                        <i class="fas fa-sync-alt"></i>
                                                     </button>
-                                                </form> --}}
+                                                </form>                                                
                                             </div>
                                         </td>
                                     </tr>
@@ -156,50 +158,12 @@
         </div>
     </div>
 
-    @push('styles')
-        <style>
-            .card {
-                margin-top: 50px;
-                border-radius: 10px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .table th {
-                font-weight: 600;
-                color: #4B5563;
-            }
-
-            .btn-success {
-                background-color: #10B981;
-                border-color: #10B981;
-            }
-
-            .btn-success:hover {
-                background-color: #059669;
-                border-color: #059669;
-            }
-
-            .form-check-input:checked {
-                background-color: #10B981;
-                border-color: #10B981;
-            }
-
-            .badge {
-                padding: 6px 12px;
-                border-radius: 20px;
-            }
-
-            .bg-success {
-                background-color: #D1FAE5 !important;
-                color: #059669;
-            }
-
-            .bg-danger {
-                background-color: #FEE2E2 !important;
-                color: #DC2626;
-            }
-        </style>
-    @endpush
+    <style>
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         @if (session('success'))

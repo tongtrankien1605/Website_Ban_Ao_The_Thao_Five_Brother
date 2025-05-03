@@ -48,7 +48,7 @@ class ProductController extends Controller
                 $query->latest('id');
         }
 
-        $products = $query->paginate(8);
+        $products = $query->where('status',1)->paginate(8);
         
         // Lấy danh mục và thương hiệu cho bộ lọc
         $categories = Category::all();
@@ -98,6 +98,9 @@ class ProductController extends Controller
             'attributeValues.attribute',
             'variants.latestStock'
         ])->findOrFail($id);
+        if(!$product->status) {
+            return redirect()->route('product.index')->with('error', 'Sản phẩm không tồn tại');
+        }
         $product->increment('views');
         $relatedProducts = Product::where('id_brand', $product->id_brand)
             ->where('id', '!=', $product->id)
