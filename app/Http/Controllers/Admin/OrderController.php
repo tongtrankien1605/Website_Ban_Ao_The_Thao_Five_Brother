@@ -29,7 +29,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::latest('id')
+        $orders = Order::latest('id')->where('orders.id_payment_method_status', '!=', 4)
             ->join('users', function ($q) {
                 $q->on('users.id', '=', 'orders.id_user');
                 $q->whereNull('users.deleted_at');
@@ -60,7 +60,7 @@ class OrderController extends Controller
             ->paginate(10);
         // dd($orders);
         $allOrderStatus = OrderStatus::orderBy('id')->get();
-        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN];
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN, EnumsOrderStatus::CANCEL, EnumsOrderStatus::WAIT_REFUND];
         $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         $paymentMethodStatuses = PaymentMethodStatus::orderBy('id')->get();
         return view('admin.orders.index', compact(['orders', 'orderStatuses', 'paymentMethodStatuses', 'allOrderStatus']));
@@ -101,7 +101,7 @@ class OrderController extends Controller
         if (!$order) {
             return redirect(route('admin.orders.index'))->with('error', 'đơn hàng không tồn tại');
         }
-        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN];
+        $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN, EnumsOrderStatus::CANCEL, EnumsOrderStatus::WAIT_REFUND];
         $orderStatuses = OrderStatus::whereNotIn('id', $data)->orderBy('id')->get();
         return view('admin.orders.show', compact('order', 'orderStatuses'));
     }
