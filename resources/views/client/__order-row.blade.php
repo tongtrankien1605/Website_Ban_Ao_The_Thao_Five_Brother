@@ -123,6 +123,13 @@
                 @if ($order->id_order_status == OrderStatus::PENDING || $order->id_order_status == OrderStatus::CONFIRM)
                     <div id="confirm-section" class="text-center">
                         <button class="btn btn-danger btnbtn">Hủy hàng</button>
+                        @if ($order->id_payment_method_status == 4 ||$order->id_payment_method_status == 1 && $order->id_payment_method == 3)
+                        <form action="{{route('payment.again',$order->id)}}" method="post" style="display:inline;">
+                            @csrf
+                            @method('GET')
+                            <button class="btn btn-warning">Thanh toán lại</button>
+                        </form>
+                        @endif
                     </div>
 
                     <div id="not-received-form" style="display:none;">
@@ -161,7 +168,7 @@
                                     <button type="button" class="btn btn-secondary btnbtn">Hủy</button>
                                 </div>
                             </form>
-                        @elseif($order->payment_method_status_name === 'Chưa thanh toán')
+                        @elseif($order->payment_method_status_name === 'Chưa thanh toán' || $order->payment_method_status_name === 'Thanh toán thất bại')
                             <form action="{{ route('order.update', $order->id) }}" method="post">
                                 @csrf
                                 @method('PUT')
@@ -398,3 +405,5 @@
         </div>
     </td>
 </tr> 
+
+    

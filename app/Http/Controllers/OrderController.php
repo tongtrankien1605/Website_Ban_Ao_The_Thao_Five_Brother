@@ -226,7 +226,7 @@ class OrderController extends Controller
             ]);
             return redirect()->back()->with('success', '5 Brother cảm ơn vì bạn đã mua hàng.');
         } elseif ($newStatus == OrderStatus::CANCEL) {
-            if ($order->id_payment_method_status == 1) {
+            if ($order->id_payment_method_status == 1 || $order->id_payment_method_status == 4) {
                 $validatedData = $request->validate([
                     'reason' => 'required|max:255'
                 ]);

@@ -258,6 +258,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/voucher/apply', [PaymentController::class, 'apply'])->name('voucher.apply');
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payment.vnpay.callback');
+Route::get('/paymentAgain/{id}', [PaymentController::class, 'paymentAgain'])->name('payment.again');
 Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
 Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
 
