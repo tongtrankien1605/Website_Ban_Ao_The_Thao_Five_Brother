@@ -85,8 +85,8 @@ class ProductController extends Controller
         $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attributes->keys())
             ->get()
             ->groupBy('product_attribute_id');
-        $brands = Brand::whereNull('deleted_at')->get();
-        $categories = Category::whereNull('deleted_at')->get();
+        $brands = Brand::whereNull('deleted_at')->where('status',1)->get();
+        $categories = Category::whereNull('deleted_at')->where('is_active',1)->get();
         return view('admin.products.create', compact(['brands', 'categories', 'attributes', 'attributeValues']));
     }
 
@@ -251,8 +251,8 @@ class ProductController extends Controller
         $attributeValues = ProductAtributeValue::whereIn('product_attribute_id', $attributes->keys())
             ->get()
             ->groupBy('product_attribute_id');
-        $brands = Brand::whereNull('deleted_at')->get();
-        $categories = Category::whereNull('deleted_at')->get();
+        $brands = Brand::whereNull('deleted_at')->where('status',1)->get();
+        $categories = Category::whereNull('deleted_at')->where('is_active',1)->get();
         $productImages = ProductImage::whereNull('deleted_at')->where('id_product', $product->id)->get();
         $skues = Skus::whereNull('deleted_at')->where('product_id', $product->id)->with(['inventories', 'inventory_entries'])->get();
         // dd($skues->toArray());

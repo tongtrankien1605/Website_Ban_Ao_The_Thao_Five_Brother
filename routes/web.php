@@ -134,6 +134,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         // Category management
         Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
         Route::resource('category', CategoryController::class);
+        Route::put('category/{category}/change_status', [CategoryController::class, 'changeStatus'])->name('category.change_status');
         
         // Product attribute
         Route::resource('product_attribute', ProductAttributeController::class);
@@ -155,6 +156,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
         Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
         Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
+        Route::put('brands/{brand}/change_status', [BrandController::class, 'changeStatus'])->name('brand.change_status');
         
         // SKUs management
         Route::resource('product.skus', SkusController::class);

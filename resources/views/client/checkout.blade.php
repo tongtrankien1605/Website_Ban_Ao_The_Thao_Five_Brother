@@ -375,7 +375,7 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
             const attemptsElement = document.getElementById('attempts');
             const countdown = document.getElementById('countdown');
             let attemptsRemaining = {{ Auth::user()->failed_attempts ?? 0 }};
-            let timeLeft = 1000; // 15 minutes (900 seconds) timeout
+            let timeLeft = 900; // 15 minutes (900 seconds) timeout
 
             // Kiểm tra hàng tồn kho
             $.ajax({

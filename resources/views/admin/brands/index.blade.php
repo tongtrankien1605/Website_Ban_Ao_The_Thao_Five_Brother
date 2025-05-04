@@ -54,6 +54,7 @@
                                 <th>Tên thương hiệu</th>
                                 <th>Ngày tạo</th>
                                 <th>Ngày cập nhật</th>
+                                <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
@@ -65,6 +66,13 @@
                                     <td>{{ $brand->created_at->format('d-m-Y') }}</td>
                                     <td>{{ $brand->updated_at->format('d-m-Y') }}</td>
                                     <td>
+                                        @if ($brand->status == 1)
+                                            <span class="badge badge-success">Hoạt động</span>
+                                        @else
+                                            <span class="badge badge-danger">Không hoạt động</span>
+                                        @endif
+                                    <td class="text-nowrap" style="width: 1px">
+                                        <div class="d-flex">
                                         <a href="{{ route('admin.brands.edit', $brand->id) }}" class="btn btn-warning">
                                             <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                                 stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em"
@@ -73,16 +81,26 @@
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST"
+                                        {{-- <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST"
                                             onsubmit="return confirm('Bạn có chắc muốn xóa thương hiệu này?')"
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger"><i
                                                     class="bi bi-trash"></i></button>
-                                        </form>
-                                        <a href="{{ route('admin.brands.show', $brand->id) }}" class="btn btn-info"><i
+                                        </form> --}}
+                                        <a href="{{ route('admin.brands.show', $brand->id) }}" class="btn btn-info ms-2"><i
                                                 class="bi bi-eye"></i></a>
+                                        <form action="{{ Route('admin.brand.change_status', $brand->id) }}"
+                                            method="post">
+                                            @csrf
+                                            @method('PUT')
+                                            <button
+                                                onclick="return confirm('Bạn chắc chắn muốn thay đổi trạng thái thương hiệu?')"
+                                                class="btn ms-2 {{ $brand->status ? 'btn-danger' : 'btn-success' }}">
+                                                <i class="fas fa-sync-alt"></i></button>
+                                        </form>
+                                    </div>
                                     </td>
                                 </tr>
                             @endforeach

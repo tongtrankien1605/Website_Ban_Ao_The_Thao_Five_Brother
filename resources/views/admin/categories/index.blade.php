@@ -107,11 +107,18 @@
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                             </svg>
                                         </a>
-                                        <form action="{{ Route('admin.category.destroy', $cate->id) }}" method="post">
+                                        {{-- <form action="{{ Route('admin.category.destroy', $cate->id) }}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Có chắc chắn xóa chứ?')"
                                                 class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                        </form> --}}
+                                        <form action="{{ Route('admin.category.change_status', $cate->id) }}" method="post">
+                                            @csrf
+                                            @method('PUT')
+                                            <button onclick="return confirm('Bạn chắc chắn muốn thay đổi trạng thái danh mục?')"
+                                                class="btn {{ $cate->is_active ? 'btn-danger' : 'btn-success' }}">
+                                                <i class="fas fa-sync-alt"></i></button>
                                         </form>
                                     </td>
                                 </tr>
