@@ -80,7 +80,7 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>STT</th>
                                 <th>ẢNH</th>
                                 <th>TÊN</th>
                                 {{-- <th>SKU</th> --}}
@@ -112,17 +112,18 @@
                                     <td>{{ $skus->barcode }}</td>
                                     <td>{{ number_format($getPrice->cost_price ?? 0) }} VND</td>
                                     <td>{{ number_format($getPrice->price ?? 0) }} VND</td>
-                                    @if ($getPrice->sale_price??'')
+                                    @if ($getPrice->sale_price ?? '')
                                         <td>{{ number_format($getPrice->sale_price) }} VND</td>
-                                        <td>{{$getPrice->discount_start->format('d/m/Y') }} - {{$getPrice->discount_end->format('d/m/Y')}}</td>
+                                        <td>{{ $getPrice->discount_start->format('d/m/Y') }} -
+                                            {{ $getPrice->discount_end->format('d/m/Y') }}</td>
                                     @else
                                         <td>Không giảm giá</td>
                                         <td>Không giảm giá</td>
                                     @endif
 
-                                    <td>{{ $skus->inventories->quantity ?? 0 }}</td>
-                                    <td class="text-end">
-                                        <div class="d-flex gap-1 justify-content-end">
+                                    <td class=" text-center">{{ $skus->inventories->quantity ?? 0 }}</td>
+                                    <td class="text-center">
+                                        <div class="d-flex gap-1 justify-content-center">
                                             <a href="{{ route('admin.product.skus.edit', ['product' => $product->id, 'sku' => $skus->id]) }}"
                                                 class="btn btn-sm btn-light">
                                                 <i class="fas fa-edit"></i>
@@ -131,16 +132,16 @@
                                                class="btn btn-sm btn-light">
                                                 <i class="fas fa-eye"></i>
                                             </a> --}}
-                                            <form
+                                            {{-- <form
                                                 action="{{ route('admin.skus.change_status', ['product' => $product->id, 'sku' => $skus->id]) }}"
                                                 method="post" class="d-inline-block"
-                                                onsubmit="return confirm('Are you sure you want to change the status of this variant?')">
+                                                onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái sản phẩm này không?')">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="btn btn-sm btn-light">
                                                     <i class="fas fa-sync-alt"></i>
                                                 </button>
-                                            </form>
+                                            </form> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -159,6 +160,24 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @endif
+    </script>
 @endsection
 
 @push('styles')

@@ -4,7 +4,7 @@
     @php
         $total = 0;
     @endphp
-    <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero-1.jpg)">
+    <div class="page-banner-section section" style="background-image: url(/client/assets/images/hero/hero1.jpg)">
         <div class="container">
             <div class="row">
                 <div class="page-banner-content col">

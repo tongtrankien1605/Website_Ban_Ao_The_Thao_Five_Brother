@@ -35,7 +35,8 @@
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                                <li class="breadcrumb-item active"><a href="{{ Route('admin.category.index') }}">Trang danh sách</a></li>
+                                <li class="breadcrumb-item active"><a href="{{ Route('admin.category.index') }}">Trang danh
+                                        sách</a></li>
                             </ol>
                         </div>
                     </div>
@@ -58,9 +59,8 @@
                                     <div class="card-body">
                                         <div class="form-group">
                                             <label for="exampleInputName">Tên</label>
-                                            <input type="text" name="name" class="form-control"
-                                                id="exampleInputName" placeholder="Nhập tên"
-                                                value="{{ old('name') }}">
+                                            <input type="text" name="name" class="form-control" id="exampleInputName"
+                                                placeholder="Nhập tên" value="{{ old('name') }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputDescription">Mô tả</label>
@@ -78,6 +78,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" name="is_active" class="form-check-input"
+                                                id="exampleCheck1" value="1"
+                                                {{ old('is_active') == '1' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="exampleCheck1">Is Active</label>
+                                        </div>                                        
                                     </div>
                                     <!-- /.card-body -->
 
@@ -91,3 +97,25 @@
                 </div>
         </div>
     @endsection
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .col-form-label {
+            font-weight: normal;
+        }
+        .custom-switch {
+            padding-left: 2.25rem;
+        }
+        .btn {
+            padding: 0.375rem 1.5rem;
+        }
+        .card {
+            background-color: #f8f9fa;
+            border: none;
+            box-shadow: none;
+        }
+        .input-group-text {
+            background-color: #fff;
+        }
+    </style>

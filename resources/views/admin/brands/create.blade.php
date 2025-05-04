@@ -45,6 +45,19 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div> --}}
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="status">Trạng thái</label>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="status"
+                                                    name="status" value="1" {{ old('status') ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="status">Hoạt động</label>
+                                            </div>
+                                            @error('status')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
                                     <div class="text-center">
                                         <a href="{{ route('admin.brands.index') }}" class="btn btn-danger">Quay lại</a>

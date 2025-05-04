@@ -142,7 +142,16 @@
                 <div class="container-fluid mt-4 px-4">
                     <h4 class="text-center text-dark mb-4">Thống Kê Đơn Hàng</h4>
 
-                    <!-- Select để chọn chế độ hiển thị -->
+                    <!-- Bộ lọc theo khoảng ngày -->
+                    <div class="mb-3 text-start">
+                        <label class="form-label fw-bold">Chọn khoảng ngày:</label>
+                        <input type="date" id="startDate" class="form-control d-inline-block w-auto" />
+                        <span class="mx-2">đến</span>
+                        <input type="date" id="endDate" class="form-control d-inline-block w-auto" />
+                        <button id="filterBtn" class="btn btn-primary ms-2">Lọc</button>
+                    </div>
+
+                    <!-- Select chế độ hiển thị mặc định -->
                     <div class="mb-3 text-start">
                         <label for="chartTypeSelect" class="form-label fw-bold">Chọn chế độ:</label>
                         <select id="chartTypeSelect" class="form-select w-auto d-inline-block">
@@ -156,6 +165,7 @@
                         <canvas id="ordersChart"></canvas>
                     </div>
                 </div>
+
 
 
                 <!-- DOANH THU tính theo ngày / tháng / năm - done -->
@@ -370,25 +380,34 @@
             const ctx = document.getElementById('ordersChart').getContext('2d');
             let currentChart;
 
-            function createChart(type) {
+            function createChart(type, customLabels = null, customData = null, customLabel = null) {
                 if (currentChart) {
                     currentChart.destroy();
                 }
 
-                let data, labels, label;
+                let labels = [],
+                    data = [],
+                    label = '';
 
                 if (type === 'day') {
                     labels = ordersByDay.map(item => item.date);
                     data = ordersByDay.map(item => item.total);
                     label = 'Số đơn hàng theo ngày';
-                } else {
+                } else if (type === 'week') {
                     labels = ordersByWeek.map(item => item.week);
                     data = ordersByWeek.map(item => item.total);
                     label = 'Số đơn hàng theo tuần';
                 }
 
+                // Nếu có dữ liệu lọc thì dùng cái đó
+                if (customLabels && customData) {
+                    labels = customLabels;
+                    data = customData;
+                    label = customLabel;
+                }
+
                 currentChart = new Chart(ctx, {
-                    type: 'line', // luôn là line
+                    type: 'line',
                     data: {
                         labels: labels,
                         datasets: [{
@@ -419,6 +438,28 @@
             // Thay đổi khi chọn từ select
             document.getElementById('chartTypeSelect').addEventListener('change', function() {
                 createChart(this.value);
+            });
+
+            // Lọc theo khoảng ngày
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                if (!startDate || !endDate) {
+                    alert('Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc.');
+                    return;
+                }
+
+                // fetch(`/orders/filter?start=${startDate}&end=${endDate}`)
+                fetch(`/admin/orders/filter?start=${startDate}&end=${endDate}`)
+
+                    .then(response => response.json())
+                    .then(data => {
+                        const labels = data.map(item => item.date);
+                        const chartData = data.map(item => item.total);
+                        const label = `Số đơn hàng từ ${startDate} đến ${endDate}`;
+                        createChart('custom', labels, chartData, label);
+                    });
             });
         });
 

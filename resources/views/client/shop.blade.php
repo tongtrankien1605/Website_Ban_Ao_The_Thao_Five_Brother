@@ -22,27 +22,25 @@
         <div class="container">
 
             <div class="row">
+                
 
                 <div class="col-12">
-                    <div class="product-show">
-                        <h4>Hiển thị:</h4>
-                        <select class="nice-select">
-                            <option>8</option>
-                            <option>12</option>
-                            <option>16</option>
-                            <option>20</option>
-                        </select>
-                    </div>
-                    <div class="product-short">
-                        <h4>Sắp xếp theo:</h4>
-                        <select class="nice-select">
-                            <option>Tên tăng dần</option>
-                            <option>Tên giảm dần</option>
-                            <option>Ngày tăng dần</option>
-                            <option>Ngày giảm dần</option>
-                            <option>Giá tăng dần</option>
-                            <option>Giá giảm dần</option>
-                        </select>
+                        <div class="product-short">
+                            <h4>Sắp xếp theo:</h4>
+                            <select class="nice-select" onchange="window.location.href=this.value">
+                                <option value="{{ route('product.index', ['sort' => 'name_asc'] + request()->except(['page', 'sort'])) }}"
+                                    {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Tên A-Z</option>
+                                <option value="{{ route('product.index', ['sort' => 'name_desc'] + request()->except(['page', 'sort'])) }}"
+                                    {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Tên Z-A</option>
+                                {{-- <option value="{{ route('product.index', ['sort' => 'price_asc'] + request()->except(['page', 'sort'])) }}"
+                                    {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá tăng dần</option>
+                                <option value="{{ route('product.index', ['sort' => 'price_desc'] + request()->except(['page', 'sort'])) }}"
+                                    {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option> --}}
+                                <option value="{{ route('product.index', ['sort' => 'date_desc'] + request()->except(['page', 'sort'])) }}"
+                                    {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Mới nhất</option>
+                                <option value="{{ route('product.index', ['sort' => 'date_asc'] + request()->except(['page', 'sort'])) }}"
+                                    {{ request('sort') == 'date_asc' ? 'selected' : '' }}>Cũ nhất</option>
+                            </select>
                     </div>
                 </div>
                 @foreach ($products as $product)
@@ -82,12 +80,8 @@
                                             <i class="fa fa-star-o"></i>
                                         </div>
 
-                                        <h5 class="size">Size: <span>S</span><span>M</span><span>L</span><span>XL</span>
-                                        </h5>
-                                        <h5 class="color">Color: <span style="background-color: #ffb2b0"></span><span
-                                                style="background-color: #0271bc"></span><span
-                                                style="background-color: #efc87c"></span><span
-                                                style="background-color: #00c183"></span></h5>
+                                        <h5><br></h5>
+                                        <h5><br></h5>
 
                                     </div>
 
@@ -105,12 +99,6 @@
                 <div class="col-12">
                     <ul class="page-pagination">
                         {{ $products->links() }}
-                        {{-- <li><a href="#"><i class="fa fa-angle-left"></i></a></li>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#"><i class="fa fa-angle-right"></i></a></li> --}}
                     </ul>
                 </div>
 
@@ -118,4 +106,22 @@
 
         </div>
     </div><!-- Page Section End -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Đóng'
+            });
+        @endif
+    </script>
 @endsection

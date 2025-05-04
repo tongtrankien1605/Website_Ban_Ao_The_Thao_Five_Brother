@@ -40,6 +40,7 @@ class BrandController extends Controller
         try {
             $newBrand = new Brand();
             $newBrand->name = $request->name;
+            $newBrand->status = $request->status ?? 0;
             $newBrand->save();
 
             return redirect()->route('admin.brands.index')->with('success', 'Thêm thương hiệu thành công!');
@@ -74,6 +75,7 @@ class BrandController extends Controller
     {
         try {
             $brand->name = $request->name;
+            $brand->status = $request->status ?? 0;
             $brand->save();
 
             return redirect()->route('admin.brands.index')->with('success', 'Cập nhật thương hiệu thành công!');
@@ -102,6 +104,16 @@ class BrandController extends Controller
             return back()->with('success', 'Xóa thành công');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
+        }
+    }
+    public function changeStatus($id){
+        $brand = Brand::find($id);
+        if ($brand) {
+            $brand->status = !$brand->status;
+            $brand->save();
+            return redirect()->back()->with('success', 'Thay đổi trạng thái thành công!');
+        } else {
+            return redirect()->back()->with('error', 'Thương hiệu không tồn tại!');
         }
     }
 }

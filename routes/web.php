@@ -111,7 +111,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('logout', [App\Http\Controllers\Admin\Auth\LoginController::class, 'logout'])->name('logout');
         Route::get('/', [DashboardController::class, 'index'])->name('index');
-        
+        // Route::get('/orders/filter', [DashboardController::class, 'filterOrders'])->name('orders.filter');
+        Route::get('/orders/filter', [DashboardController::class, 'filterOrders'])->name('orders.filter');
+
         // User management
         Route::resource('/user', AdminUserController::class);
         Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
@@ -132,6 +134,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         // Category management
         Route::get('/category/search', [CategoryController::class, 'search'])->name('category.search');
         Route::resource('category', CategoryController::class);
+        Route::put('category/{category}/change_status', [CategoryController::class, 'changeStatus'])->name('category.change_status');
         
         // Product attribute
         Route::resource('product_attribute', ProductAttributeController::class);
@@ -153,6 +156,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::put('brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
         Route::delete('brands/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
         Route::get('/brands/{id}', [BrandController::class, 'show'])->name('brands.show');
+        Route::put('brands/{brand}/change_status', [BrandController::class, 'changeStatus'])->name('brand.change_status');
         
         // SKUs management
         Route::resource('product.skus', SkusController::class);
@@ -256,6 +260,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/voucher/apply', [PaymentController::class, 'apply'])->name('voucher.apply');
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback'])->name('payment.vnpay.callback');
+Route::get('/paymentAgain/{id}', [PaymentController::class, 'paymentAgain'])->name('payment.again');
 Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('payment.paypal.success');
 Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
 

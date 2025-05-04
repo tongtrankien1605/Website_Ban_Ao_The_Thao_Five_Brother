@@ -1,7 +1,7 @@
 @extends('client.layouts.master')
 @section('content')
     <!-- Page Banner Section Start -->
-    <div class="page-banner-section section" style="background-image: url(/client//client/assets/images/hero/hero-1.jpg)">
+    <div class="page-banner-section section" style="background-image: url(/client//client/assets/images/hero/hero1.jpg)">
         <div class="container">
             <div class="row">
                 <div class="page-banner-content col">

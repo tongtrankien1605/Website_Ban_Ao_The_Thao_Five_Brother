@@ -158,6 +158,14 @@ class PaymentController extends Controller
             $discount = $voucher->max_discount_amount;
         }
 
+        if ($discount > $subtotal * 30 / 100) {
+            return response()->json([
+                'message' => 'Giá trị giảm giá không được vượt quá 30% tổng giá trị đơn hàng.'
+            ], 400);
+        }
+        // Kiểm tra xem voucher đã được sử dụng chưa
+      
+
         $final_total = $subtotal - $discount + $shipping_methods->cost;
 
         return response()->json([
@@ -180,6 +188,72 @@ class PaymentController extends Controller
 
         return back()->withErrors('Phương thức thanh toán không hợp lệ.');
     }
+
+    public function paymentAgain($id)
+    {
+        $order = Order::find($id);
+        if (!$order) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn hàng');
+        }
+
+        
+        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        $vnp_Returnurl = env('VNP_RETURN_URL');
+        $vnp_TmnCode = env('VNP_TMN_CODE');
+        $vnp_HashSecret = env('VNP_HASH_SECRET');
+        $vnp_TxnRef = $order->id;
+        $vnp_OrderInfo = "Thanh toán đơn hàng #" . $order->id;
+        $vnp_OrderType = "billpayment";
+        $vnp_Amount = intval($order->total_amount) * 100;
+        $vnp_Locale = "vn";
+        $vnp_BankCode = "NCB";
+        $vnp_IpAddr = request()->ip();
+
+        $inputData = array(
+            "vnp_Version" => "2.1.0",
+            "vnp_TmnCode" => $vnp_TmnCode,
+            "vnp_Amount" => $vnp_Amount,
+            "vnp_Command" => "pay",
+            "vnp_CreateDate" => date('YmdHis'),
+            "vnp_CurrCode" => "VND",
+            "vnp_IpAddr" => $vnp_IpAddr,
+            "vnp_Locale" => $vnp_Locale,
+            "vnp_OrderInfo" => $vnp_OrderInfo,
+            "vnp_OrderType" => $vnp_OrderType,
+            "vnp_ReturnUrl" => $vnp_Returnurl,
+            "vnp_TxnRef" => $vnp_TxnRef,
+        );
+
+        if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+            $inputData['vnp_BankCode'] = $vnp_BankCode;
+        }
+
+        ksort($inputData);
+        $query = "";
+        $i = 0;
+        $hashdata = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashdata .= urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
+            $query .= urlencode($key) . "=" . urlencode($value) . '&';
+        }
+
+        $vnp_Url = $vnp_Url . "?" . $query;
+        if (isset($vnp_HashSecret)) {
+            $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
+            $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+        }
+
+        // $order->id_payment_method_status = 1;
+        // $order->save();
+
+        return redirect($vnp_Url);
+    }
+
 
     public function processVNPay($order)
     {
@@ -250,8 +324,6 @@ class PaymentController extends Controller
 
     public function vnpayCallback(Request $request)
     {
-        $variantId = collect(session('pending_order')['items'])->pluck('id');
-        $cartItemdelete = CartItem::whereIn('id', $variantId)->get()->keyBy('id');
         Log::info('VNPay Callback received', [
             'request' => $request->all()
         ]);
@@ -319,9 +391,6 @@ class PaymentController extends Controller
                         $inventories->save();
                     }
                 }
-                $cartItemdelete->each(function ($item) {
-                    $item->delete();
-                });
 
                 return redirect()->route('my-account')
                     ->with('success', 'Đơn hàng đã được thanh toán thành công');
@@ -329,8 +398,6 @@ class PaymentController extends Controller
                 Log::info('Payment cancelled', ['orderId' => $orderId]);
                 $order->id_payment_method_status = 4; 
                 $order->save();
-
-
                 $cartItems = CartItem::where('id_user', Auth::id())->get();
                 foreach ($cartItems as $items) {
                     $inventories = Inventory::where('id', $items->id_product_variant)->first();
@@ -339,11 +406,8 @@ class PaymentController extends Controller
                         $inventories->save();
                     }
                 }
-                $cartItemdelete->each(function ($item) {
-                    $item->delete();
-                });
-                return redirect()->route('show.cart')
-                    ->with('error', 'Bạn đã hủy thanh toán đơn hàng.');
+                return redirect()->route('my-account')
+                    ->with('success', 'Bạn đã hủy thanh toán đơn hàng');
             } else {
                 Log::error('Payment failed', [
                     'orderId' => $orderId,

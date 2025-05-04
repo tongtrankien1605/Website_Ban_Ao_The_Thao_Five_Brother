@@ -104,12 +104,11 @@ class DashboardController extends Controller
         // Đơn hàng theo ngày - 7 ngày gần nhất
         $ordersByDay = DB::table('orders')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay()) // 6 ngày trước + hôm nay
+            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay())
             ->groupByRaw('DATE(created_at)')
             ->orderBy('date', 'ASC')
             ->get();
 
-        // Format lại dữ liệu ngày để đảm bảo đủ 7 ngày liên tiếp
         $ordersByDayFormatted = collect();
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i)->format('Y-m-d');
@@ -123,20 +122,19 @@ class DashboardController extends Controller
         // Đơn hàng theo tuần - 4 tuần gần nhất
         $ordersByWeek = DB::table('orders')
             ->selectRaw("DATE_FORMAT(created_at, '%x%v') as week_year, COUNT(*) as total")
-            ->where('created_at', '>=', Carbon::now()->subWeeks(3)->startOfWeek()) // 3 tuần trước + tuần hiện tại
+            ->where('created_at', '>=', Carbon::now()->subWeeks(3)->startOfWeek())
             ->groupByRaw("DATE_FORMAT(created_at, '%x%v')")
             ->orderBy('week_year', 'ASC')
             ->get();
 
-        // Format lại dữ liệu theo tuần (hiển thị Tuần xx)
         $ordersByWeekFormatted = collect();
         for ($i = 3; $i >= 0; $i--) {
             $startOfWeek = Carbon::now()->subWeeks($i)->startOfWeek();
             $endOfWeek = Carbon::now()->subWeeks($i)->endOfWeek();
             $weekLabel = 'Tuần ' . $startOfWeek->format('W') . ' (' . $startOfWeek->format('d/m') . ' - ' . $endOfWeek->format('d/m') . ')';
-            $weekYear = $startOfWeek->format('oW'); // năm + số tuần (vd: 202416)
+            $weekYear = $startOfWeek->format('oW');
 
-            $found = $ordersByWeek->firstWhere('week_year', $startOfWeek->format('oW'));
+            $found = $ordersByWeek->firstWhere('week_year', $weekYear);
             $ordersByWeekFormatted->push([
                 'week' => $weekLabel,
                 'total' => $found ? $found->total : 0,
@@ -256,7 +254,32 @@ class DashboardController extends Controller
 
 
 
+    public function filterOrders(Request $request)
+    {
+        $startDate = Carbon::parse($request->start);
+        $endDate = Carbon::parse($request->end)->endOfDay();
 
+        $filteredOrders = DB::table('orders')
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $formatted = collect();
+        $current = $startDate->copy();
+        while ($current <= $endDate) {
+            $date = $current->format('Y-m-d');
+            $found = $filteredOrders->firstWhere('date', $date);
+            $formatted->push([
+                'date' => $date,
+                'total' => $found ? $found->total : 0,
+            ]);
+            $current->addDay();
+        }
+
+        return response()->json($formatted);
+    }
 
     /**
      * Show the form for creating a new resource.

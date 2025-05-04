@@ -144,4 +144,12 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->route('admin.category.index')->with('success', 'Xóa thành công');
     }
+
+    public function changeStatus($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->is_active = !$category->is_active;
+        $category->save();
+        return redirect()->route('admin.category.index')->with('success', 'Thay đổi trạng thái thành công!');
+    }
 }

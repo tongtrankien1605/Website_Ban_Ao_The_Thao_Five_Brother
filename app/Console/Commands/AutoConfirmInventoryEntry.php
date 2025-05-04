@@ -32,7 +32,7 @@ class AutoConfirmInventoryEntry extends Command
     {
         Db::beginTransaction();
         $inventoryEntries = InventoryEntry::where('status', 'Đang chờ xử lý')
-            ->where('created_at', '<=', now()->subDays(3))
+            ->where('created_at', '<=', now()->subDays(7))
             ->get();
         foreach ($inventoryEntries as $inventoryEntry) {
             $inventoryEntry->update(['status' => 'Đã duyệt']);
