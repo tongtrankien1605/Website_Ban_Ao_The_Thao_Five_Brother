@@ -111,7 +111,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('logout', [App\Http\Controllers\Admin\Auth\LoginController::class, 'logout'])->name('logout');
         Route::get('/', [DashboardController::class, 'index'])->name('index');
-        
+        // Route::get('/orders/filter', [DashboardController::class, 'filterOrders'])->name('orders.filter');
+        Route::get('/orders/filter', [DashboardController::class, 'filterOrders'])->name('orders.filter');
+
         // User management
         Route::resource('/user', AdminUserController::class);
         Route::get('/index_delete_user', [AdminUserController::class, 'indexDelete'])->name('user.indexDelUser');
