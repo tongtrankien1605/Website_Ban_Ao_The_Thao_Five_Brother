@@ -193,6 +193,9 @@ class OrderController extends Controller
                 return response()->json(['success' => true, 'message' => 'Đặt hàng thành công!']);
             } else {
                 // For online payment methods
+                $cartItemdelete->each(function ($item) {
+                    $item->delete();
+                });
                 DB::commit();
                 $paymentController = new PaymentController();
                 return $paymentController->processPayment($request, $order);
