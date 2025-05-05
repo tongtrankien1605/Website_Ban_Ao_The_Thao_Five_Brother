@@ -307,7 +307,9 @@ style="background-color: #f8f9fa; padding: 10px; text-align: center; position: f
                             <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="is_default" name="is_default">
+                            <input type="hidden" name="is_default" value="0">
+                            <input type="checkbox" class="form-check-input" id="is_default" name="is_default"
+                                value="1">
                             <label class="form-check-label" for="is_default">Đặt làm địa chỉ mặc định</label>
                         </div>
 

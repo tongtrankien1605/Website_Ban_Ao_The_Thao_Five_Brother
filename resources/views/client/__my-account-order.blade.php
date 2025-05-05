@@ -47,12 +47,13 @@
                                             OrderStatus::WAIT_REFUND,
                                             OrderStatus::REFUND,
                                             OrderStatus::REFUND_SUCCESS,
+                                            OrderStatus::REFUND_FAILED
                                         ])->isEmpty())
                                     <tr>
                                         <td colspan="6" class="text-center">Không có đơn hàng nào</td>
                                     </tr>
                                 @else
-                                    @foreach ($orders->whereNotIn('id_order_status', [OrderStatus::CANCEL, OrderStatus::WAIT_REFUND, OrderStatus::REFUND, OrderStatus::REFUND_SUCCESS]) as $order)
+                                    @foreach ($orders->whereNotIn('id_order_status', [OrderStatus::CANCEL, OrderStatus::WAIT_REFUND, OrderStatus::REFUND, OrderStatus::REFUND_SUCCESS,OrderStatus::REFUND_FAILED]) as $order)
                                         @include('client.__order-row')
                                     @endforeach
                                 @endif
@@ -105,12 +106,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($orders->whereIn('id_order_status', [OrderStatus::REFUND, OrderStatus::REFUND_SUCCESS])->isEmpty())
+                                @if ($orders->whereIn('id_order_status', [OrderStatus::REFUND, OrderStatus::REFUND_SUCCESS,OrderStatus::REFUND_FAILED])->isEmpty())
                                     <tr>
                                         <td colspan="6" class="text-center">Không có đơn hàng nào</td>
                                     </tr>
                                 @else
-                                    @foreach ($orders->whereIn('id_order_status', [OrderStatus::REFUND, OrderStatus::REFUND_SUCCESS]) as $order)
+                                    @foreach ($orders->whereIn('id_order_status', [OrderStatus::REFUND, OrderStatus::REFUND_SUCCESS,OrderStatus::REFUND_FAILED]) as $order)
                                         @include('client.__order-row')
                                     @endforeach
                                 @endif

@@ -112,7 +112,7 @@
                                         @if($voucher->discount_type == 'percentage')
                                             {{ $voucher->discount_value }}%
                                         @else
-                                            ${{ number_format($voucher->discount_value, 2) }}
+                                            {{ number_format($voucher->discount_value) }} VND
                                         @endif
                                     </td>
                                     <td>{{ $voucher->start_date->format('j M, Y') }}</td>
