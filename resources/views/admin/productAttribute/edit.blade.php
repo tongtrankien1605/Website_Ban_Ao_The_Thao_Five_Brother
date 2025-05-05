@@ -53,10 +53,10 @@
                                                             value="{{ $value->id }}">
                                                         <input type="text" name="values[{{ $value->id }}][value]"
                                                             class="form-control" value="{{ $value->value }}">
-                                                        <button type="button" class="btn btn-danger ms-2 btn-sm"
+                                                        {{-- <button type="button" class="btn btn-danger ms-2 btn-sm"
                                                             onclick="removeValue(this)">
                                                             <i class="fa-solid fa-minus"></i>
-                                                        </button>
+                                                        </button> --}}
                                                     </div>
                                                 @endforeach
                                                 @error('values.*')

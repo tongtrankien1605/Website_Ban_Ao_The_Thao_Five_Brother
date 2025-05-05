@@ -95,7 +95,7 @@
                                             <input type="checkbox" name="is_active" class="form-check-input"
                                                 id="exampleCheck1" value="1"
                                                 {{ old('is_active', $category->is_active) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="exampleCheck1">Is Active</label>
+                                            <label class="form-check-label" for="exampleCheck1">Hoạt động   </label>
                                         </div>
                                     </div>
                                     <!-- /.card-body -->
