@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Voucher;
+use App\Models\VoucherUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 class VoucherController extends Controller
@@ -47,7 +50,16 @@ class VoucherController extends Controller
             'status' => ['nullable', Rule::in([0, 1])],
         ]);
 
-        Voucher::create($request->all());
+        $Voucher = Voucher::create($request->all());
+
+        $user = User::whereNull('deleted_at')->pluck('id')->toArray();
+        // $idUser = Arr::random($user);
+
+        foreach ($user as $key => $value) {
+            VoucherUser::create(['id_voucher'=>$Voucher->id,'id_user'=> $value]);
+        }
+
+        
 
         return redirect()->route('admin.vouchers.index')->with('success', 'Tạo mới thành công.');
     }
