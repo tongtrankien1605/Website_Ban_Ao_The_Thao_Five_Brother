@@ -29,7 +29,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::latest('id')->where('orders.id_payment_method_status', '!=', 4)
+        $orders = Order::where('orders.id_payment_method_status', '!=', 4)
             ->join('users', function ($q) {
                 $q->on('users.id', '=', 'orders.id_user');
                 $q->whereNull('users.deleted_at');
@@ -56,8 +56,8 @@ class OrderController extends Controller
             ])
             ->withSum('order_details', 'quantity')
             ->withCount('order_details')
-            ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+            ->orderByDesc('orders.updated_at')
+            ->get();
         // dd($orders);
         $allOrderStatus = OrderStatus::orderBy('id')->get();
         $data = [EnumsOrderStatus::REFUND, EnumsOrderStatus::REFUND_FAILED, EnumsOrderStatus::SUCCESS, EnumsOrderStatus::WAIT_CONFIRM, EnumsOrderStatus::REFUND_SUCCESS, EnumsOrderStatus::RETURN, EnumsOrderStatus::AUTHEN, EnumsOrderStatus::CANCEL, EnumsOrderStatus::WAIT_REFUND];

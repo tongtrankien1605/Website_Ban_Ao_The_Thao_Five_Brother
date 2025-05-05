@@ -2,7 +2,7 @@
     use App\Enums\OrderStatus;
 @endphp
 <tr>
-    <td class="text-nowrap" width="1px">
+    <td class="" width="1000px">
         <ul>
             <li class="text-start">
                 <span class="dot"></span>Người đặt:
@@ -23,7 +23,7 @@
         </ul>
     </td>
 
-    <td style="width: 1px" class="text-nowrap">
+    <td style="width: 1500px" class="">
         <ul>
             @foreach ($orderDetails[$order->id] as $orderDetail)
                 <li class="text-start">
@@ -34,7 +34,7 @@
         </ul>
     </td>
 
-    <td>
+    <td  width="1000px">
         <ul>
             <li class="text-start">
                 <span class="dot"></span>
